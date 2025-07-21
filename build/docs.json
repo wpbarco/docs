@@ -1,17 +1,18 @@
 {
   "$schema": "https://mintlify.com/docs.json",
+  "theme": "palm",
+  "name": "LangChain docs",
   "colors": {
-    "dark": "#15803D",
+    "primary": "#16A34A",
     "light": "#07C983",
-    "primary": "#16A34A"
+    "dark": "#15803D"
   },
   "favicon": "/favicon.svg",
-  "name": "LangChain docs",
   "navigation": {
     "tabs": [
       {
         "tab": "Guides",
-        "pages": [
+        "groups": [
           {
             "group": "Overview",
             "pages": [
@@ -358,8 +359,46 @@
             ]
           }
         ]
+      },
+      {
+        "tab": "LangChain Labs",
+        "groups": [
+          {
+            "group": "LangChain Labs",
+            "pages": [
+              "labs/index",
+              {
+                "group": "Open SWE",
+                "pages": [
+                  {
+                    "group": "Get Started",
+                    "pages": [
+                      "labs/swe/index"
+                    ]
+                  },
+                  {
+                    "group": "Usage",
+                    "pages": [
+                      "labs/swe/usage/intro",
+                      "labs/swe/usage/ui",
+                      "labs/swe/usage/webhook"
+                    ]
+                  },
+                  {
+                    "group": "Development Setup",
+                    "pages": [
+                      "labs/swe/setup/intro",
+                      "labs/swe/setup/development",
+                      "labs/swe/setup/authentication",
+                      "labs/swe/setup/monorepo"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     ]
-  },
-  "theme": "palm"
+  }
 }
