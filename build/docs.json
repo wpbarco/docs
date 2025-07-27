@@ -1,17 +1,32 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "palm",
-  "name": "LangChain docs",
+  "theme": "maple",
+  "name": "Docs by LangChain",
+  "description": "Documentation for LangChain, LangGraph, LangGraph Platform, LangSmith, and more.",
   "colors": {
     "primary": "#beb4fd",
-    "light": "#cfc8fe",
+    "light": "#beb4fd",
     "dark": "#1d3d3c"
   },
   "logo": {
     "light": "/logo.png",
-    "dark": "/logo-white.png"
+    "dark": "/logo-white.png",
+    "href": "https://docs.langchain.com/labs"
   },
   "favicon": "/favicon.svg",
+  "navbar": {
+    "links": [
+      {
+        "label": "Forum",
+        "href": "https://forum.langchain.com/"
+      }
+    ]
+  },
+  "fonts": {
+    "family": "Manrope"
+  },
+  "eyebrows": "breadcrumbs",
+  "contextual": {"options": ["copy", "view", "chatgpt", "claude"]},
   "navigation": {
     "dropdowns": [
       {
@@ -37,7 +52,7 @@
                 "pages": [
                   "labs/swe/usage/intro",
                   "labs/swe/usage/ui",
-                  "labs/swe/usage/webhook"
+                  "labs/swe/usage/github"
                 ]
               },
               {
