@@ -7,13 +7,13 @@ In this tutorial, we will build a chatbot that only lets specific users access i
 This is part 1 of our authentication series:
 
 1. Set up custom authentication (you are here) - Control who can access your bot
-2. [Make conversations private](resource-auth) - Let users have private conversations
-3. [Connect an authentication provider](add-auth-server) - Add real user accounts and validate using OAuth2 for production
+2. [Make conversations private](/langgraph-platform/resource-auth) - Let users have private conversations
+3. [Connect an authentication provider](/langgraph-platform/add-auth-server) - Add real user accounts and validate using OAuth2 for production
 
 This guide assumes basic familiarity with the following concepts:
 
-* [**Authentication & Access Control**](auth)
-* [**LangGraph Platform**](index)
+* [**Authentication & Access Control**](/langgraph-platform/auth)
+* [**LangGraph Platform**](/langgraph-platform/index)
 
 <Note>
   Custom auth is only available for LangGraph Platform SaaS deployments or Enterprise Self-Hosted deployments.
@@ -49,7 +49,7 @@ The server will start and open the studio in your browser:
 
 If you were to self-host this on the public internet, anyone could access it!
 
-![No auth](images/no-auth.png)
+![No auth](/langgraph-platform/images/no-auth.png)
 
 ## 2. Add authentication
 
@@ -100,7 +100,7 @@ Notice that your [authentication](https://langchain-ai.github.io/langgraph/cloud
 1. Checks if a valid token is provided in the request's [Authorization header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization)
 2. Returns the user's [identity](https://langchain-ai.github.io/langgraph/cloud/reference/sdk/python-sdk_ref#langgraph_sdk.auth.types.MinimalUserDict)
 
-Now tell LangGraph to use authentication by adding the following to the [`langgraph.json`](cli#configuration-file) configuration:
+Now tell LangGraph to use authentication by adding the following to the [`langgraph.json`](/langgraph-platform/cli#configuration-file) configuration:
 
 ```json hl_lines="7-9" title="langgraph.json"
 {
@@ -136,9 +136,9 @@ If you didn't add the `--no-browser`, the studio UI will open in the browser. Yo
 
 ## 4. Chat with your bot
 
-You should now only be able to access the bot if you provide a valid token in the request header. Users will still, however, be able to access each other's resources until you add [resource authorization handlers](auth#resource-specific-handlers) in the next section of the tutorial.
+You should now only be able to access the bot if you provide a valid token in the request header. Users will still, however, be able to access each other's resources until you add [resource authorization handlers](/langgraph-platform/auth#resource-specific-handlers) in the next section of the tutorial.
 
-![Authentication, no authorization handlers](images/authentication.png)
+![Authentication, no authorization handlers](/langgraph-platform/images/authentication.png)
 
 Run the following code in a file or notebook:
 
@@ -182,6 +182,6 @@ Congratulations! You've built a chatbot that only lets "authenticated" users acc
 
 Now that you can control who accesses your bot, you might want to:
 
-1. Continue the tutorial by going to [Make conversations private](resource-auth) to learn about resource authorization.
-2. Read more about [authentication concepts](auth).
+1. Continue the tutorial by going to [Make conversations private](/langgraph-platform/resource-auth) to learn about resource authorization.
+2. Read more about [authentication concepts](/langgraph-platform/auth).
 3. Check out the [API reference](https://langchain-ai.github.io/langgraph/cloud/reference/sdk/python-sdk_ref) for more authentication details.
