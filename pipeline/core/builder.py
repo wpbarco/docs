@@ -53,6 +53,35 @@ class DocumentationBuilder:
             ".css",
         }
 
+    def _should_ignore_file(self, file_path: Path) -> bool:
+        """Check if a file should be ignored during build.
+
+        This method filters out cached files, temporary files, and other
+        files that should not be included in the build process.
+
+        Args:
+            file_path: Path to the file to check.
+
+        Returns:
+            True if the file should be ignored, False otherwise.
+        """
+        filename = file_path.name
+
+        # Ignore files starting with .~ (cached/temporary files)
+        if filename.startswith(".~"):
+            return True
+
+        # Ignore files starting with ~ (backup files)
+        if filename.startswith("~"):
+            return True
+
+        # Ignore hidden files starting with . (except specific ones we want)
+        if filename.startswith(".") and filename not in {".gitkeep"}:
+            return True
+
+        # Ignore common temporary file patterns
+        return bool(filename.endswith((".tmp", ".temp")))
+
     def build_all(self) -> None:
         """Build all documentation files from source to build directory.
 
@@ -78,7 +107,8 @@ class DocumentationBuilder:
 
         # Collect all files to process
         all_files = [
-            file_path for file_path in self.src_dir.rglob("*") if file_path.is_file()
+            file_path for file_path in self.src_dir.rglob("*")
+            if file_path.is_file() and not self._should_ignore_file(file_path)
         ]
 
         if not all_files:
@@ -304,7 +334,7 @@ class DocumentationBuilder:
                 self._process_markdown_file(file_path, output_path)
                 return True
             # Handle notebook files with conversion to markdown
-            elif file_path.suffix.lower() == ".ipynb":
+            if file_path.suffix.lower() == ".ipynb":
                 self._process_notebook_file(file_path, output_path)
                 return True
             shutil.copy2(file_path, output_path)
