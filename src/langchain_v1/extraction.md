@@ -16,9 +16,9 @@ If you haven't already, install LangGraph and LangChain:
 pip install -U langgraph "langchain[anthropic]"
 ```
 
-!!! info
-
+<Tip>
     LangChain is installed so the extractor can call the [model](https://python.langchain.com/docs/integrations/chat/).
+</Tip>
 
 ## 2. Set up documents
 
@@ -72,8 +72,7 @@ from langchain.chains.summarization import create_summarizer
 # Create a basic summarizer
 summarizer = create_summarizer(
     model,
-    initial_prompt="Produce a concise summary of the following document in 2-3 sentences.",
-    strategy="sequential"  # Process documents one by one
+    initial_prompt="Produce a concise summary of the following document in 2-3 sentences."
 ).compile(name="TextSummarizer")
 
 # Extract summary
@@ -99,8 +98,7 @@ class Summary(BaseModel):
 structured_summarizer = create_summarizer(
     model,
     initial_prompt="Extract the main topics and create a structured summary with a title and up to 3 key points.",
-    response_format=Summary,
-    strategy="batch"  # Process all documents together
+    response_format=Summary
 ).compile(name="StructuredSummarizer")
 
 # Extract structured summary
@@ -141,9 +139,7 @@ class PeopleExtraction(BaseModel):
 entity_extractor = create_summarizer(
     model,
     initial_prompt="Extract information about people mentioned in the documents. Include the document IDs where each piece of information was found.",
-    refine_prompt="Update the extracted people information with any new facts found in the current document. Make sure to include the source document IDs for all information.",
-    response_format=PeopleExtraction,
-    strategy="sequential"
+    response_format=PeopleExtraction
 ).compile(name="EntityExtractor")
 
 # Extract entities
@@ -160,27 +156,6 @@ for person in result['result'].people:
     print()
 ```
 
-## Processing strategies
-
-The extractor supports two processing strategies:
-
-- **sequential**: Processes documents one by one, refining results iteratively. More memory-efficient for large document collections.
-- **batch**: Processes all documents together in a single request. Can be faster for smaller collections.
-
-```python
-# Sequential processing (default)
-sequential_extractor = create_summarizer(
-    model,
-    strategy="sequential"
-).compile()
-
-# Batch processing  
-batch_extractor = create_summarizer(
-    model,
-    strategy="batch"
-).compile()
-```
-
 ## Custom prompts
 
 Customize extraction behavior with specific prompts:
@@ -188,9 +163,7 @@ Customize extraction behavior with specific prompts:
 ```python
 custom_extractor = create_summarizer(
     model,
-    initial_prompt="Focus on extracting technical information and key innovations mentioned in the documents.",
-    refine_prompt="Combine the technical information from previous results with new findings from the current document.",
-    strategy="sequential"
+    initial_prompt="Focus on extracting technical information and key innovations mentioned in the documents."
 ).compile()
 ```
 

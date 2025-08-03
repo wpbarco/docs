@@ -53,6 +53,17 @@
   "navigation": {
     "dropdowns": [
       {
+        "dropdown": "LangChain v1",
+        "icon": "/images/brand/langchain-pill.svg",
+        "description": "LangChain v1 documentation and guides",
+        "tabs": [
+          {
+            "tab": "Extraction",
+            "pages": ["langchain_v1/extraction"]
+          }
+        ]
+      },
+      {
         "dropdown": "LangGraph Platform",
         "icon": "/images/brand/langgraph-platform-pill.svg",
         "description": "Platform for building and deploying AI agents",
