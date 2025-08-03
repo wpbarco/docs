@@ -60,6 +60,14 @@
           {
             "tab": "Extraction",
             "pages": ["langchain_v1/extraction"]
+          },
+          {
+            "tab": "Notebooks",
+            "pages": [
+              "langchain_v1/inline_summarizer",
+              "langchain_v1/map_reduce",
+              "langchain_v1/refine_summarizer"
+            ]
           }
         ]
       },
