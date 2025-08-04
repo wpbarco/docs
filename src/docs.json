@@ -58,15 +58,12 @@
         "description": "LangChain v1 documentation and guides",
         "tabs": [
           {
-            "tab": "Extraction",
-            "pages": ["langchain_v1/extraction"]
-          },
-          {
-            "tab": "Notebooks",
+            "tab": "Prebuilts",
             "pages": [
               "langchain_v1/stuff",
               "langchain_v1/map_reduce",
-              "langchain_v1/recursive"
+              "langchain_v1/recursive",
+              "langchain_v1/rag_agent"
             ]
           }
         ]
