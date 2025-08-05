@@ -14,19 +14,11 @@ RAG can be implemented in multiple ways, depending on your system's needs:
 
 | Architecture | Control   | Flexibility | Example Use Case                                  |
 |--------------|-----------|-------------|---------------------------------------------------|
-| 2-Step RAG   | ✅ High    | ❌ Low       | FAQs, documentation bots                          |
-| Hybrid       | ⚖️ Medium | ⚖️ Medium   |                                                   |
 | Agentic RAG  | ❌ Low     | ✅ High      | Research assistants with access to multiple tools |
+| 2-Step RAG   | ✅ High    | ❌ Low       | FAQs, documentation bots                          |
+| Hybrid       | ⚖️ Medium | ⚖️ Medium   | Domain-specific Q&A with quality validation       |
 
-## Building a knowledge base
-
-Section contains cross-links to documentation about vectorstores and custom retrievers.
-
-## ⚙️ Implementation
-
-We’ll walk through three progressively more dynamic implementations.
-
-## 1. Agentic RAG
+## Agentic RAG
 
 **Agentic Retrieval-Augmented Generation (RAG)** combines the strengths of Retrieval-Augmented Generation with agent-based reasoning. Instead of retrieving documents before answering, an agent (powered by an LLM) reasons step-by-step and decides **when** and **how** to retrieve information during the interaction.
 
@@ -155,7 +147,7 @@ print(response['messages'][-1].content)
 ```
 </Expandable>
 
-# 2. RAG with 2-Step workflow
+## 2-step workflow
 
 In **2-Step RAG**, the retrieval step is always executed before the generation step. This architecture is straightforward and predictable, making it suitable for many applications where the retrieval of relevant documents is a clear prerequisite for generating an answer.
 
@@ -263,17 +255,52 @@ print(response['answer'])
 
 </Expandable>
 
-## 3. Hybrid architectures
+## Hybrid RAG
 
-There are many possible variations on RAG architectures.
+Hybrid RAG combines characteristics of both 2-Step and Agentic RAG. It introduces intermediate steps such as query preprocessing, retrieval validation, and post-generation checks. These systems offer more flexibility than fixed pipelines while maintaining some control over execution.
 
-1. The retrieval step can involve an LLM to either interpret the question, to re-write the question or write multiple versions of it.
-2. Reflection steps after retrieval: to decide whether retrieved results make sense and if not re-execute retrieval.
-3. Reflection steps after generation: to decide whether the the generated answer is good and if not, to try re-execute retrieval or generation.
-4. Variations could allow for up to a certain number of loop iterations that invclude retrieval and post generation etc.
+Typical components include:
 
-Here's an example of
+* **Query enhancement**: Modify the input question to improve retrieval quality. This can involve rewriting unclear queries, generating multiple variations, or expanding queries with additional context.
+* **Retrieval validation**: Evaluate whether retrieved documents are relevant and sufficient. If not, the system may refine the query and retrieve again.
+* **Answer validation**: Check the generated answer for accuracy, completeness, and alignment with source content. If needed, the system can regenerate or revise the answer.
 
-Examples
+The architecture often supports multiple iterations between these steps:
 
-* [Agentic RAG with Self correction](https://langchain-ai.github.io/langgraph/tutorials/rag/langgraph_agentic_rag)
+```mermaid
+graph LR
+    A[User Question] --> B[Query Enhancement]
+    B --> C[Retrieve Documents]
+    C --> D{Sufficient Info?}
+    D -- No --> E[Refine Query]
+    E --> C
+    D -- Yes --> F[Generate Answer]
+    F --> G{Answer Quality OK?}
+    G -- No --> H{Try Different Approach?}
+    H -- Yes --> E
+    H -- No --> I[Return Best Answer]
+    G -- Yes --> I
+    I --> J[Return to User]
+
+    classDef startend fill:#2e7d32,stroke:#1b5e20,stroke-width:2px,color:#fff
+    classDef decision fill:#f9a825,stroke:#f57f17,stroke-width:2px,color:#000
+    classDef process fill:#1976d2,stroke:#0d47a1,stroke-width:1.5px,color:#fff
+
+    class A,J startend
+    class B,C,E,F,I process
+    class D,G,H decision
+```
+
+This architecture is suitable for:
+
+* Applications with ambiguous or underspecified queries
+* Systems that require validation or quality control steps
+* Workflows involving multiple sources or iterative refinement
+
+**Example** [Agentic RAG with Self-Correction](https://langchain-ai.github.io/langgraph/tutorials/rag/langgraph_agentic_rag)
+
+## Building a knowledge base
+
+A key component of RAG systems is a **knowledge base**—a repository of documents or data that the retrieval step can query.
+
+If you want to build a custom knowledge base, you can use LangChain's document loaders and vector stores to create one from your own data.
