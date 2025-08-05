@@ -1,8 +1,9 @@
+---
+title: RAG
+---
+
 **Retrieval-Augmented Generation (RAG)** is a method for enhancing the responses of language models by injecting external knowledge at generation time. Instead of relying solely on what the model "knows" (from training), RAG enables the model to query external sources—like search engines, databases, APIs, or custom document stores—to access the most relevant and up-to-date information.
 
----
-title: RAG Architectures
----
 
 RAG can be implemented in multiple ways, depending on your system's needs:
 
@@ -11,11 +12,11 @@ RAG can be implemented in multiple ways, depending on your system's needs:
 
 ![rag architectures](./rag_systems.png)
 
-| Architecture | Control   | Flexibility | Example Use Case         |
-| ------------ | --------- | ----------- | ------------------------ |
-| 2-Step RAG   | ✅ High    | ❌ Low       | FAQs, documentation bots |
-| Hybrid       | ⚖️ Medium | ⚖️ Medium   | Technical Q\&A           |
-| Agentic RAG  | ❌ Low     | ✅ High      | Research assistants      |
+| Architecture | Control   | Flexibility | Example Use Case                                  |
+|--------------|-----------|-------------|---------------------------------------------------|
+| 2-Step RAG   | ✅ High    | ❌ Low       | FAQs, documentation bots                          |
+| Hybrid       | ⚖️ Medium | ⚖️ Medium   |                                                   |
+| Agentic RAG  | ❌ Low     | ✅ High      | Research assistants with access to multiple tools |
 
 ## Building a knowledge base
 
@@ -57,47 +58,52 @@ graph LR
 ```
 
 ```python
-from langchain_core.tools import tool
-from langgraph.prebuilt import create_react_agent
 from langchain.chat_models import init_chat_model
+from langgraph.prebuilt import create_react_agent
 
 model = init_chat_model('claude-sonnet-4-0', max_tokens=32_000)
 
 agent = create_react_agent(
     model=model,
     # Include tools that include retrieval tools
-    tools=tools, # [!code highlight] 
+    tools=tools,  # [!code highlight] 
     # Customize the prompt with instructions on how to retrieve
     # the data.
     prompt=system_prompt,
 )
 ```
 
-### 🧪 Example: Agentic RAG with LangGraph Documentation
 
-This example implements an **Agentic RAG system** to assist users in querying LangGraph documentation. The agent begins by loading `llms.txt`, which lists available documentation URLs, and can then dynamically use a `fetch_documentation` tool to retrieve and process the relevant content based on the user’s question.
+<Expandable title="Extended example: Agentic RAG for LangGraph's llms.txt">
+
+This example implements an **Agentic RAG system** to assist users in querying LangGraph documentation. The agent begins by loading [llms.txt](https://llmstxt.org/), which lists available documentation URLs, and can then dynamically use a `fetch_documentation` tool to retrieve and process the relevant content based on the user’s question.
 
 ```python
-from markdownify import markdownify
 import requests
-
+from langchain.chat_models import init_chat_model
 from langchain_core.tools import tool
 from langgraph.prebuilt import create_react_agent
-from langchain.chat_models import init_chat_model
+from markdownify import markdownify
 
 ALLOWED_DOMAINS = ["https://langchain-ai.github.io/"]
 LLMS_TXT = 'https://langchain-ai.github.io/langgraph/llms.txt'
 
+
 @tool
-def fetch_documentation(url: str) -> str:
+def fetch_documentation(url: str) -> str:  # [!code highlight]
     """Fetch and convert documentation from a URL"""
     if not any(url.startswith(domain) for domain in ALLOWED_DOMAINS):
-        return f"Error: URL not allowed. Must start with one of: {', '.join(ALLOWED_DOMAINS)}"
+        return (
+            "Error: URL not allowed. "
+            f"Must start with one of: {', '.join(ALLOWED_DOMAINS)}"
+        )
     response = requests.get(url, timeout=10.0)
     response.raise_for_status()
     return markdownify(response.text)
 
-# We will fetch the content of llms.txt, so this can be done ahead of time without requiring an LLM request.
+
+# We will fetch the content of llms.txt, so this can 
+# be done ahead of time without requiring an LLM request.
 llms_txt_content = requests.get(LLMS_TXT).text
 
 # System prompt for the agent
@@ -129,8 +135,8 @@ model = init_chat_model('claude-sonnet-4-0', max_tokens=32_000)
 
 agent = create_react_agent(
     model=model,
-    tools=tools,
-    prompt=system_prompt,
+    tools=tools,  # [!code highlight]
+    prompt=system_prompt,  # [!code highlight]
     name="Agentic RAG",
 )
 
@@ -147,15 +153,11 @@ response = agent.invoke({
 
 print(response['messages'][-1].content)
 ```
+</Expandable>
 
-```output
+# 2. RAG with 2-Step workflow
 
-KeyboardInterrupt
-```
-
-# 2. Retrieval -> Generation workflow
-
-* **2-Step RAG**: Retrieval always happens before generation.
+In **2-Step RAG**, the retrieval step is always executed before the generation step. This architecture is straightforward and predictable, making it suitable for many applications where the retrieval of relevant documents is a clear prerequisite for generating an answer.
 
 ```mermaid
 graph LR
@@ -171,23 +173,29 @@ graph LR
     class B,C process
 ```
 
-### 🧪 Example: Working with LangGraph GitHub issues
+<Expandable title="Extended example: 2-Step RAG for LangGraph GitHub issues">
+
+This example demonstrates a simple 2-step RAG system that retrieves open GitHub issues from the LangGraph repository and generates an answer based on the retrieved content.
 
 ```python
-import requests
 from typing import TypedDict, NotRequired
-from langgraph.graph import StateGraph, END
+
+import requests
 from langchain.chat_models import init_chat_model
+from langgraph.graph import StateGraph, END
+
 
 class GraphState(TypedDict):
     question: str
     retrieved_content: NotRequired[str]
     answer: NotRequired[str]
 
+
 llm = init_chat_model('claude-sonnet-4-0', max_tokens=32000)
 
 
-def retrieval_step(state: GraphState) -> GraphState:
+def retrieval_step(state: GraphState):  # [!code highlight]
+    """Retrieve open issues from the LangGraph GitHub repository."""
     headers = {
         "Accept": "application/vnd.github+json",
         "User-Agent": "langgraph-rag-example",
@@ -200,19 +208,21 @@ def retrieval_step(state: GraphState) -> GraphState:
     }
     response = requests.get(url, headers=headers, params=params)
     response.raise_for_status()
-    
+
     items = response.json()
     base_url = "https://github.com/langchain-ai/langgraph/issues/"
     # Filter out PRs (issues with "pull_request" key are actually PRs)
-    issues = [f"- {issue['title']} {base_url}{issue['number']}" for issue in items if "pull_request" not in issue]
+    issues = [f"- {issue['title']} {base_url}{issue['number']}" for issue in items if
+              "pull_request" not in issue]
     retrieved = "\n".join(issues) if issues else "No issues found."
-    
+
     return {
         "retrieved_content": retrieved
     }
 
 
-def generate_response(state: GraphState) -> GraphState:
+def generate_response(state: GraphState):  # [!code highlight]
+    """Generate an answer based on the retrieved content and the user's question."""
     prompt = [
         {
             "role": "system",
@@ -236,8 +246,8 @@ def generate_response(state: GraphState) -> GraphState:
 
 
 builder = StateGraph(GraphState)
-builder.add_node("retrieval", retrieval_step)
-builder.add_node("generation", generate_response)
+builder.add_node("retrieval", retrieval_step)  # [!code highlight]
+builder.add_node("generation", generate_response)  # [!code highlight]
 builder.set_entry_point("retrieval")
 builder.add_edge("retrieval", "generation")
 builder.add_edge("generation", END)
@@ -250,6 +260,8 @@ response = graph.invoke({
 
 print(response['answer'])
 ```
+
+</Expandable>
 
 ## 3. Hybrid architectures
 
