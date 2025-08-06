@@ -4,19 +4,13 @@ title: RAG
 
 **Retrieval-Augmented Generation (RAG)** is a method for enhancing the responses of language models by injecting external knowledge at generation time. Instead of relying solely on what the model "knows" (from training), RAG enables the model to query external sources—like search engines, databases, APIs, or custom document stores—to access the most relevant and up-to-date information.
 
-
 RAG can be implemented in multiple ways, depending on your system's needs:
 
-* **2-Step RAG**: Retrieval always happens before generation. Simple and predictable.
-* **Agentic RAG**: An LLM-powered agent decides *when* and *how* to retrieve during reasoning.
-
-![rag architectures](./rag_systems.png)
-
-| Architecture | Control   | Flexibility | Example Use Case                                  |
-|--------------|-----------|-------------|---------------------------------------------------|
-| Agentic RAG  | ❌ Low     | ✅ High      | Research assistants with access to multiple tools |
-| 2-Step RAG   | ✅ High    | ❌ Low       | FAQs, documentation bots                          |
-| Hybrid       | ⚖️ Medium | ⚖️ Medium   | Domain-specific Q&A with quality validation       |
+| Architecture    | Description                                                                | Control   | Flexibility | Example Use Case                                  |
+|-----------------|----------------------------------------------------------------------------|-----------|-------------|---------------------------------------------------|
+| **Agentic RAG** | An LLM-powered agent decides *when* and *how* to retrieve during reasoning | ❌ Low     | ✅ High      | Research assistants with access to multiple tools |
+| **2-Step RAG**  | Retrieval always happens before generation. Simple and predictable         | ✅ High    | ❌ Low       | FAQs, documentation bots                          |
+| **Hybrid**      | Combines characteristics of both approaches with validation steps          | ⚖️ Medium | ⚖️ Medium   | Domain-specific Q&A with quality validation       |
 
 ## Agentic RAG
 
@@ -65,6 +59,26 @@ agent = create_react_agent(
 )
 ```
 
+### Bounded Agentic RAG
+
+Agentic RAG systems can be configured with a limit on how many reasoning/retrieval loops the agent may perform. This provides a useful balance between **flexibility** and **predictability**.
+
+A common pattern is **1-loop Agentic RAG**:
+
+* The agent decides whether to retrieve.
+* If it does retrieve, it may rewrite the query.
+* After at most one retrieval step, it generates the final answer.
+
+This setup enables paraphrasing and tool use without allowing open-ended loops. If the LLM supports it, tool calls may run in parallel.
+
+```python
+agent = create_react_agent(
+    model=model,
+    tools=tools,
+    prompt=system_prompt,
+    max_iterations=1,  # Limits agent to one loop
+)
+```
 
 <Expandable title="Extended example: Agentic RAG for LangGraph's llms.txt">
 
