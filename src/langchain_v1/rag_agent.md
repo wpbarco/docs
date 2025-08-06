@@ -6,11 +6,16 @@ title: RAG
 
 RAG can be implemented in multiple ways, depending on your system's needs:
 
-| Architecture    | Description                                                                | Control   | Flexibility | Example Use Case                                  |
-|-----------------|----------------------------------------------------------------------------|-----------|-------------|---------------------------------------------------|
-| **Agentic RAG** | An LLM-powered agent decides *when* and *how* to retrieve during reasoning | ❌ Low     | ✅ High      | Research assistants with access to multiple tools |
-| **2-Step RAG**  | Retrieval always happens before generation. Simple and predictable         | ✅ High    | ❌ Low       | FAQs, documentation bots                          |
-| **Hybrid**      | Combines characteristics of both approaches with validation steps          | ⚖️ Medium | ⚖️ Medium   | Domain-specific Q&A with quality validation       |
+| Architecture            | Description                                                                | Control   | Flexibility | Latency        | Example Use Case                                   |
+|-------------------------|----------------------------------------------------------------------------|-----------|-------------|----------------|----------------------------------------------------|
+| **Agentic RAG**         | An LLM-powered agent decides *when* and *how* to retrieve during reasoning | ❌ Low     | ✅ High      | ⏳ Variable     | Research assistants with access to multiple tools  |
+| **Bounded Agentic RAG** | Agentic RAG with a fixed number of reasoning/retrieval loops               | ✅ Medium  | ✅ Medium    | ⏱️ Predictable | Smart assistants with predictable runtime/behavior |
+| **2-Step RAG**          | Retrieval always happens before generation. Simple and predictable         | ✅ High    | ❌ Low       | ⚡ Fast         | FAQs, documentation bots                           |
+| **Hybrid**              | Combines characteristics of both approaches with validation steps          | ⚖️ Medium | ⚖️ Medium   | ⏳ Variable     | Domain-specific Q&A with quality validation        |
+
+<Info>
+**Latency**: Latency is generally more **predictable** in both **Bounded Agentic RAG** and **2-Step RAG**, as the maximum number of LLM calls is known and capped. This predictability assumes that LLM inference time is the dominant factor. However, real-world latency may also be affected by the performance of retrieval steps—such as API response times, network delays, or database queries—which can vary based on the tools and infrastructure in use.
+</Info>
 
 ## Agentic RAG
 
