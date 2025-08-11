@@ -144,7 +144,7 @@ By default, the trace will be logged to the project with the name `default`. An 
 
 The [previous section](#quick-start) showed how to trace all invocations of a LangChain runnables within your applications by setting a single environment variable. While this is a convenient way to get started, you may want to trace only specific invocations or parts of your application.
 
-There are two ways to do this in Python: by manually passing in a `LangChainTracer` ([reference docs](https://api.python.langchain.com/en/latest/tracers/langchain_core.tracers.langchain.LangChainTracer.html#langchain_core.tracers.langchain.LangChainTracer)) instance as a callback, or by using the `tracing_v2_enabled` context manager ([reference docs](https://api.python.langchain.com/en/latest/tracers/langchain_core.tracers.context.tracing_v2_enabled.html)).
+There are two ways to do this in Python: by manually passing in a `LangChainTracer` ([reference docs](https://api.python.langchain.com/en/latest/tracers/langchain_core.tracers.langchain.LangChainTracer.html#langchain_core.tracers.langchain.LangChainTracer)) instance as a callback, or by using the `tracing_context` context manager ([reference docs](https://docs.smith.langchain.com/reference/python/run_helpers/langsmith.run_helpers.tracing_context#langsmith.run_helpers.tracing_context)).
 
 In JS/TS, you can pass a `LangChainTracer` ([reference docs](https://api.js.langchain.com/classes/langchain_core_tracers_tracer_langchain.LangChainTracer.html)) instance as a callback.
 
@@ -152,20 +152,18 @@ In JS/TS, you can pass a `LangChainTracer` ([reference docs](https://api.js.lang
 <Tab title="Python">
 
 ```python
-# You can configure a LangChainTracer instance to trace a specific invocation.
-from langchain.callbacks.tracers import LangChainTracer
+# You can opt-in to specific invocations..
+import langsmith as ls
 
-tracer = LangChainTracer()
-chain.invoke({"question": "Am I using a callback?", "context": "I'm using a callback"}, config={"callbacks": [tracer]})
-
-# LangChain Python also supports a context manager for tracing a specific block of code.
-from langchain_core.tracers.context import tracing_v2_enabled
-
-with tracing_v2_enabled():
-  chain.invoke({"question": "Am I using a context manager?", "context": "I'm using a context manager"})
+with ls.tracing_context(enabled=True):
+    chain.invoke({"question": "Am I using a callback?", "context": "I'm using a callback"})
 
 # This will NOT be traced (assuming LANGSMITH_TRACING is not set)
 chain.invoke({"question": "Am I being traced?", "context": "I'm not being traced"})
+
+# This would not be traced, even if LANGSMITH_TRACING=true
+with ls.tracing_context(enabled=False):
+    chain.invoke({"question": "Am I being traced?", "context": "I'm not being traced"})
 ```
 
 </Tab>
@@ -176,10 +174,13 @@ chain.invoke({"question": "Am I being traced?", "context": "I'm not being traced
 import { LangChainTracer } from "@langchain/core/tracers/tracer_langchain";
 
 const tracer = new LangChainTracer();
-await chain.invoke({
-  question: "Am I using a callback?",
-  context: "I'm using a callback"
-}, { callbacks: [tracer] });
+await chain.invoke(
+  {
+    question: "Am I using a callback?",
+    context: "I'm using a callback"
+  },
+  { callbacks: [tracer] }
+);
 ```
 
 </Tab>
@@ -201,23 +202,17 @@ export LANGSMITH_PROJECT=my-project
 
 ### Dynamically
 
-This largely builds off of the [previous section](#trace-selectively) and allows you to set the project name for a specific `LangChainTracer` instance or as parameters to the `tracing_v2_enabled` context manager in Python.
+This largely builds off of the [previous section](#trace-selectively) and allows you to set the project name for a specific `LangChainTracer` instance or as parameters to the `tracing_context` context manager in Python.
 
 <Tabs>
 <Tab title="Python">
 
 ```python
-# You can set the project name for a specific tracer instance:
-from langchain.callbacks.tracers import LangChainTracer
-
-tracer = LangChainTracer(project_name="My Project")
-chain.invoke({"question": "Am I using a callback?", "context": "I'm using a callback"}, config={"callbacks": [tracer]})
-
 # You can set the project name using the project_name parameter.
-from langchain_core.tracers.context import tracing_v2_enabled
+import langsmith as ls
 
-with tracing_v2_enabled(project_name="My Project"):
-  chain.invoke({"question": "Am I using a context manager?", "context": "I'm using a context manager"})
+with ls.tracing_context(project_name="My Project", enabled=True):
+    chain.invoke({"question": "Am I using a context manager?", "context": "I'm using a context manager"})
 ```
 
 </Tab>
@@ -228,10 +223,13 @@ with tracing_v2_enabled(project_name="My Project"):
 import { LangChainTracer } from "@langchain/core/tracers/tracer_langchain";
 
 const tracer = new LangChainTracer({ projectName: "My Project" });
-await chain.invoke({
-  question: "Am I using a callback?",
-  context: "I'm using a callback"
-}, { callbacks: [tracer] });
+await chain.invoke(
+  {
+    question: "Am I using a callback?",
+    context: "I'm using a callback"
+  },
+  { callbacks: [tracer] }
+);
 ```
 
 </Tab>
@@ -370,9 +368,7 @@ Note that if you do this at the **root** of a trace (i.e., the top-level run, th
 
 ## Access run (span) ID for LangChain invocations
 
-When you invoke a LangChain object, you can access the run ID of the invocation. This run ID can be used to query the run in LangSmith.
-
-In Python, you can use the `collect_runs` context manager to access the run ID.
+When you invoke a LangChain object, you can manually specify the run ID of the invocation. This run ID can be used to query the run in LangSmith.
 
 In JS/TS, you can use a `RunCollectorCallbackHandler` instance to access the run ID.
 
@@ -380,28 +376,26 @@ In JS/TS, you can use a `RunCollectorCallbackHandler` instance to access the run
 <Tab title="Python">
 
 ```python
+import uuid
+
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.tracers.context import collect_runs
 
 prompt = ChatPromptTemplate.from_messages([
-  ("system", "You are a helpful assistant. Please respond to the user's request only based on the given context."),
-  ("user", "Question: {question}\n\nContext: {context}")
+    ("system", "You are a helpful assistant. Please respond to the user's request only based on the given context."),
+    ("user", "Question: {question}\n\nContext: {context}")
 ])
-
 model = ChatOpenAI(model="gpt-4o-mini")
 output_parser = StrOutputParser()
+
 chain = prompt | model | output_parser
 
 question = "Can you summarize this morning's meetings?"
 context = "During this morning's meeting, we solved all world conflict."
-
-with collect_runs() as cb:
-    result = chain.invoke({"question": question, "context": context})
-    # Get the root run id
-    run_id = cb.traced_runs[0].id
-    print(run_id)
+my_uuid = uuid.uuid4()
+result = chain.invoke({"question": question, "context": context}, {"run_id": my_uuid})
+print(my_uuid)
 ```
 
 </Tab>
@@ -414,23 +408,22 @@ import { StringOutputParser } from "@langchain/core/output_parsers";
 import { RunCollectorCallbackHandler } from "@langchain/core/tracers/run_collector";
 
 const prompt = ChatPromptTemplate.fromMessages([
-    ["system", "You are a helpful assistant. Please respond to the user's request only based on the given context."],
-    ["user", "Question: {question}\n\nContext: {context}"],
+  ["system", "You are a helpful assistant. Please respond to the user's request only based on the given context."],
+  ["user", "Question: {question}\n\nContext: {context}"],
 ]);
-
 const model = new ChatOpenAI({ modelName: "gpt-4o-mini" });
 const outputParser = new StringOutputParser();
-const chain = prompt.pipe(model).pipe(outputParser);
 
+const chain = prompt.pipe(model).pipe(outputParser);
 const runCollector = new RunCollectorCallbackHandler();
+
 const question = "Can you summarize this morning's meetings?"
 const context = "During this morning's meeting, we solved all world conflict."
-
 await chain.invoke(
-  { question: question, context: context },
-  { callbacks: [runCollector] }
+    { question: question, context: context },
+    { callbacks: [runCollector] }
 );
-
+// highlight-next-line
 const runId = runCollector.tracedRuns[0].id;
 console.log(runId);
 ```
@@ -497,24 +490,18 @@ This largely builds off of the [previous section](#trace-selectively).
 <Tab title="Python">
 
 ```python
-from langchain.callbacks.tracers import LangChainTracer
-from langsmith import Client
+import langsmith as ls
 
 # You can create a client instance with an api key and api url
-client = Client(
-  api_key="YOUR_API_KEY",  # This can be retrieved from a secrets manager
-  api_url="https://api.smith.langchain.com",  # Update appropriately for self-hosted installations or the EU region
+client = ls.Client(
+    api_key="YOUR_API_KEY",  # This can be retrieved from a secrets manager
+    api_url="https://api.smith.langchain.com",  # Update appropriately for self-hosted installations or the EU region
 )
 
-# You can pass the client and project_name to the LangChainTracer instance
-tracer = LangChainTracer(client=client, project_name="test-no-env")
-chain.invoke({"question": "Am I using a callback?", "context": "I'm using a callback"}, config={"callbacks": [tracer]})
-
-# LangChain Python also supports a context manager which allows passing the client and project_name
-from langchain_core.tracers.context import tracing_v2_enabled
-
-with tracing_v2_enabled(client=client, project_name="test-no-env"):
-  chain.invoke({"question": "Am I using a context manager?", "context": "I'm using a context manager"})
+# You can pass the client and project_name to the tracing_context
+# highlight-next-line
+with ls.tracing_context(client=client, project_name="test-no-env", enabled=True):
+    chain.invoke({"question": "Am I using a callback?", "context": "I'm using a callback"})
 ```
 
 </Tab>
@@ -526,18 +513,22 @@ import { Client } from "langsmith";
 
 // You can create a client instance with an api key and api url
 const client = new Client(
-  {
-      apiKey: "YOUR_API_KEY",
-      apiUrl: "https://api.smith.langchain.com", // Update appropriately for self-hosted installations or the EU region
-  }
+    {
+        apiKey: "YOUR_API_KEY",
+        apiUrl: "https://api.smith.langchain.com", // Update appropriately for self-hosted installations or the EU region
+    }
 );
 
 // You can pass the client and project_name to the LangChainTracer instance
+// highlight-next-line
 const tracer = new LangChainTracer({client, projectName: "test-no-env"});
-await chain.invoke({
-  question: "Am I using a callback?",
-  context: "I'm using a callback",
-}, { callbacks: [tracer] });
+await chain.invoke(
+  {
+    question: "Am I using a callback?",
+    context: "I'm using a callback",
+  },
+  { callbacks: [tracer] }
+);
 ```
 
 </Tab>

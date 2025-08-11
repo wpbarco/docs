@@ -56,7 +56,6 @@ Both the `backend` and `queue` services require write access to the destination 
 - The `backend` service attempts to write a test file to the destination bucket when the export destination is created.
   It will delete the test file if it has permission to do so (delete access is optional).
 - The `queue` service is responsible for bulk export execution and uploading the files to the bucket.
-
 </Note>
 
 The following example demonstrates how to create a destination using cURL. Replace the placeholder values with your actual configuration details.
