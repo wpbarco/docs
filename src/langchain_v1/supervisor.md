@@ -96,7 +96,7 @@ When an agent decides to hand off, it invokes a special *handoff tool* that:
 This means that supporting handoffs in your system requires tracking the **currently active agent** in the shared graph state, so the runtime always knows which agent is “in control.”
 
 
-### Context engineering
+## Context engineering
 
 Whether you’re implementing handoffs or tool calling, the quality of your system depends heavily on **how you pass context** to agents and subagents.
 
@@ -110,6 +110,7 @@ LangGraph gives you fine-grained control over this process, allowing you to:
 This **context engineering** capability lets you fine-tune every aspect of agent behavior, ensuring that each agent receives the right data, at the right time, in the right format — whether it’s acting as a tool or taking over as the active agent via a handoff.
 
 ## Supervisor (using tools)
+
 
 <Tabs>
   <Tab title="Supervisor (from scratch)">
