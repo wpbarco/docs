@@ -23,25 +23,25 @@
     }
   },
   "styling": {
-      "eyebrows": "breadcrumbs"
-    },
+    "eyebrows": "breadcrumbs"
+  },
   "contextual": {
     "options": [
       "copy",
-       "view",
-        {
-          "title": "llms.txt",
-          "description": "Open llms.txt for this site",
-          "icon": "file",
-          "href": "https://docs.langchain.com/llms.txt"
-        },
+      "view",
+      {
+        "title": "llms.txt",
+        "description": "Open llms.txt for this site",
+        "icon": "file",
+        "href": "https://docs.langchain.com/llms.txt"
+      },
       "chatgpt",
       "claude"
     ]
   },
   "integrations": {
     "gtm": {
-        "tagId": "GTM-MBBX68ST"
+      "tagId": "GTM-MBBX68ST"
     }
   },
   "head": [
@@ -256,7 +256,6 @@
           {
             "tab": "Manage",
             "groups": [
-
               {
                 "group": "Authentication & access control",
                 "pages": [
@@ -324,7 +323,28 @@
         "tabs": [
           {
             "tab": "Overview",
-            "pages": ["labs/index"]
+            "pages": [
+              "labs/index"
+            ]
+          },
+          {
+            "tab": "Deep Agents",
+            "pages": [
+              {
+                "group": "Get started",
+                "pages": [
+                  "labs/deep-agents/overview",
+                  "labs/deep-agents/quickstart"
+                ]
+              },
+              {
+                "group": "Configuration",
+                "pages": [
+                  "labs/deep-agents/configuration-options",
+                  "labs/deep-agents/built-in-components"
+                ]
+              }
+            ]
           },
           {
             "tab": "Open SWE",
