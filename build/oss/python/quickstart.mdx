@@ -61,19 +61,16 @@ agent.invoke(
 
 To configure an LLM with specific parameters, such as temperature, use [init_chat_model](https://python.langchain.com/api_reference/langchain/chat_models/langchain.chat_models.base.init_chat_model.html):
 
-```python
+```python {highlight={4,6,10}}
 from langchain.chat_models import init_chat_model
 from langgraph.prebuilt import create_react_agent
 
-# highlight-next-line
 model = init_chat_model(
     "anthropic:claude-3-7-sonnet-latest",
-    # highlight-next-line
     temperature=0
 )
 
 agent = create_react_agent(
-    # highlight-next-line
     model=model,
     tools=[get_weather],
 )
@@ -95,21 +92,20 @@ Prompts instruct the LLM how to behave. Add one of the following types of prompt
   <Tab title="Static prompt">
     Define a fixed prompt string or list of messages:
     
-    ```python
+    ```python {highlight={7}}
     from langgraph.prebuilt import create_react_agent
     
     agent = create_react_agent(
         model="anthropic:claude-3-7-sonnet-latest",
         tools=[get_weather],
         # A static prompt that never changes
-        # highlight-next-line
         prompt="Never answer questions about the weather."
     )
     
     agent.invoke(
         {"messages": [{"role": "user", "content": "what is the weather in sf"}]}
     )
-    ```
+```
 
     
 
@@ -117,13 +113,12 @@ Prompts instruct the LLM how to behave. Add one of the following types of prompt
   <Tab title="Dynamic prompt">
     Define a function that returns a message list based on the agent's state and configuration:
     
-    ```python
+    ```python {highlight={6,14,19}}
     from langchain_core.messages import AnyMessage
     from langchain_core.runnables import RunnableConfig
     from langgraph.prebuilt.chat_agent_executor import AgentState
     from langgraph.prebuilt import create_react_agent
     
-    # highlight-next-line
     def prompt(state: AgentState, config: RunnableConfig) -> list[AnyMessage]:  # (1)!
         user_name = config["configurable"].get("user_name")
         system_msg = f"You are a helpful assistant. Address the user as {user_name}."
@@ -132,16 +127,14 @@ Prompts instruct the LLM how to behave. Add one of the following types of prompt
     agent = create_react_agent(
         model="anthropic:claude-3-7-sonnet-latest",
         tools=[get_weather],
-        # highlight-next-line
         prompt=prompt
     )
     
     agent.invoke(
         {"messages": [{"role": "user", "content": "what is the weather in sf"}]},
-        # highlight-next-line
         config={"configurable": {"user_name": "John Smith"}}
     )
-    ```
+```
     
     1. Dynamic prompts allow including non-message [context](/oss/python/context) when constructing an input to the LLM, such as:
       * Information passed at runtime, like a `user_id` or API credentials (using `config`).
@@ -159,31 +152,26 @@ For more information, see [Context](/oss/python/context).
 
 To allow multi-turn conversations with an agent, you need to enable [persistence](/oss/python/persistence) by providing a checkpointer when creating an agent. At runtime, you need to provide a config containing `thread_id` — a unique identifier for the conversation (session):
 
-```python
+```python {highlight={4,9,13,16,20}}
 from langgraph.prebuilt import create_react_agent
 from langgraph.checkpoint.memory import InMemorySaver
 
-# highlight-next-line
 checkpointer = InMemorySaver()
 
 agent = create_react_agent(
     model="anthropic:claude-3-7-sonnet-latest",
     tools=[get_weather],
-    # highlight-next-line
     checkpointer=checkpointer  # (1)!
 )
 
 # Run the agent
-# highlight-next-line
 config = {"configurable": {"thread_id": "1"}}
 sf_response = agent.invoke(
     {"messages": [{"role": "user", "content": "what is the weather in sf"}]},
-    # highlight-next-line
     config  # (2)!
 )
 ny_response = agent.invoke(
     {"messages": [{"role": "user", "content": "what about new york?"}]},
-    # highlight-next-line
     config
 )
 ```
@@ -207,7 +195,7 @@ For more information, see [Memory](/oss/python/add-memory).
 
 To produce structured responses conforming to a schema, use the `response_format` parameter. The schema can be defined with a `Pydantic` model or `TypedDict`. The result will be accessible via the `structured_response` field.
 
-```python
+```python {highlight={10,17}}
 from pydantic import BaseModel
 from langgraph.prebuilt import create_react_agent
 
@@ -217,7 +205,6 @@ class WeatherResponse(BaseModel):
 agent = create_react_agent(
     model="anthropic:claude-3-7-sonnet-latest",
     tools=[get_weather],
-    # highlight-next-line
     response_format=WeatherResponse  # (1)!
 )
 
@@ -225,7 +212,6 @@ response = agent.invoke(
     {"messages": [{"role": "user", "content": "what is the weather in sf"}]}
 )
 
-# highlight-next-line
 response["structured_response"]
 ```
 

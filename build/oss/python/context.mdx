@@ -39,14 +39,13 @@ LangGraph provides three ways to manage context, which combines the mutability a
   which replaces the previous pattern of passing application configuration to `config['configurable']`.
 </Tip>
 
-```python
+```python {highlight={7}}
 @dataclass
 class ContextSchema:
     user_name: str
 
 graph.invoke( # (1)!
     {"messages": [{"role": "user", "content": "hi!"}]}, # (2)!
-    # highlight-next-line
     context={"user_name": "John Smith"} # (3)!
 )
 ```
@@ -57,13 +56,12 @@ graph.invoke( # (1)!
 
 <Tabs>
   <Tab title="Agent prompt">
-    ```python
+    ```python {highlight={6,20}}
     from langchain_core.messages import AnyMessage
     from langgraph.runtime import get_runtime
     from langgraph.prebuilt.chat_agent_executor import AgentState
     from langgraph.prebuilt import create_react_agent
     
-    # highlight-next-line
     def prompt(state: AgentState) -> list[AnyMessage]:
         runtime = get_runtime(ContextSchema)
         system_msg = f"You are a helpful assistant. Address the user as {runtime.context.user_name}."
@@ -78,38 +76,35 @@ graph.invoke( # (1)!
     
     agent.invoke(
         {"messages": [{"role": "user", "content": "what is the weather in sf"}]},
-        # highlight-next-line
         context={"user_name": "John Smith"}
     )
-    ```
+```
     
     * See [Agents](/oss/python/prebuilts) for details.
   </Tab>
   <Tab title="Workflow node">
-    ```python
+    ```python {highlight={3}}
     from langgraph.runtime import Runtime
     
-    # highlight-next-line
     def node(state: State, runtime: Runtime[ContextSchema]):
         user_name = runtime.context.user_name
         ...
-    ```
+```
     
     * See [the Graph API](/oss/python/graph-api#add-runtime-configuration) for details.
   </Tab>
   <Tab title="In a tool">
-    ```python
+    ```python {highlight={4}}
     from langgraph.runtime import get_runtime
     
     @tool
-    # highlight-next-line
     def get_user_email() -> str:
         """Retrieve user information based on user ID."""
         # simulate fetching user info from a database
         runtime = get_runtime(ContextSchema)
         email = get_user_email_from_db(runtime.context.user_name)
         return email
-    ```
+```
     
     See the [tool calling guide](/oss/python/call-tools#configuration) for details.
   </Tab>
@@ -134,18 +129,16 @@ graph.invoke( # (1)!
     
     State can also be accessed by the agent's **tools**, which can read or update the state as needed. See [tool calling guide](/oss/python/call-tools#short-term-memory) for details.
     
-    ```python
+    ```python {highlight={6,10,19}}
     from langchain_core.messages import AnyMessage
     from langchain_core.runnables import RunnableConfig
     from langgraph.prebuilt import create_react_agent
     from langgraph.prebuilt.chat_agent_executor import AgentState
     
-    # highlight-next-line
     class CustomState(AgentState): # (1)!
         user_name: str
     
     def prompt(
-        # highlight-next-line
         state: CustomState
     ) -> list[AnyMessage]:
         user_name = state["user_name"]
@@ -155,7 +148,6 @@ graph.invoke( # (1)!
     agent = create_react_agent(
         model="anthropic:claude-3-7-sonnet-latest",
         tools=[...],
-        # highlight-next-line
         state_schema=CustomState, # (2)!
         prompt=prompt
     )
@@ -164,7 +156,7 @@ graph.invoke( # (1)!
         "messages": "hi!",
         "user_name": "John Smith"
     })
-    ```
+```
     
     1. Define a custom state schema that extends `AgentState` or `MessagesState`.
     2. Pass the custom state schema to the agent. This allows the agent to access and modify the state during execution.
@@ -173,22 +165,19 @@ graph.invoke( # (1)!
 
   </Tab>
   <Tab title="In a workflow">
-    ```python
+    ```python {highlight={5,9,13}}
     from typing_extensions import TypedDict
     from langchain_core.messages import AnyMessage
     from langgraph.graph import StateGraph
     
-    # highlight-next-line
     class CustomState(TypedDict): # (1)!
         messages: list[AnyMessage]
         extra_field: int
     
-    # highlight-next-line
     def node(state: CustomState): # (2)!
         messages = state["messages"]
         ...
         return { # (3)!
-            # highlight-next-line
             "extra_field": state["extra_field"] + 1
         }
     
@@ -196,7 +185,7 @@ graph.invoke( # (1)!
     builder.add_node(node)
     builder.set_entry_point("node")
     graph = builder.compile()
-    ```
+```
     
     1. Define a custom state
     2. Access the state in any node or tool

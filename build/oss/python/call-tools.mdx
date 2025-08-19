@@ -9,10 +9,9 @@ You can [define your own tools](#define-a-tool) or use [prebuilt tools](#prebuil
 
 Define a basic tool with the [@tool](https://python.langchain.com/api_reference/core/tools/langchain_core.tools.convert.tool.html) decorator:
 
-```python
+```python {highlight={3}}
 from langchain_core.tools import tool
 
-# highlight-next-line
 @tool
 def multiply(a: int, b: int) -> int:
     """Multiply two numbers."""
@@ -57,9 +56,8 @@ ToolMessage(content='294', name='multiply', tool_call_id='1')
 
 To create a tool-calling agent, you can use the prebuilt [create_react_agent](https://langchain-ai.github.io/langgraph/reference/prebuilt/#langgraph.prebuilt.chat_agent_executor.create_react_agent):
 
-```python
+```python {highlight={2,9}}
 from langchain_core.tools import tool
-# highlight-next-line
 from langgraph.prebuilt import create_react_agent
 
 @tool
@@ -67,7 +65,6 @@ def multiply(a: int, b: int) -> int:
     """Multiply two numbers."""
     return a * b
 
-# highlight-next-line
 agent = create_react_agent(
     model="anthropic:claude-3-7-sonnet",
     tools=[multiply]
@@ -82,7 +79,7 @@ agent.invoke({"messages": [{"role": "user", "content": "what's 42 x 7?"}]})
 
 Configure tool availability at runtime based on context:
 
-```python
+```python {highlight={30,42,44,56}}
 from dataclasses import dataclass
 from typing import Literal
 
@@ -112,7 +109,6 @@ def compass() -> str:
 
 model = init_chat_model("anthropic:claude-sonnet-4-20250514")
 
-# highlight-next-line
 def configure_model(state: AgentState, runtime: Runtime[CustomContext]):
     """Configure the model with tools based on runtime context."""
     selected_tools = [
@@ -125,10 +121,8 @@ def configure_model(state: AgentState, runtime: Runtime[CustomContext]):
 
 agent = create_react_agent(
     # Dynamically configure the model with tools based on runtime context
-    # highlight-next-line
     configure_model,
     # Initialize with all tools available
-    # highlight-next-line
     tools=[weather, compass]
 )
 
@@ -141,7 +135,6 @@ output = agent.invoke(
             }
         ]
     },
-    # highlight-next-line
     context=CustomContext(tools=["weather"]),  # Only enable the weather tool
 )
 
@@ -162,12 +155,11 @@ If you are writing a custom workflow, you will need to:
 
 Use `model.bind_tools()` to register the tools with the model.
 
-```python
+```python {highlight={5}}
 from langchain.chat_models import init_chat_model
 
 model = init_chat_model(model="claude-3-5-haiku-latest")
 
-# highlight-next-line
 model_with_tools = model.bind_tools([multiply])
 ```
 
@@ -177,7 +169,7 @@ model_with_tools = model.bind_tools([multiply])
 LLMs automatically determine if a tool invocation is necessary and handle calling the tool with the appropriate arguments.
 
 <Accordion title="Extended example: attach tools to a chat model">
-  ```python
+  ```python {highlight={10}}
   from langchain_core.tools import tool
   from langchain.chat_models import init_chat_model
   
@@ -187,14 +179,13 @@ LLMs automatically determine if a tool invocation is necessary and handle callin
       return a * b
   
   model = init_chat_model(model="claude-3-5-haiku-latest")
-  # highlight-next-line
   model_with_tools = model.bind_tools([multiply])
   
   response_message = model_with_tools.invoke("what's 42 x 7?")
   tool_call = response_message.tool_calls[0]
   
   multiply.invoke(tool_call)
-  ```
+```
   
   ```pycon
   ToolMessage(
@@ -223,8 +214,7 @@ To execute tools in custom workflows, use the prebuilt [`ToolNode`](https://lang
 * **Input**: `MessagesState`, where the last message is an `AIMessage` containing the `tool_calls` parameter.
 * **Output**: `MessagesState` updated with the resulting [`ToolMessage`](https://python.langchain.com/docs/concepts/messages/#toolmessage) from executed tools.
 
-```python
-# highlight-next-line
+```python {highlight={1,14}}
 from langgraph.prebuilt import ToolNode
 
 def get_weather(location: str):
@@ -238,7 +228,6 @@ def get_coolest_cities():
     """Get a list of coolest cities"""
     return "nyc, sf"
 
-# highlight-next-line
 tool_node = ToolNode([get_weather, get_coolest_cities])
 tool_node.invoke({"messages": [...]})
 ```
@@ -247,7 +236,7 @@ tool_node.invoke({"messages": [...]})
 
 
 <Accordion title="Single tool call">
-  ```python
+  ```python {highlight={13}}
   from langchain_core.messages import AIMessage
   from langgraph.prebuilt import ToolNode
   
@@ -260,7 +249,6 @@ tool_node.invoke({"messages": [...]})
       else:
           return "It's 90 degrees and sunny."
   
-  # highlight-next-line
   tool_node = ToolNode([get_weather])
   
   message_with_single_tool_call = AIMessage(
@@ -276,7 +264,7 @@ tool_node.invoke({"messages": [...]})
   )
   
   tool_node.invoke({"messages": [message_with_single_tool_call]})
-  ```
+```
   
   ```
   {'messages': [ToolMessage(content="It's 60 degrees and foggy.", name='get_weather', tool_call_id='tool_call_id')]}
@@ -287,7 +275,7 @@ tool_node.invoke({"messages": [...]})
 </Accordion>
 
 <Accordion title="Multiple tool calls">
-  ```python
+  ```python {highlight={17,37}}
   from langchain_core.messages import AIMessage
   from langgraph.prebuilt import ToolNode
   
@@ -304,7 +292,6 @@ tool_node.invoke({"messages": [...]})
       """Get a list of coolest cities"""
       return "nyc, sf"
   
-  # highlight-next-line
   tool_node = ToolNode([get_weather, get_coolest_cities])
   
   message_with_multiple_tool_calls = AIMessage(
@@ -325,9 +312,8 @@ tool_node.invoke({"messages": [...]})
       ],
   )
   
-  # highlight-next-line
   tool_node.invoke({"messages": [message_with_multiple_tool_calls]})  # (1)!
-  ```
+```
   
   1. `ToolNode` will execute both tools in parallel
   
@@ -345,7 +331,7 @@ tool_node.invoke({"messages": [...]})
 </Accordion>
 
 <Accordion title="Use with a chat model">
-  ```python
+  ```python {highlight={11,14,17}}
   from langchain.chat_models import init_chat_model
   from langgraph.prebuilt import ToolNode
   
@@ -356,18 +342,15 @@ tool_node.invoke({"messages": [...]})
       else:
           return "It's 90 degrees and sunny."
   
-  # highlight-next-line
   tool_node = ToolNode([get_weather])
   
   model = init_chat_model(model="claude-3-5-haiku-latest")
-  # highlight-next-line
   model_with_tools = model.bind_tools([get_weather])  # (1)!
   
   
-  # highlight-next-line
   response_message = model_with_tools.invoke("what's the weather in sf?")
   tool_node.invoke({"messages": [response_message]})
-  ```
+```
   
   1. Use `.bind_tools()` to attach the tool schema to the chat model
   
@@ -382,7 +365,7 @@ tool_node.invoke({"messages": [...]})
 <Accordion title="Use in a tool-calling agent">
   This is an example of creating a tool-calling agent from scratch using `ToolNode`. You can also use LangGraph's prebuilt [agent](/oss/python/prebuilts).
   
-  ```python
+  ```python {highlight={12,15,33}}
   from langchain.chat_models import init_chat_model
   from langgraph.prebuilt import ToolNode
   from langgraph.graph import StateGraph, MessagesState, START, END
@@ -394,11 +377,9 @@ tool_node.invoke({"messages": [...]})
       else:
           return "It's 90 degrees and sunny."
   
-  # highlight-next-line
   tool_node = ToolNode([get_weather])
   
   model = init_chat_model(model="claude-3-5-haiku-latest")
-  # highlight-next-line
   model_with_tools = model.bind_tools([get_weather])
   
   def should_continue(state: MessagesState):
@@ -417,7 +398,6 @@ tool_node.invoke({"messages": [...]})
   
   # Define the two nodes we will cycle between
   builder.add_node("call_model", call_model)
-  # highlight-next-line
   builder.add_node("tools", tool_node)
   
   builder.add_edge(START, "call_model")
@@ -427,7 +407,7 @@ tool_node.invoke({"messages": [...]})
   graph = builder.compile()
   
   graph.invoke({"messages": [{"role": "user", "content": "what's the weather in sf?"}]})
-  ```
+```
   
   ```
   {
@@ -455,11 +435,9 @@ For more control over tool behavior, use the `@tool` decorator.
 
 Auto-generate descriptions from docstrings:
 
-```python
-# highlight-next-line
+```python {highlight={1,3}}
 from langchain_core.tools import tool
 
-# highlight-next-line
 @tool("multiply_tool", parse_docstring=True)
 def multiply(a: int, b: int) -> int:
     """Multiply two numbers.
@@ -478,7 +456,7 @@ def multiply(a: int, b: int) -> int:
 
 Define schemas using `args_schema`:
 
-```python
+```python {highlight={9}}
 from pydantic import BaseModel, Field
 from langchain_core.tools import tool
 
@@ -487,7 +465,6 @@ class MultiplyInputSchema(BaseModel):
     a: int = Field(description="First operand")
     b: int = Field(description="Second operand")
 
-# highlight-next-line
 @tool("multiply_tool", args_schema=MultiplyInputSchema)
 def multiply(a: int, b: int) -> int:
     return a * b
@@ -498,10 +475,9 @@ def multiply(a: int, b: int) -> int:
 
 Override the default tool name using the first argument or name property:
 
-```python
+```python {highlight={3}}
 from langchain_core.tools import tool
 
-# highlight-next-line
 @tool("multiply_tool")
 def multiply(a: int, b: int) -> int:
     """Multiply two numbers."""
@@ -525,12 +501,11 @@ Tools within LangGraph sometimes require context data, such as runtime-only argu
 
 Use configuration when you have **immutable** runtime data that tools require, such as user identifiers. You pass these arguments via [`RunnableConfig`](https://python.langchain.com/docs/concepts/runnables/#runnableconfig) at invocation and access them in the tool:
 
-```python
+```python {highlight={5,13}}
 from langchain_core.tools import tool
 from langchain_core.runnables import RunnableConfig
 
 @tool
-# highlight-next-line
 def get_user_info(config: RunnableConfig) -> str:
     """Retrieve user information based on user ID."""
     user_id = config["configurable"].get("user_id")
@@ -539,7 +514,6 @@ def get_user_info(config: RunnableConfig) -> str:
 # Invocation example with an agent
 agent.invoke(
     {"messages": [{"role": "user", "content": "look up user info"}]},
-    # highlight-next-line
     config={"configurable": {"user_id": "user_123"}}
 )
 ```
@@ -548,17 +522,15 @@ agent.invoke(
 
 
 <Accordion title="Extended example: Access config in tools">
-  ```python
+  ```python {highlight={6,9,19}}
   from langchain_core.runnables import RunnableConfig
   from langchain_core.tools import tool
   from langgraph.prebuilt import create_react_agent
   
   def get_user_info(
-      # highlight-next-line
       config: RunnableConfig,
   ) -> str:
       """Look up user info."""
-      # highlight-next-line
       user_id = config["configurable"].get("user_id")
       return "User is John Smith" if user_id == "user_123" else "Unknown user"
   
@@ -569,10 +541,9 @@ agent.invoke(
   
   agent.invoke(
       {"messages": [{"role": "user", "content": "look up user information"}]},
-      # highlight-next-line
       config={"configurable": {"user_id": "user_123"}}
   )
-  ```
+```
 
   
 
@@ -584,7 +555,7 @@ Short-term memory maintains **dynamic** state that changes during a single execu
 
 To **access** (read) the graph state inside the tools, you can use a special parameter **annotation** — [`InjectedState`](https://langchain-ai.github.io/langgraph/reference/agents/#langgraph.prebuilt.tool_node.InjectedState):
 
-```python
+```python {highlight={12}}
 from typing import Annotated, NotRequired
 from langchain_core.tools import tool
 from langgraph.prebuilt import InjectedState, create_react_agent
@@ -596,7 +567,6 @@ class CustomState(AgentState):
 
 @tool
 def get_user_name(
-    # highlight-next-line
     state: Annotated[CustomState, InjectedState]
 ) -> str:
     """Retrieve the current user-name from state."""
@@ -619,7 +589,7 @@ agent.invoke({"messages": "what's my name?"})
 
 Use a tool that returns a `Command` to **update** `user_name` and append a confirmation message:
 
-```python
+```python {highlight={12,13,14,15,16,17}}
 from typing import Annotated
 from langgraph.types import Command
 from langchain_core.messages import ToolMessage
@@ -631,17 +601,11 @@ def update_user_name(
     tool_call_id: Annotated[str, InjectedToolCallId]
 ) -> Command:
     """Update user-name in short-term memory."""
-    # highlight-next-line
     return Command(update={
-        # highlight-next-line
         "user_name": new_name,
-        # highlight-next-line
         "messages": [
-            # highlight-next-line
             ToolMessage(f"Updated user name to {new_name}", tool_call_id=tool_call_id)
-            # highlight-next-line
         ]
-        # highlight-next-line
     })
 ```
 
@@ -673,11 +637,10 @@ To use long-term memory, you need to:
 
 To **access** information in the store:
 
-```python
+```python {highlight={4,11,13}}
 from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import tool
 from langgraph.graph import StateGraph
-# highlight-next-line
 from langgraph.config import get_store
 
 @tool
@@ -685,10 +648,8 @@ def get_user_info(config: RunnableConfig) -> str:
     """Look up user info."""
     # Same as that provided to `builder.compile(store=store)`
     # or `create_react_agent`
-    # highlight-next-line
     store = get_store()
     user_id = config["configurable"].get("user_id")
-    # highlight-next-line
     user_info = store.get(("users",), user_id)
     return str(user_info.value) if user_info else "Unknown user"
 
@@ -701,17 +662,15 @@ graph = builder.compile(store=store)
 
 
 <Accordion title="Access long-term memory">
-  ```python
+  ```python {highlight={7,9,22,24,30,36}}
   from langchain_core.runnables import RunnableConfig
   from langchain_core.tools import tool
   from langgraph.config import get_store
   from langgraph.prebuilt import create_react_agent
   from langgraph.store.memory import InMemoryStore
   
-  # highlight-next-line
   store = InMemoryStore() # (1)!
   
-  # highlight-next-line
   store.put(  # (2)!
       ("users",),  # (3)!
       "user_123",  # (4)!
@@ -725,27 +684,23 @@ graph = builder.compile(store=store)
   def get_user_info(config: RunnableConfig) -> str:
       """Look up user info."""
       # Same as that provided to `create_react_agent`
-      # highlight-next-line
       store = get_store() # (6)!
       user_id = config["configurable"].get("user_id")
-      # highlight-next-line
       user_info = store.get(("users",), user_id) # (7)!
       return str(user_info.value) if user_info else "Unknown user"
   
   agent = create_react_agent(
       model="anthropic:claude-3-7-sonnet-latest",
       tools=[get_user_info],
-      # highlight-next-line
       store=store # (8)!
   )
   
   # Run the agent
   agent.invoke(
       {"messages": [{"role": "user", "content": "look up user information"}]},
-      # highlight-next-line
       config={"configurable": {"user_id": "user_123"}}
   )
-  ```
+```
   
   1. The `InMemoryStore` is a store that stores data in memory. In a production setting, you would typically use a database or other persistent storage. Please review the store documentation for more options. If you're deploying with **LangGraph Platform**, the platform will provide a production-ready store for you.
   2. For this example, we write some sample data to the store using the `put` method. Please see the [BaseStore.put](https://langchain-ai.github.io/langgraph/reference/store/#langgraph.store.base.BaseStore.put) API reference for more details.
@@ -762,11 +717,10 @@ graph = builder.compile(store=store)
 
 To **update** information in the store:
 
-```python
+```python {highlight={4,11,13}}
 from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import tool
 from langgraph.graph import StateGraph
-# highlight-next-line
 from langgraph.config import get_store
 
 @tool
@@ -774,10 +728,8 @@ def save_user_info(user_info: str, config: RunnableConfig) -> str:
     """Save user info."""
     # Same as that provided to `builder.compile(store=store)`
     # or `create_react_agent`
-    # highlight-next-line
     store = get_store()
     user_id = config["configurable"].get("user_id")
-    # highlight-next-line
     store.put(("users",), user_id, user_info)
     return "Successfully saved user info."
 
@@ -790,7 +742,7 @@ graph = builder.compile(store=store)
 
 
 <Accordion title="Update long-term memory">
-  ```python
+  ```python {highlight={18,20,26,32}}
   from typing_extensions import TypedDict
   
   from langchain_core.tools import tool
@@ -808,30 +760,26 @@ graph = builder.compile(store=store)
   def save_user_info(user_info: UserInfo, config: RunnableConfig) -> str: # (3)!
       """Save user info."""
       # Same as that provided to `create_react_agent`
-      # highlight-next-line
       store = get_store() # (4)!
       user_id = config["configurable"].get("user_id")
-      # highlight-next-line
       store.put(("users",), user_id, user_info) # (5)!
       return "Successfully saved user info."
   
   agent = create_react_agent(
       model="anthropic:claude-3-7-sonnet-latest",
       tools=[save_user_info],
-      # highlight-next-line
       store=store
   )
   
   # Run the agent
   agent.invoke(
       {"messages": [{"role": "user", "content": "My name is John Smith"}]},
-      # highlight-next-line
       config={"configurable": {"user_id": "user_123"}} # (6)!
   )
   
   # You can access the store directly to get the value
   store.get(("users",), "user_123").value
-  ```
+```
   
   1. The `InMemoryStore` is a store that stores data in memory. In a production setting, you would typically use a database or other persistent storage. Please review the [store documentation](https://python.langchain.com/api_reference/langgraph/index.html#module-langgraph.store) for more options. If you're deploying with **LangGraph Platform**, the platform will provide a production-ready store for you.
   2. The `UserInfo` class is a `TypedDict` that defines the structure of the user information. The LLM will use this to format the response according to the schema.
@@ -852,8 +800,7 @@ Use `return_direct=True` to immediately return a tool's result without executing
 
 This is useful for tools that should not trigger further processing or tool calls, allowing you to return results directly to the user.
 
-```python
-# highlight-next-line
+```python {highlight={1}}
 @tool(return_direct=True)
 def add(a: int, b: int) -> int:
     """Add two numbers"""
@@ -864,11 +811,10 @@ def add(a: int, b: int) -> int:
 
 
 <Accordion title="Extended example: Using return_direct in a prebuilt agent">
-  ```python
+  ```python {highlight={4}}
   from langchain_core.tools import tool
   from langgraph.prebuilt import create_react_agent
   
-  # highlight-next-line
   @tool(return_direct=True)
   def add(a: int, b: int) -> int:
       """Add two numbers"""
@@ -882,7 +828,7 @@ def add(a: int, b: int) -> int:
   agent.invoke(
       {"messages": [{"role": "user", "content": "what's 3 + 5?"}]}
   )
-  ```
+```
 
   
 
@@ -903,7 +849,7 @@ If you need to force a specific tool to be used, you will need to configure this
 
 Force specific tool usage via tool_choice:
 
-```python
+```python {highlight={11}}
 @tool(return_direct=True)
 def greet(user_name: str) -> int:
     """Greet user."""
@@ -914,7 +860,6 @@ tools = [greet]
 configured_model = model.bind_tools(
     tools,
     # Force the use of the 'greet' tool
-    # highlight-next-line
     tool_choice={"type": "tool", "name": "greet"}
 )
 ```
@@ -925,10 +870,9 @@ configured_model = model.bind_tools(
 <Accordion title="Extended example: Force tool usage in an agent">
   To force the agent to use specific tools, you can set the `tool_choice` option in `model.bind_tools()`:
   
-  ```python
+  ```python {highlight={3,11}}
   from langchain_core.tools import tool
   
-  # highlight-next-line
   @tool(return_direct=True)
   def greet(user_name: str) -> int:
       """Greet user."""
@@ -937,7 +881,6 @@ configured_model = model.bind_tools(
   tools = [greet]
   
   agent = create_react_agent(
-      # highlight-next-line
       model=model.bind_tools(tools, tool_choice={"type": "tool", "name": "greet"}),
       tools=tools
   )
@@ -945,7 +888,7 @@ configured_model = model.bind_tools(
   agent.invoke(
       {"messages": [{"role": "user", "content": "Hi, I am Bob"}]}
   )
-  ```
+```
 
   
 
@@ -973,10 +916,9 @@ configured_model = model.bind_tools(
 
 For supported providers, you can disable parallel tool calling by setting `parallel_tool_calls=False` via the `model.bind_tools()` method:
 
-```python
+```python {highlight={3}}
 model.bind_tools(
     tools,
-    # highlight-next-line
     parallel_tool_calls=False
 )
 ```
@@ -985,7 +927,7 @@ model.bind_tools(
 
 
 <Accordion title="Extended example: disable parallel tool calls in a prebuilt agent">
-  ```python
+  ```python {highlight={15}}
   from langchain.chat_models import init_chat_model
   
   def add(a: int, b: int) -> int:
@@ -1000,7 +942,6 @@ model.bind_tools(
   tools = [add, multiply]
   agent = create_react_agent(
       # disable parallel tool calls
-      # highlight-next-line
       model=model.bind_tools(tools, parallel_tool_calls=False),
       tools=tools
   )
@@ -1008,7 +949,7 @@ model.bind_tools(
   agent.invoke(
       {"messages": [{"role": "user", "content": "what's 3 + 5 and 4 * 7?"}]}
   )
-  ```
+```
 
   
 

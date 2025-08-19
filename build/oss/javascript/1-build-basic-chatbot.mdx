@@ -100,7 +100,7 @@ We can now incorporate the chat model into a simple node:
 
 
 
-```typescript hl_lines="7-9"
+```typescript {highlight={7-9}}
 import { StateGraph, MessagesZodState, START } from "@langchain/langgraph";
 import { z } from "zod";
 
@@ -127,7 +127,7 @@ Add an `entry` point to tell the graph **where to start its work** each time it 
 
 
 
-```typescript hl_lines="10"
+```typescript {highlight={10}}
 import { StateGraph, MessagesZodState, START } from "@langchain/langgraph";
 import { z } from "zod";
 
@@ -148,7 +148,7 @@ Add an `exit` point to indicate **where the graph should finish execution**. Thi
 
 
 
-```typescript hl_lines="11"
+```typescript {highlight={11}}
 import { StateGraph, MessagesZodState, START, END } from "@langchain/langgraph";
 import { z } from "zod";
 
@@ -173,7 +173,7 @@ on the graph builder. This creates a `CompiledGraph` we can invoke on our state.
 
 
 
-```typescript hl_lines="12"
+```typescript {highlight={12}}
 import { StateGraph, MessagesZodState, START, END } from "@langchain/langgraph";
 import { z } from "zod";
 

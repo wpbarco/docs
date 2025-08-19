@@ -16,11 +16,10 @@ Agents can be executed in two primary modes:
 
 
 
-```typescript
+```javascript {highlight={4}}
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 
 const agent = createReactAgent(...);
-// highlight-next-line
 const response = await agent.invoke({
     "messages": [
         { "role": "user", "content": "what is the weather in sf" }
@@ -119,13 +118,12 @@ To control agent execution and avoid infinite loops, set a recursion limit. This
 
 <Tabs>
   <Tab title="Runtime">
-    ```typescript
+    ```javascript {highlight={6,15}}
     import { GraphRecursionError } from "@langchain/langgraph";
     import { ChatAnthropic } from "@langchain/langgraph/prebuilt";
     import { createReactAgent } from "@langchain/langgraph/prebuilt";
     
     const maxIterations = 3;
-    // highlight-next-line
     const recursionLimit = 2 * maxIterations + 1;
     const agent = createReactAgent({
         llm: new ChatAnthropic({ model: "claude-3-5-haiku-latest" }),
@@ -135,7 +133,6 @@ To control agent execution and avoid infinite loops, set a recursion limit. This
     try {
         const response = await agent.invoke(
             {"messages": [{"role": "user", "content": "what's the weather in sf"}]},
-            // highlight-next-line
             { recursionLimit }
         );
     } catch (error) {
@@ -143,22 +140,20 @@ To control agent execution and avoid infinite loops, set a recursion limit. This
             console.log("Agent stopped due to max iterations.");
         }
     }
-    ```
+```
   </Tab>
   <Tab title=".withConfig()">
-    ```typescript
+    ```javascript {highlight={6,11}}
     import { GraphRecursionError } from "@langchain/langgraph";
     import { ChatAnthropic } from "@langchain/langgraph/prebuilt";
     import { createReactAgent } from "@langchain/langgraph/prebuilt";
     
     const maxIterations = 3;
-    // highlight-next-line
     const recursionLimit = 2 * maxIterations + 1;
     const agent = createReactAgent({
         llm: new ChatAnthropic({ model: "claude-3-5-haiku-latest" }),
         tools: [getWeather]
     });
-    // highlight-next-line
     const agentWithRecursionLimit = agent.withConfig({ recursionLimit });
     
     try {
@@ -170,7 +165,7 @@ To control agent execution and avoid infinite loops, set a recursion limit. This
             console.log("Agent stopped due to max iterations.");
         }
     }
-    ```
+```
   </Tab>
 </Tabs>
 

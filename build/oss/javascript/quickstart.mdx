@@ -76,19 +76,16 @@ await agent.invoke({
 
 To configure an LLM with specific parameters, such as temperature, use a model instance:
 
-```typescript
+```javascript {highlight={4,6,10}}
 import { ChatAnthropic } from "@langchain/anthropic";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 
-// highlight-next-line
 const model = new ChatAnthropic({
   model: "claude-3-5-sonnet-latest",
-  // highlight-next-line
   temperature: 0,
 });
 
 const agent = createReactAgent({
-  // highlight-next-line
   llm: model,
   tools: [getWeather],
 });
@@ -110,7 +107,7 @@ Prompts instruct the LLM how to behave. Add one of the following types of prompt
     
 
     
-    ```typescript
+    ```python {highlight={8}}
     import { createReactAgent } from "@langchain/langgraph/prebuilt";
     import { ChatAnthropic } from "@langchain/anthropic";
     
@@ -118,14 +115,13 @@ Prompts instruct the LLM how to behave. Add one of the following types of prompt
       llm: new ChatAnthropic({ model: "anthropic:claude-3-5-sonnet-latest" }),
       tools: [getWeather],
       // A static prompt that never changes
-      // highlight-next-line
       stateModifier: "Never answer questions about the weather."
     });
     
     await agent.invoke({
       messages: [{ role: "user", content: "what is the weather in sf" }]
     });
-    ```
+```
 
   </Tab>
   <Tab title="Dynamic prompt">
@@ -133,12 +129,11 @@ Prompts instruct the LLM how to behave. Add one of the following types of prompt
     
     Define a function that returns messages based on the agent's state and configuration:
     
-    ```typescript
+    ```python {highlight={5,14,19}}
     import { type BaseMessageLike } from "@langchain/core/messages";
     import { type RunnableConfig } from "@langchain/core/runnables";
     import { createReactAgent } from "@langchain/langgraph/prebuilt";
     
-    // highlight-next-line
     const dynamicPrompt = (state: { messages: BaseMessageLike[] }, config: RunnableConfig): BaseMessageLike[] => {  // (1)!
       const userName = config.configurable?.user_name;
       const systemMsg = `You are a helpful assistant. Address the user as ${userName}.`;
@@ -148,16 +143,14 @@ Prompts instruct the LLM how to behave. Add one of the following types of prompt
     const agent = createReactAgent({
       llm: "anthropic:claude-3-5-sonnet-latest",
       tools: [getWeather],
-      // highlight-next-line
       stateModifier: dynamicPrompt
     });
     
     await agent.invoke(
       { messages: [{ role: "user", content: "what is the weather in sf" }] },
-      // highlight-next-line
       { configurable: { user_name: "John Smith" } }
     );
-    ```
+```
     
     1. Dynamic prompts allow including non-message [context](/oss/javascript/context) when constructing an input to the LLM, such as:
       * Information passed at runtime, like a `user_id` or API credentials (using `config`).
@@ -175,31 +168,26 @@ To allow multi-turn conversations with an agent, you need to enable [persistence
 
 
 
-```typescript
+```javascript {highlight={4,9,13,16,20}}
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { MemorySaver } from "@langchain/langgraph";
 
-// highlight-next-line
 const checkpointer = new MemorySaver();
 
 const agent = createReactAgent({
   llm: "anthropic:claude-3-5-sonnet-latest",
   tools: [getWeather],
-  // highlight-next-line
   checkpointSaver: checkpointer, // (1)!
 });
 
 // Run the agent
-// highlight-next-line
 const config = { configurable: { thread_id: "1" } };
 const sfResponse = await agent.invoke(
   { messages: [{ role: "user", content: "what is the weather in sf" }] },
-  // highlight-next-line
   config // (2)!
 );
 const nyResponse = await agent.invoke(
   { messages: [{ role: "user", content: "what about new york?" }] },
-  // highlight-next-line
   config
 );
 ```
@@ -223,7 +211,7 @@ For more information, see [Memory](/oss/javascript/add-memory).
 
 To produce structured responses conforming to a schema, use the `responseFormat` parameter. The schema can be defined with a `Zod` schema. The result will be accessible via the `structuredResponse` field.
 
-```typescript
+```typescript {highlight={11,18}}
 import { z } from "zod";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 
@@ -234,7 +222,6 @@ const WeatherResponse = z.object({
 const agent = createReactAgent({
   llm: "anthropic:claude-3-5-sonnet-latest",
   tools: [getWeather],
-  // highlight-next-line
   responseFormat: WeatherResponse, // (1)!
 });
 
@@ -242,7 +229,6 @@ const response = await agent.invoke({
   messages: [{ role: "user", content: "what is the weather in sf" }],
 });
 
-// highlight-next-line
 response.structuredResponse;
 ```
 

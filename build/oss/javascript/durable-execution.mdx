@@ -88,7 +88,7 @@ If a [node](/oss/javascript/graph-api#nodes) contains multiple operations, you m
 
 <Tabs>
   <Tab title="Original">
-    ```typescript
+    ```python {highlight={13}}
     import { StateGraph, START, END } from "@langchain/langgraph";
     import { MemorySaver } from "@langchain/langgraph";
     import { v4 as uuidv4 } from "uuid";
@@ -101,7 +101,6 @@ If a [node](/oss/javascript/graph-api#nodes) contains multiple operations, you m
     });
     
     const callApi = async (state: z.infer<typeof State>) => {
-      // highlight-next-line
       const response = await fetch(state.url);
       const text = await response.text();
       const result = text.slice(0, 100); // Side-effect
@@ -128,10 +127,10 @@ If a [node](/oss/javascript/graph-api#nodes) contains multiple operations, you m
     
     // Invoke the graph
     await graph.invoke({ url: "https://www.example.com" }, config);
-    ```
+```
   </Tab>
   <Tab title="With task">
-    ```typescript
+    ```python {highlight={14,20}}
     import { StateGraph, START, END } from "@langchain/langgraph";
     import { MemorySaver } from "@langchain/langgraph";
     import { task } from "@langchain/langgraph";
@@ -145,14 +144,12 @@ If a [node](/oss/javascript/graph-api#nodes) contains multiple operations, you m
     });
     
     const makeRequest = task("makeRequest", async (url: string) => {
-      // highlight-next-line
       const response = await fetch(url);
       const text = await response.text();
       return text.slice(0, 100);
     });
     
     const callApi = async (state: z.infer<typeof State>) => {
-      // highlight-next-line
       const requests = state.urls.map((url) => makeRequest(url));
       const results = await Promise.all(requests);
       return {
@@ -178,7 +175,7 @@ If a [node](/oss/javascript/graph-api#nodes) contains multiple operations, you m
     
     // Invoke the graph
     await graph.invoke({ urls: ["https://www.example.com"] }, config);
-    ```
+```
   </Tab>
 </Tabs>
 

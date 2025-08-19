@@ -36,7 +36,7 @@ We can now incorporate it into our `StateGraph` with an additional tool:
 
 
 
-```typescript hl_lines="1 7-19"
+```typescript {highlight={1,7-19}}
 import { interrupt, MessagesZodState } from "@langchain/langgraph";
 import { ChatAnthropic } from "@langchain/anthropic";
 import { TavilySearch } from "@langchain/tavily";
@@ -95,7 +95,7 @@ We compile the graph with a checkpointer, as before:
 
 
 
-```typescript hl_lines="3 11"
+```typescript {highlight={3,11}}
 import { StateGraph, MemorySaver, START, END } from "@langchain/langgraph";
 
 const memory = new MemorySaver();
@@ -225,7 +225,7 @@ snapshot.next;
   
   Take a closer look at the `humanAssistance` tool:
   
-  ```typescript hl_lines="3"
+  ```typescript {highlight={3}}
   const humanAssistance = tool(
     async ({ query }) => {
       const humanResponse = interrupt({ query });

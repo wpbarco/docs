@@ -9,7 +9,7 @@ or other parallel execution in your graph and you have defined a graph like this
 
 
 
-```typescript hl_lines="2"
+```typescript {highlight={2}}
 import { StateGraph, Annotation, START } from "@langchain/langgraph";
 import { z } from "zod";
 
@@ -42,7 +42,7 @@ To get around this, you can define a reducer that combines multiple values:
 
 
 
-```typescript hl_lines="4-7"
+```typescript {highlight={4-7}}
 import { withLangGraph } from "@langchain/langgraph";
 import { z } from "zod";
 

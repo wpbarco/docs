@@ -16,15 +16,13 @@ Update the chatbot to research the birthday of an entity by adding `name` and `b
 
 
 
-```typescript
+```typescript {highlight={8,10}}
 import { MessagesZodState } from "@langchain/langgraph";
 import { z } from "zod";
 
 const State = z.object({
   messages: MessagesZodState.shape.messages,
-  // highlight-next-line
   name: z.string(),
-  // highlight-next-line
   birthday: z.string(),
 });
 ```

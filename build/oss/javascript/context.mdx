@@ -38,11 +38,10 @@ Config is for immutable data like user metadata or API keys. Use this when you h
 
 Specify configuration using a key called **"configurable"** which is reserved for this purpose.
 
-```typescript
+```javascript {highlight={4}}
 await graph.invoke(
   // (1)!
   { messages: [{ role: "user", content: "hi!" }] }, // (2)!
-  // highlight-next-line
   { configurable: { user_id: "user_123" } } // (3)!
 );
 ```
@@ -61,20 +60,18 @@ await graph.invoke(
     
 
     
-    ```typescript
+    ```python {highlight={6,12,22}}
     import type { BaseMessage } from "@langchain/core/messages";
     import { createReactAgent } from "@langchain/langgraph/prebuilt";
     import { MessagesZodState } from "@langchain/langgraph";
     import { z } from "zod";
     
-    // highlight-next-line
     const CustomState = z.object({ // (1)!
       messages: MessagesZodState.shape.messages,
       userName: z.string(),
     });
     
     const prompt = (
-      // highlight-next-line
       state: z.infer<typeof CustomState>
     ): BaseMessage[] => {
       const userName = state.userName;
@@ -85,7 +82,6 @@ await graph.invoke(
     const agent = createReactAgent({
       llm: model,
       tools: [...],
-      // highlight-next-line
       stateSchema: CustomState, // (2)!
       stateModifier: prompt,
     });
@@ -94,7 +90,7 @@ await graph.invoke(
       messages: [{ role: "user", content: "hi!" }],
       userName: "John Smith",
     });
-    ```
+```
     
     1. Define a custom state schema that extends `MessagesZodState` or creates a new schema.
     2. Pass the custom state schema to the agent. This allows the agent to access and modify the state during execution.
@@ -103,12 +99,11 @@ await graph.invoke(
   <Tab title="In a workflow">
 
     
-    ```typescript
+    ```python {highlight={5,15}}
     import type { BaseMessage } from "@langchain/core/messages";
     import { StateGraph, MessagesZodState, START } from "@langchain/langgraph";
     import { z } from "zod";
     
-    // highlight-next-line
     const CustomState = z.object({ // (1)!
       messages: MessagesZodState.shape.messages,
       extraField: z.number(),
@@ -119,14 +114,13 @@ await graph.invoke(
         const messages = state.messages;
         // ...
         return { // (3)!
-          // highlight-next-line
           extraField: state.extraField + 1,
         };
       })
       .addEdge(START, "node");
     
     const graph = builder.compile();
-    ```
+```
     
     1. Define a custom state
     2. Access the state in any node or tool

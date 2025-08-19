@@ -16,7 +16,7 @@ The main question when adding subgraphs is how the parent graph and subgraph com
 
 * parent and subgraph have **shared state keys** in their state [schemas](/oss/javascript/graph-api#state). In this case, you can [include the subgraph as a node in the parent graph](/oss/javascript/use-subgraphs#shared-state-schemas)
 
-  ```typescript
+  ```javascript {highlight={13,18}}
   import { StateGraph, MessagesZodState, START } from "@langchain/langgraph";
   
   // Subgraph
@@ -29,48 +29,42 @@ The main question when adding subgraphs is how the parent graph and subgraph com
     }
   );
   // ... other nodes and edges
-  // highlight-next-line
   const subgraph = subgraphBuilder.compile();
   
   // Parent graph
   
   const builder = new StateGraph(MessagesZodState)
-    // highlight-next-line
     .addNode("subgraphNode", subgraph)
     .addEdge(START, "subgraphNode");
   const graph = builder.compile();
   // ...
   await graph.invoke({ messages: [{ role: "user", content: "hi!" }] });
-  ```
+```
 
 * parent graph and subgraph have **different schemas** (no shared state keys in their state [schemas](/oss/javascript/graph-api#state)). In this case, you have to [call the subgraph from inside a node in the parent graph](/oss/javascript/use-subgraphs#different-state-schemas): this is useful when the parent graph and the subgraph have different state schemas and you need to transform state before or after calling the subgraph
 
-  ```typescript
+  ```javascript {highlight={5,11,17,22}}
   import { StateGraph, MessagesZodState, START } from "@langchain/langgraph";
   import { z } from "zod";
   
   const SubgraphState = z.object({
-    // highlight-next-line
     subgraphMessages: MessagesZodState.shape.messages,
   });
   
   // Subgraph
   
   const subgraphBuilder = new StateGraph(SubgraphState)
-    // highlight-next-line
     .addNode("callModelFromSubgraph", async (state) => {
       const response = await model.invoke(state.subgraphMessages);
       return { subgraphMessages: response };
     })
     .addEdge(START, "callModelFromSubgraph");
   // ...
-  // highlight-next-line
   const subgraph = subgraphBuilder.compile();
   
   // Parent graph
   
   const builder = new StateGraph(MessagesZodState)
-    // highlight-next-line
     .addNode("subgraphNode", async (state) => {
       const response = await subgraph.invoke({
         subgraphMessages: state.messages,
@@ -81,5 +75,5 @@ The main question when adding subgraphs is how the parent graph and subgraph com
   const graph = builder.compile();
   // ...
   await graph.invoke({ messages: [{ role: "user", content: "hi!" }] });
-  ```
+```
 
