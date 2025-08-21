@@ -1,8 +1,6 @@
 ---
-sidebar_label: DirectoryLoader
+title: DirectoryLoader
 ---
-
-# DirectoryLoader
 
 ```{=mdx}
 

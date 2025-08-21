@@ -1,4 +1,6 @@
-# Google Cloud SQL for PostgreSQL
+---
+title: Google Cloud SQL for PostgreSQL
+---
 
 [Cloud SQL](https://cloud.google.com/sql) is a fully managed relational database service that offers high performance, seamless integration, and impressive scalability and offers database engines such as PostgreSQL.
 

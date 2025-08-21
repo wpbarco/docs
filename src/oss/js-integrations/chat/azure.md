@@ -1,8 +1,6 @@
 ---
-sidebar_label: Azure OpenAI
+title: AzureChatOpenAI
 ---
-
-# AzureChatOpenAI
 
 Azure OpenAI is a Microsoft Azure service that provides powerful language models from OpenAI.
 

@@ -1,8 +1,6 @@
 ---
-sidebar_label: Together AI
+title: TogetherAI
 ---
-
-# TogetherAI
 
 <Warning>
 **You are currently on a page documenting the use of Together AI models as [text completion models](/oss/concepts/text_llms). Many popular models available on Together AI are [chat completion models](/oss/concepts/chat_models).**

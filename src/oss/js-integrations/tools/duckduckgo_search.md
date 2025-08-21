@@ -1,8 +1,6 @@
 ---
-sidebar_label: DuckDuckGoSearch
+title: DuckDuckGoSearch
 ---
-
-# DuckDuckGoSearch
 
 This notebook provides a quick overview for getting started with [DuckDuckGoSearch](/oss/integrations/tools/). For detailed documentation of all DuckDuckGoSearch features and configurations head to the [API reference](https://api.js.langchain.com/classes/langchain_community_tools_duckduckgo_search.DuckDuckGoSearch.html).
 

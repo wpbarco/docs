@@ -1,8 +1,7 @@
 ---
-sidebar_label: DeepSeek
+title: ChatDeepSeek
 ---
 
-# ChatDeepSeek
 
 This will help you getting started with DeepSeek [chat models](/oss/concepts/#chat-models). For detailed documentation of all `ChatDeepSeek` features and configurations head to the [API reference](https://api.js.langchain.com/classes/_langchain_deepseek.ChatDeepSeek.html).
 

@@ -1,8 +1,6 @@
 ---
-sidebar_label: TextLoader
+title: TextLoader
 ---
-
-# TextLoader
 
 ```{=mdx}
 

@@ -1,8 +1,6 @@
 ---
-sidebar_label: Tavily Extract
+title: Tavily Extract
 ---
-
-# Tavily Extract
 
 [Tavily](https://tavily.com/) is a search engine built specifically for AI agents (LLMs), delivering real-time, accurate, and factual results at speed. Tavily offers four key endpoints, one of which being Extract, which provides raw extracted content from a URL.
 

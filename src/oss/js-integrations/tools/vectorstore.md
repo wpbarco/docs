@@ -1,8 +1,6 @@
 ---
-sidebar_label: VectorStore Toolkit
+title: VectorStoreToolkit
 ---
-
-# VectorStoreToolkit
 
 This will help you getting started with the [VectorStoreToolkit](/oss/concepts/tools/#toolkits). For detailed documentation of all VectorStoreToolkit features and configurations head to the [API reference](https://api.js.langchain.com/classes/langchain.agents.VectorStoreToolkit.html).
 

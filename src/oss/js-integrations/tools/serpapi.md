@@ -1,8 +1,6 @@
 ---
-sidebar_label: SerpAPI
+title: SerpAPI
 ---
-
-# SerpAPI
 
 [SerpAPI](https://serpapi.com/) allows you to integrate search engine results into your LLM apps
 

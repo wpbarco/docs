@@ -1,8 +1,6 @@
 ---
-sidebar_label: Novita AI
+title: ChatNovita
 ---
-
-# ChatNovita
 
 Delivers an affordable, reliable, and simple inference platform for running top LLM models.
 

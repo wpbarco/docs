@@ -1,8 +1,6 @@
 ---
-sidebar_label: Google Generative AI
+title: GoogleGenerativeAIEmbeddings
 ---
-
-# GoogleGenerativeAIEmbeddings
 
 This will help you get started with Google Generative AI [embedding models](/oss/concepts/embedding_models) using LangChain. For detailed documentation on `GoogleGenerativeAIEmbeddings` features and configuration options, please refer to the [API reference](https://api.js.langchain.com/classes/langchain_google_genai.GoogleGenerativeAIEmbeddings.html).
 

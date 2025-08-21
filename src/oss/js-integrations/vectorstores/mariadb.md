@@ -1,8 +1,6 @@
 ---
-sidebar_label: MariaDB
+title: MariaDB
 ---
-
-# MariaDB
 
 ```{=mdx}
 <Tip>

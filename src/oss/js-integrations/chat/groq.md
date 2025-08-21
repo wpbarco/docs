@@ -1,8 +1,6 @@
 ---
-sidebar_label: Groq
+title: ChatGroq
 ---
-
-# ChatGroq
 
 [Groq](https://groq.com/) is a company that offers fast AI inference, powered by LPU™ AI inference technology which delivers fast, affordable, and energy efficient AI.
 

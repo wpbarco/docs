@@ -1,8 +1,6 @@
 ---
-sidebar_label: Elasticsearch
+title: Elasticsearch
 ---
-
-# Elasticsearch
 
 ```{=mdx}
 

@@ -1,8 +1,6 @@
 ---
-sidebar_label: Exa
+title: ExaRetriever
 ---
-
-# ExaRetriever
 
 ## Overview
 

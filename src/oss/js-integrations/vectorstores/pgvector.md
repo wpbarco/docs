@@ -1,8 +1,6 @@
 ---
-sidebar_label: PGVector
+title: PGVectorStore
 ---
-
-# PGVectorStore
 
 ```{=mdx}
 <Tip>

@@ -1,8 +1,6 @@
 ---
-sidebar_label: Qdrant
+title: Qdrant
 ---
-
-# Qdrant
 
 This guide will help you getting started with such a retriever backed by a [Qdrant vector store](/oss/integrations/vectorstores/qdrant). For detailed documentation of all features and configurations head to the [API reference](https://api.js.langchain.com/classes/langchain.retrievers_self_query.SelfQueryRetriever.html).
 

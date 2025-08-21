@@ -1,8 +1,6 @@
 ---
-sidebar_label: Google Vertex AI
+title: ChatVertexAI
 ---
-
-# ChatVertexAI
 
 [Google Vertex](https://cloud.google.com/vertex-ai) is a service that exposes all foundation models available in Google Cloud, like `gemini-1.5-pro`, `gemini-2.0-flash-exp`, etc.
 It also provides some non-Google models such as [Anthropic's Claude](https://cloud.google.com/vertex-ai/generative-ai/docs/partner-models/use-claude).

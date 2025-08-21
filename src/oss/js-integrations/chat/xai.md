@@ -1,8 +1,6 @@
 ---
-sidebar_label: xAI
+title: ChatXAI
 ---
-
-# ChatXAI
 
 [xAI](https://x.ai/) is an artificial intelligence company that develops large language models (LLMs). Their flagship model, Grok, is trained on real-time X (formerly Twitter) data and aims to provide witty, personality-rich responses while maintaining high capability on technical tasks.
 

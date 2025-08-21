@@ -1,8 +1,6 @@
 ---
-sidebar_label: File System Store
+title: LocalFileStore
 ---
-
-# LocalFileStore
 
 ```{=mdx}
 

@@ -304,7 +304,14 @@
                       "oss/javascript/js-integrations/splitters/text_splitters",
                       "oss/javascript/js-integrations/text_embedding/index",
                       "oss/javascript/js-integrations/vectorstores/index",
-                      "oss/javascript/js-integrations/document_loaders/index"
+                      {
+                        "group": "Document loaders",
+                        "pages": [
+                          "oss/javascript/js-integrations/document_loaders/index",
+                          "oss/javascript/js-integrations/document_loaders/file_loaders/index",
+                          "oss/javascript/js-integrations/document_loaders/web_loaders/index"
+                        ]
+                      }
                     ]
                   },
                   {

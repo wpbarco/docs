@@ -1,8 +1,6 @@
 ---
-sidebar_label: Together
+title: ChatTogetherAI
 ---
-
-# ChatTogetherAI
 
 [Together AI](https://www.together.ai/) offers an API to query [50+ leading open-source models](https://docs.together.ai/docs/inference-models) in a couple lines of code.
 

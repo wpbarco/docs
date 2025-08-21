@@ -1,8 +1,6 @@
 ---
-sidebar_label: Unstructured
+title: UnstructuredLoader
 ---
-
-# UnstructuredLoader
 
 ```{=mdx}
 

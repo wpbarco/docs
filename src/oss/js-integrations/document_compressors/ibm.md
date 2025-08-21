@@ -1,8 +1,6 @@
 ---
-sidebar_label: IBM watsonx.ai
+title: IBM watsonx.ai
 ---
-
-# IBM watsonx.ai
 
 ## Overview
 

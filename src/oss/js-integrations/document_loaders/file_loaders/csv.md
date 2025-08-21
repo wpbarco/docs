@@ -1,8 +1,7 @@
 ---
-sidebar_label: CSV
+title: CSV
 ---
 
-# CSVLoader
 
 ```{=mdx}
 

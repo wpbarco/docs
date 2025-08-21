@@ -1,8 +1,7 @@
 ---
-sidebar_label: FireCrawl
+title: FireCrawlLoader
 ---
 
-# FireCrawlLoader
 
 This notebook provides a quick overview for getting started with [FireCrawlLoader](/oss/integrations/document_loaders/). For detailed documentation of all FireCrawlLoader features and configurations head to the [API reference](https://api.js.langchain.com/classes/langchain_community_document_loaders_web_firecrawl.FireCrawlLoader.html).
 

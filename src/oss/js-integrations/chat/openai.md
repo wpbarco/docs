@@ -1,8 +1,6 @@
 ---
-sidebar_label: OpenAI
+title: ChatOpenAI
 ---
-
-# ChatOpenAI
 
 [OpenAI](https://en.wikipedia.org/wiki/OpenAI) is an artificial intelligence (AI) research laboratory.
 
@@ -746,10 +744,9 @@ const response = await llmWithMcp.invoke(
 );
 ```
 
-```{=mdx}
-<details>
-<summary>MCP Approvals</summary>
-```
+<Note>
+**MCP Approvals**
+
 When instructed, OpenAI will request approval before making calls to a remote MCP server.
 
 In the above command, we instructed the model to never require approval. We can also configure the model to always request approval, or to always request approval for specific tools:
@@ -795,11 +792,8 @@ const nextResponse = await model.invoke(
   ],
 );
 ```
-</details>
+</Note>
 
-```{=mdx}
-</details>
-```
 #### Image Generation
 
 ChatOpenAI allows you to bring the built-in [image generation tool](https://platform.openai.com/docs/guides/tools-image-generation) to create images as apart of multi-turn conversations through the responses API.

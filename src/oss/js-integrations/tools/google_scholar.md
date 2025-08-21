@@ -1,8 +1,6 @@
 ---
-sidebar_label: Google Scholar
+title: Google Scholar Tool
 ---
-
-# Google Scholar Tool
 
 This notebook provides a quick overview for getting started with [`SERPGoogleScholarTool`](https://api.js.langchain.com/classes/_langchain_community.tools_google_scholar.SERPGoogleScholarAPITool.html). For detailed documentation of all `SERPGoogleScholarAPITool` features and configurations, head to the [API reference](https://api.js.langchain.com/classes/_langchain_community.tools_google_scholar.SERPGoogleScholarAPITool.html).
 

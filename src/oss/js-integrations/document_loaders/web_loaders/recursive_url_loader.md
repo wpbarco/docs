@@ -1,8 +1,6 @@
 ---
-sidebar_label: RecursiveUrlLoader
+title: RecursiveUrlLoader
 ---
-
-# RecursiveUrlLoader
 
 ```{=mdx}
 

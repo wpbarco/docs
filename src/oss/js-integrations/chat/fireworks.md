@@ -1,8 +1,6 @@
 ---
-sidebar_label: Fireworks
+title: ChatFireworks
 ---
-
-# ChatFireworks
 
 [Fireworks AI](https://fireworks.ai/) is an AI inference platform to run and customize models. For a list of all models served by Fireworks see the [Fireworks docs](https://fireworks.ai/models).
 

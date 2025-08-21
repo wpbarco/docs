@@ -1,8 +1,6 @@
 ---
-sidebar_label: MongoDB Atlas
+title: MongoDB Atlas
 ---
-
-# MongoDB Atlas
 
 ```{=mdx}
 <Tip>

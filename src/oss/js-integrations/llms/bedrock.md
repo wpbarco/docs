@@ -1,5 +1,5 @@
 ---
-sidebar_label: Bedrock
+title: Bedrock
 ---
 
 # Bedrock

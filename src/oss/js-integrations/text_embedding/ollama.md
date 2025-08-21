@@ -1,8 +1,6 @@
 ---
-sidebar_label: Ollama
+title: OllamaEmbeddings
 ---
-
-# OllamaEmbeddings
 
 This will help you get started with Ollama [embedding models](/oss/concepts/embedding_models) using LangChain. For detailed documentation on `OllamaEmbeddings` features and configuration options, please refer to the [API reference](https://api.js.langchain.com/classes/langchain_ollama.OllamaEmbeddings.html).
 

@@ -1,8 +1,6 @@
 ---
-sidebar_label: Knowledge Bases for Amazon Bedrock
+title: Knowledge Bases for Amazon Bedrock
 ---
-
-# Knowledge Bases for Amazon Bedrock
 
 ## Overview
 

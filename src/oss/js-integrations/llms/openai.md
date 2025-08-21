@@ -1,8 +1,6 @@
 ---
-sidebar_label: OpenAI
+title: OpenAI
 ---
-
-# OpenAI
 
 ```{=mdx}
 

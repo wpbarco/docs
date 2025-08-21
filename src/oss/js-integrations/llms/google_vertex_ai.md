@@ -1,8 +1,6 @@
 ---
-sidebar_label: Google Vertex AI
+title: Google Vertex AI
 ---
-
-# Google Vertex AI
 
 ```{=mdx}
 

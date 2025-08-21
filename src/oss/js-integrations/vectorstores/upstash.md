@@ -1,8 +1,6 @@
 ---
-sidebar_label: Upstash Vector
+title: UpstashVectorStore
 ---
-
-# UpstashVectorStore
 
 [Upstash Vector](https://upstash.com/) is a REST based serverless vector database, designed for working with vector embeddings.
 

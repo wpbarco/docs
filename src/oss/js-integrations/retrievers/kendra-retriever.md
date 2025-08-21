@@ -1,8 +1,6 @@
 ---
-sidebar_label: Amazon Kendra Retriever
+title: AWSKendraRetriever
 ---
-
-# AWSKendraRetriever
 
 ## Overview
 

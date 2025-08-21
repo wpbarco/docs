@@ -1,8 +1,6 @@
 ---
-sidebar_label: Weaviate
+title: Weaviate
 ---
-
-# Weaviate
 
 This guide will help you getting started with such a retriever backed by a [Weaviate vector store](/oss/integrations/vectorstores/weaviate). For detailed documentation of all features and configurations head to the [API reference](https://api.js.langchain.com/classes/langchain.retrievers_self_query.SelfQueryRetriever.html).
 

@@ -1,8 +1,6 @@
 ---
-sidebar_label: Chroma
+title: Chroma
 ---
-
-# Chroma
 
 [Chroma](https://docs.trychroma.com/getting-started) is a AI-native open-source vector database focused on developer productivity and happiness. Chroma is licensed under Apache 2.0.
 

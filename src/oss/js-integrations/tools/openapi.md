@@ -1,8 +1,6 @@
 ---
-sidebar_label: OpenApi Toolkit
+title: OpenApi Toolkit
 ---
-
-# OpenApiToolkit
 
 ```{=mdx}
 

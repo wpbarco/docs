@@ -1,8 +1,6 @@
 ---
-sidebar_label: Fireworks
+title: FireworksEmbeddings
 ---
-
-# FireworksEmbeddings
 
 This will help you get started with FireworksEmbeddings [embedding models](/oss/concepts/embedding_models) using LangChain. For detailed documentation on `FireworksEmbeddings` features and configuration options, please refer to the [API reference](https://api.js.langchain.com/classes/langchain_community_embeddings_fireworks.FireworksEmbeddings.html).
 

@@ -1,8 +1,6 @@
 ---
-sidebar_label: InMemory Store
+title: InMemoryStore
 ---
-
-# InMemoryStore
 
 This will help you get started with [InMemoryStore](/oss/concepts/key_value_stores). For detailed documentation of all InMemoryStore features and configurations head to the [API reference](https://api.js.langchain.com/classes/langchain_core.stores.InMemoryStore.html).
 

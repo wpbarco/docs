@@ -1,17 +1,11 @@
 ---
-sidebar_label: Cohere
+title: Cohere
 ---
-
-# Cohere
-
-```{=mdx}
 
 <Warning>
 **Legacy**
 
-
 Cohere has marked their `generate` endpoint for LLMs as deprecated. Follow their [migration guide](https://docs.cohere.com/docs/migrating-from-cogenerate-to-cochat) to start using their Chat API via the [`ChatCohere`](/oss/integrations/chat/cohere) integration.
-
 </Warning>
 
 <Warning>
@@ -21,7 +15,6 @@ Cohere has marked their `generate` endpoint for LLMs as deprecated. Follow their
 You may be looking for [this page instead](/oss/integrations/chat/cohere/).
 </Warning>
 
-```
 This will help you get started with Cohere completion models (LLMs) using LangChain. For detailed documentation on `Cohere` features and configuration options, please refer to the [API reference](https://api.js.langchain.com/classes/langchain_cohere.Cohere.html).
 
 ## Overview

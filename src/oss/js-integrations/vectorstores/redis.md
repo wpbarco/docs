@@ -1,8 +1,6 @@
 ---
-sidebar_label: Redis
+title: RedisVectorStore
 ---
-
-# RedisVectorStore
 
 ```{=mdx}
 <Tip>

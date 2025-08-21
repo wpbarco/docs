@@ -1,8 +1,6 @@
 ---
-sidebar_label: MistralAI
+title: ChatMistralAI
 ---
-
-# ChatMistralAI
 
 [Mistral AI](https://mistral.ai/) is a platform that offers hosting for their powerful [open source models](https://docs.mistral.ai/getting-started/models/).
 

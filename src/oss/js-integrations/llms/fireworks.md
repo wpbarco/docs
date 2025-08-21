@@ -1,9 +1,6 @@
 ---
-sidebar_label: Fireworks
+title: Fireworks
 ---
-
-# Fireworks
-
 
 ```{=mdx}
 

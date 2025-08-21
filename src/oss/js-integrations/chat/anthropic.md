@@ -1,8 +1,6 @@
 ---
-sidebar_label: Anthropic
+title: ChatAnthropic
 ---
-
-# ChatAnthropic
 
 [Anthropic](https://www.anthropic.com/) is an AI safety and research company. They are the creator of Claude.
 

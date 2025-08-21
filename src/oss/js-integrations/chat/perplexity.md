@@ -1,8 +1,6 @@
 ---
-sidebar_label: Perplexity
+title: ChatPerplexity
 ---
-
-# ChatPerplexity
 
 This guide will help you getting started with Perplexity [chat models](/oss/concepts/#chat-models). For detailed documentation of all `ChatPerplexity` features and configurations head to the [API reference](https://api.js.langchain.com/classes/_langchain_community.chat_models_perplexity.ChatPerplexity.html).
 

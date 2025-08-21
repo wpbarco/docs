@@ -1,8 +1,6 @@
 ---
-sidebar_label: Cloudflare Workers AI
+title: CloudflareWorkersAIEmbeddings
 ---
-
-# CloudflareWorkersAIEmbeddings
 
 This will help you get started with Cloudflare Workers AI [embedding models](/oss/concepts/embedding_models) using LangChain. For detailed documentation on `CloudflareWorkersAIEmbeddings` features and configuration options, please refer to the [API reference](https://api.js.langchain.com/classes/langchain_cloudflare.CloudflareWorkersAIEmbeddings.html).
 

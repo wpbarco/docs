@@ -1,8 +1,6 @@
 ---
-sidebar_label: Azure OpenAI
+title: AzureOpenAIEmbeddings
 ---
-
-# AzureOpenAIEmbeddings
 
 [Azure OpenAI](https://azure.microsoft.com/products/ai-services/openai-service/) is a cloud service to help you quickly develop generative AI experiences with a diverse set of prebuilt and curated models from OpenAI, Meta and beyond.
 

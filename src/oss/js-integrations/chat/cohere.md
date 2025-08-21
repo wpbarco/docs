@@ -1,8 +1,6 @@
 ---
-sidebar_label: Cohere
+title: ChatCohere
 ---
-
-# ChatCohere
 
 [Cohere](https://cohere.com/) is a Canadian startup that provides natural language processing models that help companies improve human-machine interactions.
 

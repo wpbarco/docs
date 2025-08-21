@@ -1,8 +1,6 @@
 ---
-sidebar_label: Cloudflare Workers AI
+title: CloudflareWorkersAI
 ---
-
-# CloudflareWorkersAI
 
 This will help you get started with Cloudflare Workers AI [text completion models (LLMs)](/oss/concepts/text_llms) using LangChain. For detailed documentation on `CloudflareWorkersAI` features and configuration options, please refer to the [API reference](https://api.js.langchain.com/classes/langchain_cloudflare.CloudflareWorkersAI.html).
 

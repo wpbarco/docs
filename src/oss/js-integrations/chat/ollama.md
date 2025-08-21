@@ -1,8 +1,6 @@
 ---
-sidebar_label: Ollama
+title: ChatOllama
 ---
-
-# ChatOllama
 
 [Ollama](https://ollama.ai/) allows you to run open-source large language models, such as Llama 3.1, locally.
 

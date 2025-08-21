@@ -1,9 +1,6 @@
 ---
-sidebar_label: IBM watsonx.ai
+title: IBM watsonx.ai
 ---
-
-# IBM watsonx.ai
-
 
 This will help you get started with IBM watsonx.ai [embedding models](/oss/concepts/embedding_models) using LangChain. For detailed documentation on `IBM watsonx.ai` features and configuration options, please refer to the [API reference](https://api.js.langchain.com/modules/_langchain_community.embeddings_ibm.html).
 

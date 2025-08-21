@@ -1,8 +1,6 @@
 ---
-sidebar_label: Arcjet Redact
+title: Arcjet Redact
 ---
-
-# Arcjet Redact
 
 The [Arcjet](https://arcjet.com) redact integration allows you to redact sensitive user information from your prompts before sending it to an LLM.
 

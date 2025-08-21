@@ -1,8 +1,6 @@
 ---
-sidebar_label: Google Vertex AI
+title: VertexAIEmbeddings
 ---
-
-# VertexAIEmbeddings
 
 [Google Vertex](https://cloud.google.com/vertex-ai) is a service that exposes all foundation models available in Google Cloud.
 

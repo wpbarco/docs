@@ -1,9 +1,6 @@
 ---
-sidebar_label: IBM watsonx.ai
+title: IBM watsonx.ai
 ---
-
-# IBM watsonx.ai
-
 
 This will help you get started with IBM [text completion models (LLMs)](/oss/concepts/text_llms) using LangChain. For detailed documentation on `IBM watsonx.ai` features and configuration options, please refer to the [IBM watsonx.ai](https://api.js.langchain.com/modules/_langchain_community.llms_ibm.html).
 

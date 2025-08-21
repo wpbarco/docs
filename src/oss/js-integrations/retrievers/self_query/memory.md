@@ -1,8 +1,6 @@
 ---
-sidebar_label: In-memory
+title: In-memory
 ---
-
-# In-memory
 
 This guide will help you getting started with such a retriever backed by an [in-memory vector store](/oss/integrations/vectorstores/memory). For detailed documentation of all features and configurations head to the [API reference](https://api.js.langchain.com/classes/langchain.retrievers_self_query.SelfQueryRetriever.html).
 

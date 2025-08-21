@@ -1,8 +1,6 @@
 ---
-sidebar_label: Faiss
+title: FaissStore
 ---
-
-# FaissStore
 
 ```{=mdx}
 

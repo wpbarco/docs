@@ -1,8 +1,6 @@
 ---
-sidebar_label: Tavily Search (Community, Deprecated)
+title: TavilySearchResults (Deprecated)
 ---
-
-# TavilySearchResults (Deprecated)
 
 <Info>
 **Deprecation Notice**

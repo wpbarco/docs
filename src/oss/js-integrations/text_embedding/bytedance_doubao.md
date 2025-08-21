@@ -1,8 +1,6 @@
 ---
-sidebar_label: ByteDance Doubao
+title: ByteDanceDoubaoEmbeddings
 ---
-
-# ByteDanceDoubaoEmbeddings
 
 This will help you get started with ByteDanceDoubao [embedding models](/oss/concepts/embedding_models) using LangChain.  For detailed documentation on `ByteDanceDoubaoEmbeddings` features and configuration options, please refer to the [API reference](https://api.js.langchain.com/classes/_langchain_community.embeddings_bytedance_doubao.ByteDanceDoubaoEmbeddings.html).
 

@@ -1,8 +1,6 @@
 ---
-sidebar_label: PDFLoader
+title: PDFLoader
 ---
-
-# PDFLoader
 
 ```{=mdx}
 

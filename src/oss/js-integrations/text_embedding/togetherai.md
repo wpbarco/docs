@@ -1,8 +1,6 @@
 ---
-sidebar_label: TogetherAI
+title: TogetherAIEmbeddings
 ---
-
-# TogetherAIEmbeddings
 
 This will help you get started with TogetherAIEmbeddings [embedding models](/oss/concepts/embedding_models) using LangChain. For detailed documentation on `TogetherAIEmbeddings` features and configuration options, please refer to the [API reference](https://api.js.langchain.com/classes/langchain_community_embeddings_togetherai.TogetherAIEmbeddings.html).
 

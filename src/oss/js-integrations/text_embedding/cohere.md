@@ -1,8 +1,6 @@
 ---
-sidebar_label: Cohere
+title: CohereEmbeddings
 ---
-
-# CohereEmbeddings
 
 This will help you get started with CohereEmbeddings [embedding models](/oss/concepts/embedding_models) using LangChain. For detailed documentation on `CohereEmbeddings` features and configuration options, please refer to the [API reference](https://api.js.langchain.com/classes/langchain_cohere.CohereEmbeddings.html).
 

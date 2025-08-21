@@ -1,8 +1,6 @@
 ---
-sidebar_label: IBM watsonx.ai
+title: IBM watsonx.ai
 ---
-
-# IBM watsonx.ai
 
 This will help you getting started with IBM watsonx.ai [chat models](/oss/concepts/chat_models). For detailed documentation of all `IBM watsonx.ai` features and configurations head to the [IBM watsonx.ai](https://api.js.langchain.com/modules/_langchain_community.chat_models_ibm.html).
 

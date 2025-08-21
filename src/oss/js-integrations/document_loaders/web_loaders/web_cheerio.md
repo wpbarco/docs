@@ -1,8 +1,7 @@
 ---
-sidebar_label: Cheerio
+title: Cheerio
 ---
 
-# Cheerio
 
 This notebook provides a quick overview for getting started with [CheerioWebBaseLoader](/oss/integrations/document_loaders/). For detailed documentation of all CheerioWebBaseLoader features and configurations head to the [API reference](https://api.js.langchain.com/classes/langchain_community_document_loaders_web_cheerio.CheerioWebBaseLoader.html).
 

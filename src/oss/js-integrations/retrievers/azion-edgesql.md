@@ -1,8 +1,6 @@
 ---
-sidebar_label: Azion EdgeSQL
+title: AzionRetriever
 ---
-
-# AzionRetriever
 
 ## Overview
 

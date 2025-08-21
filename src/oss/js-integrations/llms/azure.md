@@ -1,8 +1,6 @@
 ---
-sidebar_label: Azure OpenAI
+title: Azure OpenAI
 ---
-
-# AzureOpenAI
 
 ```{=mdx}
 

@@ -1,8 +1,6 @@
 ---
-sidebar_label: Cloudflare Workers AI
+title: ChatCloudflareWorkersAI
 ---
-
-# ChatCloudflareWorkersAI
 
 [Workers AI](https://developers.cloudflare.com/workers-ai/) allows you to run machine learning models, on the Cloudflare network, from your own code.
 

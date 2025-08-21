@@ -1,8 +1,6 @@
 ---
-sidebar_label: Pinecone
+title: PineconeEmbeddings
 ---
-
-# PineconeEmbeddings
 
 This will help you get started with PineconeEmbeddings [embedding models](/oss/concepts/embedding_models) using LangChain. For detailed documentation on `PineconeEmbeddings` features and configuration options, please refer to the [API reference](https://api.js.langchain.com/classes/_langchain_pinecone.PineconeEmbeddings.html).
 

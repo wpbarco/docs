@@ -1,8 +1,6 @@
 ---
-sidebar_label: MistralAI
+title: MistralAIEmbeddings
 ---
-
-# MistralAIEmbeddings
 
 This will help you get started with MistralAIEmbeddings [embedding models](/oss/concepts/embedding_models) using LangChain. For detailed documentation on `MistralAIEmbeddings` features and configuration options, please refer to the [API reference](https://api.js.langchain.com/classes/langchain_mistralai.MistralAIEmbeddings.html).
 

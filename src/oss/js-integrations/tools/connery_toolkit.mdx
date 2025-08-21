@@ -1,7 +1,9 @@
+---
+title: Connery Toolkit
+---
+
 import Example from "@examples/agents/connery_mrkl.ts";
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
-
-# Connery Toolkit
 
 Using this toolkit, you can integrate Connery Actions into your LangChain agent.
 
@@ -54,11 +56,10 @@ In the example below, we create an agent that uses two Connery Actions to summar
 
 <Info>
 **You can see a LangSmith trace of this example [here](https://smith.langchain.com/public/5485cb37-b73d-458f-8162-43639f2b49e1/r).**
-
-:::
+</Info>
 
 <CodeBlock language="typescript">{Example}</CodeBlock>
 
-</Info>note
+<Info>
 Connery Action is a structured tool, so you can only use it in the agents supporting structured tools.
-:::
+</Info>

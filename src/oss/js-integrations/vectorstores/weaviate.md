@@ -1,8 +1,6 @@
 ---
-sidebar_label: Weaviate
+title: WeaviateStore
 ---
-
-# WeaviateStore
 
 [Weaviate](https://weaviate.io/) is an open source vector database that stores both objects and vectors, allowing for combining vector search with structured filtering. LangChain connects to Weaviate via the weaviate-client package, the official Typescript client for Weaviate.
 

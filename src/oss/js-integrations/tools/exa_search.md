@@ -1,4 +1,6 @@
-# ExaSearchResults
+---
+title: ExaSearchResults
+---
 
 Exa (formerly Metaphor Search) is a search engine fully designed for use by LLMs. Search for documents on the internet using natural language queries, then retrieve cleaned HTML content from desired documents.
 

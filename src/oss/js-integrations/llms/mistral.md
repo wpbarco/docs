@@ -1,8 +1,6 @@
 ---
-sidebar_label: MistralAI
+title: MistralAI
 ---
-
-# MistralAI
 
 ```{=mdx}
 

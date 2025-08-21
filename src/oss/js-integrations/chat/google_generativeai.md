@@ -1,8 +1,6 @@
 ---
-sidebar_label: Google GenAI
+title: ChatGoogleGenerativeAI
 ---
-
-# ChatGoogleGenerativeAI
 
 [Google AI](https://ai.google.dev/) offers a number of different chat models, including the powerful Gemini series. For information on the latest models, their features, context windows, etc. head to the [Google AI docs](https://ai.google.dev/gemini-api/docs/models/gemini).
 

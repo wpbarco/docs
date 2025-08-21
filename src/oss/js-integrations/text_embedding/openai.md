@@ -1,8 +1,6 @@
 ---
-sidebar_label: OpenAI
+title: OpenAI
 ---
-
-# OpenAI
 
 This will help you get started with OpenAIEmbeddings [embedding models](/oss/concepts/embedding_models) using LangChain. For detailed documentation on `OpenAIEmbeddings` features and configuration options, please refer to the [API reference](https://api.js.langchain.com/classes/langchain_openai.OpenAIEmbeddings.html).
 

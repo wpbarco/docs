@@ -1,8 +1,6 @@
 ---
-sidebar_label: In-memory
+title: MemoryVectorStore
 ---
-
-# MemoryVectorStore
 
 LangChain offers is an in-memory, ephemeral vectorstore that stores embeddings in-memory and does an exact, linear search for the most similar embeddings. The default similarity metric is cosine similarity, but can be changed to any of the similarity metrics supported by [ml-distance](https://mljs.github.io/distance/modules/similarity.html).
 

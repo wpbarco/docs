@@ -1,8 +1,6 @@
 ---
-sidebar_label: Qdrant
+title: QdrantVectorStore
 ---
-
-# QdrantVectorStore
 
 ```{=mdx}
 <Tip>

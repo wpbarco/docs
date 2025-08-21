@@ -1,8 +1,7 @@
 ---
-sidebar_label: LangSmith
+title: LangSmithLoader
 ---
 
-# LangSmithLoader
 
 This notebook provides a quick overview for getting started with the [LangSmithLoader](/oss/integrations/document_loaders/). For detailed documentation of all `LangSmithLoader` features and configurations head to the [API reference](https://api.js.langchain.com/classes/_langchain_core.document_loaders_langsmith.LangSmithLoader.html).
 

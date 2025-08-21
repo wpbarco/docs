@@ -1,8 +1,6 @@
 ---
-sidebar_label: Pinecone
+title: PineconeStore
 ---
-
-# PineconeStore
 
 [Pinecone](https://www.pinecone.io/) is a vector database that helps power AI for some of the world’s best companies.
 

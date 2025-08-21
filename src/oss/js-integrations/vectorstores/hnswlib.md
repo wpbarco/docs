@@ -1,8 +1,6 @@
 ---
-sidebar_label: HNSWLib
+title: HNSWLib
 ---
-
-# HNSWLib
 
 ```{=mdx}
 <Tip>
