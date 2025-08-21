@@ -301,7 +301,6 @@
                     "group": "RAG integrations",
                     "pages": [
                       "oss/javascript/js-integrations/retrievers/index",
-                      "oss/javascript/js-integrations/splitters/text_splitters",
                       "oss/javascript/js-integrations/text_embedding/index",
                       "oss/javascript/js-integrations/vectorstores/index",
                       {
