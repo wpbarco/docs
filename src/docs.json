@@ -95,7 +95,7 @@
       "youtube": "https://www.youtube.com/@LangChain"
     }
   },
-    "scripts": [
+  "scripts": [
     "/hide-version-picker.js"
   ],
   "styles": [
@@ -118,77 +118,111 @@
         "version": "Python",
         "dropdowns": [
           {
-            "dropdown": "OSS",
-            "icon": "/images/brand/langgraph-pill.svg",
-            "description": "Open source frameworks",
+            "dropdown": "LangChain",
+            "icon": "/images/brand/langchain-pill.svg",
+            "description": "Get started with LLMs and agents",
             "tabs": [
               {
-                "tab": "LangChain",
+                "tab": "Docs",
                 "groups": [
                   {
                     "group": "Get started",
                     "pages": [
-                      "oss/python/langchain-overview",
-                      "oss/python/langchain-installation",
-                      "oss/python/langchain-quickstart",
-                      "oss/python/langchain-philosophy"
+                      "langchain/python/overview",
+                      "langchain/python/quickstart"
                     ]
                   },
                   {
                     "group": "Core concepts",
+                    "group": "Core concepts",
                     "pages": [
-                      "oss/python/langchain-models",
-                      "oss/python/langchain-messages",
-                      "oss/python/langchain-tools",
-                      "oss/python/langchain-agents",
-                      "oss/python/langchain-short-term-memory",
-                      "oss/python/langchain-streaming"
+                      "langchain/python/models",
+                      "langchain/python/messages",
+                      "langchain/python/tools",
+                      "langchain/python/agents",
+                      "langchain/python/shot-term-memory",
+                      "langchain/python/streaming"
                     ]
                   },
                   {
                     "group": "Advanced",
+                    "group": "Advanced",
                     "pages": [
-                      "oss/python/langchain-long-term-memory",
-                      "oss/python/langchain-context-engineering",
-                      "oss/python/langchain-structured-output",
-                      "oss/python/langchain-mcp",
-                      "oss/python/langchain-human-in-the-loop",
-                      "oss/python/langchain-multi-agent",
-                      "oss/python/langchain-retrieval",
-                      "oss/python/langchain-runtime"
-                    ]
-                  },
-                  {
-                    "group": "Production",
-                    "pages": [
-                      "oss/python/langchain-studio",
-                      "oss/python/langchain-test",
-                      "oss/python/langchain-deploy",
-                      "oss/python/langchain-observability"
+                      "langchain/python/long-term-memory",
+                      "langchain/python/context-engineering",
+                      "langchain/python/structured-output",
+                      "langchain/python/mcp",
+                      "langchain/python/human-in-the-loop",
+                      "langchain/python/multi-agent",
+                      "langchain/python/retrieval",
+                      "langchain/python/pre-model-hook",
+                      "langchain/python/post-model-hook"
                     ]
                   }
                 ]
               },
               {
-                "tab": "LangGraph",
+                "tab": "Reference",
+                "groups": [
+                  {
+                    "group": "LangGraph reference",
+                    "pages": [
+                      "langchain/python/reference/overview",
+                      "langchain/python/reference/graphs",
+                      "langchain/python/reference/functional-api",
+                      "langchain/python/reference/pregel",
+                      "langchain/python/reference/checkpointers",
+                      "langchain/python/reference/storage",
+                      "langchain/python/reference/caching",
+                      "langchain/python/reference/types",
+                      "langchain/python/reference/runtime",
+                      "langchain/python/reference/config",
+                      "langchain/python/reference/errors",
+                      "langchain/python/reference/constants",
+                      "langchain/python/reference/channels"
+                    ]
+                  },
+                  {
+                    "group": "Prebuilt reference",
+                    "pages": [
+                      "langchain/python/reference/agents",
+                      "langchain/python/reference/supervisor",
+                      "langchain/python/reference/swarm",
+                      "langchain/python/reference/mcp"
+                    ]
+                  },
+                  {
+                    "group": "Error troubleshooting",
+                    "pages": [
+                      "langchain/python/common-errors",
+                      "langchain/python/GRAPH_RECURSION_LIMIT",
+                      "langchain/python/INVALID_CHAT_HISTORY",
+                      "langchain/python/INVALID_CONCURRENT_GRAPH_UPDATE",
+                      "langchain/python/INVALID_GRAPH_NODE_RETURN_VALUE",
+                      "langchain/python/MULTIPLE_SUBGRAPHS"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "dropdown": "LangGraph",
+            "icon": "/images/brand/langgraph-pill.svg",
+            "description": "Low level agentic runtime",
+            "tabs": [
+              {
+                "tab": "Docs",
                 "groups": [
                   {
                     "group": "Get started",
                     "pages": [
-                      "oss/python/langgraph-overview",
-                      "oss/python/langgraph-installation",
-                      "oss/python/langgraph-quickstart",
-                      "oss/python/langgraph-philosophy"
-
+                      "oss/python/overview",
+                      "oss/python/quickstart",
+                      "oss/python/run-an-agent",
+                      "oss/python/prebuilt-vs-low-level"
                     ]
                   },
-                  {
-                        "group": "Graph API",
-                        "pages": [
-                          "oss/python/langgraph-graph-api",
-                          "oss/python/langgraph-use-graph-api"
-                        ]
-                      },
                   {
                     "group": "Capabilities",
                     "pages": [
@@ -244,7 +278,6 @@
                   {
                     "group": "LangGraph APIs",
                     "pages": [
-
                       {
                         "group": "Functional API",
                         "pages": [
@@ -665,7 +698,7 @@
                       "langsmith/export-traces",
                       "langsmith/compare-traces",
                       "langsmith/share-trace",
-                      "langsmith/langgraph-platform-logs", 
+                      "langsmith/langgraph-platform-logs",
                       "langsmith/data-export"
                     ]
                   },
@@ -782,7 +815,8 @@
                       "langsmith/compare-experiment-results",
                       "langsmith/filter-experiments-ui",
                       "langsmith/fetch-perf-metrics-experiment",
-                      "langsmith/upload-existing-experiments"                    ]
+                      "langsmith/upload-existing-experiments"
+                    ]
                   },
                   {
                     "group": "Annotation & human feedback",
@@ -1623,7 +1657,7 @@
                       "langsmith/export-traces",
                       "langsmith/compare-traces",
                       "langsmith/share-trace",
-                      "langsmith/langgraph-platform-logs", 
+                      "langsmith/langgraph-platform-logs",
                       "langsmith/data-export"
                     ]
                   },
@@ -1745,7 +1779,8 @@
                       "langsmith/compare-experiment-results",
                       "langsmith/filter-experiments-ui",
                       "langsmith/fetch-perf-metrics-experiment",
-                      "langsmith/upload-existing-experiments"                    ]
+                      "langsmith/upload-existing-experiments"
+                    ]
                   },
                   {
                     "group": "Annotation & human feedback",
