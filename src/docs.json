@@ -129,7 +129,9 @@
                     "group": "Get started",
                     "pages": [
                       "langchain/python/overview",
-                      "langchain/python/quickstart"
+                      "langchain/python/installation",
+                      "langchain/python/quickstart",
+                      "langchain/python/philosophy"
                     ]
                   },
                   {
@@ -140,7 +142,7 @@
                       "langchain/python/messages",
                       "langchain/python/tools",
                       "langchain/python/agents",
-                      "langchain/python/shot-term-memory",
+                      "langchain/python/short-term-memory",
                       "langchain/python/streaming"
                     ]
                   },
@@ -157,6 +159,15 @@
                       "langchain/python/retrieval",
                       "langchain/python/pre-model-hook",
                       "langchain/python/post-model-hook"
+                    ]
+                  },
+                  {
+                    "group": "Production",
+                    "pages": [
+                      "langchain/python/studio",
+                      "langchain/python/test",
+                      "langchain/python/deploy",
+                      "langchain/python/observability"
                     ]
                   }
                 ]
@@ -218,9 +229,16 @@
                     "group": "Get started",
                     "pages": [
                       "oss/python/overview",
+                      "oss/python/installation",
                       "oss/python/quickstart",
-                      "oss/python/run-an-agent",
-                      "oss/python/prebuilt-vs-low-level"
+                      "oss/python/philosophy"
+                    ]
+                  },
+                  {
+                    "group": "Graph API",
+                    "pages": [
+                      "oss/python/graph-api",
+                      "oss/python/use-graph-api"
                     ]
                   },
                   {
@@ -268,11 +286,12 @@
                   },
                   {
                     "group": "Production",
+                    "group": "Production",
                     "pages": [
-                      "oss/python/langgraph-studio",
-                      "oss/python/langgraph-test",
-                      "oss/python/langgraph-deploy",
-                      "oss/python/langgraph-observability"
+                      "oos/python/studio",
+                      "oss/python/test",
+                      "oss/python/deploy",
+                      "oss/python/observability"
                     ]
                   },
                   {
@@ -281,45 +300,11 @@
                       {
                         "group": "Functional API",
                         "pages": [
-                          "oss/python/langgraph-functional-api",
-                          "oss/python/langgraph-use-functional-api"
+                          "oss/python/functional-api",
+                          "oss/python/use-functional-api"
                         ]
                       },
-                      "oss/python/langgraph-pregel"
-                    ]
-                  }
-                ]
-              },
-              {
-                "tab": "Integrations",
-                "groups": [
-                  {
-                    "group": "Providers",
-                    "pages": [
-                      "oss/python/integrations/providers/anthropic",
-                      "oss/python/integrations/providers/aws",
-                      "oss/python/integrations/providers/google",
-                      "oss/python/integrations/providers/huggingface",
-                      "oss/python/integrations/providers/microsoft",
-                      "oss/python/integrations/providers/openai",
-                      "oss/python/integrations/providers/all_providers"
-                    ]
-                  },
-                  {
-                    "group": "General integrations",
-                    "pages": [
-                      "oss/python/integrations/chat/index",
-                      "oss/python/integrations/tools/index"
-                    ]
-                  },
-                  {
-                    "group": "RAG integrations",
-                    "pages": [
-                      "oss/python/integrations/retrievers/index",
-                      "oss/python/integrations/splitters/text_splitters",
-                      "oss/python/integrations/text_embedding/index",
-                      "oss/python/integrations/vectorstores/index",
-                      "oss/python/integrations/document_loaders/index"
+                      "oss/python/pregel"
                     ]
                   }
                 ]
