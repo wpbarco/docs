@@ -127,7 +127,9 @@
                     "group": "Get started",
                     "pages": [
                       "langchain/python/overview",
-                      "langchain/python/quickstart"
+                      "langchain/python/installation",
+                      "langchain/python/quickstart",
+                      "langchain/python/philosophy"
                     ]
                   },
                   {
@@ -137,7 +139,7 @@
                       "langchain/python/messages",
                       "langchain/python/tools",
                       "langchain/python/agents",
-                      "langchain/python/shot-term-memory",
+                      "langchain/python/short-term-memory",
                       "langchain/python/streaming"
                     ]
                   },
@@ -153,6 +155,15 @@
                       "langchain/python/retrieval",
                       "langchain/python/pre-model-hook",
                       "langchain/python/post-model-hook"
+                    ]
+                  },
+                  {
+                    "group": "Production",
+                    "pages": [
+                      "langchain/python/studio",
+                      "langchain/python/test",
+                      "langchain/python/deploy",
+                      "langchain/python/observability"
                     ]
                   }
                 ]
@@ -214,11 +225,19 @@
                     "group": "Get started",
                     "pages": [
                       "oss/python/overview",
+                      "oss/python/installation",
                       "oss/python/quickstart",
-                      "oss/python/run-an-agent",
-                      "oss/python/prebuilt-vs-low-level"
+                      "oss/python/philosophy"
+
                     ]
                   },
+                  {
+                        "group": "Graph API",
+                        "pages": [
+                          "oss/python/graph-api",
+                          "oss/python/use-graph-api"
+                        ]
+                      },
                   {
                     "group": "Capabilities",
                     "pages": [
@@ -263,24 +282,18 @@
                     ]
                   },
                   {
-                    "group": "Run and debug",
+                    "group": "Production",
                     "pages": [
-                      "oss/python/local-server",
-                      "oss/python/ui",
-                      "oss/python/trace-agent",
-                      "oss/python/evals"
+                      "oos/python/studio",
+                      "oss/python/test",
+                      "oss/python/deploy",
+                      "oss/python/observability"
                     ]
                   },
                   {
                     "group": "LangGraph APIs",
                     "pages": [
-                      {
-                        "group": "Graph API",
-                        "pages": [
-                          "oss/python/graph-api",
-                          "oss/python/use-graph-api"
-                        ]
-                      },
+
                       {
                         "group": "Functional API",
                         "pages": [
