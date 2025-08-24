@@ -153,8 +153,7 @@
                       "langchain/python/human-in-the-loop",
                       "langchain/python/multi-agent",
                       "langchain/python/retrieval",
-                      "langchain/python/pre-model-hook",
-                      "langchain/python/post-model-hook"
+                      "langchain/python/runtime"
                     ]
                   },
                   {
