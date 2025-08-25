@@ -295,7 +295,7 @@
                   {
                     "group": "General integrations",
                     "pages": [
-                      "oss/python/integrations/chat/index",
+                      "oss/python/integrations/chat/chat_index",
                       "oss/python/integrations/tools/index"
                     ]
                   },
@@ -1210,7 +1210,7 @@
                   {
                     "group": "General integrations",
                     "pages": [
-                      "oss/javascript/integrations/chat/index",
+                      "oss/javascript/integrations/chat/chat_index",
                       "oss/javascript/integrations/tools/index"
                     ]
                   },
