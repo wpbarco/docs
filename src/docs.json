@@ -115,164 +115,141 @@
         "version": "Python",
         "dropdowns": [
           {
-            "dropdown": "LangGraph",
+            "dropdown": "OSS",
             "icon": "/images/brand/langgraph-pill.svg",
-            "description": "Framework for building reliable agents and workflows",
+            "description": "Open source frameworks",
             "tabs": [
               {
-                "tab": "Get started",
+                "tab": "LangChain",
                 "groups": [
                   {
                     "group": "Get started",
                     "pages": [
-                      "oss/python/overview",
-                      "oss/python/quickstart",
-                      "oss/python/run-an-agent",
-                      "oss/python/prebuilt-vs-low-level"
+                      "oss/python/langchain-overview",
+                      "oss/python/langchain-installation",
+                      "oss/python/langchain-quickstart",
+                      "oss/python/langchain-philosophy"
                     ]
                   },
                   {
-                    "group": "Common architectures",
+                    "group": "Core concepts",
                     "pages": [
-                      "oss/python/agentic-architectures",
-                      "oss/python/agentic-rag",
-                      "oss/python/agent-supervisor",
-                      "oss/python/sql-agent"
+                      "oss/python/langchain-models",
+                      "oss/python/langchain-messages",
+                      "oss/python/langchain-tools",
+                      "oss/python/langchain-agents",
+                      "oss/python/langchain-short-term-memory",
+                      "oss/python/langchain-streaming"
                     ]
                   },
                   {
-                    "group": "Additional resources",
+                    "group": "Advanced",
                     "pages": [
-                      "oss/python/case-studies",
-                      "oss/python/template-applications"
+                      "oss/python/langchain-long-term-memory",
+                      "oss/python/langchain-context-engineering",
+                      "oss/python/langchain-structured-output",
+                      "oss/python/langchain-mcp",
+                      "oss/python/langchain-human-in-the-loop",
+                      "oss/python/langchain-multi-agent",
+                      "oss/python/langchain-retrieval",
+                      "oss/python/langchain-runtime"
+                    ]
+                  },
+                  {
+                    "group": "Production",
+                    "pages": [
+                      "oss/python/langchain-studio",
+                      "oss/python/langchain-test",
+                      "oss/python/langchain-deploy",
+                      "oss/python/langchain-observability"
                     ]
                   }
                 ]
               },
               {
-                "tab": "Build agents",
+                "tab": "LangGraph",
                 "groups": [
                   {
-                    "group": "Basic configuration",
+                    "group": "Get started",
                     "pages": [
-                      "oss/python/prebuilts"
+                      "oss/python/langgraph-overview",
+                      "oss/python/langgraph-installation",
+                      "oss/python/langgraph-quickstart",
+                      "oss/python/langgraph-philosophy"
+
                     ]
                   },
                   {
-                    "group": "Low-level configuration",
-                    "pages": [
-                      "oss/python/why-langgraph",
-                      "oss/python/1-build-basic-chatbot",
-                      "oss/python/2-add-tools",
-                      "oss/python/3-add-memory",
-                      "oss/python/4-human-in-the-loop",
-                      "oss/python/5-customize-state",
-                      "oss/python/6-time-travel"
-                    ]
-                  },
-                  {
-                    "group": "Components",
-                    "pages": [
-                      "oss/python/models",
-                      {
-                        "group": "Tools",
+                        "group": "Graph API",
                         "pages": [
-                          "oss/python/tools",
-                          "oss/python/call-tools"
+                          "oss/python/langgraph-graph-api",
+                          "oss/python/langgraph-use-graph-api"
                         ]
                       },
-                      {
-                        "group": "MCP",
-                        "pages": [
-                          "oss/python/mcp",
-                          "oss/python/use-mcp"
-                        ]
-                      },
-                      {
-                        "group": "Multi-agent",
-                        "pages": [
-                          "oss/python/multi-agent",
-                          "oss/python/multi-agent-prebuilts",
-                          "oss/python/multi-agent-custom"
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "tab": "Agent runtime",
-                "groups": [
                   {
                     "group": "Capabilities",
                     "pages": [
-                      "oss/python/persistence",
-                      "oss/python/durable-execution",
+                      "oss/python/langgraph-persistence",
+                      "oss/python/langgraph-durable-execution",
                       {
                         "group": "Streaming",
                         "pages": [
-                          "oss/python/streaming",
-                          "oss/python/use-streaming"
+                          "oss/python/langgraph-streaming",
+                          "oss/python/langgraph-use-streaming"
                         ]
                       },
                       {
                         "group": "Human-in-the-loop",
                         "pages": [
-                          "oss/python/human-in-the-loop",
-                          "oss/python/add-human-in-the-loop"
+                          "oss/python/langgraph-human-in-the-loop",
+                          "oss/python/langgraph-add-human-in-the-loop"
                         ]
                       },
                       {
                         "group": "Time travel",
                         "pages": [
-                          "oss/python/time-travel",
-                          "oss/python/use-time-travel"
+                          "oss/python/langgraph-time-travel",
+                          "oss/python/langgraph-use-time-travel"
                         ]
                       },
                       {
                         "group": "Memory and context",
                         "pages": [
-                          "oss/python/memory",
-                          "oss/python/context",
-                          "oss/python/add-memory"
+                          "oss/python/langgraph-memory",
+                          "oss/python/langgraph-context",
+                          "oss/python/langgraph-add-memory"
                         ]
                       },
                       {
                         "group": "Subgraphs",
                         "pages": [
-                          "oss/python/subgraphs",
-                          "oss/python/use-subgraphs"
+                          "oss/python/langgraph-subgraphs",
+                          "oss/python/langgraph-use-subgraphs"
                         ]
                       }
                     ]
                   },
                   {
-                    "group": "Run and debug",
+                    "group": "Production",
                     "pages": [
-                      "oss/python/local-server",
-                      "oss/python/ui",
-                      "oss/python/trace-agent",
-                      "oss/python/evals"
+                      "oss/python/langgraph-studio",
+                      "oss/python/langgraph-test",
+                      "oss/python/langgraph-deploy",
+                      "oss/python/langgraph-observability"
                     ]
                   },
                   {
                     "group": "LangGraph APIs",
                     "pages": [
-                      {
-                        "group": "Graph API",
-                        "pages": [
-                          "oss/python/graph-api",
-                          "oss/python/use-graph-api"
-                        ]
-                      },
+
                       {
                         "group": "Functional API",
                         "pages": [
-                          "oss/python/functional-api",
-                          "oss/python/use-functional-api"
+                          "oss/python/langgraph-functional-api",
+                          "oss/python/langgraph-use-functional-api"
                         ]
                       },
-                      "oss/python/pregel"
+                      "oss/python/langgraph-pregel"
                     ]
                   }
                 ]
@@ -310,12 +287,12 @@
                   {
                     "group": "Error troubleshooting",
                     "pages": [
-                      "oss/python/common-errors",
-                      "oss/python/GRAPH_RECURSION_LIMIT",
-                      "oss/python/INVALID_CHAT_HISTORY",
-                      "oss/python/INVALID_CONCURRENT_GRAPH_UPDATE",
-                      "oss/python/INVALID_GRAPH_NODE_RETURN_VALUE",
-                      "oss/python/MULTIPLE_SUBGRAPHS"
+                      "oss/python/langgraph-common-errors",
+                      "oss/python/langgraph-GRAPH_RECURSION_LIMIT",
+                      "oss/python/langgraph-INVALID_CHAT_HISTORY",
+                      "oss/python/langgraph-INVALID_CONCURRENT_GRAPH_UPDATE",
+                      "oss/python/langgraph-INVALID_GRAPH_NODE_RETURN_VALUE",
+                      "oss/python/langgraph-MULTIPLE_SUBGRAPHS"
                     ]
                   }
                 ]
