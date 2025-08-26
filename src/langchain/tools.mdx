@@ -2,21 +2,473 @@
 title: Tools
 ---
 
-
 ## Overview
 
-## Defining a tool
+Tools are components that Agents call to perform actions. They extend a model's capabilities beyond text by letting it interact with the world through well-defined inputs and outputs.
 
-## Advanced Usage
+**Key Concepts:**
+- **Tools** are functions with structured inputs/outputs that models can call
+- **Tool calling** is when a model decides to use a tool based on the conversation
+- **Agents** orchestrate multiple tool calls to complete complex tasks
 
-### Tool Node
+## Quick Start
 
-### Accessing Agent State inside a tool
+Here's the fastest way to get a tool-calling agent running:
 
-### Updating Agent State inside a tool
+```python
+from langchain_openai import ChatOpenAI
+from langgraph.prebuilt import create_agent
+from langchain_core.tools import tool
+
+# Create a simple tool
+@tool
+def calculate(expression: str) -> str:
+    """Evaluate a mathematical expression."""
+    try:
+        result = eval(expression)
+        return f"The answer is {result}"
+    except:
+        return "Invalid expression"
+
+# Create an agent equipped with the tool
+model = ChatOpenAI(model="gpt-5")
+agent = create_agent(model, tools=[calculate])
+
+# Use it!
+response = agent.invoke({
+    "messages": [{"role": "user", "content": "What's 42 * 17 + 3?"}]
+})
+print(response["messages"][-1].content)
+# Output: 717
+```
+
+## Creating tools
+
+### Basic tool definition
+
+The simplest way to create a tool is with the `@tool` decorator. By default, the function's docstring becomes the tool's description that helps the model understand when to use it:
+
+```python
+from langchain_core.tools import tool
+
+@tool
+def search_database(query: str, limit: int = 10) -> str:
+    """Search the customer database for records matching the query.
+    
+    Args:
+        query: Search terms to look for
+        limit: Maximum number of results to return
+    """
+    # Your implementation here
+    return f"Found {limit} results for '{query}'"
+```
+
+Type hints are **required** as they define the tool's input schema. The docstring should be informative and concise to help the model understand the tool's purpose.
+
+### Customizing tool properties
+
+#### Custom tool name
+
+By default, the tool name comes from the function name. Override it when you need something more descriptive:
+
+```python
+@tool("web_search")  # Custom name
+def search(query: str) -> str:
+    """Search the web for information."""
+    return f"Results for: {query}"
+
+print(search.name)  # Output: web_search
+```
+
+#### Custom tool description
+
+Override the auto-generated tool description for clearer model guidance:
+
+```python
+@tool(name="calculator", description="Performs arithmetic calculations. Use this for any math problems.")
+def calc(expression: str) -> str:
+    """Evaluate mathematical expressions."""
+    return str(eval(expression))
+```
+
+### Advanced schema definition
+
+For complex inputs, use Pydantic models, Python dataclasses, or typed dictionaries to define detailed schemas:
+
+```python
+from pydantic import BaseModel, Field
+from typing import Literal
+
+class WeatherInput(BaseModel):
+    """Input for weather queries."""
+    location: str = Field(description="City name or coordinates")
+    units: Literal["celsius", "fahrenheit"] = Field(
+        default="celsius",
+        description="Temperature unit preference"
+    )
+    include_forecast: bool = Field(
+        default=False,
+        description="Include 5-day forecast"
+    )
+
+@tool(args_schema=WeatherInput)
+def get_weather(location: str, units: str = "celsius", include_forecast: bool = False) -> str:
+    """Get current weather and optional forecast."""
+    temp = 22 if units == "celsius" else 72
+    result = f"Current weather in {location}: {temp} degrees {units[0].upper()}"
+    if include_forecast:
+        result += "\nNext 5 days: Sunny"
+    return result
+```
+
+## Using tools with LLMs
+
+### Direct tool binding
+
+The simplest integration is binding tools directly to a model. The model can then decide whether to use tools based on the conversation:
+
+```python
+from langchain_openai import ChatOpenAI
+
+model = ChatOpenAI(model="gpt-4")
+model_with_tools = model.bind_tools([search_database, get_weather])
+
+response = model_with_tools.invoke("What's the weather in Paris?")
+```
+
+### Understanding tool calls
+
+When a model calls a tool, the response contains structured tool call information:
+
+```python
+response = model_with_tools.invoke("Search for customers named John")
+
+# The response contains tool_calls when tools are invoked
+if response.tool_calls:
+    tool_call = response.tool_calls[0]
+    # Structure:
+    # {
+    #     'id': 'unique_call_id',
+    #     'function': {
+    #         'name': 'search_database',
+    #         'arguments': '{"query": "John", "limit": 10}'
+    #     },
+    #     'type': 'function'
+    # }
+```
+
+### Forcing tool usage
+
+A key principle of tool calling is that the model decides when to use a tool based on the input's relevance. Sometimes you want to ensure a tool is used:
+
+```python
+# Force specific tool use, even for simple math
+model_forced = model.bind_tools([calculate], tool_choice="calculate")
+response = model_forced.invoke("What's 2+2?")
+
+# Force the model to use any tool
+model_any = model.bind_tools([search_database, calculate], tool_choice="any")
+response = model_any.invoke("Hello")
+```
+
+## Using tools with agents
+
+Agents go beyond simple tool binding by adding reasoning loops, state management, and multi-step execution.
+
+### Why use agents?
+
+**Use agents when you need:**
+
+- Multiple tool calls in sequence
+- Dynamic tool selection based on results
+- Retry logic and error handling
+- State persistence across tool calls
+- Complex reasoning chains
+
+### Creating a ReAct agent
+
+To create a tool-calling agent, you can use LangChain's prebuilt `create_agent`:
+
+```python
+from langgraph.prebuilt import create_agent
+
+# Define multiple tools
+@tool
+def search_products(query: str) -> str:
+    """Search product catalog."""
+    return f"Found 5 products matching '{query}'"
+
+@tool
+def check_inventory(product_id: str) -> str:
+    """Check product availability."""
+    return f"Product {product_id}: 10 units in stock"
+
+@tool
+def calculate_shipping(weight: float, destination: str) -> str:
+    """Calculate shipping cost."""
+    return f"Shipping {weight}kg to {destination}: $15"
+
+# Create agent with multiple tools
+agent = create_agent(
+    model=ChatOpenAI(model="gpt-4"),
+    tools=[search_products, check_inventory, calculate_shipping],
+    prompt="You are a helpful shopping assistant."
+)
+
+# Complex multi-step query
+result = agent.invoke({
+    "messages": [{
+        "role": "user",
+        "content": "Find wireless headphones, check if they're in stock, and calculate shipping to New York"
+    }]
+})
+```
+
+### Understanding agent tool usage
+
+The agent follows a ReAct pattern (Reasoning + Acting):
+
+```python
+# The agent's response contains the full message history:
+result["messages"] = [
+    # Original request
+    HumanMessage(content="Find wireless headphones, check if they're in stock, and calculate shipping to New York"),
+    
+    # Agent decides to search products
+    AIMessage(
+        content="",  # content is empty when calling tools
+        tool_calls=[{
+            'name': 'search_products',
+            'args': {'query': 'wireless headphones'},
+            'id': 'call_abc123'
+        }]
+    ),
+    
+    # Tool returns search results
+    ToolMessage(
+        content="Found 5 products matching 'wireless headphones'",
+        tool_call_id="call_abc123"
+    ),
+    
+    # Agent checks inventory for top result
+    AIMessage(
+        content="",
+        tool_calls=[{
+            'name': 'check_inventory',
+            'args': {'product_id': 'WH-1000XM5'},
+            'id': 'call_def456'
+        }]
+    ),
+    
+    # Tool returns inventory status
+    ToolMessage(
+        content="Product WH-1000XM5: 10 units in stock",
+        tool_call_id="call_def456"
+    ),
+    
+    # Agent's final response to user
+    AIMessage(
+        content="I found wireless headphones (model WH-1000XM5) with 10 units in stock..."
+    )
+]
+```
+
+## Advanced tool patterns
+
+### ToolNode
+
+To execute tools in custom workflows, use the prebuilt `ToolNode` or implement your own custom node.
+
+`ToolNode` is a specialized node for executing tools in a workflow. It provides the following features:
+- Supports both synchronous and asynchronous tools
+- Executes multiple tools concurrently
+- Handles errors during tool execution (`handle_tool_errors=True`, enabled by default)
+
+`ToolNode` operates on `MessagesState`:
+- **Input**: `MessagesState`, where the last message is an `AIMessage` containing the `tool_calls` parameter
+- **Output**: `MessagesState` updated with the resulting `ToolMessage` from executed tools
+
+#### Example: Single tool call
+
+```python
+from langchain_core.messages import AIMessage
+from langgraph.prebuilt import ToolNode
+
+@tool
+def get_weather(location: str):
+    """Call to get the current weather."""
+    if location.lower() in ["sf", "san francisco"]:
+        return "It's 60 degrees and foggy."
+    else:
+        return "It's 90 degrees and sunny."
+
+tool_node = ToolNode([get_weather])
+
+message_with_single_tool_call = AIMessage(
+    content="",
+    tool_calls=[
+        {
+            "name": "get_weather",
+            "args": {"location": "sf"},
+            "id": "tool_call_id",
+            "type": "tool_call",
+        }
+    ],
+)
+
+tool_node.invoke({"messages": [message_with_single_tool_call]})
+```
+Output:
+```
+{'messages': [ToolMessage(content="It's 60 degrees and foggy.", name='get_weather', tool_call_id='tool_call_id')]}
+```
+
+#### Example: Multiple tool calls
+
+```python
+from langchain_core.messages import AIMessage
+from langgraph.prebuilt import ToolNode
+
+def get_weather(location: str):
+    """Call to get the current weather."""
+    if location.lower() in ["sf", "san francisco"]:
+        return "It's 60 degrees and foggy."
+    else:
+        return "It's 90 degrees and sunny."
+
+def get_coolest_cities():
+    """Get a list of coolest cities"""
+    return "nyc, sf"
+
+tool_node = ToolNode([get_weather, get_coolest_cities])
+
+message_with_multiple_tool_calls = AIMessage(
+    content="",
+    tool_calls=[
+        {
+            "name": "get_coolest_cities",
+            "args": {},
+            "id": "tool_call_id_1",
+            "type": "tool_call",
+        },
+        {
+            "name": "get_weather",
+            "args": {"location": "sf"},
+            "id": "tool_call_id_2",
+            "type": "tool_call",
+        },
+    ],
+)
+
+tool_node.invoke({"messages": [message_with_multiple_tool_calls]})
+```
+Output:
+```
+{'messages': [ToolMessage(content='nyc, sf', name='get_coolest_cities', tool_call_id='tool_call_id_1'), ToolMessage(content="It's 60 degrees and foggy.", name='get_weather', tool_call_id='tool_call_id_2')]}
+```
+
+#### Example: Use with an LLM
+
+We can use `ToolNode` to execute the tools once we have a response from the LLM:
+
+```python
+from langchain_openai import ChatOpenAI
+from langgraph.prebuilt import ToolNode
+
+def get_weather(location: str):
+    """Call to get the current weather."""
+    if location.lower() in ["sf", "san francisco"]:
+        return "It's 60 degrees and foggy."
+    else:
+        return "It's 90 degrees and sunny."
+
+tool_node = ToolNode([get_weather])
+
+model = ChatOpenAI(model="gpt-5")
+model_with_tools = model.bind_tools([get_weather])
+
+response_message = model_with_tools.invoke("what's the weather in sf?")
+tool_node.invoke({"messages": [response_message]})
+```
+Output:
+```
+{'messages': [ToolMessage(content="It's 60 degrees and foggy.", name='get_weather', tool_call_id='toolu_01Pnkgw5JeTRxXAU7tyHT4UW')]}
+```
+
+### Accessing agent state inside a tool
+
+Tools can access the current graph state using the `InjectedState` annotation. Note that the state argument is automatically injected and hidden from the LLM's tool schema.
+
+```python
+from typing_extensions import Annotated
+from langchain_core.tools import tool
+from langgraph.prebuilt import InjectedState
+
+@tool
+def state_aware_tool(
+    state: Annotated[dict, InjectedState]
+) -> str:
+    """Tool that can read the full state."""
+    messages = state["messages"]
+    return f"Before this tool call, there were {len(messages)} messages in history"
+
+model = ChatOpenAI(model="gpt-4o")
+agent = create_agent(
+    model,
+    tools=[state_aware_tool],
+)
+agent.invoke(
+    {"messages": [{"role": "user", "content": "How many messages will exist in the state after this conversation?"}]},
+)
+```
+Output:
+```
+{'messages': [HumanMessage(content='How many messages will exist in the state after this conversation?', additional_kwargs={}, response_metadata={}, id='afbb865f-6e64-4137-abea-e7f12b448f6d'),
+  AIMessage(content='', additional_kwargs={'tool_calls': [{'id': 'call_0Q5Rwum8ihfrNI9BGKyXVIN8', 'function': {'arguments': '{}', 'name': 'state_aware_tool'}, 'type': 'function'}], 'refusal': None}, response_metadata={'token_usage': {'completion_tokens': 12, 'prompt_tokens': 53, 'total_tokens': 65, 'completion_tokens_details': {'accepted_prediction_tokens': 0, 'audio_tokens': 0, 'reasoning_tokens': 0, 'rejected_prediction_tokens': 0}, 'prompt_tokens_details': {'audio_tokens': 0, 'cached_tokens': 0}}, 'model_name': 'gpt-4o-2024-08-06', 'system_fingerprint': 'fp_80956533cb', 'id': 'chatcmpl-C8ci4I8VWQcgB8bcKh4KLemh7Y9dE', 'service_tier': 'default', 'finish_reason': 'tool_calls', 'logprobs': None}, id='run--46d853b2-62b6-429c-857e-48ebb7b340d8-0', tool_calls=[{'name': 'state_aware_tool', 'args': {}, 'id': 'call_0Q5Rwum8ihfrNI9BGKyXVIN8', 'type': 'tool_call'}], usage_metadata={'input_tokens': 53, 'output_tokens': 12, 'total_tokens': 65, 'input_token_details': {'audio': 0, 'cache_read': 0}, 'output_token_details': {'audio': 0, 'reasoning': 0}}),
+  ToolMessage(content='Before this tool call, there were 2 messages in history', name='state_aware_tool', id='dc5662a3-cc3e-422c-b289-8f4816353254', tool_call_id='call_0Q5Rwum8ihfrNI9BGKyXVIN8'),
+  AIMessage(content='After this conversation, there will be 4 messages in the state.', additional_kwargs={'refusal': None}, response_metadata={'token_usage': {'completion_tokens': 15, 'prompt_tokens': 87, 'total_tokens': 102, 'completion_tokens_details': {'accepted_prediction_tokens': 0, 'audio_tokens': 0, 'reasoning_tokens': 0, 'rejected_prediction_tokens': 0}, 'prompt_tokens_details': {'audio_tokens': 0, 'cached_tokens': 0}}, 'model_name': 'gpt-4o-2024-08-06', 'system_fingerprint': 'fp_80956533cb', 'id': 'chatcmpl-C8ci4G1mDdRJKFsY3IrCHr5C3hRxm', 'service_tier': 'default', 'finish_reason': 'stop', 'logprobs': None}, id='run--9763acf0-d457-4baf-bf9c-5f345dc06915-0', usage_metadata={'input_tokens': 87, 'output_tokens': 15, 'total_tokens': 102, 'input_token_details': {'audio': 0, 'cache_read': 0}, 'output_token_details': {'audio': 0, 'reasoning': 0}})]}
+```
+
+The conversation flow:
+
+1. **User message**:
+   ```python
+   HumanMessage(content='How many messages will exist in the state after this conversation?', ...)
+   ```
+
+2. **Model calls the tool**:
+   ```python
+   AIMessage(content='', additional_kwargs={'tool_calls': [{'id': 'call_0Q5Rwum8ihfrNI9BGKyXVIN8', 'function': {'arguments': '{}', 'name': 'state_aware_tool'}, 'type': 'function'}], ...})
+   ```
+
+3. **Tool returns result**:
+   ```python
+   ToolMessage(content='Before this tool call, there were 2 messages in history', ...)
+   ```
+
+4. **Model provides final answer**:
+   ```python
+   AIMessage(content='After this conversation, there will be 4 messages in the state.', ...)
+   ```
+
+### Updating agent state inside a tool
+
+TODO
 
 ### Accessing runtime context inside a tool
 
-### Accessing Long Term Memory inside a tool
+TODO
 
-### Updating Long Term Memory inside a tool
+### Accessing long-term memory inside a tool
+
+TODO
+
+### Updating long-term memory inside a tool
+
+TODO
+
+### Handling errors
+
+LangGraph provides built-in error handling for tool execution through the prebuilt ToolNode component, used both independently and in prebuilt agents.
+
+TODO
