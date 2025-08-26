@@ -12,7 +12,7 @@ Refer to the [Prisma and Supabase integration guide](https://supabase.com/docs/g
 
 ### Install Prisma
 
-```bash npm2yarn
+```bash npm
 npm install prisma
 ```
 ### Setup `pgvector` self hosted instance with `docker-compose`
@@ -48,7 +48,7 @@ model Document {
 ```
 Afterwards, create a new migration with `--create-only` to avoid running the migration directly.
 
-```bash npm2yarn
+```bash npm
 npx prisma migrate dev --create-only
 ```
 Add the following line to the newly created migration to enable `pgvector` extension if it hasn't been enabled yet:
@@ -58,7 +58,7 @@ CREATE EXTENSION IF NOT EXISTS vector;
 ```
 Run the migration afterwards:
 
-```bash npm2yarn
+```bash npm
 npx prisma migrate dev
 ```
 ## Usage
@@ -67,7 +67,7 @@ import IntegrationInstallTooltip from '/snippets/javascript-integrations/integra
 
 <IntegrationInstallTooltip/>
 
-```bash npm2yarn
+```bash npm
 npm install @langchain/openai @langchain/community @langchain/core
 ```
 
