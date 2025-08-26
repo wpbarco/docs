@@ -22,17 +22,17 @@ You will also need a Redis instance to connect to. See instructions on [the offi
 Each chat history session stored in Redis must have a unique id. You can provide an optional `sessionTTL` to make sessions expire after a give number of seconds.
 The `config` parameter is passed directly into the `createClient` method of [node-redis](https://github.com/redis/node-redis), and takes all the same arguments.
 
-import Example from "@examples/memory/redis.ts";
+import Redis from "/snippets/javascript-integrations/examples/memory/redis.mdx";
 
-<CodeBlock language="typescript">{Example}</CodeBlock>
+<Redis />
 
 ## Advanced Usage
 
 You can also directly pass in a previously created [node-redis](https://github.com/redis/node-redis) client instance:
 
-import AdvancedExample from "@examples/memory/redis-advanced.ts";
+import RedisAdvanced from "/snippets/javascript-integrations/examples/memory/redis-advanced.mdx";
 
-<CodeBlock language="typescript">{AdvancedExample}</CodeBlock>
+<RedisAdvanced />
 
 ### Redis Sentinel Support
 
@@ -44,6 +44,6 @@ This will require the installation of [ioredis](https://github.com/redis/ioredis
 npm install ioredis
 ```
 
-import RedisSentinel from "@examples/memory/redis-sentinel.ts";
+import RedisSentinel from "/snippets/javascript-integrations/examples/memory/redis-sentinel.mdx";
 
-<CodeBlock language="typescript">{RedisSentinel}</CodeBlock>
+<RedisSentinel />

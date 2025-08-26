@@ -18,57 +18,57 @@ import IntegrationInstallTooltip from '/snippets/javascript-integrations/integra
 npm install @langchain/community @langchain/core
 ```
 
-import UnifiedModelParamsTooltip from "@mdx_components/unified_model_params_tooltip.mdx";
+import UnifiedModelParamsTooltip from "/snippets/javascript-integrations/unified-model-params-tooltip.mdx";
 
-<UnifiedModelParamsTooltip></UnifiedModelParamsTooltip>
+<UnifiedModelParamsTooltip />
 
 ## Basic usage
 
-import Minimax from "@examples/models/chat/integration_minimax.ts";
+import IntegrationMinimax from "/snippets/javascript-integrations/examples/models/chat/integration_minimax.mdx";
 
-<CodeBlock language="typescript">{Minimax}</CodeBlock>
+<IntegrationMinimax />
 
 ## Chain model calls
 
-import MinimaxChain from "@examples/models/chat/minimax_chain.ts";
+import MinimaxChain from "/snippets/javascript-integrations/examples/models/chat/minimax_chain.mdx";
 
-<CodeBlock language="typescript">{MinimaxChain}</CodeBlock>
+<MinimaxChain />
 
 ## With function calls
 
-import MinimaxFunctions from "@examples/models/chat/minimax_functions.ts";
-import MinimaxFunctionsZod from "@examples/models/chat/minimax_functions_zod.ts";
+import MinimaxFunctions from "/snippets/javascript-integrations/examples/models/chat/minimax_functions.mdx";
+import MinimaxFunctionsZod from "/snippets/javascript-integrations/examples/models/chat/minimax_functions_zod.mdx";
 
-<CodeBlock language="typescript">{MinimaxFunctions}</CodeBlock>
+<MinimaxFunctions />
 
 ## Functions with Zod
 
-<CodeBlock language="typescript">{MinimaxFunctionsZod}</CodeBlock>
+<MinimaxFunctionsZod />
 
 ## With glyph
 
 This feature can help users force the model to return content in the requested format.
 
-import MinimaxGlyph from "@examples/models/chat/minimax_glyph.ts";
+import MinimaxGlyph from "/snippets/javascript-integrations/examples/models/chat/minimax_glyph.mdx";
 
-<CodeBlock language="typescript">{MinimaxGlyph}</CodeBlock>
+<MinimaxGlyph />
 
 ## With sample messages
 
 This feature can help the model better understand the return information the user wants to get,
 including but not limited to the content, format, and response mode of the information.
 
-import MinimaxSampleMessages from "@examples/models/chat/minimax_sample_messages.ts";
+import MinimaxSampleMessages from "/snippets/javascript-integrations/examples/models/chat/minimax_sample_messages.mdx";
 
-<CodeBlock language="typescript">{MinimaxSampleMessages}</CodeBlock>
+<MinimaxSampleMessages />
 
 ## With plugins
 
 This feature supports calling tools like a search engine to get additional data that can assist the model.
 
-import MinimaxPlugins from "@examples/models/chat/minimax_plugins.ts";
+import MinimaxPlugins from "/snippets/javascript-integrations/examples/models/chat/minimax_plugins.mdx";
 
-<CodeBlock language="typescript">{MinimaxPlugins}</CodeBlock>
+<MinimaxPlugins />
 
 ## Related
 

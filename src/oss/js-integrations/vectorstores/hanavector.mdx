@@ -20,21 +20,21 @@ npm install -S @langchain/community @langchain/core hdb
 
 You'll also need to have database connection to a HANA Cloud instance.
 
-import EnvVars from "@examples/indexes/vector_stores/hana_vector/.env.example";
+import EnvExample from "/snippets/javascript-integrations/examples/indexes/vector_stores/hana_vector/env_example.mdx";
 
-<CodeBlock language="text">{EnvVars}</CodeBlock>
+<EnvExample />
 
 ## Create a new index from texts
 
-import ExampleTexts from "@examples/indexes/vector_stores/hana_vector/fromTexts.ts";
+import Fromtexts from "/snippets/javascript-integrations/examples/indexes/vector_stores/hana_vector/fromTexts.mdx";
 
-<CodeBlock language="typescript">{ExampleTexts}</CodeBlock>
+<Fromtexts />
 
 ## Create a new index from a loader and perform similarity searches
 
-import ExampleLoader from "@examples/indexes/vector_stores/hana_vector/fromDocs.ts";
+import Fromdocs from "/snippets/javascript-integrations/examples/indexes/vector_stores/hana_vector/fromDocs.mdx";
 
-<CodeBlock language="typescript">{ExampleLoader}</CodeBlock>
+<Fromdocs />
 
 ## Creating an HNSW Vector Index
 
@@ -42,19 +42,17 @@ A vector index can significantly speed up top-k nearest neighbor queries for vec
 
 For more information about creating an index at the database level, such as parameters requirement, please refer to the [official documentation](https://help.sap.com/docs/hana-cloud-database/sap-hana-cloud-sap-hana-database-vector-engine-guide/create-vector-index-statement-data-definition).
 
-import ExampleIndex from "@examples/indexes/vector_stores/hana_vector/createHnswIndex.ts";
+import Createhnswindex from "/snippets/javascript-integrations/examples/indexes/vector_stores/hana_vector/createHnswIndex.mdx";
 
-<CodeBlock language="typescript">{ExampleIndex}</CodeBlock>
+<Createhnswindex />
 
 ## Basic Vectorstore Operations
 
-import ExampleBasic from "@examples/indexes/vector_stores/hana_vector/basics.ts";
+import Basics from "/snippets/javascript-integrations/examples/indexes/vector_stores/hana_vector/basics.mdx";
 
-<CodeBlock language="typescript">{ExampleBasic}</CodeBlock>
+<Basics />
 
 ## Advanced filtering
-
-import { Table, Tr, Th, Td } from "@mdx-js/react";
 
 In addition to the basic value-based filtering capabilities, it is possible to use more advanced filtering. The table below shows the available filter operators.
 
@@ -73,15 +71,15 @@ In addition to the basic value-based filtering capabilities, it is possible to u
 | `$and`     | Logical "and", supporting 2 or more operands                               |
 | `$or`      | Logical "or", supporting 2 or more operands                                |
 
-import ExampleAdvancedFilter from "@examples/indexes/vector_stores/hana_vector/advancedFiltering.ts";
+import Advancedfiltering from "/snippets/javascript-integrations/examples/indexes/vector_stores/hana_vector/advancedFiltering.mdx";
 
-<CodeBlock language="typescript">{ExampleAdvancedFilter}</CodeBlock>
+<Advancedfiltering />
 
 ## Using a VectorStore as a retriever in chains for retrieval augmented generation (RAG)
 
-import ExampleChain from "@examples/indexes/vector_stores/hana_vector/chains.ts";
+import Chains from "/snippets/javascript-integrations/examples/indexes/vector_stores/hana_vector/chains.mdx";
 
-<CodeBlock language="typescript">{ExampleChain}</CodeBlock>
+<Chains />
 
 ## Related
 

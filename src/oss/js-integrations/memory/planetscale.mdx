@@ -25,14 +25,14 @@ You will also need an PlanetScale Account and a database to connect to. See inst
 Each chat history session stored in PlanetScale database must have a unique id.
 The `config` parameter is passed directly into the `new Client()` constructor of [@planetscale/database](https://planetscale.com/docs/tutorials/planetscale-serverless-driver), and takes all the same arguments.
 
-import Example from "@examples/memory/planetscale.ts";
+import Planetscale from "/snippets/javascript-integrations/examples/memory/planetscale.mdx";
 
-<CodeBlock language="typescript">{Example}</CodeBlock>
+<Planetscale />
 
 ## Advanced Usage
 
 You can also directly pass in a previously created [@planetscale/database](https://planetscale.com/docs/tutorials/planetscale-serverless-driver) client instance:
 
-import AdvancedExample from "@examples/memory/planetscale_advanced.ts";
+import PlanetscaleAdvanced from "/snippets/javascript-integrations/examples/memory/planetscale_advanced.mdx";
 
-<CodeBlock language="typescript">{AdvancedExample}</CodeBlock>
+<PlanetscaleAdvanced />

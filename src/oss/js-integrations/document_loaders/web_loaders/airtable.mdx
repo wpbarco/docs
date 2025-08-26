@@ -2,8 +2,6 @@
 title: AirtableLoader
 ---
 
-import loadExample from "@examples/document_loaders/airtable_load";
-
 The `AirtableLoader` class provides functionality to load documents from Airtable tables. It supports two main methods:
 
 1. `load()`: Retrieves all records at once, ideal for small to moderate datasets.
@@ -19,4 +17,6 @@ process.env.AIRTABLE_API_TOKEN = "YOUR_AIRTABLE_API_TOKEN";
 
 ## Usage
 
-<CodeBlock language="typescript">{loadExample}</CodeBlock>
+import AirtableLoader from "/snippets/javascript-integrations/examples/document_loaders/airtable_load.mdx";
+
+<AirtableLoader />
