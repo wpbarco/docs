@@ -11,37 +11,6 @@ Tools are components that Agents call to perform actions. They extend a model's 
 - **Tool calling** is when a model decides to use a tool based on the conversation
 - **Agents** orchestrate multiple tool calls to complete complex tasks
 
-## Quick start
-
-Here's the fastest way to get a tool-calling agent running:
-
-```python
-from langchain_openai import ChatOpenAI
-from langgraph.prebuilt import create_agent
-from langchain_core.tools import tool
-
-# Create a simple tool
-@tool
-def calculate(expression: str) -> str:
-    """Evaluate a mathematical expression."""
-    try:
-        result = eval(expression)
-        return f"The answer is {result}"
-    except:
-        return "Invalid expression"
-
-# Create an agent equipped with the tool
-model = ChatOpenAI(model="gpt-5")
-agent = create_agent(model, tools=[calculate])
-
-# Use it!
-response = agent.invoke({
-    "messages": [{"role": "user", "content": "What's 42 * 17 + 3?"}]
-})
-print(response["messages"][-1].content)
-# Output: 717
-```
-
 ## Creating tools
 
 ### Basic tool definition
@@ -93,9 +62,11 @@ def calc(expression: str) -> str:
 
 ### Advanced schema definition
 
-For complex inputs, use Pydantic models, Python dataclasses, or typed dictionaries to define detailed schemas:
+For complex inputs, use Pydantic models, dataclasses, or typed dictionaries to define detailed schemas:
 
-```python
+<CodeGroup>
+
+```python Pydantic model
 from pydantic import BaseModel, Field
 from typing import Literal
 
@@ -120,6 +91,48 @@ def get_weather(location: str, units: str = "celsius", include_forecast: bool = 
         result += "\nNext 5 days: Sunny"
     return result
 ```
+
+```python Dataclass
+from dataclasses import dataclass
+from typing import Literal
+
+@dataclass
+class WeatherInput:
+    """Input for weather queries."""
+    location: str # City name or coordinates
+    units: Literal["celsius", "fahrenheit"] = "celsius" # Temperature unit preference
+    include_forecast: bool = False # Include 5-day forecast
+
+@tool(args_schema=WeatherInput)
+def get_weather(location: str, units: str = "celsius", include_forecast: bool = False) -> str:
+    """Get current weather and optional forecast."""
+    temp = 22 if units == "celsius" else 72
+    result = f"Current weather in {location}: {temp} degrees {units[0].upper()}"
+    if include_forecast:
+        result += "\nNext 5 days: Sunny"
+    return result
+```
+
+```python Typed dictionary
+from typing import TypedDict
+
+class WeatherInput(TypedDict):
+    """Input for weather queries."""
+    location: str # City name or coordinates
+    units: Literal["celsius", "fahrenheit"] = "celsius" # Temperature unit preference
+    include_forecast: bool = False # Include 5-day forecast
+
+@tool(args_schema=WeatherInput)
+def get_weather(location: str, units: str = "celsius", include_forecast: bool = False) -> str:
+    """Get current weather and optional forecast."""
+    temp = 22 if units == "celsius" else 72
+    result = f"Current weather in {location}: {temp} degrees {units[0].upper()}"
+    if include_forecast:
+        result += "\nNext 5 days: Sunny"
+    return result
+```
+
+</CodeGroup>
 
 ## Using tools with LLMs
 
@@ -277,198 +290,263 @@ result["messages"] = [
 
 ### ToolNode
 
-To execute tools in custom workflows, use the prebuilt `ToolNode` or implement your own custom node.
+For advanced tool execution control in agents, you can configure a custom `ToolNode` and pass it to `create_react_agent`.
 
-`ToolNode` is a specialized node for executing tools in a workflow. It provides the following features:
-- Supports both synchronous and asynchronous tools
-- Executes multiple tools concurrently
-- Handles errors during tool execution (`handle_tool_errors=True`, enabled by default)
+#### Configuration options
 
-`ToolNode` operates on `MessagesState`:
-- **Input**: `MessagesState`, where the last message is an `AIMessage` containing the `tool_calls` parameter
-- **Output**: `MessagesState` updated with the resulting `ToolMessage` from executed tools
-
-#### Example: Single tool call
+`ToolNode` accepts the following parameters:
 
 ```python
-from langchain_core.messages import AIMessage
 from langgraph.prebuilt import ToolNode
 
-@tool
-def get_weather(location: str):
-    """Call to get the current weather."""
-    if location.lower() in ["sf", "san francisco"]:
-        return "It's 60 degrees and foggy."
-    else:
-        return "It's 90 degrees and sunny."
-
-tool_node = ToolNode([get_weather])
-
-message_with_single_tool_call = AIMessage(
-    content="",
-    tool_calls=[
-        {
-            "name": "get_weather",
-            "args": {"location": "sf"},
-            "id": "tool_call_id",
-            "type": "tool_call",
-        }
-    ],
+tool_node = ToolNode(
+    tools=[...],              # List of tools or callables
+    name="tools",             # Node name (default: "tools")
+    tags=["tool-execution"],  # Optional metadata tags for filtering/organization
+    handle_tool_errors=True,  # Error handling configuration (see below)
+    messages_key="messages"   # Key for messages in state (default: "messages")
 )
-
-tool_node.invoke({"messages": [message_with_single_tool_call]})
-```
-Output:
-```
-{'messages': [ToolMessage(content="It's 60 degrees and foggy.", name='get_weather', tool_call_id='tool_call_id')]}
 ```
 
-#### Example: Multiple tool calls
+#### Error handling strategies
+
+`ToolNode` provides built-in error handling for tool execution through its `handle_tool_errors` property.
+
+There are two broad scenarios in which a tool can fail:
+1. The tool call itself fails, e.g. due to a network error;
+2. The model generates tool call arguments that do not match the tool's schema.
+
+The default behavior for each scenario is:
+- Scenario 1: Raises an error
+- Scenario 2: Returns a tool message to the model with a descriptive error, guiding it to correct its mistake.
+
+To customize the error handling behavior, you can configure `handle_tool_errors` to either be a boolean, a string, a callable, an exception type, or a tuple of exception types.
 
 ```python
-from langchain_core.messages import AIMessage
-from langgraph.prebuilt import ToolNode
+# Strategy 1: Retry on all exception types with the default error message template
+tool_node = ToolNode(tools=[my_tool], handle_tool_errors=True)
 
-def get_weather(location: str):
-    """Call to get the current weather."""
-    if location.lower() in ["sf", "san francisco"]:
-        return "It's 60 degrees and foggy."
-    else:
-        return "It's 90 degrees and sunny."
-
-def get_coolest_cities():
-    """Get a list of coolest cities"""
-    return "nyc, sf"
-
-tool_node = ToolNode([get_weather, get_coolest_cities])
-
-message_with_multiple_tool_calls = AIMessage(
-    content="",
-    tool_calls=[
-        {
-            "name": "get_coolest_cities",
-            "args": {},
-            "id": "tool_call_id_1",
-            "type": "tool_call",
-        },
-        {
-            "name": "get_weather",
-            "args": {"location": "sf"},
-            "id": "tool_call_id_2",
-            "type": "tool_call",
-        },
-    ],
+# Strategy 2: Retry on all exception types with a custom message template
+tool_node = ToolNode(
+    tools=[my_tool],
+    handle_tool_errors="I encountered an issue. Please try rephrasing your request."
 )
 
-tool_node.invoke({"messages": [message_with_multiple_tool_calls]})
-```
-Output:
-```
-{'messages': [ToolMessage(content='nyc, sf', name='get_coolest_cities', tool_call_id='tool_call_id_1'), ToolMessage(content="It's 60 degrees and foggy.", name='get_weather', tool_call_id='tool_call_id_2')]}
+# Strategy 3: Retry on ValueError with a custom message, otherwise raise
+def custom_error_handler(e: Exception) -> Optional[str]:
+    if isinstance(e, ValueError):
+        return "Invalid input. Please check your parameters."
+    return None
+
+tool_node = ToolNode(
+    tools=[my_tool],
+    handle_tool_errors=custom_error_handler
+)
+
+# Strategy 4: Retry on ValueError and KeyError with the default error message template, otherwise raise
+tool_node = ToolNode(
+    tools=[my_tool],
+    handle_tool_errors=(ValueError, KeyError)
+)
 ```
 
-#### Example: Use with an LLM
+#### Using with `create_react_agent`
 
-We can use `ToolNode` to execute the tools once we have a response from the LLM:
+Pass a configured `ToolNode` directly to `create_react_agent`:
 
 ```python
 from langchain_openai import ChatOpenAI
-from langgraph.prebuilt import ToolNode
+from langgraph.prebuilt import ToolNode, create_react_agent
 
-def get_weather(location: str):
-    """Call to get the current weather."""
-    if location.lower() in ["sf", "san francisco"]:
-        return "It's 60 degrees and foggy."
-    else:
-        return "It's 90 degrees and sunny."
+@tool
+def search_database(query: str) -> str:
+    """Search the database."""
+    return f"Results for: {query}"
 
-tool_node = ToolNode([get_weather])
+@tool
+def send_email(to: str, subject: str, body: str) -> str:
+    """Send an email."""
+    return f"Email sent to {to}"
 
-model = ChatOpenAI(model="gpt-5")
-model_with_tools = model.bind_tools([get_weather])
+# Configure ToolNode with custom error handling
+tool_node = ToolNode(
+    tools=[search_database, send_email],
+    name="email_tools",
+    handle_tool_errors="Encountered an issue. Let me try a different approach."
+)
 
-response_message = model_with_tools.invoke("what's the weather in sf?")
-tool_node.invoke({"messages": [response_message]})
+# Create agent with the configured ToolNode
+agent = create_react_agent(
+    model=ChatOpenAI(model="gpt-4"),
+    tools=tool_node,  # Pass ToolNode instead of tools list
+    prompt="You are a helpful email assistant."
+)
+
+# The agent will use your custom ToolNode configuration
+result = agent.invoke({
+    "messages": [{"role": "user", "content": "Search for John and email him"}]
+})
 ```
-Output:
-```
-{'messages': [ToolMessage(content="It's 60 degrees and foggy.", name='get_weather', tool_call_id='toolu_01Pnkgw5JeTRxXAU7tyHT4UW')]}
-```
+
+When you pass a `ToolNode` to `create_react_agent`, the agent uses your exact configuration including error handling, custom names, and tags. This is useful when you need fine-grained control over tool execution behavior.
 
 ### Accessing agent state inside a tool
 
-Tools can access the current graph state using the `InjectedState` annotation. Note that the state argument is automatically injected and hidden from the LLM's tool schema.
+Tools can access the current graph state using the `InjectedState` annotation:
 
 ```python
 from typing_extensions import Annotated
-from langchain_core.tools import tool
 from langgraph.prebuilt import InjectedState
 
+# Access the current conversation state
 @tool
-def state_aware_tool(
+def summarize_conversation(
     state: Annotated[dict, InjectedState]
 ) -> str:
-    """Tool that can read the full state."""
+    """Summarize the conversation so far."""
     messages = state["messages"]
-    return f"Before this tool call, there were {len(messages)} messages in history"
+    
+    human_msgs = sum(1 for m in messages if m.__class__.__name__ == "HumanMessage")
+    ai_msgs = sum(1 for m in messages if m.__class__.__name__ == "AIMessage")
+    tool_msgs = sum(1 for m in messages if m.__class__.__name__ == "ToolMessage")
+    
+    return f"Conversation has {human_msgs} user messages, {ai_msgs} AI responses, and {tool_msgs} tool results"
 
-model = ChatOpenAI(model="gpt-5o")
-agent = create_agent(
-    model,
-    tools=[state_aware_tool],
-)
-agent.invoke(
-    {"messages": [{"role": "user", "content": "How many messages will exist in the state after this conversation?"}]},
-)
+# Access custom state fields
+@tool
+def get_user_preference(
+    pref_name: str,
+    preferences: Annotated[dict, InjectedState("user_preferences")]
+) -> str:
+    """Get a user preference value."""
+    return preferences.get(pref_name, "Not set")
 ```
-Output:
-```
-{'messages': [HumanMessage(content='How many messages will exist in the state after this conversation?', additional_kwargs={}, response_metadata={}, id='afbb865f-6e64-4137-abea-e7f12b448f6d'),
-  AIMessage(content='', additional_kwargs={'tool_calls': [{'id': 'call_0Q5Rwum8ihfrNI9BGKyXVIN8', 'function': {'arguments': '{}', 'name': 'state_aware_tool'}, 'type': 'function'}], 'refusal': None}, response_metadata={'token_usage': {'completion_tokens': 12, 'prompt_tokens': 53, 'total_tokens': 65, 'completion_tokens_details': {'accepted_prediction_tokens': 0, 'audio_tokens': 0, 'reasoning_tokens': 0, 'rejected_prediction_tokens': 0}, 'prompt_tokens_details': {'audio_tokens': 0, 'cached_tokens': 0}}, 'model_name': 'gpt-5o-2024-08-06', 'system_fingerprint': 'fp_80956533cb', 'id': 'chatcmpl-C8ci4I8VWQcgB8bcKh4KLemh7Y9dE', 'service_tier': 'default', 'finish_reason': 'tool_calls', 'logprobs': None}, id='run--46d853b2-62b6-429c-857e-48ebb7b340d8-0', tool_calls=[{'name': 'state_aware_tool', 'args': {}, 'id': 'call_0Q5Rwum8ihfrNI9BGKyXVIN8', 'type': 'tool_call'}], usage_metadata={'input_tokens': 53, 'output_tokens': 12, 'total_tokens': 65, 'input_token_details': {'audio': 0, 'cache_read': 0}, 'output_token_details': {'audio': 0, 'reasoning': 0}}),
-  ToolMessage(content='Before this tool call, there were 2 messages in history', name='state_aware_tool', id='dc5662a3-cc3e-422c-b289-8f4816353254', tool_call_id='call_0Q5Rwum8ihfrNI9BGKyXVIN8'),
-  AIMessage(content='After this conversation, there will be 4 messages in the state.', additional_kwargs={'refusal': None}, response_metadata={'token_usage': {'completion_tokens': 15, 'prompt_tokens': 87, 'total_tokens': 102, 'completion_tokens_details': {'accepted_prediction_tokens': 0, 'audio_tokens': 0, 'reasoning_tokens': 0, 'rejected_prediction_tokens': 0}, 'prompt_tokens_details': {'audio_tokens': 0, 'cached_tokens': 0}}, 'model_name': 'gpt-5o-2024-08-06', 'system_fingerprint': 'fp_80956533cb', 'id': 'chatcmpl-C8ci4G1mDdRJKFsY3IrCHr5C3hRxm', 'service_tier': 'default', 'finish_reason': 'stop', 'logprobs': None}, id='run--9763acf0-d457-4baf-bf9c-5f345dc06915-0', usage_metadata={'input_tokens': 87, 'output_tokens': 15, 'total_tokens': 102, 'input_token_details': {'audio': 0, 'cache_read': 0}, 'output_token_details': {'audio': 0, 'reasoning': 0}})]}
-```
-
-The conversation flow:
-
-1. **User message**:
-   ```python
-   HumanMessage(content='How many messages will exist in the state after this conversation?', ...)
-   ```
-
-2. **Model calls the tool**:
-   ```python
-   AIMessage(content='', additional_kwargs={'tool_calls': [{'id': 'call_0Q5Rwum8ihfrNI9BGKyXVIN8', 'function': {'arguments': '{}', 'name': 'state_aware_tool'}, 'type': 'function'}], ...})
-   ```
-
-3. **Tool returns result**:
-   ```python
-   ToolMessage(content='Before this tool call, there were 2 messages in history', ...)
-   ```
-
-4. **Model provides final answer**:
-   ```python
-   AIMessage(content='After this conversation, there will be 4 messages in the state.', ...)
-   ```
+**Important:** State-injected arguments are hidden from the model. It only sees `pref_name` in the tool schema.
 
 ### Updating agent state inside a tool
 
-TODO
+Use a tool that returns a `Command` to update the agent state:
+
+```python
+from langgraph.types import Command
+from langchain_core.messages import ToolMessage
+from langchain_core.tools import InjectedToolCallId
+from langgraph.graph.message import RemoveMessage, REMOVE_ALL_MESSAGES
+
+# Update the conversation history by removing all messages
+@tool
+def clear_conversation() -> Command:
+    """Clear the conversation history."""
+    
+    return Command(
+        update={
+            "messages": [RemoveMessage(id=REMOVE_ALL_MESSAGES)],
+        }
+    )
+
+# Update the user_name in the agent state
+@tool
+def update_user_name(
+    new_name: str,
+    tool_call_id: Annotated[dict, InjectedToolCallId]
+) -> Command:
+    """Update the user's name."""
+    return Command(update={"user_name": new_name})
+```
 
 ### Accessing runtime context inside a tool
 
-TODO
+Tools may sometimes require immutable context data, such as runtime-only arguments (e.g., user IDs or session details), that should not be controlled by the model. This can be achieved with `get_runtime`:
+
+```python
+from dataclasses import dataclass
+from langchain_openai import ChatOpenAI
+from langgraph.prebuilt import create_agent
+from langchain_core.tools import tool
+from langgraph.runtime import get_runtime
+
+@dataclass
+class ContextSchema:
+    user_name: str
+
+@tool
+def get_user_name(
+) -> str:
+    """Get the user's name."""
+    runtime = get_runtime(ContextSchema)
+    return runtime.context.user_name
+
+model = ChatOpenAI(model="gpt-4o")
+agent = create_agent(
+    model,
+    tools=[get_user_name],
+    context_schema=ContextSchema
+)
+agent.invoke(
+    {"messages": [{"role": "user", "content": "What is my name?"}]},
+    context=ContextSchema(user_name="John Smith")
+)
+```
 
 ### Accessing long-term memory inside a tool
 
-TODO
+Tools may also require access to your agent's long-term memory store, e.g. user-specific or application-specific data stored across conversations. This can be achieved by using `get_store`:
+
+```python
+from langgraph.config import get_store
+
+@tool
+def get_user_info(user_id: str) -> str:
+    """Look up user info."""
+    store = get_store()
+    user_info = store.get(("users",), user_id)
+    return str(user_info.value) if user_info else "Unknown user"
+```
 
 ### Updating long-term memory inside a tool
 
-TODO
+To update long-term memory, you can use the `.put()` method of `InMemoryStore`. A full example of persistent memory across sessions:
 
-### Handling errors
+```python expandable
+from typing import Any
+from langgraph.prebuilt import InjectedStore
+from langgraph.config import get_store
+from langgraph.store.memory import InMemoryStore
 
-LangGraph provides built-in error handling for tool execution through the prebuilt ToolNode component, used both independently and in prebuilt agents.
+@tool
+def get_user_info(user_id: str) -> str:
+    """Look up user info."""
+    store = get_store()
+    user_info = store.get(("users",), user_id)
+    return str(user_info.value) if user_info else "Unknown user"
 
-TODO
+@tool
+def save_user_info(user_id: str, user_info: dict[str, Any]) -> str:
+    """Save user info."""
+    store = get_store()
+    store.put(("users",), user_id, user_info)
+    return "Successfully saved user info."
+
+store = InMemoryStore()
+agent = create_react_agent(
+    model,
+    tools=[get_user_info, save_user_info],
+    store=store
+)
+
+# First session: save user info
+agent.invoke({
+    "messages": [{"role": "user", "content": "Save the following user: userid: abc123, name: Foo, age: 25, email: foo@langchain.dev"}]
+})
+
+# Second session: get user info
+agent.invoke({
+    "messages": [{"role": "user", "content": "Get user info for user with id 'abc123'"}]
+})
+
+# Output:
+# Here is the user info for user with ID "abc123":
+# - Name: Foo
+# - Age: 25
+# - Email: foo@langchain.dev
+```
