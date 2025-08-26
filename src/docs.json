@@ -255,6 +255,40 @@
                 ]
               },
               {
+                "tab": "Integrations",
+                "groups": [
+                  {
+                    "group": "Providers",
+                    "pages": [
+                      "oss/python/integrations/providers/anthropic",
+                      "oss/python/integrations/providers/aws",
+                      "oss/python/integrations/providers/google",
+                      "oss/python/integrations/providers/huggingface",
+                      "oss/python/integrations/providers/microsoft",
+                      "oss/python/integrations/providers/openai",
+                      "oss/python/integrations/providers/all_providers"
+                    ]
+                  },
+                  {
+                    "group": "General integrations",
+                    "pages": [
+                      "oss/python/integrations/chat/index",
+                      "oss/python/integrations/tools/index"
+                    ]
+                  },
+                  {
+                    "group": "RAG integrations",
+                    "pages": [
+                      "oss/python/integrations/retrievers/index",
+                      "oss/python/integrations/splitters/text_splitters",
+                      "oss/python/integrations/text_embedding/index",
+                      "oss/python/integrations/vectorstores/index",
+                      "oss/python/integrations/document_loaders/index"
+                    ]
+                  }
+                ]
+              },
+              {
                 "tab": "Reference",
                 "groups": [
                   {
@@ -1024,26 +1058,26 @@
                   {
                     "group": "Get started",
                     "pages": [
-                      "oss/javascript/overview",
-                      "oss/javascript/quickstart",
-                      "oss/javascript/run-an-agent",
-                      "oss/javascript/prebuilt-vs-low-level"
+                      "oss/javascript/langgraph-overview",
+                      "oss/javascript/langgraph-quickstart",
+                      "oss/javascript/langgraph-run-an-agent",
+                      "oss/javascript/langgraph-prebuilt-vs-low-level"
                     ]
                   },
                   {
                     "group": "Common architectures",
                     "pages": [
-                      "oss/javascript/agentic-architectures",
-                      "oss/javascript/agentic-rag",
-                      "oss/javascript/agent-supervisor",
-                      "oss/javascript/sql-agent"
+                      "oss/javascript/langgraph-agentic-architectures",
+                      "oss/javascript/langgraph-agentic-rag",
+                      "oss/javascript/langgraph-agent-supervisor",
+                      "oss/javascript/langgraph-sql-agent"
                     ]
                   },
                   {
                     "group": "Additional resources",
                     "pages": [
-                      "oss/javascript/case-studies",
-                      "oss/javascript/template-applications"
+                      "oss/javascript/langgraph-case-studies",
+                      "oss/javascript/langgraph-template-applications"
                     ]
                   }
                 ]
@@ -1054,45 +1088,45 @@
                   {
                     "group": "Basic configuration",
                     "pages": [
-                      "oss/javascript/prebuilts"
+                      "oss/javascript/langgraph-prebuilts"
                     ]
                   },
                   {
                     "group": "Low-level configuration",
                     "pages": [
-                      "oss/javascript/why-langgraph",
-                      "oss/javascript/1-build-basic-chatbot",
-                      "oss/javascript/2-add-tools",
-                      "oss/javascript/3-add-memory",
-                      "oss/javascript/4-human-in-the-loop",
-                      "oss/javascript/5-customize-state",
-                      "oss/javascript/6-time-travel"
+                      "oss/javascript/langgraph-why-langgraph",
+                      "oss/javascript/langgraph-1-build-basic-chatbot",
+                      "oss/javascript/langgraph-2-add-tools",
+                      "oss/javascript/langgraph-3-add-memory",
+                      "oss/javascript/langgraph-4-human-in-the-loop",
+                      "oss/javascript/langgraph-5-customize-state",
+                      "oss/javascript/langgraph-6-time-travel"
                     ]
                   },
                   {
                     "group": "Components",
                     "pages": [
-                      "oss/javascript/models",
+                      "oss/javascript/langgraph-models",
                       {
                         "group": "Tools",
                         "pages": [
-                          "oss/javascript/tools",
-                          "oss/javascript/call-tools"
+                          "oss/javascript/langgraph-tools",
+                          "oss/javascript/langgraph-call-tools"
                         ]
                       },
                       {
                         "group": "MCP",
                         "pages": [
-                          "oss/javascript/mcp",
-                          "oss/javascript/use-mcp"
+                          "oss/javascript/langgraph-mcp",
+                          "oss/javascript/langgraph-use-mcp"
                         ]
                       },
                       {
                         "group": "Multi-agent",
                         "pages": [
-                          "oss/javascript/multi-agent",
-                          "oss/javascript/multi-agent-prebuilts",
-                          "oss/javascript/multi-agent-custom"
+                          "oss/javascript/langgraph-multi-agent",
+                          "oss/javascript/langgraph-multi-agent-prebuilts",
+                          "oss/javascript/langgraph-multi-agent-custom"
                         ]
                       }
                     ]
@@ -1105,42 +1139,42 @@
                   {
                     "group": "Capabilities",
                     "pages": [
-                      "oss/javascript/persistence",
-                      "oss/javascript/durable-execution",
+                      "oss/javascript/langgraph-persistence",
+                      "oss/javascript/langgraph-durable-execution",
                       {
                         "group": "Streaming",
                         "pages": [
-                          "oss/javascript/streaming",
-                          "oss/javascript/use-streaming"
+                          "oss/javascript/langgraph-streaming",
+                          "oss/javascript/langgraph-use-streaming"
                         ]
                       },
                       {
                         "group": "Human-in-the-loop",
                         "pages": [
-                          "oss/javascript/human-in-the-loop",
-                          "oss/javascript/add-human-in-the-loop"
+                          "oss/javascript/langgraph-human-in-the-loop",
+                          "oss/javascript/langgraph-add-human-in-the-loop"
                         ]
                       },
                       {
                         "group": "Time travel",
                         "pages": [
-                          "oss/javascript/time-travel",
-                          "oss/javascript/use-time-travel"
+                          "oss/javascript/langgraph-time-travel",
+                          "oss/javascript/langgraph-use-time-travel"
                         ]
                       },
                       {
                         "group": "Memory and context",
                         "pages": [
-                          "oss/javascript/memory",
-                          "oss/javascript/context",
-                          "oss/javascript/add-memory"
+                          "oss/javascript/langgraph-memory",
+                          "oss/javascript/langgraph-context",
+                          "oss/javascript/langgraph-add-memory"
                         ]
                       },
                       {
                         "group": "Subgraphs",
                         "pages": [
-                          "oss/javascript/subgraphs",
-                          "oss/javascript/use-subgraphs"
+                          "oss/javascript/langgraph-subgraphs",
+                          "oss/javascript/langgraph-use-subgraphs"
                         ]
                       }
                     ]
@@ -1148,10 +1182,10 @@
                   {
                     "group": "Run and debug",
                     "pages": [
-                      "oss/javascript/local-server",
-                      "oss/javascript/ui",
-                      "oss/javascript/trace-agent",
-                      "oss/javascript/evals"
+                      "oss/javascript/langgraph-local-server",
+                      "oss/javascript/langgraph-ui",
+                      "oss/javascript/langgraph-trace-agent",
+                      "oss/javascript/langgraph-evals"
                     ]
                   },
                   {
@@ -1160,18 +1194,57 @@
                       {
                         "group": "Graph API",
                         "pages": [
-                          "oss/javascript/graph-api",
-                          "oss/javascript/use-graph-api"
+                          "oss/javascript/langgraph-graph-api",
+                          "oss/javascript/langgraph-use-graph-api"
                         ]
                       },
                       {
                         "group": "Functional API",
                         "pages": [
-                          "oss/javascript/functional-api",
-                          "oss/javascript/use-functional-api"
+                          "oss/javascript/langgraph-functional-api",
+                          "oss/javascript/langgraph-use-functional-api"
                         ]
                       },
-                      "oss/javascript/pregel"
+                      "oss/javascript/langgraph-pregel"
+                    ]
+                  }
+                ]
+              },
+              {
+                "tab": "Integrations",
+                "groups": [
+                  {
+                    "group": "Providers",
+                    "pages": [
+                      "oss/javascript/js-integrations/platforms/anthropic",
+                      "oss/javascript/js-integrations/platforms/aws",
+                      "oss/javascript/js-integrations/platforms/google",
+                      "oss/javascript/js-integrations/platforms/microsoft",
+                      "oss/javascript/js-integrations/platforms/openai"
+                    ]
+                  },
+                  {
+                    "group": "General integrations",
+                    "pages": [
+                      "oss/javascript/js-integrations/chat/index",
+                      "oss/javascript/js-integrations/tools/index"
+                    ]
+                  },
+                  {
+                    "group": "RAG integrations",
+                    "pages": [
+                      "oss/javascript/js-integrations/retrievers/index",
+                      "oss/javascript/js-integrations/splitters/text_splitters",
+                      "oss/javascript/js-integrations/text_embedding/index",
+                      "oss/javascript/js-integrations/vectorstores/index",
+                      {
+                        "group": "Document loaders",
+                        "pages": [
+                          "oss/javascript/js-integrations/document_loaders/index",
+                          "oss/javascript/js-integrations/document_loaders/file_loaders/index",
+                          "oss/javascript/js-integrations/document_loaders/web_loaders/index"
+                        ]
+                      }
                     ]
                   }
                 ]
