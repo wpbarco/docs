@@ -11,7 +11,7 @@ Tools are components that Agents call to perform actions. They extend a model's 
 - **Tool calling** is when a model decides to use a tool based on the conversation
 - **Agents** orchestrate multiple tool calls to complete complex tasks
 
-## Quick Start
+## Quick start
 
 Here's the fastest way to get a tool-calling agent running:
 
@@ -130,10 +130,10 @@ The simplest integration is binding tools directly to a model. The model can the
 ```python
 from langchain_openai import ChatOpenAI
 
-model = ChatOpenAI(model="gpt-4")
+model = ChatOpenAI(model="gpt-5")
 model_with_tools = model.bind_tools([search_database, get_weather])
 
-response = model_with_tools.invoke("What's the weather in Paris?")
+response = model_with_tools.invoke("What's the weather in Sydney?")
 ```
 
 ### Understanding tool calls
@@ -210,7 +210,7 @@ def calculate_shipping(weight: float, destination: str) -> str:
 
 # Create agent with multiple tools
 agent = create_agent(
-    model=ChatOpenAI(model="gpt-4"),
+    model=ChatOpenAI(model="gpt-5"),
     tools=[search_products, check_inventory, calculate_shipping],
     prompt="You are a helpful shopping assistant."
 )
@@ -412,7 +412,7 @@ def state_aware_tool(
     messages = state["messages"]
     return f"Before this tool call, there were {len(messages)} messages in history"
 
-model = ChatOpenAI(model="gpt-4o")
+model = ChatOpenAI(model="gpt-5o")
 agent = create_agent(
     model,
     tools=[state_aware_tool],
@@ -424,9 +424,9 @@ agent.invoke(
 Output:
 ```
 {'messages': [HumanMessage(content='How many messages will exist in the state after this conversation?', additional_kwargs={}, response_metadata={}, id='afbb865f-6e64-4137-abea-e7f12b448f6d'),
-  AIMessage(content='', additional_kwargs={'tool_calls': [{'id': 'call_0Q5Rwum8ihfrNI9BGKyXVIN8', 'function': {'arguments': '{}', 'name': 'state_aware_tool'}, 'type': 'function'}], 'refusal': None}, response_metadata={'token_usage': {'completion_tokens': 12, 'prompt_tokens': 53, 'total_tokens': 65, 'completion_tokens_details': {'accepted_prediction_tokens': 0, 'audio_tokens': 0, 'reasoning_tokens': 0, 'rejected_prediction_tokens': 0}, 'prompt_tokens_details': {'audio_tokens': 0, 'cached_tokens': 0}}, 'model_name': 'gpt-4o-2024-08-06', 'system_fingerprint': 'fp_80956533cb', 'id': 'chatcmpl-C8ci4I8VWQcgB8bcKh4KLemh7Y9dE', 'service_tier': 'default', 'finish_reason': 'tool_calls', 'logprobs': None}, id='run--46d853b2-62b6-429c-857e-48ebb7b340d8-0', tool_calls=[{'name': 'state_aware_tool', 'args': {}, 'id': 'call_0Q5Rwum8ihfrNI9BGKyXVIN8', 'type': 'tool_call'}], usage_metadata={'input_tokens': 53, 'output_tokens': 12, 'total_tokens': 65, 'input_token_details': {'audio': 0, 'cache_read': 0}, 'output_token_details': {'audio': 0, 'reasoning': 0}}),
+  AIMessage(content='', additional_kwargs={'tool_calls': [{'id': 'call_0Q5Rwum8ihfrNI9BGKyXVIN8', 'function': {'arguments': '{}', 'name': 'state_aware_tool'}, 'type': 'function'}], 'refusal': None}, response_metadata={'token_usage': {'completion_tokens': 12, 'prompt_tokens': 53, 'total_tokens': 65, 'completion_tokens_details': {'accepted_prediction_tokens': 0, 'audio_tokens': 0, 'reasoning_tokens': 0, 'rejected_prediction_tokens': 0}, 'prompt_tokens_details': {'audio_tokens': 0, 'cached_tokens': 0}}, 'model_name': 'gpt-5o-2024-08-06', 'system_fingerprint': 'fp_80956533cb', 'id': 'chatcmpl-C8ci4I8VWQcgB8bcKh4KLemh7Y9dE', 'service_tier': 'default', 'finish_reason': 'tool_calls', 'logprobs': None}, id='run--46d853b2-62b6-429c-857e-48ebb7b340d8-0', tool_calls=[{'name': 'state_aware_tool', 'args': {}, 'id': 'call_0Q5Rwum8ihfrNI9BGKyXVIN8', 'type': 'tool_call'}], usage_metadata={'input_tokens': 53, 'output_tokens': 12, 'total_tokens': 65, 'input_token_details': {'audio': 0, 'cache_read': 0}, 'output_token_details': {'audio': 0, 'reasoning': 0}}),
   ToolMessage(content='Before this tool call, there were 2 messages in history', name='state_aware_tool', id='dc5662a3-cc3e-422c-b289-8f4816353254', tool_call_id='call_0Q5Rwum8ihfrNI9BGKyXVIN8'),
-  AIMessage(content='After this conversation, there will be 4 messages in the state.', additional_kwargs={'refusal': None}, response_metadata={'token_usage': {'completion_tokens': 15, 'prompt_tokens': 87, 'total_tokens': 102, 'completion_tokens_details': {'accepted_prediction_tokens': 0, 'audio_tokens': 0, 'reasoning_tokens': 0, 'rejected_prediction_tokens': 0}, 'prompt_tokens_details': {'audio_tokens': 0, 'cached_tokens': 0}}, 'model_name': 'gpt-4o-2024-08-06', 'system_fingerprint': 'fp_80956533cb', 'id': 'chatcmpl-C8ci4G1mDdRJKFsY3IrCHr5C3hRxm', 'service_tier': 'default', 'finish_reason': 'stop', 'logprobs': None}, id='run--9763acf0-d457-4baf-bf9c-5f345dc06915-0', usage_metadata={'input_tokens': 87, 'output_tokens': 15, 'total_tokens': 102, 'input_token_details': {'audio': 0, 'cache_read': 0}, 'output_token_details': {'audio': 0, 'reasoning': 0}})]}
+  AIMessage(content='After this conversation, there will be 4 messages in the state.', additional_kwargs={'refusal': None}, response_metadata={'token_usage': {'completion_tokens': 15, 'prompt_tokens': 87, 'total_tokens': 102, 'completion_tokens_details': {'accepted_prediction_tokens': 0, 'audio_tokens': 0, 'reasoning_tokens': 0, 'rejected_prediction_tokens': 0}, 'prompt_tokens_details': {'audio_tokens': 0, 'cached_tokens': 0}}, 'model_name': 'gpt-5o-2024-08-06', 'system_fingerprint': 'fp_80956533cb', 'id': 'chatcmpl-C8ci4G1mDdRJKFsY3IrCHr5C3hRxm', 'service_tier': 'default', 'finish_reason': 'stop', 'logprobs': None}, id='run--9763acf0-d457-4baf-bf9c-5f345dc06915-0', usage_metadata={'input_tokens': 87, 'output_tokens': 15, 'total_tokens': 102, 'input_token_details': {'audio': 0, 'cache_read': 0}, 'output_token_details': {'audio': 0, 'reasoning': 0}})]}
 ```
 
 The conversation flow:
