@@ -298,7 +298,7 @@ The `configuration` field also accepts other `ClientOptions` parameters accepted
 If you are using the deprecated Azure OpenAI SDK with the `@langchain/azure-openai` package, you can update your code to use the new Azure integration following these steps:
 
 1. Install the new `@langchain/openai` package and remove the previous `@langchain/azure-openai` package:
-   ```bash npm2yarn
+   ```bash npm
    npm install @langchain/openai
    npm uninstall @langchain/azure-openai
    ```

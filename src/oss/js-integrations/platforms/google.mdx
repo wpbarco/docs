@@ -18,7 +18,7 @@ import IntegrationInstallTooltip from '/snippets/integration_install_tooltip.mdx
 <Tab title="GenAI">
 <IntegrationInstallTooltip/>
 
-```bash npm2yarn
+```bash npm
 npm install @langchain/google-genai @langchain/core
 ```
 Configure your API key.
@@ -78,7 +78,7 @@ const res = await visionModel.invoke(input2);
 <Tab title="VertexAI">
 <IntegrationInstallTooltip/>
 
-```bash npm2yarn
+```bash npm
 npm install @langchain/google-vertexai @langchain/core
 ```
 Then, you'll need to add your service account credentials, either directly as a `GOOGLE_VERTEX_AI_WEB_CREDENTIALS` environment variable:
@@ -155,7 +155,7 @@ class that works with both Vertex AI and the AI Studio APIs.)
 **Since Gemma is an open model, it may also be available from other platforms** including [Ollama](/oss/integrations/chat/ollama/).
 </Tip>
 
-```bash npm2yarn
+```bash npm
 npm install @langchain/google-gauth @langchain/core
 ```
 Configure your API key.
