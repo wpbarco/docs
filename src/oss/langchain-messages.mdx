@@ -341,137 +341,106 @@ if response.tool_calls:
 
 ## Content Blocks
 
-Content blocks enable rich, multimodal interactions by allowing messages to contain images, documents, audio, and other media types alongside text.
+Content blocks enable **provider-agnostic** multimodal interactions. Instead of handling different image formats, audio types, and document structures across providers, content blocks provide a unified interface that works everywhere (supported).
 
 TODO link out to guide
 
-### Text Content Blocks
+### Why Content Blocks Matter
+
+TODO this needs to be a gif that shows the massive differences at a glance
 
 ```python
-# Simple text content
-message = HumanMessage("Hello world")
+# ❌ Provider-specific multimodal handling
+openai_message = {
+    "role": "user", 
+    "content": [
+        {"type": "text", "text": "What's in this image?"}, 
+        {"type": "image_url", "image_url": {"url": "..."}}  # OpenAI format
+    ]
+}
 
-# Multi-part content with blocks
-message = HumanMessage([
-    {"type": "text", "text": "Please analyze this image:"},
-    {"type": "image", "source_type": "url", "url": "https://example.com/image.jpg"}
-])
-```
+anthropic_message = {
+    "role": "user",
+    "content": [
+        {"type": "text", "text": "What's in this image?"},
+        {"type": "image", "source": {"type": "url", "media_type": "image/jpeg", "url": "..."}}  # Anthropic format
+    ]
+}
 
-### Image Content Blocks
-
-```python
-import base64
-import httpx
-
-# Image from URL
-image_message = HumanMessage([
-    {"type": "text", "text": "Describe this image:"},
-    {
-        "type": "image",
-        "source_type": "url",
-        "url": "https://example.com/photo.jpg"
-    }
-])
-
-# Image from base64 data
-image_data = base64.b64encode(httpx.get("https://example.com/photo.jpg").content).decode("utf-8")
-image_message = HumanMessage([
+# ✅ Universal content blocks
+universal_message = HumanMessage([
     {"type": "text", "text": "What's in this image?"},
-    {
-        "type": "image",
-        "source_type": "base64",
-        "data": image_data,
-        "mime_type": "image/jpeg"
-    }
-])
-
-response = model.invoke([image_message])
-```
-
-### Document Content Blocks
-
-```python
-# PDF document from base64
-pdf_data = base64.b64encode(open("document.pdf", "rb").read()).decode("utf-8")
-
-document_message = HumanMessage([
-    {"type": "text", "text": "Summarize this document:"},
-    {
-        "type": "file",
-        "source_type": "base64",
-        "data": pdf_data,
-        "mime_type": "application/pdf",
-        "filename": "report.pdf"  # Required for some providers
-    }
-])
-
-response = model.invoke([document_message])
-```
-
-### Audio Content Blocks
-
-```python
-# Audio analysis
-audio_data = base64.b64encode(open("recording.wav", "rb").read()).decode("utf-8")
-
-audio_message = HumanMessage([
-    {"type": "text", "text": "Transcribe this audio:"},
-    {
-        "type": "audio",
-        "source_type": "base64",
-        "data": audio_data,
-        "mime_type": "audio/wav"
-    }
-])
-
-response = model.invoke([audio_message])
-```
-
-### Provider-Specific Features
-
-Content blocks can include provider-specific features:
-
-```python
-# Anthropic prompt caching
-cached_message = HumanMessage([
-    {"type": "text", "text": "Analyze this large document:"},
-    {
-        "type": "file", 
-        "source_type": "base64",
-        "data": large_document_data,
-        "mime_type": "application/pdf",
-        "cache_control": {"type": "ephemeral"}  # Cache for reuse
-    }
-])
-
-# Anthropic citations
-cited_message = HumanMessage([
-    {"type": "text", "text": "Summarize with citations:"},
-    {
-        "type": "file",
-        "source_type": "base64", 
-        "data": document_data,
-        "mime_type": "application/pdf",
-        "citations": {"enabled": True}  # Enable citation tracking
-    }
+    {"type": "image", "source_type": "url", "url": "..."}  # Works with any provider
 ])
 ```
 
-### Complex Multimodal Interactions
+### Standard Content Types
+
+TODO switcher to show different content types
 
 ```python
-# Multi-step analysis with mixed content
-analysis_message = HumanMessage([
-    {"type": "text", "text": "Compare these materials:"},
-    {"type": "image", "source_type": "url", "url": "chart1.jpg"},
-    {"type": "image", "source_type": "url", "url": "chart2.jpg"}, 
-    {"type": "text", "text": "Also reference this report:"},
-    {"type": "file", "source_type": "base64", "data": report_data, "mime_type": "application/pdf"},
-    {"type": "text", "text": "Provide a comprehensive analysis with recommendations."}
+# Text content
+{"type": "text", "text": "Hello world"}
+
+# Images (URL or base64)  
+{"type": "image", "source_type": "url", "url": "https://..."}
+{"type": "image", "source_type": "base64", "data": "...", "mime_type": "image/jpeg"}
+
+# Documents
+{"type": "file", "source_type": "base64", "data": "...", "mime_type": "application/pdf"}
+
+# Audio
+{"type": "audio", "source_type": "base64", "data": "...", "mime_type": "audio/wav"}
+```
+
+### Multimodal Message Example
+
+```python
+# Combine multiple content types in one message
+multimodal_message = HumanMessage([
+    {"type": "text", "text": "Compare this image and document:"},
+    {"type": "image", "source_type": "url", "url": "chart.jpg"},
+    {"type": "file", "source_type": "base64", "data": pdf_data, "mime_type": "application/pdf"},
+    {"type": "text", "text": "Which data source is more reliable?"}
 ])
 
-response = model.invoke([analysis_message])
+# Works with any compatible model
+response = model.invoke([multimodal_message])
+```
+
+### Rich Model Responses
+
+With `output_version="v1"`, models return structured content blocks:
+
+```python
+model = ChatOpenAI(output_version="v1")
+response = model.invoke("Analyze the sales data and show your reasoning")
+
+# Response contains structured blocks
+for block in response.content_blocks:
+    if block["type"] == "reasoning":
+        print(f"Model reasoning: {block['reasoning']}")
+    elif block["type"] == "text": 
+        print(f"Final answer: {block['text']}")
+    elif block["type"] == "tool_call":
+        print(f"Tool used: {block['name']} with {block['args']}")
+```
+
+### Advanced Block Types
+
+```python
+# Models can return reasoning, tool calls, and results
+response = model.invoke("What's 25 * 4 and what's the weather in NYC?")
+
+# Standard blocks include:
+# - ReasoningContentBlock: Model's internal reasoning
+# - ToolCall: Function calls made by model  
+# - WebSearchCall/WebSearchResult: Built-in web search
+# - CodeInterpreterCall/CodeInterpreterResult: Code execution
+# - TextContentBlock: Final text responses
+# - Citations: Source attribution within text
+
+# All in a provider-agnostic format
 ```
 
 ### Message Utilities
