@@ -34,29 +34,29 @@ npm install @langchain/openai @langchain/community @langchain/core
 
 ### Create a new index from texts
 
-import ExampleTexts from "@examples/indexes/vector_stores/closevector.ts";
+import Closevector from "/snippets/javascript-integrations/examples/indexes/vector_stores/closevector.mdx";
 
-<CodeBlock language="typescript">{ExampleTexts}</CodeBlock>
+<Closevector />
 
 ### Create a new index from a loader
 
-import ExampleLoader from "@examples/indexes/vector_stores/closevector_fromdocs.ts";
+import ClosevectorFromdocs from "/snippets/javascript-integrations/examples/indexes/vector_stores/closevector_fromdocs.mdx";
 
-<CodeBlock language="typescript">{ExampleLoader}</CodeBlock>
+<ClosevectorFromdocs />
 
 ### Save an index to CloseVector CDN and load it again
 
 CloseVector supports saving/loading indexes to/from cloud. To use this feature, you need to create an account on [CloseVector](https://closevector.getmegaportal.com/). Please read [CloseVector Docs](https://closevector-docs.getmegaportal.com/) and generate your API key first by [loging in](https://closevector.getmegaportal.com/).
 
-import ExampleCloud from "@examples/indexes/vector_stores/closevector_saveload_fromcloud.ts";
+import ClosevectorSaveloadFromcloud from "/snippets/javascript-integrations/examples/indexes/vector_stores/closevector_saveload_fromcloud.mdx";
 
-<CodeBlock language="typescript">{ExampleCloud}</CodeBlock>
+<ClosevectorSaveloadFromcloud />
 
 ### Save an index to file and load it again
 
-import ExampleSave from "@examples/indexes/vector_stores/closevector_saveload.ts";
+import ClosevectorSaveload from "/snippets/javascript-integrations/examples/indexes/vector_stores/closevector_saveload.mdx";
 
-<CodeBlock language="typescript">{ExampleSave}</CodeBlock>
+<ClosevectorSaveload />
 
 ## Related
 

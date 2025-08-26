@@ -77,10 +77,10 @@ npm install @langchain/openai @langchain/community @langchain/core
 These fields must be sanitized beforehand to avoid SQL injection.
 </Warning>
 
-import Example from "@examples/indexes/vector_stores/prisma_vectorstore/prisma.ts";
+import Prisma from "/snippets/javascript-integrations/examples/indexes/vector_stores/prisma_vectorstore/prisma.mdx";
 import Schema from "@examples/indexes/vector_stores/prisma_vectorstore/prisma/schema.prisma";
 
-<CodeBlock language="typescript">{Example}</CodeBlock>
+<Prisma />
 
 The following SQL operators are available as filters: `equals`, `in`, `isNull`, `isNotNull`, `like`, `lt`, `lte`, `gt`, `gte`, `not`.
 

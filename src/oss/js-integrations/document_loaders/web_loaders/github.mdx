@@ -15,9 +15,9 @@ npm install @langchain/community @langchain/core ignore
 
 ## Usage
 
-import Example from "@examples/document_loaders/github.ts";
+import Github from "/snippets/javascript-integrations/examples/document_loaders/github.mdx";
 
-<CodeBlock language="typescript">{Example}</CodeBlock>
+<Github />
 
 The loader will ignore binary files like images.
 
@@ -25,9 +25,9 @@ The loader will ignore binary files like images.
 
 To ignore specific files, you can pass in an `ignorePaths` array into the constructor:
 
-import IgnoreExample from "@examples/document_loaders/github_ignore_paths.ts";
+import GithubIgnorePaths from "/snippets/javascript-integrations/examples/document_loaders/github_ignore_paths.mdx";
 
-<CodeBlock language="typescript">{IgnoreExample}</CodeBlock>
+<GithubIgnorePaths />
 
 ### Using a Different GitHub Instance
 
@@ -37,18 +37,18 @@ For this you need two additional parameters:
 - `baseUrl` - the base URL of your GitHub instance, so the githubUrl matches `<baseUrl>/<owner>/<repo>/...`
 - `apiUrl` - the URL of the API endpoint of your GitHub instance
 
-import CustomInstanceExample from "@examples/document_loaders/github_custom_instance.ts";
+import GithubCustomInstance from "/snippets/javascript-integrations/examples/document_loaders/github_custom_instance.mdx";
 
-<CodeBlock language="typescript">{CustomInstanceExample}</CodeBlock>
+<GithubCustomInstance />
 
 ### Dealing with Submodules
 
 In case your repository has submodules, you have to decide if the loader should follow them or not. You can control this with the boolean `processSubmodules` parameter. By default, submodules are not processed.
 Note that processing submodules works only in conjunction with setting the `recursive` parameter to true.
 
-import SubmodulesExample from "@examples/document_loaders/github_submodules.ts";
+import GithubSubmodules from "/snippets/javascript-integrations/examples/document_loaders/github_submodules.mdx";
 
-<CodeBlock language="typescript">{SubmodulesExample}</CodeBlock>
+<GithubSubmodules />
 
 Note, that the loader will not follow submodules which are located on another GitHub instance than the one of the current repository.
 
@@ -56,6 +56,6 @@ Note, that the loader will not follow submodules which are located on another Gi
 
 For situations where processing large repositories in a memory-efficient manner is required. You can use the `loadAsStream` method to asynchronously streams documents from the entire GitHub repository.
 
-import StreamExample from "@examples/document_loaders/github_stream.ts";
+import GithubStream from "/snippets/javascript-integrations/examples/document_loaders/github_stream.mdx";
 
-<CodeBlock language="typescript">{StreamExample}</CodeBlock>
+<GithubStream />

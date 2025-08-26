@@ -43,9 +43,9 @@ For indexing multiple corpora, you'll need to create a separate VectaraStore ins
 
 ## Usage
 
-import Example from "@examples/indexes/vector_stores/vectara.ts";
+import Vectara from "/snippets/javascript-integrations/examples/indexes/vector_stores/vectara.mdx";
 
-<CodeBlock language="typescript">{Example}</CodeBlock>
+<Vectara />
 
 Note that `lambda` is a parameter related to Vectara's hybrid search capbility, providing a tradeoff between neural search and boolean/exact match as described [here](https://docs.vectara.com/docs/api-reference/search-apis/lexical-matching). We recommend the value of 0.025 as a default, while providing a way for advanced users to customize this value if needed.
 

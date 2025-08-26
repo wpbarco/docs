@@ -19,7 +19,7 @@ Note that setting a decay rate of exactly 0 or 1 makes `hoursPassed` irrelevant 
 This example shows how to intialize a `TimeWeightedVectorStoreRetriever` with a vector store.
 It is important to note that due to required metadata, all documents must be added to the backing vector store using the `addDocuments` method on the **retriever**, not the vector store itself.
 
-import Example from "@examples/retrievers/time-weighted-retriever.ts";
+import TimeWeightedRetriever from "/snippets/javascript-integrations/examples/retrievers/time-weighted-retriever.mdx";
 
 import IntegrationInstallTooltip from '/snippets/javascript-integrations/integration-install-tooltip.mdx';
 
@@ -29,7 +29,7 @@ import IntegrationInstallTooltip from '/snippets/javascript-integrations/integra
 npm install @langchain/openai @langchain/core
 ```
 
-<CodeBlock language="typescript">{Example}</CodeBlock>
+<TimeWeightedRetriever />
 
 ## Related
 

@@ -41,15 +41,15 @@ const model = new OllamaFunctions({
 
 You can now pass in functions the same way as OpenAI:
 
-import OllamaFunctionsCalling from "@examples/models/chat/ollama_functions/function_calling.ts";
+import FunctionCalling from "/snippets/javascript-integrations/examples/models/chat/ollama_functions/function_calling.mdx";
 
-<CodeBlock language="typescript">{OllamaFunctionsCalling}</CodeBlock>
+<FunctionCalling />
 
 ## Using for extraction
 
-import OllamaFunctionsExtraction from "@examples/models/chat/ollama_functions/extraction.ts";
+import Extraction from "/snippets/javascript-integrations/examples/models/chat/ollama_functions/extraction.mdx";
 
-<CodeBlock language="typescript">{OllamaFunctionsExtraction}</CodeBlock>
+<Extraction />
 
 <Tip>
 You can see a simple LangSmith trace of this [here](https://smith.langchain.com/public/74692bfc-0224-4221-b187-ddbf20d7ecc0/r)
@@ -61,9 +61,9 @@ Behind the scenes, this uses Ollama's JSON mode to constrain output to JSON, the
 
 Because different models have different strengths, it may be helpful to pass in your own system prompt. Here's an example:
 
-import OllamaFunctionsCustomPrompt from "@examples/models/chat/ollama_functions/custom_prompt.ts";
+import CustomPrompt from "/snippets/javascript-integrations/examples/models/chat/ollama_functions/custom_prompt.mdx";
 
-<CodeBlock language="typescript">{OllamaFunctionsCustomPrompt}</CodeBlock>
+<CustomPrompt />
 
 ## Related
 

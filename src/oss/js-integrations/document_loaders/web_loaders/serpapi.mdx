@@ -18,7 +18,7 @@ You'll need to sign up and retrieve your [SerpAPI API key](https://serpapi.com/d
 
 Here's an example of how to use the `SerpAPILoader`:
 
-import Example from "@examples/document_loaders/serpapi.ts";
+import Serpapi from "/snippets/javascript-integrations/examples/document_loaders/serpapi.mdx";
 
 import IntegrationInstallTooltip from '/snippets/javascript-integrations/integration-install-tooltip.mdx';
 
@@ -28,6 +28,6 @@ import IntegrationInstallTooltip from '/snippets/javascript-integrations/integra
 npm install @langchain/community @langchain/core @langchain/openai
 ```
 
-<CodeBlock language="typescript">{Example}</CodeBlock>
+<Serpapi />
 
 In this example, the `SerpAPILoader` is used to load web search results, which are then stored in memory using `MemoryVectorStore`. A retrieval chain is then used to retrieve the most relevant documents from the memory and answer the question based on these documents. This demonstrates how the `SerpAPILoader` can streamline the process of loading and processing web search results.

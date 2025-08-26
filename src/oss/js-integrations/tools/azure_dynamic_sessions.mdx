@@ -24,23 +24,23 @@ Once you have your instance running, you need to make sure you have properly set
 
 After you've added the role for your identity, you need to retrieve the **session pool management endpoint**. You can find it in the Azure Portal, under the "Overview" section of your instance. Then you need to set the following environment variable:
 
-import EnvVars from "@examples/tools/azure_dynamic_sessions/.env.example";
+import EnvVars from "/snippets/javascript-integrations/examples/tools/azure_dynamic_sessions/env-vars.mdx";
 
-<CodeBlock language="text">{EnvVars}</CodeBlock>
+<EnvVars />
 
 ## Usage example
 
 Below is a simple example that creates a new Python code interpreter session, invoke the tool and prints the result.
 
-import Example from "@examples/tools/azure_dynamic_sessions/azure_dynamic_sessions.ts";
+import AzureDynamicSessions from "/snippets/javascript-integrations/examples/tools/azure_dynamic_sessions/azure_dynamic_sessions.mdx";
 
-<CodeBlock language="typescript">{Example}</CodeBlock>
+<AzureDynamicSessions />
 
 Here is a complete example where we use an Azure OpenAI chat model to call the Python code interpreter session tool to execute the code and get the result:
 
-import AgentExample from "@examples/tools/azure_dynamic_sessions/azure_dynamic_sessions-agent.ts";
+import AzureDynamicSessionsAgent from "/snippets/javascript-integrations/examples/tools/azure_dynamic_sessions/azure_dynamic_sessions-agent.mdx";
 
-<CodeBlock language="typescript">{AgentExample}</CodeBlock>
+<AzureDynamicSessionsAgent />
 
 ## Related
 

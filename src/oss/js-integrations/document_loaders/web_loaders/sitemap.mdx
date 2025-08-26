@@ -14,12 +14,12 @@ npm install @langchain/community @langchain/core
 
 The URL passed in must either contain the `.xml` path to the sitemap, or a default `/sitemap.xml` will be appended to the URL.
 
-import Example from "@examples/document_loaders/sitemap.ts";
+import Sitemap from "/snippets/javascript-integrations/examples/document_loaders/sitemap.mdx";
 
-<CodeBlock language="typescript">{Example}</CodeBlock>
+<Sitemap />
 
 Or, if you want to only load the sitemap and not the contents of each page from the sitemap, you can use the `parseSitemap` method:
 
-import ParseSitemapExample from "@examples/document_loaders/parse_sitemap.ts";
+import ParseSitemap from "/snippets/javascript-integrations/examples/document_loaders/parse_sitemap.mdx";
 
-<CodeBlock language="typescript">{ParseSitemapExample}</CodeBlock>
+<ParseSitemap />
