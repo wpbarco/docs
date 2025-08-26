@@ -12,7 +12,7 @@ Messages are structured objects that contain:
 
 - **Role**: Identifies the message type (`system`, `user`, `assistant`, or `tool`)
 - **Content**: Types of content: text, images, audio, documents, and more
-- **Metadata**: Optional fields like IDs, names, and usage information
+- **Metadata**: Optional fields like IDs, names, usage information, and response metadata from providers
 
 LangChain provides a unified message format that works across all chat model providers, handling provider-specific differences automatically.
 
@@ -208,8 +208,25 @@ print(f"Content: {response.content}")
 print(f"Tool calls: {response.tool_calls}")
 print(f"Usage: {response.usage_metadata}")
 print(f"ID: {response.id}")
+
+# Provider-specific response metadata
 print(f"Response metadata: {response.response_metadata}")
 ```
+
+### Response Metadata
+
+AI messages include metadata from the provider with token usage, model details, and generation information:
+
+```python
+response = model.invoke("Explain quantum computing")
+metadata = response.response_metadata
+
+print(f"Model: {metadata.get('model_name')}")
+print(f"Tokens: {metadata.get('token_usage', {}).get('total_tokens', 0)}")
+print(f"Finish reason: {metadata.get('finish_reason')}")
+```
+
+Common fields include `model_name`, `finish_reason`, `id`, and `token_usage` (format varies by provider).
 
 ### Tool Calling Responses
 
@@ -237,10 +254,10 @@ if response.tool_calls:
 
 ### Streaming and Chunks
 
-During streaming, you receive `AIMessageChunk` objects:
+During streaming, you receive `AIMessageChunk` objects that accumulate metadata:
 
 ```python
-# Stream response
+# Stream response and collect metadata
 chunks = []
 for chunk in llm.stream([HumanMessage("Write a poem")]):
     chunks.append(chunk)
