@@ -201,7 +201,7 @@ To see examples of how to use tools with agents, see [Agents](./agents).
 
 ### ToolNode
 
-For advanced tool execution control in agents, you can configure a custom `ToolNode` and pass it to `create_react_agent`.
+ToolNode is a built-in LangGraph component that handles tool calls within an agent's workflow. It works seamlessly with `create_react_agent`, offering advanced tool execution control, built in parallelism, and error handling.
 
 #### Configuration options
 
@@ -219,42 +219,81 @@ tool_node = ToolNode(
 )
 ```
 
+<ParamField path="tools" required>
+  A list of tools that this node can execute. Can include:
+  - LangChain `@tool` decorated functions
+  - Callable objects (e.g. functions) with proper type hints and a docstring
+</ParamField>
+
+<ParamField path="name">
+  Identifier for this node in your agent workflow.
+  Used for debugging and visualization — appears in execution traces and logs.
+  Default: `"tools"`
+</ParamField>
+
+<ParamField path="tags">
+  Optional list of string labels for categorization.
+  Useful for filtering execution traces.
+  Example: ["api-calls", "external-tools"]
+  Default: None
+</ParamField>
+
+<ParamField path="handle_tool_errors">
+  Controls how tool execution failures are handled.
+  Can be:
+    - `bool`
+    - `str`
+    - `Callable[..., str]`
+    - `type[Exception]`
+    - `tuple[type[Exception], ...]`
+  
+  See [Error handling strategies](#error-handling-strategies) below for details.
+  Default: internal `_default_handle_tool_errors`
+</ParamField>
+
+<ParamField path="messages_key">
+  The state dictionary key where messages are stored.
+  `ToolNode` looks here for the AI's tool calls and adds the tool response messages.
+  Must match your agent's state schema.
+  Default: "messages"
+</ParamField>
+
 #### Error handling strategies
 
 `ToolNode` provides built-in error handling for tool execution through its `handle_tool_errors` property.
 
-There are two broad scenarios in which a tool can fail within `ToolNode`:
-1. The tool call itself fails, e.g. due to a network error;
-2. The model generates tool call arguments that do not match the tool's schema.
+To customize the error handling behavior, you can configure `handle_tool_errors` to either be a boolean, a string, a callable, an exception type, or a tuple of exception types:
 
-The default behavior for each scenario is:
-- Scenario 1: Raises an error
-- Scenario 2: Returns a tool message to the model with a descriptive error, guiding it to correct its mistake.
+- **`True`**: Catch all errors and return a ToolMessage with the default error template containing the exception details.
+- **`str`**: Catch all errors and return a ToolMessage with this custom error message string.
+- **`type[Exception]`**: Only catch exceptions with the specified type and return the default error message for it.
+- **`tuple[type[Exception], ...]`**: Only catch exceptions with the specified types and return default error messages for them.
+- **`Callable[..., str]`**: Catch exceptions matching the callable's signature and return the string result of calling it with the exception.
+- **`False`**: Disable error handling entirely, allowing exceptions to propagate.
 
-To customize the error handling behavior, you can configure `handle_tool_errors` to either be a boolean, a string, a callable, an exception type, or a tuple of exception types.
+`handle_tool_errors` defaults to a callable `_default_handle_tool_errors` that:
+- catches tool invocation errors `ToolInvocationError` (due to invalid arguments provided by the model) and returns a descriptive error message
+- ignores tool execution errors (they will be re-raised with the template string `TOOL_CALL_ERROR_TEMPLATE = "Error: {error}\n Please fix your mistakes."`)
+
+Examples of how to use the different error handling strategies:
 
 ```python wrap
-# Strategy 1: Retry on all exception types with the default error message template
+# Retry on all exception types with the default error message template string
 tool_node = ToolNode(tools=[my_tool], handle_tool_errors=True)
 
-# Strategy 2: Retry on all exception types with a custom message template
+# Retry on all exception types with a custom message string
 tool_node = ToolNode(
     tools=[my_tool],
     handle_tool_errors="I encountered an issue. Please try rephrasing your request."
 )
 
-# Strategy 3: Retry on ValueError with a custom message, otherwise raise
-def custom_error_handler(e: Exception) -> Optional[str]:
-    if isinstance(e, ValueError):
-        return "Invalid input. Please check your parameters."
-    return None
+# Retry on ValueError with a custom message, otherwise raise
+def handle_errors(e: ValueError) -> str:
+    return "Invalid input provided"
 
-tool_node = ToolNode(
-    tools=[my_tool],
-    handle_tool_errors=custom_error_handler
-)
+tool_node = ToolNode([my_tool], handle_tool_errors=handle_errors)
 
-# Strategy 4: Retry on ValueError and KeyError with the default error message template, otherwise raise
+# Retry on ValueError and KeyError with the default error message template string, otherwise raise
 tool_node = ToolNode(
     tools=[my_tool],
     handle_tool_errors=(ValueError, KeyError)
@@ -327,12 +366,12 @@ def summarize_conversation(
 @tool
 def get_user_preference(
     pref_name: str,
-    preferences: Annotated[dict, InjectedState("user_preferences")]
+    preferences: Annotated[dict, InjectedState("user_preferences")] # InjectedState parameters are not visible to the model
 ) -> str:
     """Get a user preference value."""
     return preferences.get(pref_name, "Not set")
 ```
-**Important:** State-injected arguments are hidden from the model. It only sees `pref_name` in the tool schema.
+**Important:** State-injected arguments are hidden from the model. For the example above, the model only sees `pref_name` in the tool schema - `preferences` is *not* included in the request.
 
 ### Updating agent state inside a tool
 
