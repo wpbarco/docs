@@ -24,9 +24,9 @@ You'll also need to have an Azure AI Search instance running. You can deploy a f
 
 Once you have your instance running, make sure you have the endpoint and the admin key (query keys can be used only to search document, not to index, update or delete). The endpoint is the URL of your instance which you can find in the Azure Portal, under the "Overview" section of your instance. The admin key can be found under the "Keys" section of your instance. Then you need to set the following environment variables:
 
-import EnvVars from "@examples/indexes/vector_stores/azure_aisearch/.env.example";
+import EnvVars from "/snippets/javascript-integrations/examples/indexes/vector_stores/azure_aisearch/env_vars.mdx";
 
-<CodeBlock language="text">{EnvVars}</CodeBlock>
+<EnvVars />
 
 ## About hybrid search
 

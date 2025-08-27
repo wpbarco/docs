@@ -29,11 +29,9 @@ npm install @langchain/openai @langchain/community @langchain/core
 `Neo4j` provides a prebuilt Docker image that can be used to quickly setup a self-hosted Neo4j database instance.
 Create a file below named `docker-compose.yml`:
 
-import DockerExample from "@examples/indexes/vector_stores/neo4j_vector/docker-compose.example.yml";
+import DockerExample from "/snippets/javascript-integrations/examples/indexes/vector_stores/neo4j_vector/docker_example.mdx";
 
-<CodeBlock language="yml" name="docker-compose.yml">
-  {DockerExample}
-</CodeBlock>
+<DockerExample />
 
 And then in the same directory, run `docker compose up` to start the container.
 

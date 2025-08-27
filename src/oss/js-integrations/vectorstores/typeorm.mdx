@@ -28,11 +28,9 @@ npm install @langchain/openai @langchain/community @langchain/core
 `pgvector` provides a prebuilt Docker image that can be used to quickly setup a self-hosted Postgres instance.
 Create a file below named `docker-compose.yml`:
 
-import DockerExample from "@examples/indexes/vector_stores/typeorm_vectorstore/docker-compose.example.yml";
+import DockerComposeExample from "/snippets/javascript-integrations/examples/indexes/vector_stores/typeorm_vectorstore/docker_compose_example.mdx";
 
-<CodeBlock language="yml" name="docker-compose.yml">
-  {DockerExample}
-</CodeBlock>
+<DockerComposeExample />
 
 And then in the same directory, run `docker compose up` to start the container.
 
