@@ -950,6 +950,18 @@ Adding "D" to ['A', 'B', 'C']
 
 
 
+<Tip>
+  **Set max concurrency**
+  You can control the maximum number of concurrent tasks by setting `max_concurrency` in the [configuration](https://langchain-ai.github.io/langgraphjs/reference/interfaces/langgraph.LangGraphRunnableConfig.html) when invoking the graph.
+  
+  ```typescript
+  const result = await graph.invoke({ value1: "c" }, {configurable: {max_concurrency: 10}});
+  ```
+</Tip>
+
+
+
+
 ### Conditional branching
 
 

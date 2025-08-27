@@ -1115,6 +1115,18 @@ Adding "D" to ['A', 'B', 'C']
   Together, these let you perform parallel execution and fully control exception handling.
 </Accordion>
 
+<Tip>
+  **Set max concurrency**
+  You can control the maximum number of concurrent tasks by setting `max_concurrency` in the [configuration](https://python.langchain.com/api_reference/core/runnables/langchain_core.runnables.config.RunnableConfig.html) when invoking the graph.
+  
+  ```python
+  graph.invoke({"value_1": "c"}, {"configurable": {"max_concurrency": 10}})
+  ```
+</Tip>
+
+
+
+
 ### Defer node execution
 
 Deferring node execution is useful when you want to delay the execution of a node until all other pending tasks are completed. This is particularly relevant when branches have different lengths, which is common in workflows like map-reduce flows.
