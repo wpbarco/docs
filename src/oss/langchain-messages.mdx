@@ -51,11 +51,7 @@ response = model.invoke("Hello, how are you?")
 
 ### OpenAI Format Compatibility
 
-TODO does this deserve its own section here? or just a brief note?
-
-LangChain messages are compatible with OpenAI's format:
-
-TODO link out to OpenAI message format guide ref
+LangChain messages work seamlessly with OpenAI's dictionary format:
 
 ```python
 # Both formats work
@@ -210,7 +206,10 @@ for chunk in llm.stream([HumanMessage("Write a poem")]):
     chunks.append(chunk)
     print(chunk.content, end="", flush=True)
 
-# TODO show how they are auto-summed in new pattern
+# Combine chunks into final message
+from langchain_core.messages import AIMessage
+final_message = sum(chunks, AIMessage(""))  # Automatically combines content
+print(f"\nFull response: {final_message.content}")
 ```
 
 ## Tool Message
@@ -354,8 +353,8 @@ With `output_version="v1"`, models return structured content blocks:
 model = ChatOpenAI(output_version="v1")
 response = model.invoke("Analyze the sales data and show your reasoning")
 
-# Response contains structured blocks
-for block in response.content_blocks:
+# Response contains structured blocks  
+for block in response.content:
     if block["type"] == "reasoning":
         print(f"Model reasoning: {block['reasoning']}")
     elif block["type"] == "text": 
@@ -364,21 +363,27 @@ for block in response.content_blocks:
         print(f"Tool used: {block['name']} with {block['args']}")
 ```
 
-### Advanced Block Types
+### Content Block Types
+
+When using `output_version="v1"`, models can return various structured content types:
+
+| Block Type | Description | When Available |
+|------------|-------------|----------------|
+| `TextContentBlock` | Standard text responses | Always |
+| `ToolUseContentBlock` | Tool/function calls | When model calls tools |
+| `ReasoningContentBlock` | Model's reasoning process | Provider-specific |
+| `WebSearchContentBlock` | Web search results | When web search is used |
+| `CodeInterpreterContentBlock` | Code execution results | When code interpreter is used |
 
 ```python
-# Models can return reasoning, tool calls, and results
-response = model.invoke("What's 25 * 4 and what's the weather in NYC?")
-
-# Standard blocks include:
-# - ReasoningContentBlock: Model's internal reasoning
-# - ToolCall: Function calls made by model  
-# - WebSearchCall/WebSearchResult: Built-in web search
-# - CodeInterpreterCall/CodeInterpreterResult: Code execution
-# - TextContentBlock: Final text responses
-# - Citations: Source attribution within text
-
-# All in a provider-agnostic format
+# Example response with multiple block types
+response = model.invoke("Search for Python tutorials and explain the results")
+for block in response.content:
+    print(f"Block type: {block['type']}")
+    if block['type'] == 'text':
+        print(f"Text: {block['text']}")
+    elif block['type'] == 'tool_use':
+        print(f"Tool: {block['name']}, Args: {block['input']}")
 ```
 
 ### Message Utilities

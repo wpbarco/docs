@@ -220,7 +220,6 @@ result = structured_llm.invoke("What's the weather in Seattle?")
 
 ### Streaming Structured Output
 
-TODO does this deserve its own section? Or just a note in streaming section linking out?
 
 ```python
 # Only works with TypedDict schemas
@@ -238,7 +237,6 @@ for chunk in streaming_llm.stream("Tell me a joke about cats"):
 
 ## Streaming
 
-TODO is this more important than previous sections? Should it be higher up?
 
 All LangChain chat models support streaming responses. 
 
@@ -274,11 +272,7 @@ asyncio.run(stream_response())
 
 For complex chains with multiple steps, use `astream_events()` to get detailed streaming information:
 
-TODO link out to thorough guide on this or show a very simple example
 
-### Token Usage Tracking
-
-TODO include this???
 
 ### Streaming with Tools
 
