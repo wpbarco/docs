@@ -4,7 +4,6 @@ title: Messages
 
 Messages are the fundamental unit of communication in LangChain chat models. They represent the input and output of conversations, carrying both content and metadata that enables rich, multimodal interactions.
 
-TODO link out to chat model conceptual guide
 
 ## Overview
 
@@ -33,6 +32,8 @@ TODO model switcher
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 
+# Note: output_version="v1" enables standard content blocks
+# TODO: tooltip link to output_version guide
 model = ChatOpenAI(model="gpt-oss", output_version="v1")
 
 # Create messages
@@ -77,7 +78,6 @@ response2 = model.invoke(langchain_format)
 
 System messages prime the model's behavior and provide conversational context. They set the tone, define the model's role, and establish guidelines for responses.
 
-TODO link out to system message best practices guide
 
 ### Basic System Messages
 
@@ -112,26 +112,6 @@ Different providers handle system messages in various ways:
 
 LangChain handles these differences automatically.
 
-### Advanced System Message Patterns
-
-TODO keep? or link out to advanced guide?
-
-```python
-# Multi-part system instructions
-system_parts = [
-    "You are an expert data analyst.",
-    "Always include confidence levels in your analysis.",
-    "Provide actionable insights based on the data."
-]
-system_msg = SystemMessage("\n".join(system_parts))
-
-# Dynamic system messages
-def create_system_message(domain: str, style: str) -> SystemMessage:
-    return SystemMessage(f"You are a {domain} expert. Respond in a {style} style.")
-
-system_msg = create_system_message("finance", "professional")
-```
-
 ## Human Message
 
 Human messages represent user input and interactions. They can contain text, images, audio, files, and any other multimodal content.
@@ -143,24 +123,11 @@ from langchain_core.messages import HumanMessage
 
 human_msg = HumanMessage("What is machine learning?")
 
-# Use with models
-# TODO which pattern to show here? or all?
-response = model.invoke([human_msg])
-response = model.invoke(human_msg)
-response = model.invoke("What is machine learning?")
+# Different invoke format options
+response = model.invoke([human_msg])  # List of messages
+response = model.invoke("What is machine learning?")  # String shortcut
 ```
 
-### String Shortcut
-
-TODO keep??
-
-For quick testing, strings are automatically converted to HumanMessage:
-
-```python
-# These are equivalent
-response1 = model.invoke([HumanMessage("Hello")])
-response2 = model.invoke("Hello")  # Automatically converted
-```
 
 ### Message Metadata
 
@@ -168,8 +135,9 @@ response2 = model.invoke("Hello")  # Automatically converted
 # Add metadata
 human_msg = HumanMessage(
     content="Hello!",
-    name="alice",  # Identify different users
-    id="msg_123"   # Unique identifier for tracing
+    name="alice",  # Optional: identify different users
+    id="msg_123",  # Optional: unique identifier for tracing
+    additional_kwargs={"custom_field": "value"}  # Optional: provider-specific fields
 )
 
 # Use in multi-user scenarios
@@ -180,7 +148,8 @@ messages = [
 ]
 ```
 
-TODO make sure how `name` field is used across different providers is clear
+**Note**: The `name` field behavior varies by provider - some use it for user identification, others ignore it. The `id` and `additional_kwargs` fields are preserved but may not be sent to all providers.
+TODO make this better
 
 ## AI Message
 
@@ -189,13 +158,8 @@ AI messages represent model responses and contain the output of chat model invoc
 ### Basic AI Messages
 
 ```python
-from langchain_core.messages import AIMessage
-
-# Simple response
-ai_msg = AIMessage("Machine learning is a subset of artificial intelligence...")
-
-# Access response content
 response = model.invoke("Explain AI")
+print(type(response))  # <class 'langchain_core.messages.AIMessage'>
 ```
 
 ### AI Message Attributes
@@ -203,12 +167,12 @@ response = model.invoke("Explain AI")
 ```python
 response = model.invoke("Tell me a joke")
 
-# Standardized attributes
 print(f"Content: {response.content}")
-print(f"Tool calls: {response.tool_calls}")
-print(f"Usage: {response.usage_metadata}")
-print(f"ID: {response.id}")
-print(f"Response metadata: {response.response_metadata}")
+print(f"Tool calls: {response.tool_calls}")  # Empty list if no tools called
+print(f"ID: {response.id}")  # Auto-generated or provider message ID
+print(f"Usage: {response.usage_metadata}")  # Token counts when available
+print(f"Response metadata: {response.response_metadata}")  # Provider-specific data
+# TODO: link out to refs for each
 ```
 
 ### Tool Calling Responses
@@ -237,10 +201,10 @@ if response.tool_calls:
 
 ### Streaming and Chunks
 
-During streaming, you receive `AIMessageChunk` objects:
+During streaming, you receive `AIMessageChunk` objects that can be combined:
 
 ```python
-# Stream response
+# Stream response and collect chunks
 chunks = []
 for chunk in llm.stream([HumanMessage("Write a poem")]):
     chunks.append(chunk)
@@ -253,7 +217,6 @@ for chunk in llm.stream([HumanMessage("Write a poem")]):
 
 Tool messages contain the results of tool executions and are used to pass data back to models after external processing.
 
-TODO link out to tool calling conceptual guide
 
 ### Basic Tool Messages
 
@@ -314,36 +277,11 @@ except Exception as e:
     )
 ```
 
-### Advanced Tool Workflows
-
-```python
-# Multi-step tool execution
-def handle_tool_calls(messages: list, tool_calls: list):
-    """Execute multiple tools and return updated messages"""
-    for tool_call in tool_calls:
-        result = execute_tool(tool_call["name"], tool_call["args"])
-        tool_msg = ToolMessage(
-            content=str(result),
-            tool_call_id=tool_call["id"]
-        )
-        messages.append(tool_msg)
-    return messages
-
-# Use in conversation loop
-messages = [HumanMessage("Calculate 25 * 4 and get weather for NYC")]
-response = llm_with_tools.invoke(messages)
-
-if response.tool_calls:
-    messages.append(response)  # Add AI response with tool calls
-    messages = handle_tool_calls(messages, response.tool_calls)
-    final_response = model.invoke(messages)  # Get final answer
-```
 
 ## Content Blocks
 
 Content blocks enable **provider-agnostic** multimodal interactions. Instead of handling different image formats, audio types, and document structures across providers, content blocks provide a unified interface that works everywhere (supported).
 
-TODO link out to guide
 
 ### Why Content Blocks Matter
 

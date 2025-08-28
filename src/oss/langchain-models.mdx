@@ -6,7 +6,6 @@ LangChain provides a unified interface for working with chat models from various
 
 ## `init_chat_model()`
 
-TODO link out to chat model conceptual guide
 
 The easiest way to initialize any chat model in one line. Supports automatic provider inference and runtime configuration, making it perfect for applications that need to support multiple model providers.
 
@@ -39,7 +38,6 @@ llm = init_chat_model(
 # Use with custom configuration
 response = llm.invoke(
     "Hello", 
-    output_version="v1",
     config={
         "configurable": {
             "primary_model": "claude-3-5-sonnet-latest",
@@ -93,7 +91,6 @@ A few highlights:
 
 ## Tool Calling
 
-TODO link out to tool calling conceptual guide, important to emphasize difference between internal/server side tools
 
 Modern chat models support tool calling, allowing them to use external functions and APIs.
 
@@ -132,13 +129,19 @@ for tool_call in response.tool_calls:
 # Force the model to use a specific tool
 response = llm_with_tools.invoke(
     "Hello there!",
-    tool_choice="GetWeather"  # Will use weather tool even for greetings
+    tool_choice="GetWeather"  # Forces use of GetWeather tool
 )
 
-# Prevent tool usage
+# Prevent tool usage entirely
 response = llm_with_tools.invoke(
     "What's the weather in NYC?",
-    tool_choice="none"  # Won't use any tools
+    tool_choice="none"  # Disables all tools
+)
+
+# Allow any tool (default behavior)
+response = llm_with_tools.invoke(
+    "What's the weather in NYC?",
+    tool_choice="any"  # Model chooses appropriate tool
 )
 ```
 
@@ -209,10 +212,10 @@ class MathQuery(BaseModel):
     """Mathematical calculation request"""
     expression: str = Field(description="Math expression to evaluate")
 
-class QueryResponse(BaseModel):
-    query_type: Union[WeatherQuery, MathQuery]
-
-structured_llm = llm.with_structured_output(QueryResponse)
+# Use Union for multiple possible response types
+structured_llm = llm.with_structured_output(Union[WeatherQuery, MathQuery])
+result = structured_llm.invoke("What's the weather in Seattle?")
+# Returns either WeatherQuery or MathQuery instance
 ```
 
 ### Streaming Structured Output
