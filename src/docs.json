@@ -431,7 +431,7 @@
                   {
                     "group": "Build with LangGraph Platform",
                     "pages": [
-                      "langgraph-platform/langgraph-basics/why-langgraph"
+                      "langgraph-platform/why-langgraph"
                     ]
                   },
                   {
@@ -1399,7 +1399,7 @@
                   {
                     "group": "Build with LangGraph Platform",
                     "pages": [
-                      "langgraph-platform/langgraph-basics/why-langgraph"
+                      "langgraph-platform/why-langgraph"
                     ]
                   },
                   {
