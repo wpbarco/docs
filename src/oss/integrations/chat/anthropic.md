@@ -213,8 +213,7 @@ Claude also supports interactions with files through its managed [Files API](htt
 
 The Files API can also be used to upload files to a container for use with Claude's built-in code-execution tools. See the [code execution](#code-execution) section below, for details.
 
-<details>
-<summary>Images</summary>
+<Accordion title="Images">
 
 ```python
 # Upload image
@@ -255,8 +254,7 @@ input_message = {
 }
 llm.invoke([input_message])
 ```
-
-</details>
+</Accordion>
 
 <details>
 <summary>PDFs</summary>
