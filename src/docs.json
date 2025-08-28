@@ -705,6 +705,7 @@
                     "pages": [
                       "langsmith/rules",
                       "langsmith/webhooks",
+                      "langsmith/alerts-webhook",
                       "langsmith/online-evaluations"
                     ]
                   },
@@ -1683,6 +1684,7 @@
                     "pages": [
                       "langsmith/rules",
                       "langsmith/webhooks",
+                      "langsmith/alerts-webhook",
                       "langsmith/online-evaluations"
                     ]
                   },
