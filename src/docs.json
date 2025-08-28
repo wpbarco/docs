@@ -279,12 +279,53 @@
                   {
                     "group": "Providers",
                     "pages": [
-                      "oss/python/integrations/providers/anthropic",
-                      "oss/python/integrations/providers/aws",
-                      "oss/python/integrations/providers/google",
-                      "oss/python/integrations/providers/huggingface",
-                      "oss/python/integrations/providers/microsoft",
-                      "oss/python/integrations/providers/openai",
+                      {
+                        "group": "Anthropic",
+                        "pages": [
+                          "oss/python/integrations/providers/anthropic",
+                          "oss/python/integrations/chat/anthropic"
+                        ]
+                      },
+                      {
+                        "group": "AWS",
+                        "pages": [
+                          "oss/python/integrations/providers/aws",
+                          "oss/python/integrations/chat/bedrock",
+                          "oss/python/integrations/text_embedding/bedrock"
+                        ]
+                      },
+                      {
+                        "group": "Google",
+                        "pages": [
+                          "oss/python/integrations/providers/google",
+                          "oss/python/integrations/chat/google_generative_ai",
+                          "oss/python/integrations/text_embedding/google_generative_ai"
+                        ]
+                      },
+                      {
+                        "group": "Hugging Face",
+                        "pages": [
+                          "oss/python/integrations/providers/huggingface",
+                          "oss/python/integrations/chat/huggingface",
+                          "oss/python/integrations/text_embedding/huggingfacehub"
+                        ]
+                      },
+                      {
+                        "group": "Microsoft",
+                        "pages": [
+                          "oss/python/integrations/providers/microsoft",
+                          "oss/python/integrations/chat/azure_ai",
+                          "oss/python/integrations/text_embedding/azureopenai"
+                        ]
+                      },
+                      {
+                        "group": "OpenAI",
+                        "pages": [
+                          "oss/python/integrations/providers/openai",
+                          "oss/python/integrations/chat/openai",
+                          "oss/python/integrations/text_embedding/openai"
+                        ]
+                      },
                       "oss/python/integrations/providers/all_providers"
                     ]
                   },
@@ -1064,12 +1105,12 @@
         "version": "JavaScript",
         "dropdowns": [
           {
-            "dropdown": "LangGraph",
+            "dropdown": "OSS",
             "icon": "/images/brand/langgraph-pill.svg",
-            "description": "Framework for building reliable agents and workflows",
+            "description": "Open source frameworks",
             "tabs": [
               {
-                "tab": "Get started",
+                "tab": "LangChain",
                 "groups": [
                   {
                     "group": "Get started",
@@ -1095,12 +1136,7 @@
                       "oss/javascript/langgraph-case-studies",
                       "oss/javascript/langgraph-template-applications"
                     ]
-                  }
-                ]
-              },
-              {
-                "tab": "Build agents",
-                "groups": [
+                  },
                   {
                     "group": "Basic configuration",
                     "pages": [
@@ -1150,7 +1186,7 @@
                 ]
               },
               {
-                "tab": "Agent runtime",
+                "tab": "LangGraph",
                 "groups": [
                   {
                     "group": "Capabilities",
@@ -1243,13 +1279,34 @@
                         "group": "AWS",
                         "pages": [
                           "oss/javascript/js-integrations/platforms/aws",
-                          "/oss/javascript/integrations/chat/bedrock"
+                          "/oss/javascript/js-integrations/chat/bedrock",
+                          "/oss/javascript/js-integrations/text_embedding/bedrock"
                         ]
                       },
-                      "oss/javascript/js-integrations/platforms/aws",
-                      "oss/javascript/js-integrations/platforms/google",
-                      "oss/javascript/js-integrations/platforms/microsoft",
-                      "oss/javascript/js-integrations/platforms/openai"
+                      {
+                        "group": "Google",
+                        "pages": [
+                          "oss/javascript/js-integrations/platforms/google",
+                          "/oss/javascript/js-integrations/chat/google_generativeai",
+                          "/oss/javascript/js-integrations/text_embedding/google_generativeai"
+                        ]
+                      },
+                      {
+                        "group": "Microsoft",
+                        "pages": [
+                          "oss/javascript/js-integrations/platforms/microsoft",
+                          "/oss/javascript/js-integrations/chat/azure",
+                          "/oss/javascript/js-integrations/text_embedding/azure_openai"
+                        ]
+                      },
+                    {
+                      "group": "OpenAI",
+                      "pages": [
+                        "oss/javascript/js-integrations/platforms/openai",
+                        "/oss/javascript/js-integrations/chat/openai",
+                        "/oss/javascript/js-integrations/text_embedding/openai"
+                      ]
+                    }
                     ]
                   },
                   {
