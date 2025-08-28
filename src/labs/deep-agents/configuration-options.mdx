@@ -173,3 +173,33 @@ const agent = createDeepAgent({
 </CodeGroup>
 
 When a tool call requires approval, the agent will pause and wait for human input before proceeding. The message shown to users will include your custom prefix (or "Tool execution requires approval" by default) followed by the tool name and arguments. Multiple tool calls are processed in parallel, allowing you to review and approve multiple operations at once.
+=======
+### Custom models
+
+<Note>
+
+Custom models are only supported in the Python implementation.
+
+</Note>
+
+By default, `deepagents` uses `"claude-sonnet-4-20250514"`. You can customize this by passing any [LangChain model object](https://python.langchain.com/docs/integrations/chat/).
+
+For example, use OpenAI's `gpt-oss` model via Ollama:
+
+```python
+# pip install langchain langchain-ollama
+
+from deepagents import create_deep_agent
+
+# ... existing agent definitions ...
+
+model = init_chat_model(
+    model="ollama:gpt-oss:20b",  
+)
+agent = create_deep_agent(
+    tools=tools,
+    instructions=instructions,
+    model=model,
+    ...
+)
+```
