@@ -208,7 +208,7 @@ for chunk in llm.stream([HumanMessage("Write a poem")]):
 
 # Combine chunks into final message
 from langchain_core.messages import AIMessage
-final_message = sum(chunks, AIMessage(""))  # Automatically combines content
+final_message = sum(chunks, AIMessage(""))
 print(f"\nFull response: {final_message.content}")
 ```
 
