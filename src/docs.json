@@ -1232,7 +1232,20 @@
                   {
                     "group": "Providers",
                     "pages": [
-                      "oss/javascript/js-integrations/platforms/anthropic",
+                      {
+                        "group": "Anthropic",
+                        "pages": [
+                          "oss/javascript/js-integrations/platforms/anthropic",
+                          "oss/javascript/js-integrations/chat/anthropic"
+                        ]
+                      },
+                      {
+                        "group": "AWS",
+                        "pages": [
+                          "oss/javascript/js-integrations/platforms/aws",
+                          "/oss/javascript/integrations/chat/bedrock"
+                        ]
+                      },
                       "oss/javascript/js-integrations/platforms/aws",
                       "oss/javascript/js-integrations/platforms/google",
                       "oss/javascript/js-integrations/platforms/microsoft",
