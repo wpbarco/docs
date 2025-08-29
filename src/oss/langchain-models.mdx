@@ -432,6 +432,103 @@ for (const response of responses) {
 }
 ```
 
+## Advanced features
+
+{/\* ### Tool calling
+
+Models can request to call [tools]() that perform tasks such as fetching data
+from a database, searching the web, or running code.
+
+<Note>
+  You will sometimes hear the term `function calling`. We use this term
+  interchangeably with `tool calling`.
+</Note>
+
+To make tools available for use by a model, they must be bound using
+`.bind_tools()`. In subsequent invocations, the model can choose to call any of
+the bound tools as needed. For more details on creating, using, and executing
+tools requests, see the [tools]() guide.
+
+```python Binding tools highlight={16}
+from pydantic import BaseModel, Field
+
+class GetWeather(BaseModel):
+    """Get the current weather in a given location"""
+    location: str = Field(..., description="The city and state, e.g. Boston, MA")
+
+model_with_tools = model.bind_tools([GetWeather])
+
+response = model_with_tools.invoke("What's the weather like in Boston?")
+for tool_call in response.tool_calls:
+    # View tool calls made by the model
+    print(f"Tool: {tool_call['name']}")
+    print(f"Args: {tool_call['args']}")
+```
+
+If we want to include some tool info here, we can do so like this:
+
+TODO a switcher to iterate through all different tool schema options
+TODO model switcher to show this example for our top 5 providers
+
+```python Binding tools highlight={16}
+from pydantic import BaseModel, Field
+from langchain.chat_models import init_chat_model
+
+class GetWeather(BaseModel):
+    """Get the current weather in a given location"""
+    location: str = Field(..., description="The city and state, e.g. Boston, MA")
+
+class Calculator(BaseModel):
+    """Perform mathematical calculations"""
+    expression: str = Field(..., description="Mathematical expression to evaluate")
+
+model = init_chat_model(
+    model="gpt-5",
+    model_provider="openai"
+)
+model_with_tools = model.bind_tools([GetWeather, Calculator])
+
+response = model_with_tools.invoke("What's the weather like in Boston and what's 25 * 4?")
+for tool_call in response.tool_calls:
+    # View tool calls made by the model
+    print(f"Tool: {tool_call['name']}")
+    print(f"Args: {tool_call['args']}")
+```
+
+In this example, the model's response includes a **request** to execute a tool.
+It is up to you to perform the requested action and return the result back to
+the model for use in subsequent reasoning.
+
+TODO link out to a different guide on tool execution; beyond the scope here
+
+#### Forcing tool calls
+
+By default, the model has the freedom to choose which bound tool to use based on
+the user's input. However, you might want to force choosing a tool, ensuring the
+model uses either a particular tool or _any_ tool from a given list:
+
+<CodeGroup>
+
+```python Force use of specific tools
+response = model_with_tools.invoke(
+    "What's the weather in both New York and London, and calculate 15 + 25",
+    force_tool_calls=["GetWeather", "Calculator"]
+)
+```
+
+```python Force use of any tool
+response = model_with_tools.invoke(
+    "What's the weather in both New York and London, and calculate 15 + 25",
+    force_tool_calls="any"
+)
+```
+
+</CodeGroup>
+
+#### Parallel tool calls
+
+TODO \*/}
+
 ### Structured outputs
 
 Models can be requested to respond in a particular format (e.g., JSON or
@@ -447,7 +544,18 @@ TODO show example of image/audio/video input
 
 TODO show example of image/audio/video output
 
-### Context window
+### Reasoning
+
+## Advanced configuration
+
+## Supported models
+
+LangChain supports all major model providers, including OpenAI, Anthropic,
+Google, Azure, AWS Bedrock, and more. Each provider offers a variety of models
+with different capabilities. For a full list of supported models in LangChain,
+see the [provider reference]().
+
+{/\* ### Context window
 
 A model's context window refers to the maximum size of the input that it can
 process at one time. Maximum size varies from model to model.
@@ -456,22 +564,4 @@ If the input to a model exceeds the context window, the model may not be able to
 process the entire input and could raise an error. In conversational
 applications, this determines how much information the model can "remember"
 throughout a conversation. Consequently, you may need to manage the context to
-maintain a coherent dialogue.
-
-### Reasoning
-
-## Advanced configuration
-
-## Supported models
-
-LangChain supports all major model providers.
-
-TODO link out to page with full table
-
-At a glance:
-
-| Provider  | Tool Calling | Structured Output | Multimodal | Streaming | Async |
-| --------- | ------------ | ----------------- | ---------- | --------- | ----- |
-| OpenAI    | x            | x                 | x          | x         | x     |
-| Anthropic | x            | x                 | x          | x         | x     |
-| Google    | x            | x                 | x          | x         | x     |
+maintain a coherent dialogue. \*/}
