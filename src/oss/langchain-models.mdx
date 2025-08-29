@@ -2,43 +2,48 @@
 title: Models
 ---
 
+import ConversationHistory from '/snippets/oss/langchain-conversation-history.mdx';
+
 Large Language Models (LLMs) are advanced machine learning tools that excel in a
 wide range of language-related tasks such as text generation, translation,
-summarization, question answering, and more, without needing task-specific fine
-tuning for every scenario.
+summarization, question answering, and more.
 
 Modern LLMs are typically accessed through a chat interface, where [messages]()
-are exchanged between a user and the model. This is most commonly done via a
-user interface or an API.
+are exchanged between a user and the model.
 
 In addition to basic text generation, many models support the following advanced
 features:
 
-* [Tool calling]() - enables models to interact with external services, APIs,
-and databases.
-* [Structured output]() - constrain the response format to match a provided
-schema.
-* [Multimodality]() - the ability to process data other than text, such as
-images.
-* [Reasoning]() - the ability to perform multi-step reasoning to arrive at a
-conclusion.
+* [Tool calling](#tool-calling) - enables models to interact with external
+services, APIs, and databases.
+* [Structured output](#structured-output) - constrain the response format to
+match a provided schema.
+* [Multimodality](#multimodality) - the ability to process data other than text,
+such as images.
+* [Reasoning](#reasoning) - the ability to perform multi-step reasoning to
+arrive at a conclusion.
 
 ## Basic usage
 
-### Key methods
-1. **[Invoke]()** - The model takes [messages]() as input and returns messages
-after generating a full response.
-2. **[Stream]()** - Invoke the model, but stream the response as it is generated
-in real-time.
-3. **[Batch]()** - Send multiple requests to a model in a batch for more
-efficient processing.
+The primary interface for interacting with models in LangChain is the
+`ChatModel` abstraction. They provide a consistent interface for accessing
+different LLMs from various providers.
 
-### `init_chat_model()`
+The easiest way start interacting with a model in LangChain is to use
+`init_chat_model()` to initialize one from a model [provider]() of your choice.
 
-The easiest way start interacting with a model in LangChain:
+<CodeGroup>
+```python
+from langchain.chat_models import init_chat_model
 
-<CodeGroup dropdown>
-```python OpenAI icon="openai"
+model = init_chat_model(
+    model="gpt-5", 
+    model_provider="openai"
+)
+response = model.invoke("Why do parrots talk?")
+```
+
+{/* ```python OpenAI icon="openai"
 from langchain.chat_models import init_chat_model
 
 model = init_chat_model(
@@ -86,85 +91,121 @@ model = init_chat_model(
     model_provider="ollama",
 )
 response = model.invoke("Why do parrots talk?")
-```
+``` */}
 </CodeGroup>
 
-In addition to passing in single string messages, you can provide the model a
-list of messages to represent conversation history. The role of each message
-provides context to the model about who is speaking. See the [messages]() guide
-for more info.
+### Key methods
 
-```python Conversation history
-from langchain.messages import HumanMessage, AIMessage, SystemMessage
-
-conversation = [
-    SystemMessage("You are a helpful assistant that translates English to French."),
-    HumanMessage("Translate: I love programming."),
-    AIMessage("J'adore la programmation."),
-    HumanMessage("Translate: I love building applications.")
-]
-
-response = model.invoke(conversation)
-print(response)
-```
+<Card title="Invoke" href="#invoke" icon="paper-plane" arrow="true" horizontal>
+    The model takes messages as input and returns
+    messages after generating a full response.
+</Card>
+<Card title="Stream" href="#stream" icon="tower-broadcast" arrow="true" horizontal>
+    Invoke the model, but stream the response as it is
+    generated in real-time.
+</Card>
+<Card title="Batch" href="#batch" icon="folder-open" arrow="true" horizontal>
+    Send multiple requests to a model in a batch for more
+    efficient processing.
+</Card>
 
 ## Parameters
 
-Models take parameters that can be used to configure its behavior. These
-parameters vary by model and provider, but common ones include:
+A `ChatModel` takes parameters that can be used to configure its behavior. The
+full set of supported parameters vary by model and provider, but common ones
+include:
 
-| Parameter      | Description                                                                                                                                                             |
-|----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `model`        | The name or identifier of the specific model you want to use.                                                                                                           |
-| `api_key`      | The key required for authenticating with the model's provider. This is usually issued when you sign up for access to the model.                                         |
-| `temperature`  | Controls the randomness of the model's output. A higher number makes responses more creative, while a lower one makes them more deterministic.                          |
-| `stop`         | A string that indicates when the model should stop generating its output.                                                                                               |
-| `timeout`      | The maximum time (in seconds) to wait for a response from the model before canceling the request.                                                                       |
-| `max_tokens`   | Limits the total number of [tokens]() in the response, effectively controling how long the output can be.                                                               |
-| `max_retries`  | The maximum number of attempts the system will make to resend a request if it fails due to issues like network timeouts or rate limits.                                 |
+<ParamField body="model" type="string" required>
+    The name or identifier of the specific model you want to use with the
+    provider.
+</ParamField>
 
-<Note>
-    To find all the parameters supported by a model, head to the their
-    respective [page]().
-</Note>
+<ParamField body="api_key" type="string">
+    The key required for authenticating with the model's provider. This is
+    usually issued when you sign up for access to the model.
+</ParamField>
+
+<ParamField body="temperature" type="number">
+    Controls the randomness of the model's output. A higher number makes
+    responses more creative, while a lower one makes them more deterministic.
+</ParamField>
+
+<ParamField body="stop" type="string[]">
+    A sequence of characters that indicates when the model should stop
+    generating its output.
+</ParamField>
+
+<ParamField body="timeout" type="number">
+    The maximum time (in seconds) to wait for a response from the model before
+    canceling the request.
+</ParamField>
+
+<ParamField body="max_tokens" type="number">
+    Limits the total number of [tokens]() in the response, effectively
+    controlling how long the output can be.
+</ParamField>
+
+<ParamField body="max_retries" type="number">
+    The maximum number of attempts the system will make to resend a request if
+    it fails due to issues like network timeouts or rate limits.
+</ParamField>
+
+<Info>
+    To find all the parameters supported by a `ChatModel`, head to its
+    respective [reference]().
+</Info>
 
 ## Invocation
 
-Models must be invoked to generate output. There are three main methods for 
-doing this, each suited to different use cases.
+A `ChatModel` must be invoked to generate an output. There are three main
+invocation methods, each suited to different use cases.
 
-<Tip>All invocation methods have asynchronous equivalents.</Tip>
+<Tip>
+    Each invocation method has an
+    <Tooltip tip="Asynchronous methods are useful for non-blocking operations, especially in web servers or applications that handle multiple tasks concurrently.">asynchronous</Tooltip>
+    equivalent, typically prefixed with the letter `'a'`
+    
+    For example: `ainvoke()`, `astream()`, `abatch()`
+    
+    A full list of async methods can be found in the [reference]().
+</Tip>
 
-### `invoke()`
+### Invoke
 
-The most straightforward way to use a model is to call `invoke()` with a single
+The most straightforward way to call a model is to use `invoke()` with a single
 message or a list of messages.
 
-```python Invoke
+A list of messages can be provided to a model to represent a conversation
+history. Each message has a role to provide context as to who is speaking in the
+sequence. See the [messages]() guide for more detail.
+
+<CodeGroup>
+```python Single message
 response = model.invoke("Why do parrots have colorful feathers?")
 print(response)
 ```
+<ConversationHistory/>
+</CodeGroup>
 
-### `stream()`
+### Stream
 
-Most models can stream their output content as it is generated. By displaying
-output progressively, even before a complete response is ready, streaming
-significantly improves user experience, particularly for longer responses.
+Most models can stream their output content while it is being generated. By
+displaying output progressively, streaming significantly improves user
+experience, particularly for longer responses.
 
-Calling `stream()` returns an iterator that yields chunks of output
-synchronously as they are produced. You can use a loop to process each chunk in
-real-time:
+Calling `stream()` returns an <Tooltip tip="An object that progressively provides access to each item of a collection, in order">iterator</Tooltip>
+that yields output chunks as they are produced. You can use a loop to process
+each chunk in real-time:
 
 ```python Streaming
 for chunk in model.stream("Why do parrots have colorful feathers?"):
     print(chunk)
 ```
 
-### `batch()`
+### Batch
 
-Batching requests to a model can significantly improve performance when needing
-to process multiple independent inputs, as the processing can be done in
-parallel:
+Batching a collection of independent requests to a model can significantly
+improve performance, as the processing can be done in parallel:
 
 ```python Batch
 responses = model.batch([
@@ -199,17 +240,38 @@ for response in model.batch_as_completed([
 
 ### Tool calling
 
-Models can request to call [tools]() to perform tasks such as fetching data from
-a database, searching the web, or running code.
+Models can request to call [tools]() that perform tasks such as fetching data
+from a database, searching the web, or running code.
 
 <Note>
     You will sometimes hear the term `function calling`. We use this term 
     interchangeably with `tool calling`.
 </Note>
 
-To make tools available for use by a model, they must be bound with
-`.bind_tools()`. In subsequent invocations, the model can then choose to call
-any of the bound tools as needed.
+To make tools available for use by a model, they must be bound using
+`.bind_tools()`. In subsequent invocations, the model can choose to call any of
+the bound tools as needed. For more details on creating, using, and executing
+tools requests, see the [tools]() guide.
+
+```python Binding tools highlight={16}
+from pydantic import BaseModel, Field
+
+class GetWeather(BaseModel):
+    """Get the current weather in a given location"""
+    location: str = Field(..., description="The city and state, e.g. Boston, MA")
+
+model_with_tools = model.bind_tools([GetWeather])
+
+response = model_with_tools.invoke("What's the weather like in Boston?")
+for tool_call in response.tool_calls:
+    # View tool calls made by the model
+    print(f"Tool: {tool_call['name']}")
+    print(f"Args: {tool_call['args']}")
+```
+
+{/* 
+
+If we want to include some tool info here, we can do so like this:
 
 TODO a switcher to iterate through all different tool schema options
 TODO model switcher to show this example for our top 5 providers
@@ -272,7 +334,7 @@ response = model_with_tools.invoke(
 
 #### Parallel tool calls
 
-TODO
+TODO */}
 
 ### Structured outputs
 
@@ -289,17 +351,6 @@ TODO show example of image/audio/video input
 
 TODO show example of image/audio/video output
 
-### Context window
-
-A model's context window refers to the maximum size of the input that it can
-process at one time. Maximum size varies from model to model.
-
-If the input to a model exceeds the context window, the model may not be able to
-process the entire input and could raise an error. In conversational
-applications, this determines how much information the model can "remember"
-throughout a conversation. Consequently, you may need to manage the context to
-maintain a coherent dialogue.
-
 ### Reasoning
 
 
@@ -310,14 +361,20 @@ maintain a coherent dialogue.
 
 ## Supported models
 
-LangChain supports all major model providers.
+LangChain supports all major model providers, including OpenAI, Anthropic,
+Google, Azure, AWS Bedrock, and more. Each provider offers a variety of models
+with different capabilities. For a full list of supported models in LangChain,
+see the [provider reference]().
 
-TODO link out to page with full table
 
-At a glance:
 
-| Provider  | Tool Calling | Structured Output | Multimodal | Streaming | Async |
-|-----------|--------------|-------------------|------------|-----------|-------|
-| OpenAI    | x            | x                 | x          | x         | x     |
-| Anthropic | x            | x                 | x          | x         | x     |
-| Google    | x            | x                 | x          | x         | x     |
+{/* ### Context window
+
+A model's context window refers to the maximum size of the input that it can
+process at one time. Maximum size varies from model to model.
+
+If the input to a model exceeds the context window, the model may not be able to
+process the entire input and could raise an error. In conversational
+applications, this determines how much information the model can "remember"
+throughout a conversation. Consequently, you may need to manage the context to
+maintain a coherent dialogue. */}
