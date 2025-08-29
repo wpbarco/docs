@@ -418,7 +418,7 @@
                     ]
                   },
                   {
-                    "group": "Plans and deployment",
+                    "group": "Plans",
                     "pages": [
                       "langgraph-platform/plans"
                     ]
