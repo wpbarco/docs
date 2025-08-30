@@ -67,7 +67,7 @@ response = model.invoke(messages)  # Returns AIMessage
 ```typescript
 import { initChatModel } from "langchain/chat_models";
 
-const model = initChatModel("openai:gpt-5-nano");
+const model = await initChatModel("openai:gpt-5-nano");
 
 const systemMsg = new SystemMessage("You are a helpful assistant.");
 const humanMsg = new HumanMessage("Hello, how are you?");
@@ -281,7 +281,7 @@ human_msg = HumanMessage(
 :::
 
 :::js
-```typescript
+```typescript Add metadata
 const humanMsg = new HumanMessage({
     content: "Hello!",
     name: "alice",
@@ -650,8 +650,10 @@ human_message = HumanMessage(content_blocks=[
 ```typescript
 import { HumanMessage } from "@langchain/core/messages";
 
+// String content
 const humanMessage = new HumanMessage("Hello, how are you?");
 
+// List of content blocks
 const humanMessage = new HumanMessage({
     contentBlocks: [
         { type: "text", text: "Hello, how are you?" },
@@ -841,6 +843,7 @@ response = model.invoke([message])
 :::
 
 :::js
+<CodeGroup>
 ```typescript PDF document analysis
 import { readFileSync } from 'fs';
 import { HumanMessage } from '@langchain/core/messages';
@@ -850,7 +853,7 @@ const pdfData = readFileSync("report.pdf");
 const pdfBase64 = pdfData.toString('base64');
 
 const message = new HumanMessage({
-    content: [
+    contentBlocks: [
         { type: "text", text: "Summarize the key findings in this report" },
         { type: "file", data: pdfBase64, mimeType: "application/pdf" }
     ]
@@ -868,7 +871,7 @@ const audioData = readFileSync("meeting.mp3");
 const audioBase64 = audioData.toString('base64');
 
 const message = new HumanMessage({
-    content: [
+    contentBlocks: [
         { type: "text", text: "Transcribe this audio and identify the main topics discussed" },
         { type: "audio", data: audioBase64, mimeType: "audio/mpeg" }
     ]
@@ -886,7 +889,7 @@ const videoData = readFileSync("demo.mp4");
 const videoBase64 = videoData.toString('base64');
 
 const message = new HumanMessage({
-    content: [
+    contentBlocks: [
         { type: "text", text: "Describe what happens in this video" },
         { type: "video", data: videoBase64, mimeType: "video/mp4" }
     ]
@@ -894,6 +897,7 @@ const message = new HumanMessage({
 
 const response = await model.invoke([message]);
 ```
+</CodeGroup>
 :::
 
 <Warning>
@@ -1193,7 +1197,7 @@ must adhere to one of the following block types:
 
 :::js
 Content blocks are represented (either when creating a message or accessing the
-`contentBlocks` field) as a list of typed dictionaries. Each item in the list
+`contentBlocks` field) as a list of typed objects. Each item in the list
 must adhere to one of the following block types:
 
 <AccordionGroup>
@@ -1588,12 +1592,12 @@ are not a replacement for the `content` property, but rather a new property that
 content of a message in a standardized format.
 
 :::python
-`.content_blocks` is a computed property that outputs standard blocks based on `.content`. Because of this
+`.content_blocks` is a computed property that outputs standard blocks based on `.content`. Because of this,
 content blocks will not be included in the output when a message gets stringified/serialized by default.
 :::
 
 :::js
-`.contentBlocks` is a computed property that outputs standard blocks based on `.content`. Because of this
+`.contentBlocks` is a computed property that outputs standard blocks based on `.content`. Because of this,
 content blocks will not be included in the output when a message gets stringified/serialized by default.
 :::
 
@@ -1623,10 +1627,10 @@ model = ChatOpenAI()  # Uses v1
 :::js
 <CodeGroup>
 ```typescript Model initialization
-# Default v0 (backward compatible)
+// Default v0 (backward compatible)
 const model = new ChatOpenAI({ model: "gpt-4o" })
 
-# Explicit v1
+// Explicit v1
 const model = new ChatOpenAI({ model: "gpt-4o", output_version: "v1" })
 ```
 
@@ -1643,7 +1647,10 @@ When instructed, the model will output a message with `.content` as a list of
 [standard content blocks](#content-block-reference) (the same as if you were accessing `.content_blocks`).
 
 ```python
-model = init_chat_model(model="", provider="", output_version="v1")
+model = init_chat_model("", {
+    modelProvider: "",
+    outputVersion: "v1",
+})
 response = model.invoke("Analyze the sales data and show your reasoning")
 
 response.content  # List of ContentBlock objects
@@ -1656,7 +1663,7 @@ When instructed, the model will output a message with `.content` as a list of
 [standard content blocks](#content-block-reference) (the same as if you were accessing `.contentBlocks`).
 
 ```typescript
-const model = initChatModel(model="", provider="", output_version="v1")
+const model = await initChatModel(model="", provider="", output_version="v1")
 const response = await model.invoke("Analyze the sales data and show your reasoning")
 
 response.content  // List of ContentBlock objects
@@ -1667,6 +1674,7 @@ response.contentBlocks  // Same as above, but typed
 Models can interpret both v0 and v1 content formats, which means that you can use the same model instance
 to invoke messages that might have different content formats.
 
+:::python
 | Aspect | v0 | v1 (Standard) |
 |:--------|:-----------|:-------------|
 | **Default behavior** | Yes | Accessible through `.content_blocks` |
@@ -1674,6 +1682,16 @@ to invoke messages that might have different content formats.
 | **Content format** | Provider-specific | Standardized `ContentBlock` types |
 | **Type safety** | Limited | Fully typed |
 | **Multimodal support** | Basic | Comprehensive |
+:::
+:::js
+| Aspect | v0 | v1 (Standard) |
+|:--------|:-----------|:-------------|
+| **Default behavior** | Yes | Accessible through `.contentBlocks` |
+| **Serialization** | `content` is raw model output | `content` is a list of `ContentBlock` objects |
+| **Content format** | Provider-specific | Standardized `ContentBlock` types |
+| **Type safety** | Limited | Fully typed |
+| **Multimodal support** | Basic | Comprehensive |
+:::
 
 {/* TODO: ensure these topics are covered somewhere  */}
 {/*
