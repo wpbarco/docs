@@ -591,15 +591,8 @@ for (const response of responses) {
 For more details on batching, see the [reference](https://js.langchain.com/api_reference/core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.batch).
 :::
 
-## Context windows
 
-Each model has a <Tooltip tip="The maximum number of tokens a model can process in a single request, including both input and output tokens">context window</Tooltip>
-that determines how much text it can process at once. To learn more, see our
-guide on [context engineering](./langchain-context-engineering.mdx) for strategies to effectively manage context.
-
-## Model capabilities
-
-### Tool calling
+## Tool calling
 
 Models can request to call tools that perform tasks such as fetching data from a
 database, searching the web, or running code. Tools are pairings of:
@@ -614,12 +607,12 @@ definitions (often defined with something like JSON schema)
 </Note>
 
 :::python
-To make tools that you have defined available for use by a model, you must bind them using @[BaseChatModel.bindTools][`bindTools()`]. In subsequent invocations, the model can choose to call any of the bound tools
+To make tools that you have defined available for use by a model, you must bind them using `bindTools()`. In subsequent invocations, the model can choose to call any of the bound tools
 as needed.
 :::
 
 :::js
-To make tools that you have defined available for use by a model, you must bind them using @[BaseChatModel.bindTools][`bindTools()`]. In subsequent invocations, the model can choose to call any of the bound tools as needed.
+To make tools that you have defined available for use by a model, you must bind them using `bindTools()`. In subsequent invocations, the model can choose to call any of the bound tools as needed.
 :::
 
 Some model providers offer built-in tools that can be enabled via model
@@ -685,9 +678,7 @@ When binding user-defined tools, the model's response includes a **request** to
 execute a tool. It is up to you to perform the requested action and return the
 result back to the model for use in subsequent reasoning.
 
-The LangGraph framework simplifies the orchestration of model and tool calls.
-See the [agent guides](./langchain-agents.mdx) to get started. Below, we show
-some simple patterns for illustration.
+Below, we show some common ways you can get use tool calling.
 
 :::python
 <AccordionGroup>
@@ -943,7 +934,7 @@ some simple patterns for illustration.
 </AccordionGroup>
 :::
 
-### Structured outputs
+## Structured outputs
 
 Models can be requested to provide their response in a format matching a given
 schema. This is useful for ensuring the output can be easily parsed and used in
@@ -1242,6 +1233,15 @@ const modelWithStructure = model.withStructuredOutput(MovieDetails);
 </Accordion>
 
 
+## Supported models
+
+LangChain supports all major model providers, including OpenAI, Anthropic,
+Google, Azure, AWS Bedrock, and more. Each provider offers a variety of models
+with different capabilities. For a full list of supported models in LangChain,
+see the [integrations page](./integrations/providers).
+
+## Advanced configuration
+
 ### Multimodal
 
 Certain models can process and return non-textual data such as images, audio, and video. You can pass non-textual data to a model by providing [content blocks](./langchain-messages.mdx#content)
@@ -1255,7 +1255,7 @@ All LangChain chat models with underlying multimodal capabilities support:
 </Tip>
 
 :::python
-<CodeGroup>    
+<CodeGroup>
     ```python Image input
     # From URL
     response = model.invoke([
@@ -1343,7 +1343,7 @@ All LangChain chat models with underlying multimodal capabilities support:
 :::
 
 :::js
-<CodeGroup>    
+<CodeGroup>
     ```typescript Image input
     // From URL
     const response = await model.invoke([
@@ -1473,7 +1473,7 @@ better understand how the model arrived at its final answer.
         reasoning_steps = [r for r in chunk.content_blocks if r["type"] == "reasoning"]
         print(reasoning_steps if reasoning_steps else chunk.text)
     ```
-    
+
     ```python Full reasoning output
     response = model.invoke("Why do parrots have colorful feathers?")
     reasoning_steps = [b for b in response.content_blocks if b["type"] == "reasoning"]
@@ -1491,7 +1491,7 @@ better understand how the model arrived at its final answer.
         console.log(reasoningSteps.length > 0 ? reasoningSteps : chunk.text);
     }
     ```
-    
+
     ```typescript Full reasoning output
     const response = await model.invoke("Why do parrots have colorful feathers?");
     const reasoningSteps = response.contentBlocks.filter(b => b.type === "reasoning");
@@ -1508,14 +1508,6 @@ reasoning entirely. This may take the form of categorical "tiers" of reasoning
 For details, see the relevant chat model in the
 [integrations page](./integrations/providers).
 
-## Supported models
-
-LangChain supports all major model providers, including OpenAI, Anthropic,
-Google, Azure, AWS Bedrock, and more. Each provider offers a variety of models
-with different capabilities. For a full list of supported models in LangChain,
-see the [integrations page](./integrations/providers).
-
-## Advanced configuration
 
 ### Local models
 

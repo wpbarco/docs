@@ -177,8 +177,7 @@
                     "pages": [
                       "oss/python/langgraph/overview",
                       "oss/python/langgraph/installation",
-                      "oss/python/langgraph/quickstart",
-                      "oss/python/langgraph/philosophy"
+                      "oss/python/langgraph/quickstart"
 
                     ]
                   },
@@ -192,9 +191,9 @@
                   {
                     "group": "Capabilities",
                     "pages": [
-                      "oss/langgraph/persistence",
-                      "oss/langgraph/durable-execution",
-                      "oss/langgraph/streaming",
+                      "oss/python/langgraph/persistence",
+                      "oss/python/langgraph/durable-execution",
+                      "oss/python/langgraph/streaming",
                       {
                         "group": "Human-in-the-loop",
                         "pages": [
@@ -1138,6 +1137,7 @@
                   }
                 ]
               },
+
               {
                 "tab": "LangGraph",
                 "groups": [
@@ -1146,16 +1146,23 @@
                     "pages": [
                       "oss/javascript/langgraph/overview",
                       "oss/javascript/langgraph/installation",
-                      "oss/javascript/langgraph/quickstart",
-                      "oss/javascript/langgraph/philosophy"
+                      "oss/javascript/langgraph/quickstart"
+
+                    ]
+                  },
+                  {
+                    "group": "Graph API",
+                    "pages": [
+                      "oss/javascript/langgraph/graph-api",
+                      "oss/javascript/langgraph/use-graph-api"
                     ]
                   },
                   {
                     "group": "Capabilities",
                     "pages": [
-                      "oss/langgraph/persistence",
-                      "oss/langgraph/durable-execution",
-                      "oss/langgraph/streaming",
+                      "oss/javascript/langgraph/persistence",
+                      "oss/javascript/langgraph/durable-execution",
+                      "oss/javascript/langgraph/streaming",
                       {
                         "group": "Human-in-the-loop",
                         "pages": [
@@ -1188,24 +1195,18 @@
                     ]
                   },
                   {
-                    "group": "Run and debug",
+                    "group": "Production",
                     "pages": [
-                      "oss/javascript/langgraph/local-server",
-                      "oss/javascript/langgraph/ui",
-                      "oss/javascript/langgraph/trace-agent",
-                      "oss/javascript/langgraph/evals"
+                      "oss/javascript/langgraph/studio",
+                      "oss/javascript/langgraph/test",
+                      "oss/javascript/langgraph/deploy",
+                      "oss/javascript/langgraph/observability"
                     ]
                   },
                   {
                     "group": "LangGraph APIs",
                     "pages": [
-                      {
-                        "group": "Graph API",
-                        "pages": [
-                          "oss/javascript/langgraph/graph-api",
-                          "oss/javascript/langgraph/use-graph-api"
-                        ]
-                      },
+
                       {
                         "group": "Functional API",
                         "pages": [

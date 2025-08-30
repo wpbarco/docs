@@ -35,13 +35,14 @@ To add short-term memory (thread-level persistence) to an agent, you need to spe
 an agent.
 
 <Info>
-LangChain's `create_react_agent()` manages short-term memory as a part of your agent's state.
+LangChain's agent manages short-term memory as a part of your agent's state.
 By storing these in the graph's state, the agent can access the full context for a given conversation while maintaining separation between different threads.
 
 State is persisted to a database (or memory) using a checkpointer so the thread can be resumed at any time. 
 Short-term memory updates when the agent is invoked or a step (like a tool call) is completed, and the state is read at the start of each step.
 </Info>
 
+:::python
 ```python {highlight={2,7,12}}
 from langchain.agents import create_react_agent
 from langgraph.checkpoint.memory import InMemorySaver
@@ -57,11 +58,32 @@ agent.invoke(
     {"configurable": {"thread_id": "1"}},
 )
 ```
+:::
+:::js
+```ts {highlight={2,4, 9,14}}
+import { createReactAgent } from "langchain";
+import { MemorySaver } from "@langchain/langgraph";
+
+const checkpointer = new MemorySaver();
+
+const agent = createReactAgent({
+  model: "anthropic:claude-3-7-sonnet-latest",
+  tools: [getWeather],
+  checkpointer: checkpointer,
+});
+
+await agent.invoke(
+  { messages: [{ role: "user", content: "hi! i am Bob" }] },
+  { configurable: { thread_id: "1" } }
+);
+```
+:::
 
 ### In production
 
 In production, use a checkpointer backed by a database:
 
+:::python
 ```python {highlight={2,9}}
 from langchain.agents import create_react_agent
 from langgraph.checkpoint.postgres import PostgresSaver
@@ -74,6 +96,15 @@ with PostgresSaver.from_conn_string(DB_URI) as checkpointer:
         checkpointer=checkpointer,
     )
 ```
+:::
+:::js
+```ts
+import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
+
+const DB_URI = "postgresql://postgres:postgres@localhost:5442/postgres?sslmode=disable";
+const checkpointer = PostgresSaver.fromConnString(DB_URI);
+```
+:::
 
 
 ## Customizing agent memory
@@ -83,6 +114,7 @@ Users can subclass `AgentState` to add additional fields to the state.
 
 This custom state can then be accessed via tools and dynamic prompt / model functions.
 
+:::python
 ```python {highlight={3,10}}
 from langchain.agents import create_react_agent, AgentState
 from langgraph.checkpoint.memory import InMemorySaver
@@ -97,6 +129,10 @@ agent = create_react_agent(
     checkpointer=InMemorySaver(),
 )
 ```
+:::
+:::js
+TODO
+:::
 
 ## Common Patterns
 
@@ -421,6 +457,9 @@ final_response["messages"][-1].pretty_print()
 print("\nSummary:", final_response["context"]["running_summary"].summary)
 ```
 :::
+:::js
+TODO
+:::
 
 ## Access
 
@@ -437,6 +476,7 @@ You can access the short-term memory of an agent in a few different ways:
 Access short term memory (state) in a tool by injecting the agent's state into the tool signature with the `InjectedState` annotation.
 This annotation hides the state from the tool signature (so the model doesn't see it), but the tool can access it.
 
+:::python
 ```python
 from typing import Annotated
 from langchain.agents import create_react_agent, AgentState
@@ -465,8 +505,12 @@ result = agent.invoke({
 print(result["messages"][-1].content)
 #> User is John Smith.
 ```
+:::
+:::js
+TODO
+:::
 
-### Write short-term memory from tools
+#### Write short-term memory from tools
 
 To modify the agent's short-term memory (state) during execution, you can return state updates directly from the tools. 
 This is useful for persisting intermediate results or making information accessible to subsequent tools or prompts.
@@ -598,6 +642,7 @@ await agent.invoke(
 
 Access short term memory (state) in a dynamic prompt function by injecting the agent's state into the prompt function signature.
 
+:::python
 ```python
 from langchain_core.messages import AnyMessage
 from langchain.agents import create_react_agent, AgentState
@@ -653,11 +698,16 @@ The weather in San Francisco is always sunny!
 
 Hi John Smith, the weather in San Francisco is always sunny!
 ```
+:::
+:::js
+TODO
+:::
 
 ### Pre Model Hook
 
 Access short term memory (state) in a pre model hook by injecting the agent's state into the hook signature.
 
+:::python
 ```python
 from langchain_core.messages.utils import trim_messages, count_tokens_approximately
 from langchain_core.messages import BaseMessage
@@ -689,11 +739,16 @@ agent = create_react_agent(
 result = agent.invoke({"messages": "hi, my name is bob"}, {"configurable": {"thread_id": "1"}})
 print(result["messages"][-1].content)
 ```
+:::
+:::js
+TODO
+:::
 
 ### Post Model Hook
 
 Access short term memory (state) in a post model hook by injecting the agent's state into the hook signature.
 
+:::python
 ```python
 from langchain.agents import create_react_agent, AgentState
 
@@ -713,3 +768,7 @@ agent = create_react_agent(
     checkpointer=InMemorySaver(),
 )
 ```
+:::
+:::js
+TODO
+:::
