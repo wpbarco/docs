@@ -99,6 +99,19 @@ def after_model(self, state: AgentState) -> AgentUpdate | AgentGoTo | None:
 :::js
 TODO
 :::
+
+## New state keys
+
+Middleware may require new state keys to exist.
+Middleware can declare new state keys by typing the input or output types.
+
+Example usage:
+:::python
+```python
+```
+:::
+:::js
+:::
 ## Middleware execution order
 
 You can provide multiple middlewares. They are executed in the following logic:
@@ -144,3 +157,4 @@ LangChain provides several built in middleware to use off-the-shelf
 - Summarization
 - Trimming
 - Anthropic Prompt Caching
+- Usage Tracking
