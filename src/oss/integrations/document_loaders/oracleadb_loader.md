@@ -2,31 +2,27 @@
 title: Oracle Autonomous Database
 ---
 
-Oracle autonomous database is a cloud database that uses machine learning to automate database tuning, security, backups, updates, and other routine management tasks traditionally performed by DBAs.
+Oracle Autonomous Database is a cloud database that uses machine learning to automate database tuning, security, backups, updates, and other routine management tasks traditionally performed by DBAs.
 
-This notebook covers how to load documents from oracle autonomous database, the loader supports connection with connection string or tns configuration.
+This notebook covers how to load documents from Oracle Autonomous Database, the loader supports connection with connection string or tns configuration.
 
 ## Prerequisites
-1. Database runs in a 'Thin' mode:
-   https://python-oracledb.readthedocs.io/en/latest/user_guide/appendix_b.html
-2. `pip install oracledb`:
-   https://python-oracledb.readthedocs.io/en/latest/user_guide/installation.html
+
+1. Install `python-oracledb`: `pip install oracledb`
+   1. See [Installing `python-oracledb`](https://python-oracledb.readthedocs.io/en/latest/user_guide/installation.html).
 
 ## Instructions
-
 
 ```python
 pip install oracledb
 ```
-
 
 ```python
 from langchain_community.document_loaders import OracleAutonomousDatabaseLoader
 from settings import s
 ```
 
-With mutual TLS authentication (mTLS), wallet_location and wallet_password are required to create the connection, user can create connection by providing either connection string or tns configuration details.
-
+With mutual TLS authentication (mTLS), wallet_location and wallet_password parameters are required to create the connection. See python-oracledb documentation [Connecting to Oracle Cloud Autonomous Databases](https://python-oracledb.readthedocs.io/en/latest/user_guide/connection_handling.html#connecting-to-oracle-cloud-autonomous-databases).
 
 ```python
 SQL_QUERY = "select prod_id, time_id from sh.costs fetch first 5 rows only"
@@ -55,9 +51,7 @@ doc_loader_2 = OracleAutonomousDatabaseLoader(
 doc_2 = doc_loader_2.load()
 ```
 
-With TLS authentication, wallet_location and wallet_password are not required.
-Bind variable option is provided by argument "parameters".
-
+With 1-way TLS authentication, only the database credentials and connection string are required to establish a connection. The example below also shows passing bind variable values with the argument `parameters`.
 
 ```python
 SQL_QUERY = "select channel_id, channel_desc from sh.channels where channel_desc = :1 fetch first 5 rows only"

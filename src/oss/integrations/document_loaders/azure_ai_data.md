@@ -2,7 +2,7 @@
 title: Azure AI Data
 ---
 
->[Azure AI Studio](https://ai.azure.com/) provides the capability to upload data assets to cloud storage and register existing data assets from the following sources:
+>[Azure AI Foundry (formerly Azure AI Studio](https://ai.azure.com/) provides the capability to upload data assets to cloud storage and register existing data assets from the following sources:
 >
 >- `Microsoft OneLake`
 >- `Azure Blob Storage`
@@ -12,18 +12,15 @@ The benefit of this approach over `AzureBlobStorageContainerLoader` and `AzureBl
 
 This notebook covers how to load document objects from a data asset in AI Studio.
 
-
 ```python
 %pip install --upgrade --quiet azureml-fsspec azure-ai-generative
 ```
-
 
 ```python
 from azure.ai.resources.client import AIClient
 from azure.identity import DefaultAzureCredential
 from langchain_community.document_loaders import AzureAIDataLoader
 ```
-
 
 ```python
 # Create a connection to your project
@@ -35,50 +32,39 @@ client = AIClient(
 )
 ```
 
-
 ```python
 # get the latest version of your data asset
 data_asset = client.data.get(name="<data_asset_name>", label="latest")
 ```
-
 
 ```python
 # load the data asset
 loader = AzureAIDataLoader(url=data_asset.path)
 ```
 
-
 ```python
 loader.load()
 ```
-
-
 
 ```output
 [Document(page_content='Lorem ipsum dolor sit amet.', lookup_str='', metadata={'source': '/var/folders/y6/8_bzdg295ld6s1_97_12m4lr0000gn/T/tmpaa9xl6ch/fake.docx'}, lookup_index=0)]
 ```
 
-
 ## Specifying a glob pattern
-You can also specify a glob pattern for more fine-grained control over what files to load. In the example below, only files with a `pdf` extension will be loaded.
 
+You can also specify a glob pattern for more fine-grained control over what files to load. In the example below, only files with a `pdf` extension will be loaded.
 
 ```python
 loader = AzureAIDataLoader(url=data_asset.path, glob="*.pdf")
 ```
 
-
 ```python
 loader.load()
 ```
 
-
-
 ```output
 [Document(page_content='Lorem ipsum dolor sit amet.', lookup_str='', metadata={'source': '/var/folders/y6/8_bzdg295ld6s1_97_12m4lr0000gn/T/tmpujbkzf_l/fake.docx'}, lookup_index=0)]
 ```
-
-
 
 ```python
 
