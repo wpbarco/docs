@@ -108,9 +108,13 @@ If a user asks you for the weather, make sure you know the location. If you can 
 
 ### Step 2: Create Your Tools
 
-Tools are functions your agent can call. They should be well-documented and handle real-world scenarios:
+
 
 :::python
+Tools are functions your agent can call. They should be well-documented.
+Oftentimes tools will want to connect to external systems, and will rely on runtime configuration to do so.
+Notice here how the `get_user_info` tool does exactly that.
+
 ```python
 # Step 2: define tools
 from langchain_core.tools import tool
@@ -135,6 +139,9 @@ def get_user_info(config: RunnableConfig) -> str:
 :::
 
 :::js
+Tools are functions your agent can call. They should be well-documented.
+Oftentimes tools will want to connect to external systems, and will rely on runtime configuration to do so.
+Notice here how the `getUserInfo` tool does exactly that.
 ```ts
 import { tool } from "langchain";
 import z from "zod";
