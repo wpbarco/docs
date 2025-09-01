@@ -1,316 +1,215 @@
 ---
-title: Apache Cassandra
+title: Cassandra
 ---
 
-This page provides a quickstart for using [Apache Cassandra®](https://cassandra.apache.org/) as a Vector Store.
+<Tip>
+**Compatibility**
 
-> [Cassandra](https://cassandra.apache.org/) is a NoSQL, row-oriented, highly scalable and highly available database.Starting with version 5.0, the database ships with [vector search capabilities](https://cassandra.apache.org/doc/trunk/cassandra/vector-search/overview.html).
+Only available on Node.js.
+</Tip>
 
-_Note: in addition to access to the database, an OpenAI API Key is required to run the full example._
+[Apache Cassandra®](https://cassandra.apache.org/_/index.html) is a NoSQL, row-oriented, highly scalable and highly available database.
 
-### Setup and general dependencies
+The [latest version](<https://cwiki.apache.org/confluence/display/CASSANDRA/CEP-30%3A+Approximate+Nearest+Neighbor(ANN)+Vector+Search+via+Storage-Attached+Indexes>) of Apache Cassandra natively supports Vector Similarity Search.
 
-Use of the integration requires the following Python package.
+## Setup
 
+First, install the Cassandra Node.js driver:
 
-```python
-%pip install --upgrade --quiet langchain-community "cassio>=0.1.4"
+import IntegrationInstallTooltip from '/snippets/javascript-integrations/integration-install-tooltip.mdx';
+
+<IntegrationInstallTooltip/>
+
+```bash npm
+npm install cassandra-driver @langchain/community @langchain/openai @langchain/core
+```
+Depending on your database providers, the specifics of how to connect to the database will vary. We will create a document `configConnection` which will be used as part of the vector store configuration.
+
+### Apache Cassandra®
+
+Vector search is supported in [Apache Cassandra® 5.0](https://cassandra.apache.org/_/Apache-Cassandra-5.0-Moving-Toward-an-AI-Driven-Future.html) and above. You can use a standard connection document, for example:
+
+```typescript
+const configConnection = {
+  contactPoints: ['h1', 'h2'],
+  localDataCenter: 'datacenter1',
+  credentials: {
+    username: <...> as string,
+    password: <...> as string,
+  },
+};
+```
+### Astra DB
+
+Astra DB is a cloud-native Cassandra-as-a-Service platform.
+
+1. Create an [Astra DB account](https://astra.datastax.com/register).
+2. Create a [vector enabled database](https://astra.datastax.com/createDatabase).
+3. Create a [token](https://docs.datastax.com/en/astra/docs/manage-application-tokens.html) for your database.
+
+```typescript
+const configConnection = {
+  serviceProviderArgs: {
+    astra: {
+      token: <...> as string,
+      endpoint: <...> as string,
+    },
+  },
+};
+```
+Instead of `endpoint:`, you many provide property `datacenterID:` and optionally `regionName:`.
+
+## Indexing docs
+
+```typescript
+import { CassandraStore } from "langchain/vectorstores/cassandra";
+import { OpenAIEmbeddings } from "@langchain/openai";
+
+// The configConnection document is defined above
+const config = {
+  ...configConnection,
+  keyspace: "test",
+  dimensions: 1536,
+  table: "test",
+  indices: [{ name: "name", value: "(name)" }],
+  primaryKey: {
+    name: "id",
+    type: "int",
+  },
+  metadataColumns: [
+    {
+      name: "name",
+      type: "text",
+    },
+  ],
+};
+
+const vectorStore = await CassandraStore.fromTexts(
+  ["I am blue", "Green yellow purple", "Hello there hello"],
+  [
+    { id: 2, name: "2" },
+    { id: 1, name: "1" },
+    { id: 3, name: "3" },
+  ],
+  new OpenAIEmbeddings(),
+  cassandraConfig
+);
+```
+## Querying docs
+
+```typescript
+const results = await vectorStore.similaritySearch("Green yellow purple", 1);
+```
+or filtered query:
+
+```typescript
+const results = await vectorStore.similaritySearch("B", 1, { name: "Bubba" });
+```
+## Vector Types
+
+Cassandra supports `cosine` (the default), `dot_product`, and `euclidean` similarity search; this is defined when the
+vector store is first created, and specifed in the constructor parameter `vectorType`, for example:
+
+```typescript
+  ...,
+  vectorType: "dot_product",
+  ...
+```
+## Indices
+
+With Version 5, Cassandra introduced Storage Attached Indexes, or SAIs. These allow `WHERE` filtering without specifying
+the partition key, and allow for additional operator types such as non-equalities. You can define these with the `indices`
+parameter, which accepts zero or more dictionaries each containing `name` and `value` entries.
+
+Indices are optional, though required if using filtered queries on non-partition columns.
+
+- The `name` entry is part of the object name; on a table named `test_table` an index with `name: "some_column"`
+  would be `idx_test_table_some_column`.
+- The `value` entry is the column on which the index is created, surrounded by `(` and `)`. With the above column
+  `some_column` it would be specified as `value: "(some_column)"`.
+- An optional `options` entry is a map passed to the `WITH OPTIONS =` clause of the `CREATE CUSTOM INDEX` statement.
+  The specific entries on this map are index type specific.
+
+```typescript
+  indices: [{ name: "some_column", value: "(some_column)" }],
+```
+## Advanced Filtering
+
+By default, filters are applied with an equality `=`. For those fields that have an `indices` entry, you may
+provide an `operator` with a string of a value supported by the index; in this case, you specify one or
+more filters, as either a singleton or in a list (which will be `AND`-ed together). For example:
+
+```typescript
+   { name: "create_datetime", operator: ">", value: some_datetime_variable }
+```
+or
+
+```typescript
+[
+  { userid: userid_variable },
+  { name: "create_datetime", operator: ">", value: some_date_variable },
+];
+```
+`value` can be a single value or an array. If it is not an array, or there is only one element in `value`,
+the resulting query will be along the lines of `${name} ${operator} ?` with `value` bound to the `?`.
+
+If there is more than one element in the `value` array, the number of unquoted `?` in `name` are counted
+and subtracted from the length of `value`, and this number of `?` is put on the right side of the operator;
+if there are more than one `?` then they will be encapsulated in `(` and `)`, e.g. `(?, ?, ?)`.
+
+This faciliates bind values on the left of the operator, which is useful for some functions; for example
+a geo-distance filter:
+
+```typescript
+{
+  name: "GEO_DISTANCE(coord, ?)",
+  operator: "<",
+  value: [new Float32Array([53.3730617,-6.3000515]), 10000],
+},
+```
+## Data Partitioning and Composite Keys
+
+In some systems, you may wish to partition the data for various reasons, perhaps by user or by session. Data in Cassandra
+is always partitioned; by default this library will partition by the first primary key field. You may specify multiple
+columns which comprise the primary (unique) key of a record, and optionally indicate those fields which should be
+part of the partition key. For example, the vector store could be partitioned by both `userid` and `collectionid`, with
+additional fields `docid` and `docpart` making an individual entry unique:
+
+```typescript
+  ...,
+  primaryKey: [
+    {name: "userid", type: "text", partition: true},
+    {name: "collectionid", type: "text", partition: true},
+    {name: "docid", type: "text"},
+    {name: "docpart", type: "int"},
+  ],
+  ...
+```
+When searching, you may include partition keys on the filter without defining `indices` for these columns; you do
+not need to specify all partition keys, but must specify those in the key first. In the above example, you could
+specify a filter of `{userid: userid_variable}` and `{userid: userid_variable, collectionid: collectionid_variable}`,
+but if you wanted to specify a filter of only `{collectionid: collectionid_variable}` you would have to include
+`collectionid` on the `indices` list.
+
+## Additional Configuration Options
+
+In the configuration document, further optional parameters are provided; their defaults are:
+
+```typescript
+  ...,
+  maxConcurrency: 25,
+  batchSize: 1,
+  withClause: "",
+  ...
 ```
 
-_Note: depending on your LangChain setup, you may need to install/upgrade other dependencies needed for this demo_
-_(specifically, recent versions of `datasets`, `openai`, `pypdf` and `tiktoken` are required, along with `langchain-community`)._
-
-
-```python
-import os
-from getpass import getpass
-
-from datasets import (
-    load_dataset,
-)
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_core.documents import Document
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import RunnablePassthrough
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-```
-
-
-```python
-if "OPENAI_API_KEY" not in os.environ:
-    os.environ["OPENAI_API_KEY"] = getpass("OPENAI_API_KEY = ")
-```
-
-
-```python
-embe = OpenAIEmbeddings()
-```
-
-## Import the Vector Store
-
-
-```python
-from langchain_community.vectorstores import Cassandra
-```
-
-## Connection parameters
-
-The Vector Store integration shown in this page can be used with Cassandra as well as other derived databases, such as Astra DB, which use the CQL (Cassandra Query Language) protocol.
-
-> DataStax [Astra DB](https://docs.datastax.com/en/astra-serverless/docs/vector-search/quickstart.html) is a managed serverless database built on Cassandra, offering the same interface and strengths.
-
-Depending on whether you connect to a Cassandra cluster or to Astra DB through CQL, you will provide different parameters when creating the vector store object.
-
-### Connecting to a Cassandra cluster
-
-You first need to create a `cassandra.cluster.Session` object, as described in the [Cassandra driver documentation](https://docs.datastax.com/en/developer/python-driver/latest/api/cassandra/cluster/#module-cassandra.cluster). The details vary (e.g. with network settings and authentication), but this might be something like:
-
-
-```python
-from cassandra.cluster import Cluster
-
-cluster = Cluster(["127.0.0.1"])
-session = cluster.connect()
-```
-
-You can now set the session, along with your desired keyspace name, as a global CassIO parameter:
-
-
-```python
-import cassio
-
-CASSANDRA_KEYSPACE = input("CASSANDRA_KEYSPACE = ")
-
-cassio.init(session=session, keyspace=CASSANDRA_KEYSPACE)
-```
-
-Now you can create the vector store:
-
-
-```python
-vstore = Cassandra(
-    embedding=embe,
-    table_name="cassandra_vector_demo",
-    # session=None, keyspace=None  # Uncomment on older versions of LangChain
-)
-```
-
-_Note: you can also pass your session and keyspace directly as parameters when creating the vector store. Using the global `cassio.init` setting, however, comes handy if your applications uses Cassandra in several ways (for instance, for vector store, chat memory and LLM response caching), as it allows to centralize credential and DB connection management in one place._
-
-### Connecting to Astra DB through CQL
-
-In this case you initialize CassIO with the following connection parameters:
-
-- the Database ID, e.g. `01234567-89ab-cdef-0123-456789abcdef`
-- the Token, e.g. `AstraCS:6gBhNmsk135....` (it must be a "Database Administrator" token)
-- Optionally a Keyspace name (if omitted, the default one for the database will be used)
-
-
-```python
-ASTRA_DB_ID = input("ASTRA_DB_ID = ")
-ASTRA_DB_APPLICATION_TOKEN = getpass("ASTRA_DB_APPLICATION_TOKEN = ")
-
-desired_keyspace = input("ASTRA_DB_KEYSPACE (optional, can be left empty) = ")
-if desired_keyspace:
-    ASTRA_DB_KEYSPACE = desired_keyspace
-else:
-    ASTRA_DB_KEYSPACE = None
-```
-
-
-```python
-import cassio
-
-cassio.init(
-    database_id=ASTRA_DB_ID,
-    token=ASTRA_DB_APPLICATION_TOKEN,
-    keyspace=ASTRA_DB_KEYSPACE,
-)
-```
-
-Now you can create the vector store:
-
-
-```python
-vstore = Cassandra(
-    embedding=embe,
-    table_name="cassandra_vector_demo",
-    # session=None, keyspace=None  # Uncomment on older versions of LangChain
-)
-```
-
-## Load a dataset
-
-Convert each entry in the source dataset into a `Document`, then write them into the vector store:
-
-
-```python
-philo_dataset = load_dataset("datastax/philosopher-quotes")["train"]
-
-docs = []
-for entry in philo_dataset:
-    metadata = {"author": entry["author"]}
-    doc = Document(page_content=entry["quote"], metadata=metadata)
-    docs.append(doc)
-
-inserted_ids = vstore.add_documents(docs)
-print(f"\nInserted {len(inserted_ids)} documents.")
-```
-
-In the above, `metadata` dictionaries are created from the source data and are part of the `Document`.
-
-Add some more entries, this time with `add_texts`:
-
-
-```python
-texts = ["I think, therefore I am.", "To the things themselves!"]
-metadatas = [{"author": "descartes"}, {"author": "husserl"}]
-ids = ["desc_01", "huss_xy"]
-
-inserted_ids_2 = vstore.add_texts(texts=texts, metadatas=metadatas, ids=ids)
-print(f"\nInserted {len(inserted_ids_2)} documents.")
-```
-
-_Note: you may want to speed up the execution of `add_texts` and `add_documents` by increasing the concurrency level for_
-_these bulk operations - check out the methods' `batch_size` parameter_
-_for more details. Depending on the network and the client machine specifications, your best-performing choice of parameters may vary._
-
-## Run searches
-
-This section demonstrates metadata filtering and getting the similarity scores back:
-
-
-```python
-results = vstore.similarity_search("Our life is what we make of it", k=3)
-for res in results:
-    print(f"* {res.page_content} [{res.metadata}]")
-```
-
-
-```python
-results_filtered = vstore.similarity_search(
-    "Our life is what we make of it",
-    k=3,
-    filter={"author": "plato"},
-)
-for res in results_filtered:
-    print(f"* {res.page_content} [{res.metadata}]")
-```
-
-
-```python
-results = vstore.similarity_search_with_score("Our life is what we make of it", k=3)
-for res, score in results:
-    print(f"* [SIM={score:3f}] {res.page_content} [{res.metadata}]")
-```
-
-### MMR (Maximal-marginal-relevance) search
-
-
-```python
-results = vstore.max_marginal_relevance_search(
-    "Our life is what we make of it",
-    k=3,
-    filter={"author": "aristotle"},
-)
-for res in results:
-    print(f"* {res.page_content} [{res.metadata}]")
-```
-
-## Deleting stored documents
-
-
-```python
-delete_1 = vstore.delete(inserted_ids[:3])
-print(f"all_succeed={delete_1}")  # True, all documents deleted
-```
-
-
-```python
-delete_2 = vstore.delete(inserted_ids[2:5])
-print(f"some_succeeds={delete_2}")  # True, though some IDs were gone already
-```
-
-## A minimal RAG chain
-
-The next cells will implement a simple RAG pipeline:
-- download a sample PDF file and load it onto the store;
-- create a RAG chain with LCEL (LangChain Expression Language), with the vector store at its heart;
-- run the question-answering chain.
-
-
-```python
-!curl -L \
-    "https://github.com/awesome-astra/datasets/blob/main/demo-resources/what-is-philosophy/what-is-philosophy.pdf?raw=true" \
-    -o "what-is-philosophy.pdf"
-```
-
-
-```python
-pdf_loader = PyPDFLoader("what-is-philosophy.pdf")
-splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=64)
-docs_from_pdf = pdf_loader.load_and_split(text_splitter=splitter)
-
-print(f"Documents from PDF: {len(docs_from_pdf)}.")
-inserted_ids_from_pdf = vstore.add_documents(docs_from_pdf)
-print(f"Inserted {len(inserted_ids_from_pdf)} documents.")
-```
-
-
-```python
-retriever = vstore.as_retriever(search_kwargs={"k": 3})
-
-philo_template = """
-You are a philosopher that draws inspiration from great thinkers of the past
-to craft well-thought answers to user questions. Use the provided context as the basis
-for your answers and do not make up new reasoning paths - just mix-and-match what you are given.
-Your answers must be concise and to the point, and refrain from answering about other topics than philosophy.
-
-CONTEXT:
-{context}
-
-QUESTION: {question}
-
-YOUR ANSWER:"""
-
-philo_prompt = ChatPromptTemplate.from_template(philo_template)
-
-llm = ChatOpenAI()
-
-chain = (
-    {"context": retriever, "question": RunnablePassthrough()}
-    | philo_prompt
-    | llm
-    | StrOutputParser()
-)
-```
-
-
-```python
-chain.invoke("How does Russel elaborate on Peirce's idea of the security blanket?")
-```
-
-For more, check out a complete RAG template using Astra DB through CQL [here](https://github.com/langchain-ai/langchain/tree/master/templates/cassandra-entomology-rag).
-
-## Cleanup
-
-the following essentially retrieves the `Session` object from CassIO and runs a CQL `DROP TABLE` statement with it:
-
-_(You will lose the data you stored in it.)_
-
-
-```python
-cassio.config.resolve_session().execute(
-    f"DROP TABLE {cassio.config.resolve_keyspace()}.cassandra_vector_demo;"
-)
-```
-
-### Learn more
-
-For more information, extended quickstarts and additional usage examples, please visit the [CassIO documentation](https://cassio.org/frameworks/langchain/about/) for more on using the LangChain `Cassandra` vector store.
-
-#### Attribution statement
-
-> Apache Cassandra, Cassandra and Apache are either registered trademarks or trademarks of the [Apache Software Foundation](http://www.apache.org/) in the United States and/or other countries.
+| Parameter        | Usage                                                                                                                                                                                                                        |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `maxConcurrency` | How many concurrent requests will be sent to Cassandra at a given time.                                                                                                                                                      |
+| `batchSize`      | How many documents will be sent on a single request to Cassandra. When using a value > 1, you should ensure your batch size will not exceed the Cassandra parameter `batch_size_fail_threshold_in_kb`. Batches are unlogged. |
+| `withClause`     | Cassandra tables may be created with an optional `WITH` clause; this is generally not needed but provided for completeness.                                                                                                  |
+
+## Related
+
+- Vector store [conceptual guide](/oss/javascript/concepts/#vectorstores)
+- Vector store [how-to guides](/oss/javascript/how-to/#vectorstores)

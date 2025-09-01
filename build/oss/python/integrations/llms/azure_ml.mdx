@@ -6,12 +6,10 @@ title: Azure ML
 
 This notebook goes over how to use an LLM hosted on an `Azure ML Online Endpoint`.
 
-
 ```python
 ##Installing the langchain packages needed to use the integration
 %pip install -qU langchain-community
 ```
-
 
 ```python
 from langchain_community.llms.azureml_endpoint import AzureMLOnlineEndpoint
@@ -19,7 +17,7 @@ from langchain_community.llms.azureml_endpoint import AzureMLOnlineEndpoint
 
 ## Set up
 
-You must [deploy a model on Azure ML](https://learn.microsoft.com/en-us/azure/machine-learning/how-to-use-foundation-models?view=azureml-api-2#deploying-foundation-models-to-endpoints-for-inferencing) or [to Azure AI studio](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/deploy-models-open) and obtain the following parameters:
+You must [deploy a model on Azure ML](https://learn.microsoft.com/en-us/azure/machine-learning/how-to-use-foundation-models?view=azureml-api-2#deploying-foundation-models-to-endpoints-for-inferencing) or [to Azure AI Foundry (formerly Azure AI Studio](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/deploy-models-open) and obtain the following parameters:
 
 * `endpoint_url`: The REST endpoint url provided by the endpoint.
 * `endpoint_api_type`: Use `endpoint_type='dedicated'` when deploying models to **Dedicated endpoints** (hosted managed infrastructure). Use `endpoint_type='serverless'` when deploying models using the **Pay-as-you-go** offering (model as a service).
@@ -41,7 +39,6 @@ The `content_formatter` parameter is a handler class for transforming the reques
 
 ### Example: LlaMa 2 completions with real-time endpoints
 
-
 ```python
 from langchain_community.llms.azureml_endpoint import (
     AzureMLEndpointApiType,
@@ -62,14 +59,12 @@ response
 
 Model parameters can also be indicated during invocation:
 
-
 ```python
 response = llm.invoke("Write me a song about sparkling water:", temperature=0.5)
 response
 ```
 
 ### Example: Chat completions with pay-as-you-go deployments (model as a service)
-
 
 ```python
 from langchain_community.llms.azureml_endpoint import (
@@ -92,7 +87,6 @@ response
 ### Example: Custom content formatter
 
 Below is an example using a summarization model from Hugging Face.
-
 
 ```python
 import json
@@ -162,7 +156,6 @@ print(summarized_text)
 
 ### Example: Dolly with LLMChain
 
-
 ```python
 from langchain.chains import LLMChain
 from langchain_community.llms.azureml_endpoint import DollyContentFormatter
@@ -188,8 +181,8 @@ print(chain.invoke({"word_count": 100, "topic": "how to make friends"}))
 ```
 
 ## Serializing an LLM
-You can also save and load LLM configurations
 
+You can also save and load LLM configurations
 
 ```python
 from langchain_community.llms.loading import load_llm

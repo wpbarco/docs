@@ -125,14 +125,9 @@ To see examples of how to use tools with agents, see [Agents](./langchain-agents
 
 ## Advanced tool patterns
 
-<Note>
-The following section explores advanced tool patterns that use LangGraph concepts.
-</Note>
-
-
 ### ToolNode
 
-ToolNode is a built-in LangGraph component that handles tool calls within an agent's workflow. It works seamlessly with `create_react_agent()`, offering advanced tool execution control, built in parallelism, and error handling.
+ToolNode is a prebuilt LangGraph component that handles tool calls within an agent's workflow. It works seamlessly with `create_react_agent()`, offering advanced tool execution control, built in parallelism, and error handling.
 
 
 
@@ -159,6 +154,9 @@ tool_node = ToolNode(
   - LangChain `@tool` decorated functions
   - Callable objects (e.g. functions) with proper type hints and a docstring
 </ParamField>
+
+
+
 
 <ParamField path="handle_tool_errors">
   Controls how tool execution failures are handled.
@@ -220,10 +218,10 @@ tool_node = ToolNode(
     handle_tool_errors=(ValueError, KeyError)
 )
 ```
-#### Using with `create_react_agent()`
 
 
 
+#### Using with create_react_agent()
 <Note>
 We recommend that you familiarize yourself with `create_react_agent()` before covering this section. Read more about it [here](./langchain-agents).
 </Note>

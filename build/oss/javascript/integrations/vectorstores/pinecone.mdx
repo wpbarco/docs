@@ -1,169 +1,125 @@
 ---
-title: Pinecone
+title: PineconeStore
 ---
 
->[Pinecone](https://docs.pinecone.io/docs/overview) is a vector database with broad functionality.
+[Pinecone](https://www.pinecone.io/) is a vector database that helps power AI for some of the world’s best companies.
 
-This notebook shows how to use functionality related to the `Pinecone` vector database.
+This guide provides a quick overview for getting started with Pinecone [vector stores](/oss/javascript/concepts/#vectorstores). For detailed documentation of all `PineconeStore` features and configurations head to the [API reference](https://api.js.langchain.com/classes/langchain_pinecone.PineconeStore.html).
+
+## Overview
+
+### Integration details
+
+| Class | Package | [PY support](https://python.langchain.com/docs/integrations/vectorstores/pinecone/) | Package latest |
+| :--- | :--- | :---: | :---: |
+| [`PineconeStore`](https://api.js.langchain.com/classes/langchain_pinecone.PineconeStore.html) | [`@langchain/pinecone`](https://npmjs.com/@langchain/pinecone) | ✅ |  ![NPM - Version](https://img.shields.io/npm/v/@langchain/pinecone?style=flat-square&label=%20&) |
 
 ## Setup
 
-To use the `PineconeVectorStore` you first need to install the partner package, as well as the other packages used throughout this notebook.
+To use Pinecone vector stores, you'll need to create a Pinecone account, initialize an index, and install the `@langchain/pinecone` integration package. You'll also want to install the [official Pinecone SDK](https://www.npmjs.com/package/@pinecone-database/pinecone) to initialize a client to pass into the `PineconeStore` instance.
 
+This guide will also use [OpenAI embeddings](/oss/javascript/integrations/text_embedding/openai), which require you to install the `@langchain/openai` integration package. You can also use [other supported embeddings models](/oss/javascript/integrations/text_embedding) if you wish.
 
-```python
-pip install -qU langchain langchain-pinecone langchain-openai
+```{=mdx}
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+<Npm2Yarn>
+  @langchain/pinecone @langchain/openai @langchain/core @pinecone-database/pinecone@5
+</Npm2Yarn>
 ```
-
-Migration note: if you are migrating from the `langchain_community.vectorstores` implementation of Pinecone, you may need to remove your `pinecone-client` v2 dependency before installing `langchain-pinecone`, which relies on `pinecone-client` v6.
-
 ### Credentials
 
-Create a new Pinecone account, or sign into your existing one, and create an API key to use in this notebook.
+Sign up for a [Pinecone](https://www.pinecone.io/) account and create an index. Make sure the dimensions match those of the embeddings you want to use (the default is 1536 for OpenAI's `text-embedding-3-small`). Once you've done this set the `PINECONE_INDEX`, `PINECONE_API_KEY`, and (optionally) `PINECONE_ENVIRONMENT` environment variables:
 
+```typescript
+process.env.PINECONE_API_KEY = "your-pinecone-api-key";
+process.env.PINECONE_INDEX = "your-pinecone-index";
 
-```python
-import getpass
-import os
-
-from pinecone import Pinecone
-
-if not os.getenv("PINECONE_API_KEY"):
-    os.environ["PINECONE_API_KEY"] = getpass.getpass("Enter your Pinecone API key: ")
-
-pinecone_api_key = os.environ.get("PINECONE_API_KEY")
-
-pc = Pinecone(api_key=pinecone_api_key)
+// Optional
+process.env.PINECONE_ENVIRONMENT = "your-pinecone-environment";
 ```
+If you are using OpenAI embeddings for this guide, you'll need to set your OpenAI key as well:
 
+```typescript
+process.env.OPENAI_API_KEY = "YOUR_API_KEY";
+```
 If you want to get automated tracing of your model calls you can also set your [LangSmith](https://docs.smith.langchain.com/) API key by uncommenting below:
 
-
-```python
-# os.environ["LANGSMITH_API_KEY"] = getpass.getpass("Enter your LangSmith API key: ")
-# os.environ["LANGSMITH_TRACING"] = "true"
+```typescript
+// process.env.LANGSMITH_TRACING="true"
+// process.env.LANGSMITH_API_KEY="your-api-key"
 ```
-
-## Initialization
-
-Before initializing our vector store, let's connect to a Pinecone index. If one named `index_name` doesn't exist, it will be created.
+## Instantiation
 
 
-```python
-from pinecone import ServerlessSpec
+```typescript
+import { PineconeStore } from "@langchain/pinecone";
+import { OpenAIEmbeddings } from "@langchain/openai";
 
-index_name = "langchain-test-index"  # change if desired
+import { Pinecone as PineconeClient } from "@pinecone-database/pinecone";
 
-if not pc.has_index(index_name):
-    pc.create_index(
-        name=index_name,
-        dimension=1536,
-        metric="cosine",
-        spec=ServerlessSpec(cloud="aws", region="us-east-1"),
-    )
+const embeddings = new OpenAIEmbeddings({
+  model: "text-embedding-3-small",
+});
 
-index = pc.Index(index_name)
+const pinecone = new PineconeClient();
+// Will automatically read the PINECONE_API_KEY and PINECONE_ENVIRONMENT env vars
+const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX!);
+
+const vectorStore = await PineconeStore.fromExistingIndex(
+  embeddings,
+  {
+    pineconeIndex,
+    // Maximum number of batch requests to allow at once. Each batch is 1000 vectors.
+    maxConcurrency: 5,
+    // You can pass a namespace here too
+    // namespace: "foo",
+  }
+);
 ```
-
-
-```python
-from langchain_openai import OpenAIEmbeddings
-
-embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
-```
-
-
-```python
-from langchain_pinecone import PineconeVectorStore
-
-vector_store = PineconeVectorStore(index=index, embedding=embeddings)
-```
-
 ## Manage vector store
-
-Once you have created your vector store, we can interact with it by adding and deleting different items.
 
 ### Add items to vector store
 
-We can add items to our vector store by using the `add_documents` function.
 
+```typescript
+import type { Document } from "@langchain/core/documents";
 
-```python
-from uuid import uuid4
+const document1: Document = {
+  pageContent: "The powerhouse of the cell is the mitochondria",
+  metadata: { source: "https://example.com" }
+};
 
-from langchain_core.documents import Document
+const document2: Document = {
+  pageContent: "Buildings are made out of brick",
+  metadata: { source: "https://example.com" }
+};
 
-document_1 = Document(
-    page_content="I had chocolate chip pancakes and scrambled eggs for breakfast this morning.",
-    metadata={"source": "tweet"},
-)
+const document3: Document = {
+  pageContent: "Mitochondria are made out of lipids",
+  metadata: { source: "https://example.com" }
+};
 
-document_2 = Document(
-    page_content="The weather forecast for tomorrow is cloudy and overcast, with a high of 62 degrees.",
-    metadata={"source": "news"},
-)
+const document4: Document = {
+  pageContent: "The 2024 Olympics are in Paris",
+  metadata: { source: "https://example.com" }
+}
 
-document_3 = Document(
-    page_content="Building an exciting new project with LangChain - come check it out!",
-    metadata={"source": "tweet"},
-)
+const documents = [document1, document2, document3, document4];
 
-document_4 = Document(
-    page_content="Robbers broke into the city bank and stole $1 million in cash.",
-    metadata={"source": "news"},
-)
-
-document_5 = Document(
-    page_content="Wow! That was an amazing movie. I can't wait to see it again.",
-    metadata={"source": "tweet"},
-)
-
-document_6 = Document(
-    page_content="Is the new iPhone worth the price? Read this review to find out.",
-    metadata={"source": "website"},
-)
-
-document_7 = Document(
-    page_content="The top 10 soccer players in the world right now.",
-    metadata={"source": "website"},
-)
-
-document_8 = Document(
-    page_content="LangGraph is the best framework for building stateful, agentic applications!",
-    metadata={"source": "tweet"},
-)
-
-document_9 = Document(
-    page_content="The stock market is down 500 points today due to fears of a recession.",
-    metadata={"source": "news"},
-)
-
-document_10 = Document(
-    page_content="I have a bad feeling I am going to get deleted :(",
-    metadata={"source": "tweet"},
-)
-
-documents = [
-    document_1,
-    document_2,
-    document_3,
-    document_4,
-    document_5,
-    document_6,
-    document_7,
-    document_8,
-    document_9,
-    document_10,
-]
-uuids = [str(uuid4()) for _ in range(len(documents))]
-vector_store.add_documents(documents=documents, ids=uuids)
+await vectorStore.addDocuments(documents, { ids: ["1", "2", "3", "4"] });
 ```
+```output
+[ '1', '2', '3', '4' ]
+```
+**Note:** After adding documents, there is a slight delay before they become queryable.
 
 ### Delete items from vector store
 
 
-```python
-vector_store.delete(ids=[uuids[-1]])
+```typescript
+await vectorStore.delete({ ids: ["4"] });
 ```
 
 ## Query vector store
@@ -175,54 +131,70 @@ Once your vector store has been created and the relevant documents have been add
 Performing a simple similarity search can be done as follows:
 
 
-```python
-results = vector_store.similarity_search(
-    "LangChain provides abstractions to make working with LLMs easy",
-    k=2,
-    filter={"source": "tweet"},
-)
-for res in results:
-    print(f"* {res.page_content} [{res.metadata}]")
+```typescript
+// Optional filter
+const filter = { source: "https://example.com" };
+
+const similaritySearchResults = await vectorStore.similaritySearch("biology", 2, filter);
+
+for (const doc of similaritySearchResults) {
+  console.log(`* ${doc.pageContent} [${JSON.stringify(doc.metadata, null)}]`);
+}
 ```
-
-#### Similarity search with score
-
-You can also search with score:
-
-
-```python
-results = vector_store.similarity_search_with_score(
-    "Will it be hot tomorrow?", k=1, filter={"source": "news"}
-)
-for res, score in results:
-    print(f"* [SIM={score:3f}] {res.page_content} [{res.metadata}]")
+```output
+* The powerhouse of the cell is the mitochondria [{"source":"https://example.com"}]
+* Mitochondria are made out of lipids [{"source":"https://example.com"}]
 ```
+If you want to execute a similarity search and receive the corresponding scores you can run:
 
-#### Other search methods
 
-There are more search methods (such as MMR) not listed in this notebook, to find all of them be sure to read the [API reference](https://python.langchain.com/api_reference/pinecone/vectorstores/langchain_pinecone.vectorstores.PineconeVectorStore.html).
+```typescript
+const similaritySearchWithScoreResults = await vectorStore.similaritySearchWithScore("biology", 2, filter)
 
+for (const [doc, score] of similaritySearchWithScoreResults) {
+  console.log(`* [SIM=${score.toFixed(3)}] ${doc.pageContent} [${JSON.stringify(doc.metadata)}]`);
+}
+```
+```output
+* [SIM=0.165] The powerhouse of the cell is the mitochondria [{"source":"https://example.com"}]
+* [SIM=0.148] Mitochondria are made out of lipids [{"source":"https://example.com"}]
+```
 ### Query by turning into retriever
 
-You can also transform the vector store into a retriever for easier usage in your chains.
+You can also transform the vector store into a [retriever](/oss/javascript/concepts/retrievers) for easier usage in your chains. 
 
 
-```python
-retriever = vector_store.as_retriever(
-    search_type="similarity_score_threshold",
-    search_kwargs={"k": 1, "score_threshold": 0.4},
-)
-retriever.invoke("Stealing from the bank is a crime", filter={"source": "news"})
+```typescript
+const retriever = vectorStore.asRetriever({
+  // Optional filter
+  filter: filter,
+  k: 2,
+});
+
+await retriever.invoke("biology");
 ```
-
-## Usage for retrieval-augmented generation
+```output
+[
+  Document {
+    pageContent: 'The powerhouse of the cell is the mitochondria',
+    metadata: { source: 'https://example.com' },
+    id: undefined
+  },
+  Document {
+    pageContent: 'Mitochondria are made out of lipids',
+    metadata: { source: 'https://example.com' },
+    id: undefined
+  }
+]
+```
+### Usage for retrieval-augmented generation
 
 For guides on how to use this vector store for retrieval-augmented generation (RAG), see the following sections:
 
-- [Tutorials](/oss/javascript/tutorials/rag)
-- [How-to: Question and answer with RAG](https://python.langchain.com/docs/how_to/#qa-with-rag)
-- [Retrieval conceptual docs](https://python.langchain.com/docs/concepts/retrieval)
+- [Tutorials: working with external knowledge](/oss/javascript/tutorials/#working-with-external-knowledge).
+- [How-to: Question and answer with RAG](/oss/javascript/how-to/#qa-with-rag)
+- [Retrieval conceptual docs](/oss/javascript/concepts/retrieval)
 
 ## API reference
 
-For detailed documentation of all features and configurations head to the API reference: https://python.langchain.com/api_reference/pinecone/vectorstores/langchain_pinecone.vectorstores.PineconeVectorStore.html
+For detailed documentation of all `PineconeStore` features and configurations head to the [API reference](https://api.js.langchain.com/classes/langchain_pinecone.PineconeStore.html).

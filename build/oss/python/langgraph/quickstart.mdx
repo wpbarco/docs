@@ -6,7 +6,7 @@ import AlphaCallout from '/snippets/alpha-lg-callout.mdx';
 
 <AlphaCallout />
 
-Using Graph API
+Using the Graph API:
 ```python
 # Step 0: Define tools and model
 
@@ -106,6 +106,7 @@ def tool_node(state: dict):
 # Step 4: Define logic to determine whether to end
 
 from typing import Literal
+from langgraph.graph import StateGraph, START, END
 
 # Conditional edge function to route to the tool node or end based upon whether the LLM made a tool call
 def should_continue(state: MessagesState) -> Literal["environment", END]:
@@ -120,8 +121,6 @@ def should_continue(state: MessagesState) -> Literal["environment", END]:
     return END
 
 # Step 5: Build agent
-
-from langgraph.graph import StateGraph, START, END
 
 # Build workflow
 agent_builder = StateGraph(MessagesState)
@@ -161,7 +160,7 @@ for m in messages["messages"]:
 ```
 
 
-Using Functional API
+Using the Functional API:
 ```python
 # Step 0: Define tools and model
 
@@ -220,7 +219,7 @@ from langchain_core.messages import (
     BaseMessage,
     ToolCall,
 )
-
+from langgraph.func import entrypoint, task
 
 # Step 1: define model node
 @task

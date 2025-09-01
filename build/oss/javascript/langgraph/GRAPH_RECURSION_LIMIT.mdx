@@ -13,7 +13,7 @@ This is often due to an infinite loop caused by code like the example below:
 
 ```typescript
 import { StateGraph } from "@langchain/langgraph";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 const State = z.object({
   someKey: z.string(),

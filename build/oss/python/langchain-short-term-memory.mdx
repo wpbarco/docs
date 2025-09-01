@@ -35,7 +35,7 @@ To add short-term memory (thread-level persistence) to an agent, you need to spe
 an agent.
 
 <Info>
-LangChain's `create_react_agent()` manages short-term memory as a part of your agent's state.
+LangChain's agent manages short-term memory as a part of your agent's state.
 By storing these in the graph's state, the agent can access the full context for a given conversation while maintaining separation between different threads.
 
 State is persisted to a database (or memory) using a checkpointer so the thread can be resumed at any time. 
@@ -58,6 +58,8 @@ agent.invoke(
 )
 ```
 
+
+
 ### In production
 
 In production, use a checkpointer backed by a database:
@@ -76,6 +78,8 @@ with PostgresSaver.from_conn_string(DB_URI) as checkpointer:
 ```
 
 
+
+
 ## Customizing agent memory
 
 By default, agents use `AgentState` to manage short term memory, specifically the conversation history via a `messages` key.
@@ -83,7 +87,7 @@ Users can subclass `AgentState` to add additional fields to the state.
 
 This custom state can then be accessed via tools and dynamic prompt / model functions.
 
-```python {highlight={3,10}}
+```python highlight={3-5,10}
 from langchain.agents import create_react_agent, AgentState
 from langgraph.checkpoint.memory import InMemorySaver
 
@@ -97,6 +101,8 @@ agent = create_react_agent(
     checkpointer=InMemorySaver(),
 )
 ```
+
+
 
 ## Common Patterns
 
@@ -316,6 +322,7 @@ print("\nSummary:", final_response["context"]["running_summary"].summary)
 ```
 
 
+
 ## Access
 
 You can access the short-term memory of an agent in a few different ways:
@@ -360,7 +367,9 @@ print(result["messages"][-1].content)
 #> User is John Smith.
 ```
 
-### Write short-term memory from tools
+
+
+#### Write short-term memory from tools
 
 To modify the agent's short-term memory (state) during execution, you can return state updates directly from the tools. 
 This is useful for persisting intermediate results or making information accessible to subsequent tools or prompts.
@@ -483,6 +492,8 @@ The weather in San Francisco is always sunny!
 Hi John Smith, the weather in San Francisco is always sunny!
 ```
 
+
+
 ### Pre Model Hook
 
 Access short term memory (state) in a pre model hook by injecting the agent's state into the hook signature.
@@ -519,6 +530,8 @@ result = agent.invoke({"messages": "hi, my name is bob"}, {"configurable": {"thr
 print(result["messages"][-1].content)
 ```
 
+
+
 ### Post Model Hook
 
 Access short term memory (state) in a post model hook by injecting the agent's state into the hook signature.
@@ -542,3 +555,4 @@ agent = create_react_agent(
     checkpointer=InMemorySaver(),
 )
 ```
+

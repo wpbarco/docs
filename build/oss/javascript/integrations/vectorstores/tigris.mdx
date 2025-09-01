@@ -2,80 +2,120 @@
 title: Tigris
 ---
 
-> [Tigris](https://tigrisdata.com) is an open-source Serverless NoSQL Database and Search Platform designed to simplify building high-performance vector search applications.
-> `Tigris` eliminates the infrastructure complexity of managing, operating, and synchronizing multiple tools, allowing you to focus on building great applications instead.
+Tigris makes it easy to build AI applications with vector embeddings.
+It is a fully managed cloud-native database that allows you store and
+index documents and vector embeddings for fast and scalable vector search.
 
-This notebook guides you how to use Tigris as your VectorStore
+<Tip>
+**Compatibility**
 
-**Pre requisites**
-1. An OpenAI account. You can sign up for an account [here](https://platform.openai.com/)
-2. [Sign up for a free Tigris account](https://console.preview.tigrisdata.cloud). Once you have signed up for the Tigris account, create a new project called `vectordemo`. Next, make a note of the *Uri* for the region you've created your project in, the **clientId** and **clientSecret**. You can get all this information from the **Application Keys** section of the project.
+Only available on Node.js.
+</Tip>
 
-Let's first install our dependencies:
+## Setup
 
+### 1. Install the Tigris SDK
 
-```python
-%pip install --upgrade --quiet  tigrisdb openapi-schema-pydantic langchain-openai langchain-community tiktoken
+Install the SDK as follows
+
+```bash npm
+npm install -S @tigrisdata/vector
+```
+### 2. Fetch Tigris API credentials
+
+You can sign up for a free Tigris account [here](https://www.tigrisdata.com/).
+
+Once you have signed up for the Tigris account, create a new project called `vectordemo`.
+Next, make a note of the `clientId` and `clientSecret`, which you can get from the
+Application Keys section of the project.
+
+## Index docs
+
+import IntegrationInstallTooltip from '/snippets/javascript-integrations/integration-install-tooltip.mdx';
+
+<IntegrationInstallTooltip/>
+
+```bash npm
+npm install -S @langchain/openai
+```
+```typescript
+import { VectorDocumentStore } from "@tigrisdata/vector";
+import { Document } from "langchain/document";
+import { OpenAIEmbeddings } from "@langchain/openai";
+import { TigrisVectorStore } from "langchain/vectorstores/tigris";
+
+const index = new VectorDocumentStore({
+  connection: {
+    serverUrl: "api.preview.tigrisdata.cloud",
+    projectName: process.env.TIGRIS_PROJECT,
+    clientId: process.env.TIGRIS_CLIENT_ID,
+    clientSecret: process.env.TIGRIS_CLIENT_SECRET,
+  },
+  indexName: "examples_index",
+  numDimensions: 1536, // match the OpenAI embedding size
+});
+
+const docs = [
+  new Document({
+    metadata: { foo: "bar" },
+    pageContent: "tigris is a cloud-native vector db",
+  }),
+  new Document({
+    metadata: { foo: "bar" },
+    pageContent: "the quick brown fox jumped over the lazy dog",
+  }),
+  new Document({
+    metadata: { baz: "qux" },
+    pageContent: "lorem ipsum dolor sit amet",
+  }),
+  new Document({
+    metadata: { baz: "qux" },
+    pageContent: "tigris is a river",
+  }),
+];
+
+await TigrisVectorStore.fromDocuments(docs, new OpenAIEmbeddings(), { index });
 ```
 
-We will load the `OpenAI` api key and `Tigris` credentials in our environment
+## Query docs
 
+```typescript
+import { VectorDocumentStore } from "@tigrisdata/vector";
+import { OpenAIEmbeddings } from "@langchain/openai";
+import { TigrisVectorStore } from "langchain/vectorstores/tigris";
 
-```python
-import getpass
-import os
+const index = new VectorDocumentStore({
+  connection: {
+    serverUrl: "api.preview.tigrisdata.cloud",
+    projectName: process.env.TIGRIS_PROJECT,
+    clientId: process.env.TIGRIS_CLIENT_ID,
+    clientSecret: process.env.TIGRIS_CLIENT_SECRET,
+  },
+  indexName: "examples_index",
+  numDimensions: 1536, // match the OpenAI embedding size
+});
 
-if "OPENAI_API_KEY" not in os.environ:
-    os.environ["OPENAI_API_KEY"] = getpass.getpass("OpenAI API Key:")
-if "TIGRIS_PROJECT" not in os.environ:
-    os.environ["TIGRIS_PROJECT"] = getpass.getpass("Tigris Project Name:")
-if "TIGRIS_CLIENT_ID" not in os.environ:
-    os.environ["TIGRIS_CLIENT_ID"] = getpass.getpass("Tigris Client Id:")
-if "TIGRIS_CLIENT_SECRET" not in os.environ:
-    os.environ["TIGRIS_CLIENT_SECRET"] = getpass.getpass("Tigris Client Secret:")
+const vectorStore = await TigrisVectorStore.fromExistingIndex(
+  new OpenAIEmbeddings(),
+  { index }
+);
+
+/* Search the vector DB independently with metadata filters */
+const results = await vectorStore.similaritySearch("tigris", 1, {
+  "metadata.foo": "bar",
+});
+console.log(JSON.stringify(results, null, 2));
+/*
+[
+  Document {
+    pageContent: 'tigris is a cloud-native vector db',
+    metadata: { foo: 'bar' }
+  }
+]
+*/
 ```
 
+## Related
 
-```python
-from langchain_community.document_loaders import TextLoader
-from langchain_community.vectorstores import Tigris
-from langchain_openai import OpenAIEmbeddings
-from langchain_text_splitters import CharacterTextSplitter
-```
-
-### Initialize Tigris vector store
-Let's import our test dataset:
-
-
-```python
-loader = TextLoader("../../../state_of_the_union.txt")
-documents = loader.load()
-text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
-docs = text_splitter.split_documents(documents)
-
-embeddings = OpenAIEmbeddings()
-```
-
-
-```python
-vector_store = Tigris.from_documents(docs, embeddings, index_name="my_embeddings")
-```
-
-### Similarity Search
-
-
-```python
-query = "What did the president say about Ketanji Brown Jackson"
-found_docs = vector_store.similarity_search(query)
-print(found_docs)
-```
-
-### Similarity Search with score (vector distance)
-
-
-```python
-query = "What did the president say about Ketanji Brown Jackson"
-result = vector_store.similarity_search_with_score(query)
-for doc, score in result:
-    print(f"document={doc}, score={score}")
-```
+- Vector store [conceptual guide](/oss/javascript/concepts/#vectorstores)
+- Vector store [how-to guides](/oss/javascript/how-to/#vectorstores)

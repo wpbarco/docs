@@ -600,16 +600,20 @@ graph.invoke(inputs, context={"llm_provider": "anthropic"})
 
 You can then access and use this context inside a node or conditional edge:
 
-```python
-from langgraph.runtime import Runtime
+```typescript
+import { Runtime } from "@langchain/langgraph";
+import { z } from "zod/v4";
 
-def node_a(state: State, runtime: Runtime[ContextSchema]):
-    llm = get_llm(runtime.context.llm_provider)
-    ...
+const nodeA = (
+  state: z.infer<typeof State>,
+  runtime: Runtime<z.infer<typeof ContextSchema>>,
+) => {
+  const llm = getLLM(runtime.context?.llm);
+  // ...
+};
 ```
 
 See [this guide](/oss/python/langgraph/use-graph-api#add-runtime-configuration) for a full breakdown on configuration.
-:::
 
 
 

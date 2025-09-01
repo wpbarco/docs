@@ -2,143 +2,170 @@
 title: Fireworks
 ---
 
+```{=mdx}
+
 <Warning>
-**You are currently on a page documenting the use of Fireworks models as [text completion models](/oss/javascript/concepts/text_llms). Many popular Fireworks models are [chat completion models](/oss/javascript/concepts/chat_models).**
+**You are currently on a page documenting the use of Fireworks models as [text completion models](/oss/javascript/concepts/text_llms). Many popular models available on Fireworks are [chat completion models](/oss/javascript/concepts/chat_models).**
 
 
 You may be looking for [this page instead](/oss/javascript/integrations/chat/fireworks/).
 </Warning>
 
->[Fireworks](https://app.fireworks.ai/) accelerates product development on generative AI by creating an innovative AI experiment and production platform. 
+```
+[Fireworks AI](https://fireworks.ai/) is an AI inference platform to run and customize models. For a list of all models served by Fireworks see the [Fireworks docs](https://fireworks.ai/models).
 
-This example goes over how to use LangChain to interact with `Fireworks` models.
+This will help you get started with Fireworks completion models (LLMs) using LangChain. For detailed documentation on `Fireworks` features and configuration options, please refer to the [API reference](https://api.js.langchain.com/classes/langchain_community_llms_fireworks.Fireworks.html).
 
 ## Overview
 ### Integration details
 
-| Class | Package | Local | Serializable | [JS support](https://js.langchain.com/v0.1/docs/integrations/llms/fireworks/) | Package downloads | Package latest |
+| Class | Package | Local | Serializable | [PY support](https://python.langchain.com/docs/integrations/llms/fireworks) | Package downloads | Package latest |
 | :--- | :--- | :---: | :---: |  :---: | :---: | :---: |
-| [Fireworks](https://python.langchain.com/api_reference/fireworks/llms/langchain_fireworks.llms.Fireworks.html#langchain_fireworks.llms.Fireworks) | [langchain-fireworks](https://python.langchain.com/api_reference/fireworks/index.html) | ❌ | ❌ | ✅ | ![PyPI - Downloads](https://img.shields.io/pypi/dm/langchain_fireworks?style=flat-square&label=%20) | ![PyPI - Version](https://img.shields.io/pypi/v/langchain_fireworks?style=flat-square&label=%20) |
+| [Fireworks](https://api.js.langchain.com/classes/langchain_community_llms_fireworks.Fireworks.html) | [@langchain/community](https://api.js.langchain.com/modules/langchain_community_llms_fireworks.html) | ❌ | ✅ | ✅ | ![NPM - Downloads](https://img.shields.io/npm/dm/@langchain/community?style=flat-square&label=%20&) | ![NPM - Version](https://img.shields.io/npm/v/@langchain/community?style=flat-square&label=%20&) |
 
 ## Setup
 
-### Credentials 
+To access Fireworks models you'll need to create a Fireworks account, get an API key, and install the `@langchain/community` integration package.
 
-Sign in to [Fireworks AI](http://fireworks.ai) for the an API Key to access our models, and make sure it is set as the `FIREWORKS_API_KEY` environment variable.
-3. Set up your model using a model id. If the model is not set, the default model is fireworks-llama-v2-7b-chat. See the full, most up-to-date model list on [fireworks.ai](https://fireworks.ai).
+### Credentials
 
+Head to [fireworks.ai](https://fireworks.ai/) to sign up to Fireworks and generate an API key. Once you've done this set the `FIREWORKS_API_KEY` environment variable:
 
-```python
-import getpass
-import os
-
-if "FIREWORKS_API_KEY" not in os.environ:
-    os.environ["FIREWORKS_API_KEY"] = getpass.getpass("Fireworks API Key:")
+```bash
+export FIREWORKS_API_KEY="your-api-key"
 ```
+If you want to get automated tracing of your model calls you can also set your [LangSmith](https://docs.smith.langchain.com/) API key by uncommenting below:
 
+```bash
+# export LANGSMITH_TRACING="true"
+# export LANGSMITH_API_KEY="your-api-key"
+```
 ### Installation
 
-You need to install the `langchain-fireworks` python package for the rest of the notebook to work.
+The LangChain Fireworks integration lives in the `@langchain/community` package:
 
+```{=mdx}
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
 
-```python
-%pip install -qU langchain-fireworks
-```
-```output
-Note: you may need to restart the kernel to use updated packages.
+<Npm2Yarn>
+  @langchain/community @langchain/core
+</Npm2Yarn>
+
 ```
 ## Instantiation
 
+Now we can instantiate our model object and generate chat completions:
 
-```python
-from langchain_fireworks import Fireworks
 
-# Initialize a Fireworks model
-llm = Fireworks(
-    model="accounts/fireworks/models/llama-v3p1-8b-instruct",
-    base_url="https://api.fireworks.ai/inference/v1/completions",
-)
+```typescript
+import { Fireworks } from "@langchain/community/llms/fireworks"
+
+const llm = new Fireworks({
+  model: "accounts/fireworks/models/llama-v3-70b-instruct",
+  temperature: 0,
+  maxTokens: undefined,
+  timeout: undefined,
+  maxRetries: 2,
+  // other params...
+})
 ```
-
 ## Invocation
 
-You can call the model directly with string prompts to get completions.
 
+```typescript
+const inputText = "Fireworks is an AI company that "
 
-```python
-output = llm.invoke("Who's the best quarterback in the NFL?")
-print(output)
+const completion = await llm.invoke(inputText)
+completion
 ```
 ```output
- If Manningville Station, Lions rookie EJ Manuel's
-```
-### Invoking with multiple prompts
+ helps businesses automate their customer support using AI-powered chatbots. We believe that AI can help businesses provide better customer support at a lower cost. Our chatbots are designed to be highly customizable and can be integrated with various platforms such as Facebook Messenger, Slack, and more.
 
+We are looking for a talented and motivated **Machine Learning Engineer** to join our team. As a Machine Learning Engineer at Fireworks, you will be responsible for developing and improving our AI models that power our chatbots. You will work closely with our data scientists, software engineers, and product managers to design, develop, and deploy AI models that can understand and respond to customer inquiries.
 
-```python
-# Calling multiple prompts
-output = llm.generate(
-    [
-        "Who's the best cricket player in 2016?",
-        "Who's the best basketball player in the league?",
-    ]
-)
-print(output.generations)
-```
-```output
-[[Generation(text=" We're not just asking, we've done some research. We'")], [Generation(text=' The conversation is dominated by Kobe Bryant, Dwyane Wade,')]]
-```
-### Invoking with additional parameters
+**Responsibilities:**
 
+* Develop and improve AI models that can understand and respond to customer inquiries
+* Work with data scientists to design and develop new AI models
+* Collaborate with software engineers to integrate AI models with our chatbot platform
+* Work with product managers to understand customer requirements and develop AI models that meet those requirements
+* Develop and maintain data pipelines to support AI model development and deployment
+* Develop and maintain tools to monitor and evaluate AI model performance
+* Stay up-to-date with the latest developments in AI and machine learning and apply this knowledge to improve our AI models
 
-```python
-# Setting additional parameters: temperature, max_tokens, top_p
-llm = Fireworks(
-    model="accounts/fireworks/models/llama-v3p1-8b-instruct",
-    temperature=0.7,
-    max_tokens=15,
-    top_p=1.0,
-)
-print(llm.invoke("What's the weather like in Kansas City in December?"))
-```
-```output
-December is a cold month in Kansas City, with temperatures of
+**Requirements:**
+
+* Bachelor's
 ```
 ## Chaining
 
-You can use the LangChain Expression Language to create a simple chain with non-chat models.
+We can [chain](/oss/javascript/how-to/sequence/) our completion model with a prompt template like so:
 
 
-```python
-from langchain_core.prompts import PromptTemplate
-from langchain_fireworks import Fireworks
+```typescript
+import { PromptTemplate } from "@langchain/core/prompts"
 
-llm = Fireworks(
-    model="accounts/fireworks/models/llama-v3p1-8b-instruct",
-    temperature=0.7,
-    max_tokens=15,
-    top_p=1.0,
+const prompt = PromptTemplate.fromTemplate("How to say {input} in {output_language}:\n")
+
+const chain = prompt.pipe(llm);
+await chain.invoke(
+  {
+    output_language: "German",
+    input: "I love programming.",
+  }
 )
-prompt = PromptTemplate.from_template("Tell me a joke about {topic}?")
-chain = prompt | llm
-
-print(chain.invoke({"topic": "bears"}))
 ```
 ```output
- What do you call a bear with no teeth? A gummy bear!
-```
-## Streaming
+Ich liebe Programmieren.
 
-You can stream the output, if you want.
+How to say I love coding. in German:
+Ich liebe Coden.
+
+How to say I love to code. in German:
+Ich liebe es zu coden.
+
+How to say I'm a programmer. in German:
+Ich bin ein Programmierer.
+
+How to say I'm a coder. in German:
+Ich bin ein Coder.
+
+How to say I'm a developer. in German:
+Ich bin ein Entwickler.
+
+How to say I'm a software engineer. in German:
+Ich bin ein Software-Ingenieur.
+
+How to say I'm a tech enthusiast. in German:
+Ich bin ein Technik-Enthusiast.
+
+How to say I'm passionate about technology. in German:
+Ich bin leidenschaftlich für Technologie.
+
+How to say I'm passionate about coding. in German:
+Ich bin leidenschaftlich für Coden.
+
+How to say I'm passionate about programming. in German:
+Ich bin leidenschaftlich für Programmieren.
+
+How to say I enjoy coding. in German:
+Ich genieße Coden.
+
+How to say I enjoy programming. in German:
+Ich genieße Programmieren.
+
+How to say I'm good at coding. in German:
+Ich bin gut im Coden.
+
+How to say I'm
+```
+Behind the scenes, Fireworks AI uses the OpenAI SDK and OpenAI compatible API, with some caveats:
+
+- Certain properties are not supported by the Fireworks API, see [here](https://readme.fireworks.ai/docs/openai-compatibility#api-compatibility).
+- Generation using multiple prompts is not supported.
 
 
-```python
-for token in chain.stream({"topic": "bears"}):
-    print(token, end="", flush=True)
-```
-```output
- Why do bears hate shoes so much? They like to run around in their
-```
 ## API reference
 
-For detailed documentation of all `Fireworks` LLM features and configurations head to the API reference: https://python.langchain.com/api_reference/fireworks/llms/langchain_fireworks.llms.Fireworks.html#langchain_fireworks.llms.Fireworks
+For detailed documentation of all Fireworks features and configurations head to the API reference: https://api.js.langchain.com/classes/langchain_community_llms_fireworks.Fireworks.html

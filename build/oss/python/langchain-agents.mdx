@@ -58,7 +58,7 @@ graph TD
 
 
 <Info>
-Under the hood, `create_react_agent()` builds a **graph**-based agent runtime. A graph consists of nodes (steps) and edges (connections) that define how your agent processes information. The agent moves through this graph, executing nodes like the model node (which calls the model), the tools node (which executes tools), or pre/post model hook nodes. Learn more about the [graph API](./langgraph-graph-api).
+Under the hood, `create_react_agent()` builds a **graph**-based agent runtime using [LangGraph](./langgraph/overview). A graph consists of nodes (steps) and edges (connections) that define how your agent processes information. The agent moves through this graph, executing nodes like the model node (which calls the model), the tools node (which executes tools), or pre/post model hook nodes. Learn more about the [graph API](./langgraph/graph-api).
 </Info>
 
 ## Core components
@@ -69,9 +69,7 @@ The [model](./langchain-models) is the reasoning engine of your agent. It can be
 
 #### Static model
 
-Static models are configured once when creating the agent and remain unchanged throughout execution. This is the most common and straightforward approach.
-
-To initialize a static model from a model identifier string:
+Static models are configured once when creating the agent and remain unchanged throughout execution. This is the most common and straightforward approach. To initialize a static model from a model identifier string:
 
 ```python wrap
 from langchain.agents import create_react_agent
@@ -84,9 +82,7 @@ agent = create_react_agent(
 
 
 
-Model identifier strings use the format `provider:model` (e.g. `"openai:gpt-5"`) and support automatic inference (e.g. `"gpt-5"` will be inferred as `"openai:gpt-5"`).
-
-The user may want more control over the model configuration, in which case they can initialize a model instance directly:
+Model identifier strings use the format `provider:model` (e.g. `"openai:gpt-5"`) and support automatic inference (e.g. `"gpt-5"` will be inferred as `"openai:gpt-5"`). You may want more control over the model configuration, in which case you can initialize a model instance directly using the [provider package](./integrations/providers):
 
 ```python wrap
 from langchain.agents import create_react_agent
@@ -101,9 +97,9 @@ model = ChatOpenAI(
 agent = create_react_agent(model, tools=tools)
 ```
 
+Model instances give you complete control over configuration. Use them when you need to set specific parameters like temperature, max tokens, timeouts, or configure API keys, base URLs, and other provider-specific settings. Refer to the [API reference](./integrations/providers) to see available params and methods on your model.
 
 
-Model instances give you complete control over configuration. Use them when you need to set specific parameters like temperature, max tokens, timeouts, or configure API keys, base URLs, and other provider-specific settings. Refer to the [API reference](https://python.langchain.com/api_reference/) to see available params and methods on your model.
 
 #### Dynamic model
 
@@ -184,7 +180,7 @@ agent = create_react_agent(model, tools=[search, calculate])
 
 If an empty tool list is provided, the agent will consist of a single LLM node without tool calling.
 
-#### Passing a configured `ToolNode`
+#### Passing a configured ToolNode
 
 Alternatively, you can create a `ToolNode` directly and pass it to the agent. This allows you to customize the tool node's behavior, such as handling tool errors:
 
@@ -212,7 +208,7 @@ If an error occurs within `ToolNode`, the agent will return a `ToolMessage` to t
 
 
 <Tip>
-To learn more about error handling in`ToolNode`, see [ToolNode](./langchain-tools#toolnode).
+To learn more about error handling in `ToolNode`, see [ToolNode](./langchain-tools#toolnode).
 </Tip>
 
 ### Tool use in the ReAct loop
@@ -320,22 +316,6 @@ def dynamic_prompt(state):
     )
     return [system_msg] + state["messages"]
 agent = create_react_agent(model, tools, prompt=dynamic_prompt)
-```
-
-
-
-#### Runnable
-
-```python wrap
-from langchain_core.runnables import RunnableLambda
-
-prompt_runnable = RunnableLambda(
-    lambda state: [
-        SystemMessage(content=f"Current context: {state.get('context', 'general')}"),
-        *state["messages"]
-    ]
-)
-agent = create_react_agent(model, tools, prompt=prompt_runnable)
 ```
 
 
@@ -609,189 +589,3 @@ for chunk in agent.stream({
 <Tip>
 For more details on streaming, see [Streaming](./langchain-streaming).
 </Tip>
-
-## End-to-end examples
-
-### Simple search agent
-
-A simple agent that answers questions by searching for information using the Tavily search tool.
-
-To run this example, you'll need to set your Tavily and OpenAI API keys in your environment variables.
-
-```python wrap
-from langchain_openai import ChatOpenAI
-from langchain_tavily import TavilySearch
-from langchain.agents import create_react_agent
-
-search = TavilySearch(max_results=2)
-tools = [search]
-
-model = ChatOpenAI(model="gpt-5",)
-agent = create_react_agent(
-    model, 
-    tools,
-    prompt="You are a helpful assistant that can search the web for information. You can use the search tool to find information. Answer concisely."
-)
-```
-```python wrap
-agent.invoke({
-    "messages": [
-        {"role": "user", "content": "Tell me about LangChain."}
-    ]
-})
-# LangChain is an open-source framework designed for building applications based on large language models (LLMs). It enables developers to create and customize prompt chains or templates, connect language models to external data sources, and adapt language models to specific business contexts. 
-
-# LangChain also provides platforms for building reliable agents, used by top engineering teams and global brands like Replit, AT&T, Home Depot, and Klarna. The platform includes LangGraph, a framework for building controllable agents and long-running workflows, and LangSmith, which offers evaluation and monitoring tools to help developers debug and improve agents at scale. LangChain supports various integrations and makes it easy for teams to build, deploy, and manage enterprise-grade agents efficiently.
-
-# For more detailed information, you can visit [LangChain's LinkedIn page](https://www.linkedin.com/company/langchain) or their [website](https://langchain.com/).
-```
-
-
-
-### Multi-step researcher agent
-
-A more sophisticated agent that researches topics by collecting and summarizing multiple articles.
-
-This example uses a Tavily search tool to browse the web, a `store` to persist state across sessions, a `post_model_hook` to track tool usage, a custom `state_schema` to store additional state.
-
-```python wrap expandable
-from langchain_openai import ChatOpenAI
-from langchain_tavily import TavilySearch
-from langchain_core.tools import tool
-from langgraph.checkpoint.memory import MemorySaver
-from langchain.agents import create_react_agent
-from langchain.agents import AgentState
-from langgraph.store.memory import InMemoryStore
-import json
-
-search = TavilySearch(max_results=3)
-
-store = InMemoryStore()
-
-class ResearcherState(AgentState):
-    tool_usage_stats: dict[str, int]
-
-@tool
-def store_article(name: str, url: str, summary: str) -> str:
-    """Store an article's information in memory."""
-    namespace = ("research", "articles")
-    existing = store.get(namespace, "collected_articles")
-    articles = existing.value if existing else []
-    
-    articles.append({
-        "name": name,
-        "url": url,
-        "summary": summary
-    })
-    
-    store.put(namespace, "collected_articles", articles)
-    return f"Stored article: {name}"
-
-@tool  
-def get_stored_articles() -> str:
-    """Retrieve all stored articles."""
-    namespace = ("research", "articles")
-    existing = store.get(namespace, "collected_articles")
-    
-    if not existing:
-        return "No articles stored yet."
-    
-    articles = existing.value
-    if not articles:
-        return "No articles stored yet."
-    
-    return json.dumps(articles, indent=2)
-
-def track_tool_usage(state):
-    """Track which tools are being called and add metadata."""
-    messages = state["messages"]
-    last_message = messages[-1]
-    
-    if hasattr(last_message, 'tool_calls') and last_message.tool_calls:
-        tool_names = [tc['name'] for tc in last_message.tool_calls]
-                
-        if not state.get("tool_usage_stats"):
-            state["tool_usage_stats"] = {}
-        for tool_name in tool_names:
-            state["tool_usage_stats"][tool_name] = state["tool_usage_stats"].get(tool_name, 0) + 1
-        
-        return {"tool_usage_stats": state["tool_usage_stats"]}
-    
-    elif isinstance(last_message, AIMessage) and not hasattr(last_message, 'tool_calls'):
-        if state.get("tool_usage_stats"):
-            print(f"Tool usage summary: {json.dumps(state['tool_usage_stats'])}")
-
-model = ChatOpenAI(model="gpt-5")
-tools = [search, store_article, get_stored_articles]
-agent = create_react_agent(
-    model,
-    tools,
-    post_model_hook=track_tool_usage,
-    prompt="""You are a research assistant. When asked to find articles:
-1. Search for relevant content
-2. Store each article with a descriptive name, URL, and summary
-3. Only perform at most one tool call at a time
-4. Keep track of what you've collected
-5. Continue until you have the requested number of articles
-6. Before you finish, double check that you have the requested number of articles by calling the get_stored_articles tool
-6. If you have the requested number of articles, stop and present them in an organized format""",
-    checkpointer=MemorySaver(),
-    store=store,
-    state_schema=ResearcherState
-)
-```
-
-Invoke a research session:
-```python wrap expandable
-config = {"configurable": {"thread_id": "langchain-agents"}, "recursion_limit": 100}
-agent.invoke({
-        "messages": [
-            {"role": "user", "content": "Find 5 relevant articles about LangChain and AI agents."}
-        ]
-    }, 
-    config=config,
-)
-# Here are 5 relevant articles about LangChain and AI agents:
-
-# 1) LangGraph — LangChain Blog
-# - URL: https://blog.langchain.dev/langgraph
-# - Summary: Official introduction to LangGraph (built on LangChain) explaining why cyclical graphs are useful for agent runtimes. Covers core concepts and how LangGraph enables robust, stateful agents with loops and branching beyond traditional DAGs.
-
-# 2) LangGraph: Multi-Agent Workflows — LangChain Blog
-# - URL: https://blog.langchain.dev/langgraph-multi-agent-workflows
-# - Summary: Shows how to build multi-agent systems with LangGraph, including coordination patterns and examples. Compares to other frameworks (e.g., AutoGen) and links to repo examples for practical implementation.
-
-# 3) Plan-and-Execute Agents — LangChain Blog
-# - URL: https://blog.langchain.dev/planning-agents
-# - Summary: Discusses plan-and-execute agent architectures in LangChain. Explains separating a planner LLM from a tool-execution runtime, variations like ReWOO, and a "joiner” component for dynamic replanning to improve speed and reliability.
-
-# 4) LangGraph Tutorial: Building LLM Agents with LangChain (Zep)
-# - URL: https://www.getzep.com/ai-agents/langgraph-tutorial/
-# - Summary: Hands-on tutorial for building agents using LangGraph, including ReAct-style agents, tool integration (ToolNode), memory (MemorySaver), and guidelines for production-ready agent architectures.
-
-# 5) Building AI agent systems with LangGraph (Medium)
-# - URL: https://medium.com/pythoneers/building-ai-agent-systems-with-langgraph-9d85537a6326
-# - Summary: Overview of using LangGraph (on top of LangChain) to build AI agents with cyclic, stateful graphs. Compares with LangChain’s AgentExecutor loop and highlights benefits for error handling, tool use, and adaptable multi-agent workflows.
-```
-
-We can then use the same `thread_id` to invoke a follow-up session where the agent maintains access to work performed in the previous session:
-```python wrap expandable
-config = {"configurable": {"thread_id": "research-session-2"}, "recursion_limit": 100}
-agent.invoke({
-        "messages": [
-            {"role": "user", "content": "Find 2 more articles."}
-        ]
-    }, 
-    config=config,
-)
-# Here are 2 more relevant articles about LangChain and AI agents:
-
-# 6) LangGraph Studio: The first agent IDE — LangChain Blog
-# - URL: https://blog.langchain.com/langgraph-studio-the-first-agent-ide/
-# - Summary: Official announcement of LangGraph Studio, an IDE for developing, visualizing, and debugging agentic applications. Explains why specialized tooling matters for agents and how to get started using Studio.
-
-# 7) Tool calling — Python LangChain (Docs)
-# - URL: https://python.langchain.com/docs/concepts/tool_calling/
-# - Summary: Concept guide to LangChain’s standardized tool-calling interface. Covers binding tools to models, controlling tool choice, and how this underpins agent behavior and AgentExecutor loops.
-```
-

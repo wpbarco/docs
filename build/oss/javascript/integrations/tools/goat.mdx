@@ -4,6 +4,12 @@ title: GOAT
 
 [GOAT](https://github.com/goat-sdk/goat) is the finance toolkit for AI agents.
 
+<Warning>
+**This tool exists outside of the main LangChain repository [here](https://github.com/goat-sdk/goat/).**
+
+Please use caution when linking wallets to external providers and make sure they are trusted.
+</Warning>
+
 ## Overview
 
 Create agents that can:
@@ -18,6 +24,7 @@ Create agents that can:
 - Get financial insights
 
 ### How it works
+
 GOAT leverages blockchains, cryptocurrencies (such as stablecoins), and wallets as the infrastructure to enable agents to become economic actors:
 
 1. Give your agent a [wallet](https://github.com/goat-sdk/goat/tree/main#chains-and-wallets)
@@ -38,124 +45,71 @@ If you don't find what you need on our more than 200 integrations you can easily
 
 See how to do it [here](https://github.com/goat-sdk/goat/tree/main#-contributing).
 
-### Quickstarts
-
-The best way to get started is by using the quickstarts below. See how you can configure GOAT to achieve any of the use cases below.
-
-- **By use case**
-  - **Money transmission**
-    - Send and receive payments [[EVM](https://github.com/goat-sdk/goat/tree/main/python/examples/by-use-case/evm-send-and-receive-tokens), [Solana](https://github.com/goat-sdk/goat/tree/main/python/examples/by-use-case/solana-send-and-receive-tokens)]
-  - **Investing**
-    - Generate yield [[Solana](https://github.com/goat-sdk/goat/tree/main/python/examples/by-use-case/solana-usdc-yield-deposit)]
-    - Purchase crypto assets [[EVM](https://github.com/goat-sdk/goat/tree/main/python/examples/by-use-case/evm-swap-tokens), [Solana](https://github.com/goat-sdk/goat/tree/main/python/examples/by-use-case/solana-swap-tokens)]
-- **By wallet**
-  - [Crossmint](https://github.com/goat-sdk/goat/tree/main/python/examples/by-wallet/crossmint)
-- **See all python quickstarts [here](https://github.com/goat-sdk/goat/tree/main/python/examples).**
-
-
 ## Setup
 
 1. Install the core package and langchain adapter:
 
 ```bash
-pip install goat-sdk goat-sdk-adapter-langchain
+npm i @goat-sdk/core @goat-sdk/adapter-langchain
 ```
 
 2. Install the type of wallet you want to use (e.g solana):
 
 ```bash
-pip install goat-sdk-wallet-solana
+npm i @goat-sdk/wallet-evm @goat-sdk/wallet-viem
 ```
 
 3. Install the plugins you want to use in that chain:
 
 ```bash
-pip install goat-sdk-plugin-spl-token
+npm i @goat-sdk/plugin-erc20
 ```
 
 ## Instantiation
 
 Now we can instantiate our toolkit:
 
-```python
-from goat_adapters.langchain import get_on_chain_tools
-from goat_wallets.solana import solana, send_solana
-from goat_plugins.spl_token import spl_token, SplTokenPluginOptions
-from goat_plugins.spl_token.tokens import SPL_TOKENS
+```typescript
+import { http } from "viem";
+import { createWalletClient } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { baseSepolia } from "viem/chains";
 
-# Initialize Solana client
-client = SolanaClient(os.getenv("SOLANA_RPC_ENDPOINT"))
+import { getOnChainTools } from "@goat-sdk/adapter-langchain";
+import { PEPE, USDC, erc20 } from "@goat-sdk/plugin-erc20";
 
-# Initialize regular Solana wallet
-keypair = Keypair.from_base58_string(os.getenv("SOLANA_WALLET_SEED") or "")
-wallet = solana(client, keypair)
+import { sendETH } from "@goat-sdk/wallet-evm";
+import { viem } from "@goat-sdk/wallet-viem";
 
-tools = get_on_chain_tools(
-        wallet=wallet,
-        plugins=[
-            send_solana(),
-            spl_token(SplTokenPluginOptions(
-                network="mainnet",  # Using devnet as specified in .env
-                tokens=SPL_TOKENS
-            )),
-        ],
-    )
+import { ChatOpenAI } from "@langchain/openai";
+import { createReactAgent } from "@langchain/langgraph/prebuilt";
+
+// 1. Create a wallet client
+const account = privateKeyToAccount(
+  process.env.WALLET_PRIVATE_KEY as `0x${string}`
+);
+
+const walletClient = createWalletClient({
+  account: account,
+  transport: http(process.env.RPC_PROVIDER_URL),
+  chain: baseSepolia,
+});
+
+// 2. Set up the tools
+const tools = await getOnChainTools({
+  wallet: viem(walletClient),
+  plugins: [sendETH(), erc20({ tokens: [USDC, PEPE] })],
+});
+
+// 3. Create the agent
+const model = new ChatOpenAI({
+  model: "gpt-4o-mini",
+});
+
+const agent = createReactAgent({ llm: model, tools: tools });
 ```
 
-## Invocation
-```python
-tools["get_balance"].invoke({ "address": "0x1234567890123456789012345678901234567890" })
-```
+## Related
 
-## Use within an agent
-
-```python
-import os
-import asyncio
-from dotenv import load_dotenv
-
-# Load environment variables
-load_dotenv()
-
-from solana.rpc.api import Client as SolanaClient
-from solders.keypair import Keypair
-
-from goat_adapters.langchain import get_on_chain_tools
-from goat_wallets.solana import solana, send_solana
-from goat_plugins.spl_token import spl_token, SplTokenPluginOptions
-from goat_plugins.spl_token.tokens import SPL_TOKENS
-
-# Initialize Solana client
-client = SolanaClient(os.getenv("SOLANA_RPC_ENDPOINT"))
-
-# Initialize regular Solana wallet
-keypair = Keypair.from_base58_string(os.getenv("SOLANA_WALLET_SEED") or "")
-wallet = solana(client, keypair)
-
-# Initialize LLM
-llm = ChatOpenAI(model="gpt-4o-mini")
-
-def main():
-    # Initialize tools with Solana wallet
-    tools = get_on_chain_tools(
-        wallet=wallet,
-        plugins=[
-            send_solana(),
-            spl_token(SplTokenPluginOptions(
-                network="mainnet",  # Using devnet as specified in .env
-                tokens=SPL_TOKENS
-            )),
-        ],
-    )
-
-    # Initialize agent
-    # Your agent code here
-
-
-if __name__ == "__main__":
-    main()
-```
-
-## API reference
-
-- For a complete list of tools, see the [GOAT SDK documentation](https://github.com/goat-sdk/goat).
+- Tool [conceptual guide](/oss/javascript/concepts/#tools)
+- Tool [how-to guides](/oss/javascript/how-to/#tools)

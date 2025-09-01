@@ -21,8 +21,16 @@ The main question when adding subgraphs is how the parent graph and subgraph com
 
 * parent and subgraph have **shared state keys** in their state [schemas](/oss/javascript/langgraph/graph-api#state). In this case, you can [include the subgraph as a node in the parent graph](/oss/javascript/langgraph/use-subgraphs#shared-state-schemas)
 
-  ```javascript {highlight={13,18}}
-  import { StateGraph, MessagesZodState, START } from "@langchain/langgraph";
+  ```typescript {highlight={13,18}}
+  import { StateGraph, MessagesZodMeta, START } from "@langchain/langgraph";
+  import { registry } from "@langchain/langgraph/zod";
+  import { z } from "zod/v4";
+
+  const MessagesZodState = z.object({
+    messages: z
+      .array(z.custom<BaseMessage>())
+      .register(registry, MessagesZodMeta),
+  });
   
   // Subgraph
   
@@ -48,12 +56,22 @@ The main question when adding subgraphs is how the parent graph and subgraph com
 
 * parent graph and subgraph have **different schemas** (no shared state keys in their state [schemas](/oss/javascript/langgraph/graph-api#state)). In this case, you have to [call the subgraph from inside a node in the parent graph](/oss/javascript/langgraph/use-subgraphs#different-state-schemas): this is useful when the parent graph and the subgraph have different state schemas and you need to transform state before or after calling the subgraph
 
-  ```javascript {highlight={5,11,17,22}}
-  import { StateGraph, MessagesZodState, START } from "@langchain/langgraph";
-  import { z } from "zod";
+  ```typescript {highlight={5,11,17,22}}
+  import { StateGraph, MessagesZodMeta, START } from "@langchain/langgraph";
+  import { BaseMessage } from "@langchain/core/messages";
+  import { registry } from "@langchain/langgraph/zod";
+  import { z } from "zod/v4";
+  
+  const MessagesZodState = z.object({
+    messages: z
+      .array(z.custom<BaseMessage>())
+      .register(registry, MessagesZodMeta),
+  });
   
   const SubgraphState = z.object({
-    subgraphMessages: MessagesZodState.shape.messages,
+    subgraphMessages: z
+      .array(z.custom<BaseMessage>())
+      .register(registry, MessagesZodMeta),
   });
   
   // Subgraph

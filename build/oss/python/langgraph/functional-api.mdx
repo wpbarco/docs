@@ -607,7 +607,7 @@ Encapsulate side effects (e.g., writing to a file, sending an email) in tasks to
   <Tab title="Correct">
     In this example, the side effect is encapsulated in a task, ensuring consistent execution upon resumption.
     
-    ```javascript {highlight={3,4}}
+    ```typescript {highlight={3,4}}
     from langgraph.func import task
     
     @task
@@ -677,7 +677,7 @@ Please read the section on [determinism](#determinism) for more details.
   <Tab title="Correct">
     In this example, the workflow uses the input `t0` to determine which task to execute. This is deterministic because the result of the workflow depends only on the input.
     
-    ```javascript {highlight={5,6,12}}
+    ```typescript {highlight={5,6,12}}
     import time
     
     from langgraph.func import task

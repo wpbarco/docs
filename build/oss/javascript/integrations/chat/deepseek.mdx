@@ -2,127 +2,201 @@
 title: ChatDeepSeek
 ---
 
-This will help you get started with DeepSeek's hosted [chat models](/oss/javascript/concepts/chat_models). For detailed documentation of all ChatDeepSeek features and configurations head to the [API reference](https://python.langchain.com/api_reference/deepseek/chat_models/langchain_deepseek.chat_models.ChatDeepSeek.html).
 
-<Tip>
-**DeepSeek's models are open source and can be run locally (e.g. in [Ollama](./ollama.ipynb)) or on other inference providers (e.g. [Fireworks](./fireworks.ipynb), [Together](./together.ipynb)) as well.**
-
-
-</Tip>
+This will help you getting started with DeepSeek [chat models](/oss/javascript/concepts/#chat-models). For detailed documentation of all `ChatDeepSeek` features and configurations head to the [API reference](https://api.js.langchain.com/classes/_langchain_deepseek.ChatDeepSeek.html).
 
 ## Overview
 ### Integration details
 
-| Class | Package | Local | Serializable | [JS support](https://js.langchain.com/docs/integrations/chat/deepseek) | Package downloads | Package latest |
+| Class | Package | Local | Serializable | [PY support](https://python.langchain.com/docs/integrations/chat/deepseek) | Package downloads | Package latest |
 | :--- | :--- | :---: | :---: |  :---: | :---: | :---: |
-| [ChatDeepSeek](https://python.langchain.com/api_reference/deepseek/chat_models/langchain_deepseek.chat_models.ChatDeepSeek.html) | [langchain-deepseek](https://python.langchain.com/api_reference/deepseek/) | ❌ | beta | ✅ | ![PyPI - Downloads](https://img.shields.io/pypi/dm/langchain-deepseek?style=flat-square&label=%20) | ![PyPI - Version](https://img.shields.io/pypi/v/langchain-deepseek?style=flat-square&label=%20) |
+| [`ChatDeepSeek`](https://api.js.langchain.com/classes/_langchain_deepseek.ChatDeepSeek.html) | [`@langchain/deepseek`](https://npmjs.com/@langchain/deepseek) | ❌ (see [Ollama](/oss/javascript/integrations/chat/ollama)) | beta | ✅ | <img src="https://img.shields.io/npm/dm/@langchain/deepseek?style=flat-square&label=%20&" alt="NPM - Downloads" /> | <img src="https://img.shields.io/npm/v/@langchain/deepseek?style=flat-square&label=%20&" alt="NPM - Version" /> |
 
 ### Model features
-| [Tool calling](/oss/javascript/how-to/tool_calling) | [Structured output](/oss/javascript/how-to/structured_output/) | JSON mode | [Image input](/oss/javascript/how-to/multimodal_inputs/) | Audio input | Video input | [Token-level streaming](/oss/javascript/how-to/chat_streaming/) | Native async | [Token usage](/oss/javascript/how-to/chat_token_usage_tracking/) | [Logprobs](/oss/javascript/how-to/logprobs/) |
-| :---: | :---: | :---: | :---: |  :---: | :---: | :---: | :---: | :---: | :---: |
-| ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ |
 
-<Note>
-**DeepSeek-R1, specified via `model="deepseek-reasoner"`, does not support tool calling or structured output. Those features [are supported](https://api-docs.deepseek.com/guides/function_calling) by DeepSeek-V3 (specified via `model="deepseek-chat"`).**
+See the links in the table headers below for guides on how to use specific features.
 
+| [Tool calling](/oss/javascript/how-to/tool_calling) | [Structured output](/oss/javascript/how-to/structured_output/) | JSON mode | [Image input](/oss/javascript/how-to/multimodal_inputs/) | Audio input | Video input | [Token-level streaming](/oss/javascript/how-to/chat_streaming/) | [Token usage](/oss/javascript/how-to/chat_token_usage_tracking/) | [Logprobs](/oss/javascript/how-to/logprobs/) |
+| :---: | :---: | :---: | :---: |  :---: | :---: | :---: | :---: | :---: |
+| ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ | 
 
-</Note>
+Note that as of 1/27/25, tool calling and structured output are not currently supported for `deepseek-reasoner`.
 
 ## Setup
 
-To access DeepSeek models you'll need to create a/an DeepSeek account, get an API key, and install the `langchain-deepseek` integration package.
+To access DeepSeek models you'll need to create a DeepSeek account, get an API key, and install the `@langchain/deepseek` integration package.
+
+You can also access the DeepSeek API through providers like [Together AI](/oss/javascript/integrations/chat/togetherai) or [Ollama](/oss/javascript/integrations/chat/ollama).
 
 ### Credentials
 
-Head to [DeepSeek's API Key page](https://platform.deepseek.com/api_keys) to sign up to DeepSeek and generate an API key. Once you've done this set the `DEEPSEEK_API_KEY` environment variable:
+Head to https://deepseek.com/ to sign up to DeepSeek and generate an API key. Once you've done this set the `DEEPSEEK_API_KEY` environment variable:
 
-
-```python
-import getpass
-import os
-
-if not os.getenv("DEEPSEEK_API_KEY"):
-    os.environ["DEEPSEEK_API_KEY"] = getpass.getpass("Enter your DeepSeek API key: ")
+```bash
+export DEEPSEEK_API_KEY="your-api-key"
 ```
 
-To enable automated tracing of your model calls, set your [LangSmith](https://docs.smith.langchain.com/) API key:
+If you want to get automated tracing of your model calls you can also set your [LangSmith](/langsmith/home) API key by uncommenting below:
 
-
-```python
-# os.environ["LANGSMITH_TRACING"] = "true"
-# os.environ["LANGSMITH_API_KEY"] = getpass.getpass("Enter your LangSmith API key: ")
+```bash
+# export LANGSMITH_TRACING="true"
+# export LANGSMITH_API_KEY="your-api-key"
 ```
 
 ### Installation
 
-The LangChain DeepSeek integration lives in the `langchain-deepseek` package:
+The LangChain ChatDeepSeek integration lives in the `@langchain/deepseek` package:
 
-
-```python
-%pip install -qU langchain-deepseek
 ```
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
 
+<Npm2Yarn>
+  @langchain/deepseek @langchain/core
+</Npm2Yarn>
+
+```
 ## Instantiation
 
 Now we can instantiate our model object and generate chat completions:
 
 
-```python
-from langchain_deepseek import ChatDeepSeek
+```typescript
+import { ChatDeepSeek } from "@langchain/deepseek";
 
-llm = ChatDeepSeek(
-    model="deepseek-chat",
-    temperature=0,
-    max_tokens=None,
-    timeout=None,
-    max_retries=2,
-    # other params...
-)
+const llm = new ChatDeepSeek({
+  model: "deepseek-reasoner",
+  temperature: 0,
+  // other params...
+})
 ```
 
-## Invocation
 
-
-```python
-messages = [
-    (
-        "system",
-        "You are a helpful assistant that translates English to French. Translate the user sentence.",
-    ),
-    ("human", "I love programming."),
-]
-ai_msg = llm.invoke(messages)
-ai_msg.content
+```typescript
+const aiMsg = await llm.invoke([
+  [
+    "system",
+    "You are a helpful assistant that translates English to French. Translate the user sentence.",
+  ],
+  ["human", "I love programming."],
+])
+aiMsg
+```
+```output
+AIMessage {
+  "id": "e2874482-68a7-4552-8154-b6a245bab429",
+  "content": "J'adore la programmation.",
+  "additional_kwargs": {
+    "reasoning_content": "..."
+  },
+  "response_metadata": {
+    "tokenUsage": {
+      "promptTokens": 23,
+      "completionTokens": 7,
+      "totalTokens": 30
+    },
+    "finish_reason": "stop",
+    "model_name": "deepseek-reasoner",
+    "usage": {
+      "prompt_tokens": 23,
+      "completion_tokens": 7,
+      "total_tokens": 30,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 23
+    },
+    "system_fingerprint": "fp_3a5770e1b4"
+  },
+  "tool_calls": [],
+  "invalid_tool_calls": [],
+  "usage_metadata": {
+    "output_tokens": 7,
+    "input_tokens": 23,
+    "total_tokens": 30,
+    "input_token_details": {
+      "cache_read": 0
+    },
+    "output_token_details": {}
+  }
+}
 ```
 
+```typescript
+console.log(aiMsg.content)
+```
+```output
+J'adore la programmation.
+```
 ## Chaining
 
 We can [chain](/oss/javascript/how-to/sequence/) our model with a prompt template like so:
 
 
-```python
-from langchain_core.prompts import ChatPromptTemplate
+```typescript
+import { ChatPromptTemplate } from "@langchain/core/prompts"
 
-prompt = ChatPromptTemplate(
+const prompt = ChatPromptTemplate.fromMessages(
+  [
     [
-        (
-            "system",
-            "You are a helpful assistant that translates {input_language} to {output_language}.",
-        ),
-        ("human", "{input}"),
-    ]
+      "system",
+      "You are a helpful assistant that translates {input_language} to {output_language}.",
+    ],
+    ["human", "{input}"],
+  ]
 )
 
-chain = prompt | llm
-chain.invoke(
-    {
-        "input_language": "English",
-        "output_language": "German",
-        "input": "I love programming.",
-    }
+const chain = prompt.pipe(llm);
+await chain.invoke(
+  {
+    input_language: "English",
+    output_language: "German",
+    input: "I love programming.",
+  }
 )
+```
+```output
+AIMessage {
+  "id": "6e7f6f8c-8d7a-4dad-be07-425384038fd4",
+  "content": "Ich liebe es zu programmieren.",
+  "additional_kwargs": {
+    "reasoning_content": "..."
+  },
+  "response_metadata": {
+    "tokenUsage": {
+      "promptTokens": 18,
+      "completionTokens": 9,
+      "totalTokens": 27
+    },
+    "finish_reason": "stop",
+    "model_name": "deepseek-reasoner",
+    "usage": {
+      "prompt_tokens": 18,
+      "completion_tokens": 9,
+      "total_tokens": 27,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 18
+    },
+    "system_fingerprint": "fp_3a5770e1b4"
+  },
+  "tool_calls": [],
+  "invalid_tool_calls": [],
+  "usage_metadata": {
+    "output_tokens": 9,
+    "input_tokens": 18,
+    "total_tokens": 27,
+    "input_token_details": {
+      "cache_read": 0
+    },
+    "output_token_details": {}
+  }
+}
 ```
 
 ## API reference
 
-For detailed documentation of all ChatDeepSeek features and configurations head to the [API Reference](https://python.langchain.com/api_reference/deepseek/chat_models/langchain_deepseek.chat_models.ChatDeepSeek.html).
+For detailed documentation of all ChatDeepSeek features and configurations head to the API reference: https://api.js.langchain.com/classes/_langchain_deepseek.ChatDeepSeek.html

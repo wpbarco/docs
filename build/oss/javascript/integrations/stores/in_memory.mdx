@@ -1,93 +1,134 @@
 ---
-title: InMemoryByteStore
+title: InMemoryStore
 ---
 
-This guide will help you get started with in-memory [key-value stores](/oss/javascript/concepts/key_value_stores). For detailed documentation of all `InMemoryByteStore` features and configurations head to the [API reference](https://python.langchain.com/api_reference/core/stores/langchain_core.stores.InMemoryByteStore.html).
+This will help you get started with [InMemoryStore](/oss/javascript/concepts/key_value_stores). For detailed documentation of all InMemoryStore features and configurations head to the [API reference](https://api.js.langchain.com/classes/langchain_core.stores.InMemoryStore.html).
+
+The `InMemoryStore` allows for a generic type to be assigned to the values in the store. We'll assign type `BaseMessage` as the type of our values, keeping with the theme of a chat history store.
 
 ## Overview
 
-The `InMemoryByteStore` is a non-persistent implementation of a `ByteStore` that stores everything in a Python dictionary. It's intended for demos and cases where you don't need persistence past the lifetime of the Python process.
-
 ### Integration details
 
-| Class | Package | Local | [JS support](https://js.langchain.com/docs/integrations/stores/in_memory/) | Package downloads | Package latest |
+| Class | Package | Local | [PY support](https://python.langchain.com/docs/integrations/stores/in_memory/) | Package downloads | Package latest |
 | :--- | :--- | :---: | :---: |  :---: | :---: |
-| [InMemoryByteStore](https://python.langchain.com/api_reference/core/stores/langchain_core.stores.InMemoryByteStore.html) | [langchain-core](https://python.langchain.com/api_reference/core/index.html) | ✅ | ✅ | ![PyPI - Downloads](https://img.shields.io/pypi/dm/langchain_core?style=flat-square&label=%20) | ![PyPI - Version](https://img.shields.io/pypi/v/langchain_core?style=flat-square&label=%20) |
+| [InMemoryStore](https://api.js.langchain.com/classes/langchain_core.stores.InMemoryStore.html) | [@langchain/core](https://api.js.langchain.com/modules/langchain_core.stores.html) | ✅ | ✅ | ![NPM - Downloads](https://img.shields.io/npm/dm/@langchain/core?style=flat-square&label=%20&) | ![NPM - Version](https://img.shields.io/npm/v/@langchain/core?style=flat-square&label=%20&) |
+
+## Setup
 
 ### Installation
 
-The LangChain `InMemoryByteStore` integration lives in the `langchain-core` package:
+The LangChain InMemoryStore integration lives in the `@langchain/core` package:
 
+```{=mdx}
 
-```python
-%pip install -qU langchain-core
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+<Npm2Yarn>
+  @langchain/core
+</Npm2Yarn>
+
 ```
-
 ## Instantiation
 
-Now you can instantiate your byte store:
+Now we can instantiate our byte store:
 
 
-```python
-from langchain_core.stores import InMemoryByteStore
+```typescript
+import { InMemoryStore } from "@langchain/core/stores"
+import { BaseMessage } from "@langchain/core/messages";
 
-kv_store = InMemoryByteStore()
+const kvStore = new InMemoryStore<BaseMessage>();
 ```
-
 ## Usage
 
 You can set data under keys like this using the `mset` method:
 
 
-```python
-kv_store.mset(
-    [
-        ["key1", b"value1"],
-        ["key2", b"value2"],
-    ]
+```typescript
+import { AIMessage, HumanMessage } from "@langchain/core/messages";
+
+await kvStore.mset(
+  [
+    ["key1", new HumanMessage("value1")],
+    ["key2", new AIMessage("value2")],
+  ]
 )
 
-kv_store.mget(
-    [
-        "key1",
-        "key2",
-    ]
+await kvStore.mget(
+  [
+    "key1",
+    "key2",
+  ]
 )
 ```
-
-
-
 ```output
-[b'value1', b'value2']
+[
+  HumanMessage {
+    "content": "value1",
+    "additional_kwargs": {},
+    "response_metadata": {}
+  },
+  AIMessage {
+    "content": "value2",
+    "additional_kwargs": {},
+    "response_metadata": {},
+    "tool_calls": [],
+    "invalid_tool_calls": []
+  }
+]
 ```
-
-
 And you can delete data using the `mdelete` method:
 
 
-```python
-kv_store.mdelete(
-    [
-        "key1",
-        "key2",
-    ]
+```typescript
+await kvStore.mdelete(
+  [
+    "key1",
+    "key2",
+  ]
 )
 
-kv_store.mget(
-    [
-        "key1",
-        "key2",
-    ]
+await kvStore.mget(
+  [
+    "key1",
+    "key2",
+  ]
 )
 ```
-
-
-
 ```output
-[None, None]
+[ undefined, undefined ]
 ```
+## Yielding values
+
+If you want to get back all the keys you can call the `yieldKeys` method. Optionally, you can pass a key prefix to only get back keys which match that prefix.
 
 
+```typescript
+import { InMemoryStore } from "@langchain/core/stores"
+import { AIMessage, BaseMessage, HumanMessage } from "@langchain/core/messages";
+
+const kvStoreForYield = new InMemoryStore<BaseMessage>();
+
+// Add some data to the store
+await kvStoreForYield.mset(
+  [
+    ["message:id:key1", new HumanMessage("value1")],
+    ["message:id:key2", new AIMessage("value2")],
+  ]
+)
+
+const yieldedKeys = [];
+for await (const key of kvStoreForYield.yieldKeys("message:id:")) {
+  yieldedKeys.push(key);
+}
+
+console.log(yieldedKeys);
+```
+```output
+[ 'message:id:key1', 'message:id:key2' ]
+```
 ## API reference
 
-For detailed documentation of all `InMemoryByteStore` features and configurations, head to the API reference: https://python.langchain.com/api_reference/core/stores/langchain_core.stores.InMemoryByteStore.html
+For detailed documentation of all InMemoryStore features and configurations, head to the [API reference](https://api.js.langchain.com/classes/langchain_core.stores.InMemoryStore.html)

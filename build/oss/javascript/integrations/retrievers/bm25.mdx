@@ -2,104 +2,57 @@
 title: BM25
 ---
 
->[BM25 (Wikipedia)](https://en.wikipedia.org/wiki/Okapi_BM25) also known as the `Okapi BM25`, is a ranking function used in information retrieval systems to estimate the relevance of documents to a given search query.
->
->`BM25Retriever` retriever uses the [`rank_bm25`](https://github.com/dorianbrown/rank_bm25) package.
+BM25, also known as [Okapi BM25](https://en.wikipedia.org/wiki/Okapi_BM25), is a ranking function used in information retrieval systems to estimate the relevance of documents to a given search query.
 
+You can use it as part of your retrieval pipeline as a to rerank documents as a postprocessing step after retrieving an initial set of documents from another source.
 
+## Setup
 
-```python
-%pip install --upgrade --quiet  rank_bm25
+The `BM25Retriever` is exported from `@langchain/community`. You'll need to install it like this:
+
+```{=mdx}
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+<Npm2Yarn>
+  @langchain/community @langchain/core
+</Npm2Yarn>
 ```
+This retriever uses code from [`this implementation`](https://github.com/FurkanToprak/OkapiBM25) of Okapi BM25.
+
+## Usage
+
+You can now create a new retriever with previously retrieved documents:
 
 
-```python
-from langchain_community.retrievers import BM25Retriever
+```typescript
+import { BM25Retriever } from "@langchain/community/retrievers/bm25";
+
+const retriever = BM25Retriever.fromDocuments([
+  { pageContent: "Buildings are made out of brick", metadata: {} },
+  { pageContent: "Buildings are made out of wood", metadata: {} },
+  { pageContent: "Buildings are made out of stone", metadata: {} },
+  { pageContent: "Cars are made out of metal", metadata: {} },
+  { pageContent: "Cars are made out of plastic", metadata: {} },
+  { pageContent: "mitochondria is the powerhouse of the cell", metadata: {} },
+  { pageContent: "mitochondria is made of lipids", metadata: {} },
+], { k: 4 });
+
+// Will return the 4 documents reranked by the BM25 algorithm
+await retriever.invoke("mitochondria");
 ```
-
-## Create New Retriever with Texts
-
-
-```python
-retriever = BM25Retriever.from_texts(["foo", "bar", "world", "hello", "foo bar"])
-```
-
-## Create a New Retriever with Documents
-
-You can now create a new retriever with the documents you created.
-
-
-```python
-from langchain_core.documents import Document
-
-retriever = BM25Retriever.from_documents(
-    [
-        Document(page_content="foo"),
-        Document(page_content="bar"),
-        Document(page_content="world"),
-        Document(page_content="hello"),
-        Document(page_content="foo bar"),
-    ]
-)
-```
-
-## Use Retriever
-
-We can now use the retriever!
-
-
-```python
-result = retriever.invoke("foo")
-```
-
-
-```python
-result
-```
-
-
-
 ```output
-[Document(metadata={}, page_content='foo'),
- Document(metadata={}, page_content='foo bar'),
- Document(metadata={}, page_content='hello'),
- Document(metadata={}, page_content='world')]
+[
+  { pageContent: 'mitochondria is made of lipids', metadata: {} },
+  {
+    pageContent: 'mitochondria is the powerhouse of the cell',
+    metadata: {}
+  },
+  { pageContent: 'Buildings are made out of brick', metadata: {} },
+  { pageContent: 'Buildings are made out of wood', metadata: {} }
+]
 ```
 
+```typescript
 
-## Preprocessing Function
-Pass a custom preprocessing function to the retriever to improve search results. Tokenizing text at the word level can enhance retrieval, especially when using vector stores like Chroma, Pinecone, or Faiss for chunked documents.
-
-
-```python
-import nltk
-
-nltk.download("punkt_tab")
-```
-
-
-```python
-from nltk.tokenize import word_tokenize
-
-retriever = BM25Retriever.from_documents(
-    [
-        Document(page_content="foo"),
-        Document(page_content="bar"),
-        Document(page_content="world"),
-        Document(page_content="hello"),
-        Document(page_content="foo bar"),
-    ],
-    k=2,
-    preprocess_func=word_tokenize,
-)
-
-result = retriever.invoke("bar")
-result
-```
-
-
-
-```output
-[Document(metadata={}, page_content='bar'),
- Document(metadata={}, page_content='foo bar')]
 ```

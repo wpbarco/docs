@@ -2,31 +2,40 @@
 title: Models
 ---
 
+import ConversationHistory from '/snippets/oss/langchain-conversation-history.mdx';
 import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
 
 <AlphaCallout />
 
-import ConversationHistory from '/snippets/oss/langchain-conversation-history.mdx';
 
 ## Overview
 
-[LLMs](https://en.wikipedia.org/wiki/Large_language_model) are machine learning models that can interpret and generate text like humans do. They're versatile enough to write content, translate languages, summarize information, and answer questions without needing special training for each task.
+[LLMs](https://en.wikipedia.org/wiki/Large_language_model) are machine learning models that can interpret and generate text like humans. They're versatile enough to write content, translate languages, summarize, and answer questions without needing special training for each task.
 
-In addition to text generation, many models support other interaction patterns, such as:
+In addition to text generation, many models support:
 
-* <Icon icon="hammer" size={16} /> [Tool calling](#tool-calling) - where models can call external tools (like database queries or API calls) and use the results in their responses.
+* <Icon icon="hammer" size={16} /> [Tool calling](#tool-calling) - where models call external tools (like databases queries or API calls) and use results in their responses.
 * <Icon icon="shapes" size={16} /> [Structured output](#structured-outputs) -
-where the model is constrained to respond with an object that matches a schema.
+where the model's response is constrained match a schema.
 * <Icon icon="image" size={16} /> [Multimodal](#multimodal) - where models can process and return data other than text, such as images, audio, and video.
 * <Icon icon="brain" size={16} /> [Reasoning](#reasoning) - where models are able to perform multi-step reasoning to arrive at a conclusion.
 
-Providers like OpenAI, Anthropic, and Google offer access to a range of LLMs each carrying their own strengths and weaknesses. Every provider has its own unique interaction patterns for accessing and using models, typically through a user interface or an API where [messages](./langchain-messages.mdx) are exchanged between a user and the model.
+{/*  TODO I really don't like how verbose and bulky this is, as well as its positioning
+(we should get to the basic usage as quick as possible IMO)
 
-Because each provider has its own opinionated way of interacting with models, it can make it difficult to swap between models and providers without significant code changes. LangChain simplifies this by providing a chat model abstraction to interact with models across a number of providers and models. This lets you focus on the logic of your application rather than the implementation details of the underlying provider API.
+Maybe this is better suited somewhere else
+
+Providers like OpenAI, Anthropic, and Google offer access to a range of models each
+suited to different tasks. Consequently, providers tend to each have unique interaction
+patterns for their models, typically through a user interface or an API where [messages](./langchain-messages.mdx) are exchanged with a user.
+Because the APIs are not unified, it can be difficult to swap between models and providers without significant code changes.
+LangChain simplifies this by providing a chat model abstraction to interact with models across a number of providers and models.
+This lets you focus on the logic of your application rather than the implementation details of the underlying provider API. */}
+
 
 ## Basic usage
 
-The easiest way to get started with a model in LangChain is to use `init_chat_model` to initialize one from a model [provider](/oss/python/integrations/providers) of your choice.
+The easiest way to get started with a model in LangChain is to use `init_chat_model` to initialize one from a [provider](/oss/python/integrations/providers) of your choice:
 
 <CodeGroup>
 ```python Initialize a chat model
@@ -90,6 +99,9 @@ response = model.invoke("Why do parrots talk?")
 See [`init_chat_model`](https://python.langchain.com/api_reference/langchain/chat_models/langchain.chat_models.base.init_chat_model.html)
 for more detail.
 
+
+
+
 ### Key methods
 
 <Card title="Invoke" href="#invoke" icon="paper-plane" arrow="true" horizontal>
@@ -151,9 +163,12 @@ include:
     it fails due to issues like network timeouts or rate limits.
 </ParamField>
 
+
+
+
 <Info>
     To find all the parameters supported by a given chat model, head to the
-    [Reference](https://python.langchain.com/api_reference/).
+    [reference docs](https://python.langchain.com/api_reference/).
 </Info>
 
 ## Invocation
@@ -168,8 +183,9 @@ invocation methods, each suited to different use cases.
     
     For example: `ainvoke()`, `astream()`, `abatch()`
     
-    A full list of async methods can be found in the [reference](https://python.langchain.com/api_reference/core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.invoke).
+    A full list of async methods can be found in the [reference docs](https://python.langchain.com/api_reference/).
 </Tip>
+
 
 ### Invoke
 
@@ -180,9 +196,15 @@ response = model.invoke("Why do parrots have colorful feathers?")
 print(response)
 ```
 
+
+
+
 A list of messages can be provided to a model to represent conversation history. Each message has a role that models use to indicate who sent the message in the conversation. See the [messages](./langchain-messages.mdx) guide for more detail on roles, types, and content.
 
 <ConversationHistory/>
+
+
+
 
 ### Stream
 
@@ -190,10 +212,7 @@ Most models can stream their output content while it is being generated. By
 displaying output progressively, streaming significantly improves user
 experience, particularly for longer responses.
 
-Calling [`stream()`](https://python.langchain.com/api_reference/core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.stream)
-returns an <Tooltip tip="An object that progressively provides access to each item of a collection, in order.">iterator</Tooltip>
-that yields output chunks as they are produced. You can use a loop to process
-each chunk in real-time:
+Calling [`stream()`](https://python.langchain.com/api_reference/core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.stream) returns an <Tooltip tip="An object that progressively provides access to each item of a collection, in order.">iterator</Tooltip> that yields output chunks as they are produced. You can use a loop to process each chunk in real-time:
 
 <CodeGroup>
     ```python Basic text streaming
@@ -215,9 +234,12 @@ each chunk in real-time:
     ```
 </CodeGroup>
 
-As opposed to `invoke()`, which returns a single `AIMessage` after the model has
+
+
+
+As opposed to `invoke()`, which returns a single @[`AIMessage`][AIMessage] after the model has
 finished generating its full response, `stream()` returns multiple
-`AIMessageChunk` objects, each containing a portion of the output text.
+@[`AIMessageChunk`][AIMessageChunk] objects, each containing a portion of the output text.
 
 Importantly, each `AIMessageChunk` in a stream is designed to be gathered into a
 full message via summation:
@@ -239,8 +261,11 @@ print(full.content_blocks)
 # [{"type": "text", "text": "The sky is typically blue..."}]
 ```
 
-The resulting full message can be treated the same as a message that was
-generated with [invoke](#invoke) - for example, it can be aggregated into a
+
+
+
+The resulting message can be treated the same as a message that was
+generated with [`invoke()`](#invoke) - for example, it can be aggregated into a
 message history and passed back to the model as conversational context.
 
 <Warning>
@@ -249,6 +274,32 @@ message history and passed back to the model as conversational context.
     would be one that needs to store the entire output in memory before it can
     be processed.
 </Warning>
+<Accordion title="Advanced streaming topics">
+    <Accordion title='"Auto-Streaming" Chat Models'>
+        LangChain simplifies streaming from chat models by automatically enabling
+        streaming mode in certain cases, even when you're not explicitly calling the
+        streaming methods. This is particularly useful when you use the
+        non-streaming invoke method but still want to stream the entire application,
+        including intermediate results from the chat model.
+
+        In [LangGraph agents](./langchain-agents), for example, you can
+        call `model.invoke()` within nodes, but LangChain will automatically
+        delegate to streaming if running in a streaming mode.
+
+        #### How it works
+
+        When you `invoke()` a chat model, LangChain will automatically switch to
+        an internal streaming mode if it detects that you are trying to stream the
+        overall application. The result of the invocation will be the same as far as
+        the code that was using invoke is concerned; however, while the chat model
+        is being streamed, LangChain will take care of invoking `on_llm_new_token`
+        events in LangChain's callback system.
+        
+        Callback events allow LangGraph `stream()` and @[astream_events][`astream_events()`]
+        to surface the chat model's output in real-time.
+
+
+    </Accordion>
 
 <Accordion title='"Auto-Streaming" Chat Models'>
     <Note>
@@ -262,7 +313,7 @@ message history and passed back to the model as conversational context.
     non-streaming invoke method but still want to stream the entire application,
     including intermediate results from the chat model.
 
-    In [LangGraph agents](/oss/python/python/langchain-agents), for example, you can
+    In [LangGraph agents](./langchain-agents), for example, you can
     call `model.invoke()` within nodes, but LangChain will automatically
     delegate to streaming if running in a streaming mode.
 
@@ -275,57 +326,58 @@ message history and passed back to the model as conversational context.
     is being streamed, LangChain will take care of invoking `on_llm_new_token`
     events in LangChain's callback system.
     
-    Callback events allow LangGraph `stream()` and [`astream_events()`](https://python.langchain.com/api_reference/langchain/agents/langchain.agents.agent.AgentExecutor.html#langchain.agents.agent.AgentExecutor.astream_events)
+    Callback events allow LangGraph `stream()` and [`astream_events()`](https://python.langchain.com/api_reference/core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.astream_events)
     to surface the chat model's output in real-time.
+
+
 </Accordion>
 
-<Accordion
-    title="Stream events"
->    
-    LangChain chat models can also stream semantic events using `astream_events()`.
+        LangChain chat models can also stream semantic events using `astream_events()`.
 
-    This simplifies filtering based on event types and other metadata, and will
-    aggregate the full message in the background. See below for an example.
+        This simplifies filtering based on event types and other metadata, and will
+        aggregate the full message in the background. See below for an example.
 
-    ```python
-    async for event in model.astream_events("Hello"):
+        ```python
+        async for event in model.astream_events("Hello"):
 
-        if event["event"] == "on_chat_model_start":
-            print(f"Input: {event['data']['input']}")
+            if event["event"] == "on_chat_model_start":
+                print(f"Input: {event['data']['input']}")
 
-        elif event["event"] == "on_chat_model_stream":
-            print(f"Token: {event['data']['chunk'].text}")
+            elif event["event"] == "on_chat_model_stream":
+                print(f"Token: {event['data']['chunk'].text}")
 
-        elif event["event"] == "on_chat_model_end":
-            print(f"Full message: {event['data']['output'].text}")
+            elif event["event"] == "on_chat_model_end":
+                print(f"Full message: {event['data']['output'].text}")
 
-        else:
-            pass
-    ```
-    ```txt
-    Input: Hello
-    Token: Hi
-    Token:  there
-    Token: !
-    Token:  How
-    Token:  can
-    Token:  I
-    ...
-    Full message: Hi there! How can I help today?
-    ```
+            else:
+                pass
+        ```
+        ```txt
+        Input: Hello
+        Token: Hi
+        Token:  there
+        Token: !
+        Token:  How
+        Token:  can
+        Token:  I
+        ...
+        Full message: Hi there! How can I help today?
+        ```
+
+        See the @[astream_events][`astream_events()`] reference for event types and other details.
+
+
     
-    See the [`astream_events()`](https://python.langchain.com/api_reference/langchain/agents/langchain.agents.agent.AgentExecutor.html#langchain.agents.agent.AgentExecutor.astream_events)
-    reference for event types and other details.
+
+
 </Accordion>
 
 ### Batch
 
 <Note>
-
-This section describes a chat model method `batch()`, which parallelizes model
-calls client-side. It is distinct from batch APIs supported by inference
-providers.
-
+    This section describes a chat model method `batch()`, which parallelizes model
+    calls client-side. It is distinct from batch APIs supported by inference
+    providers.
 </Note>
 
 Batching a collection of independent requests to a model can significantly
@@ -341,10 +393,8 @@ for response in responses:
     print(response)
 ```
 
-By default, [`batch()`](https://python.langchain.com/api_reference/core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.batch)
-will only return the final output for the entire batch. If you want to receive
-the output for each individual input as it is finishes generating, you can
-stream results with [`batch_as_completed()`](https://python.langchain.com/api_reference/core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.batch_as_completed):
+By default, [`batch()`](https://python.langchain.com/api_reference/core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.batch) will only return the final output for the entire batch. If you want to receive
+the output for each individual input as it is finishes generating, you can stream results with [`batch_as_completed()`](https://python.langchain.com/api_reference/core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.batch_as_completed):
 
 ```python Yield responses upon completion
 for response in model.batch_as_completed([
@@ -375,42 +425,38 @@ for response in model.batch_as_completed([
     )
     ```
 
-    See the [`RunnableConfig`](https://python.langchain.com/api_reference/core/runnables/langchain_core.runnables.config.RunnableConfig.html#runnableconfig)
-    reference for a full list of supported attributes.
+    See the [`RunnableConfig`](https://python.langchain.com/api_reference/core/runnables/langchain_core.runnables.config.RunnableConfig.html) reference for a full list of supported attributes.
 </Tip>
 
 For more details on batching, see the [reference](https://python.langchain.com/api_reference/core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.batch).
 
-## Context windows
 
-Each model has a <Tooltip tip="The maximum number of tokens a model can process in a single request, including both input and output tokens">context window</Tooltip>
-that determines how much text it can process at once. To learn more, see our
-guide on [context engineering](./langchain-context-engineering.mdx) for strategies to effectively manage context.
 
-## Model capabilities
 
-### Tool calling
+
+## Tool calling
 
 Models can request to call tools that perform tasks such as fetching data from a
 database, searching the web, or running code. Tools are pairings of:
 
 1. A schema, including the name of the tool, a description, and/or argument
-definitions (often defined with something like JSON schema)
-2. A function or coroutine to execute.
+definitions (often a JSON schema)
+2. A function or <Tooltip tip="A method that can suspend execution and resume at a later time">coroutine</Tooltip>
+to execute.
 
 <Note>
-    You will sometimes hear the term `function calling`. We use this term 
+    You may hear the term `function calling`. We use this 
     interchangeably with `tool calling`.
 </Note>
 
-To make tools that you have defined available for use by a model, you must bind
-them using [`bind_tools()`](https://python.langchain.com/api_reference/core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.bind_tools).
-In subsequent invocations, the model can choose to call any of the bound tools
+To make tools that you have defined available for use by a model, you must bind them using `bindTools()`. In subsequent invocations, the model can choose to call any of the bound tools
 as needed.
 
+
+
+
 Some model providers offer built-in tools that can be enabled via model
-parameters. Check the respective
-[provider reference](/oss/python/integrations/providers) for details.
+parameters. Check the respective [provider reference](./integrations/providers.mdx) for details.
 
 <Tip>
 
@@ -437,16 +483,17 @@ for tool_call in response.tool_calls:
     print(f"Args: {tool_call['args']}")
 ```
 
+
+
+
 When binding user-defined tools, the model's response includes a **request** to
 execute a tool. It is up to you to perform the requested action and return the
 result back to the model for use in subsequent reasoning.
 
-The LangGraph framework simplifies the orchestration of model and tool calls.
-See the [agent guides](/oss/python/langchain-agents) to get started. Below, we show
-some simple patterns for illustration.
+Below, we show some common ways you can get use tool calling.
 
 <AccordionGroup>
-    <Accordion title="Tool execution loop">
+    <Accordion title="Tool execution loop" icon="arrow-rotate-right">
         When a model returns tool calls, you need to execute the tools and pass
         the results back to the model. This creates a conversation loop where
         the model can use tool results to generate its final response.
@@ -477,7 +524,7 @@ some simple patterns for illustration.
         requests.
     </Accordion>
 
-    <Accordion title="Forcing tool calls">
+    <Accordion title="Forcing tool calls" icon="asterisk">
 
         By default, the model has the freedom to choose which bound tool to use
         based on the user's input. However, you might want to force choosing a
@@ -495,7 +542,7 @@ some simple patterns for illustration.
         </CodeGroup>
     </Accordion>
 
-    <Accordion title="Parallel tool calls">
+    <Accordion title="Parallel tool calls" icon="layer-group">
         Many models support calling multiple tools in parallel when appropriate.
         This allows the model to gather information from different sources
         simultaneously.
@@ -527,7 +574,7 @@ some simple patterns for illustration.
         appropriate based on the independence of the requested operations.
     </Accordion>
     
-    <Accordion title="Streaming tool calls">
+    <Accordion title="Streaming tool calls" icon="rss">
         When streaming responses, tool calls are progressively built through
         `ToolCallChunk`. This allows you to see tool calls as they're being
         generated rather than waiting for the complete response.
@@ -566,7 +613,10 @@ some simple patterns for illustration.
     </Accordion>
 </AccordionGroup>
 
-### Structured outputs
+
+
+
+## Structured outputs
 
 Models can be requested to provide their response in a format matching a given
 schema. This is useful for ensuring the output can be easily parsed and used in
@@ -575,8 +625,8 @@ for enforcing structured outputs.
 
 <Tabs>
     <Tab title="Pydantic">
-        Pydantic models provide the richest feature set with field validation,
-        descriptions, and nested structures.
+        [Pydantic models](https://docs.pydantic.dev/latest/concepts/models/#basic-model-usage)
+        provide the richest feature set with field validation, descriptions, and nested structures.
 
         ```python
         from pydantic import BaseModel, Field
@@ -654,6 +704,9 @@ for enforcing structured outputs.
     </Tab>
 </Tabs>
 
+
+
+
 <Note>
     **Key considerations for structured outputs:**
 
@@ -665,11 +718,13 @@ for enforcing structured outputs.
     `TypedDict` and JSON Schema require manual validation
 </Note>
 
-<Accordion title="Example: get `AIMessage` output alongside parsed structure">
+
+
+
+<Accordion title="Example: Message output alongside parsed structure">
 
 It can be useful to return the raw `AIMessage` object alongside the parsed
-representation, to access response metadata such as token counts and other
-information.
+representation to access response metadata such as [token counts](#token-usage):
 
 ```python highlight={10}
 from pydantic import BaseModel, Field
@@ -691,9 +746,13 @@ response
 # }
 ```
 
+
+
+
 </Accordion>
 
-<Accordion title="Example: nested structures">
+<Accordion title="Example: Nested structures">
+
 <CodeGroup>
     ```python Pydantic BaseModel
     from pydantic import BaseModel, Field
@@ -729,25 +788,34 @@ response
     model_with_structure = model.with_structured_output(MovieDetails)
     ```
 </CodeGroup>
+
+
+
 </Accordion>
 
 
+## Supported models
+
+LangChain supports all major model providers, including OpenAI, Anthropic,
+Google, Azure, AWS Bedrock, and more. Each provider offers a variety of models
+with different capabilities. For a full list of supported models in LangChain,
+see the [integrations page](./integrations/providers).
+
+## Advanced configuration
+
 ### Multimodal
 
-Certain models can process and return non-textual data such as images, audio,
-and video. You can pass non-textual data to a model by providing [content blocks](./langchain-messages.mdx#content)
+Certain models can process and return non-textual data such as images, audio, and video. You can pass non-textual data to a model by providing [content blocks](./langchain-messages.mdx#content).
 
 <Tip>
 All LangChain chat models with underlying multimodal capabilities support:
 
 1. Data in the cross-provider standard format (shown below)
-2. OpenAI [chat completions](https://platform.openai.com/docs/guides/images-vision?api-mode=chat)
-format
-3. Any format that is native to that specific provider (e.g., Anthropic models
-accept Anthropic native format)
+2. OpenAI [chat completions](https://platform.openai.com/docs/guides/images-vision?api-mode=chat) format
+3. Any format that is native to that specific provider (e.g., Anthropic models accept Anthropic native format)
 </Tip>
 
-<CodeGroup>    
+<CodeGroup>
     ```python Image input
     # From URL
     response = model.invoke([
@@ -831,8 +899,10 @@ accept Anthropic native format)
         {"type": "video", "file_id": "file-abc123"},
     ])
     ```
-
 </CodeGroup>
+
+
+
 
 Some models can also return multimodal data as part of their response. In such cases,
 the resulting `AIMessage` will have content blocks with multimodal types.
@@ -846,7 +916,10 @@ print(response.content_blocks)
 # ]
 ```
 
-See the [integrations page](/oss/python/integrations/providers) for details on specific providers.
+
+
+
+See the [integrations page](./integrations/providers) for details on specific providers.
 
 ### Reasoning
 
@@ -863,13 +936,16 @@ better understand how the model arrived at its final answer.
         reasoning_steps = [r for r in chunk.content_blocks if r["type"] == "reasoning"]
         print(reasoning_steps if reasoning_steps else chunk.text)
     ```
-    
-    ```python Full reasoning output
+
+    ```python Complete reasoning output
     response = model.invoke("Why do parrots have colorful feathers?")
     reasoning_steps = [b for b in response.content_blocks if b["type"] == "reasoning"]
     print(" ".join(step["reasoning"] for step in reasoning_steps))
     ```
 </CodeGroup>
+
+
+
 
 Depending on the model, you can sometimes specify the level of effort it should
 put into reasoning. Alternatively, you can request that the model turn off
@@ -877,16 +953,8 @@ reasoning entirely. This may take the form of categorical "tiers" of reasoning
 (e.g., `'low'` or `'high'`) or integer token budgets.
 
 For details, see the relevant chat model in the
-[integrations page](/oss/python/integrations/providers).
+[integrations page](./integrations/providers).
 
-## Supported models
-
-LangChain supports all major model providers, including OpenAI, Anthropic,
-Google, Azure, AWS Bedrock, and more. Each provider offers a variety of models
-with different capabilities. For a full list of supported models in LangChain,
-see the [integrations page](/oss/python/integrations/providers).
-
-## Advanced configuration
 
 ### Local models
 
@@ -896,14 +964,14 @@ of using a cloud-based model.
 
 [Ollama](./integrations/providers/ollama.mdx) is one of the easiest ways to run
 models locally. See the full list of local integrations on the
-[integrations page](/oss/python/integrations/providers).
+[integrations page](./integrations/providers).
 
 ### Caching
 
 Chat model APIs can be slow and expensive to call. To help mitigate this,
 LangChain provides an optional caching layer for chat model integrations.
 
-<Accordion title="Enable caching for your model">
+<Accordion title="Enable caching for your model" icon="database">
 
     By default, caching is disabled. To enable it, import:
 
@@ -946,6 +1014,9 @@ LangChain provides an optional caching layer for chat model integrations.
 
 </Accordion>
 
+
+
+
 ### Rate limiting
 
 Many chat model providers impose a limit on the number of invocations that can
@@ -957,7 +1028,7 @@ To help manage rate limits, chat model integrations accept a `rate_limiter`
 parameter that can be provided during initialization to control the rate at
 which requests are made.
 
-<Accordion title="Initialize and use a rate limiter">
+<Accordion title="Initialize and use a rate limiter" icon="gauge-high">
     LangChain in comes with a built-in in memory rate limiter. This rate limiter
     is thread safe and can be shared by multiple threads in the same process.
 
@@ -984,13 +1055,14 @@ which requests are made.
     </Warning>
 </Accordion>
 
+
 ### Base URL or proxy
 
 For many chat model integrations, you can configure the base URL for API
 requests, which allows you to use model providers that have OpenAI-compatible
 APIs or to use a proxy server.
 
-<Accordion title="Base URL">
+<Accordion title="Base URL" icon="link">
 
 Many model providers offer OpenAI-compatible APIs (e.g.,
 [Together AI](https://www.together.ai/),
@@ -1006,13 +1078,16 @@ model = init_chat_model(
 )
 ```
 
+
+
+
 <Note>
     When using direct chat model class instantiation, the parameter name may
     vary by provider. Check the respective [reference](/oss/python/integrations/providers) for details.
 </Note>
 </Accordion>
 
-<Accordion title="Proxy configuration">
+<Accordion title="Proxy configuration" icon="shield">
 
 For deployments requiring HTTP proxies, some model integrations support proxy
 configuration:
@@ -1033,6 +1108,7 @@ model = ChatOpenAI(
 
 </Accordion>
 
+
 ### Log probabilities
 
 Certain models can be configured to return token-level log probabilities
@@ -1049,12 +1125,13 @@ response = model.invoke("Why do parrots talk?")
 print(response.response_metadata["logprobs"])
 ```
 
+
 ### Token usage
 
 A number of model providers return token usage information as part of the
 invocation response. When available, this information will be included on the
 `AIMessage` objects produced by the corresponding model. For more details, see
-the [messages](/oss/python/python/langchain-messages) guide.
+the [messages](./langchain-messages) guide.
 
 <Note>
 
@@ -1129,12 +1206,13 @@ with get_usage_metadata_callback() as cb:
 </Tab>
 </Tabs>
 
+
 ### Invocation config
 
-When invoking a model, you can pass additional configuration through the
-`config` parameter using a [`RunnableConfig`](https://python.langchain.com/api_reference/core/runnables/langchain_core.runnables.config.RunnableConfig.html#runnableconfig)
-dictionary. This provides run-time control over execution behavior, callbacks,
-and metadata tracking.
+When invoking a model, you can pass additional configuration through the `config` parameter using a [`RunnableConfig`](https://python.langchain.com/api_reference/core/runnables/langchain_core.runnables.config.RunnableConfig.html) dictionary. This provides run-time control over execution behavior, callbacks, and metadata tracking.
+
+
+
 
 Common configuration options include:
 
@@ -1149,6 +1227,9 @@ response = model.invoke(
     }
 )
 ```
+
+
+
 
 <Accordion title="Key configuration attributes">
     <ParamField body="run_name" type="string">
@@ -1182,6 +1263,9 @@ response = model.invoke(
     </ParamField>
 </Accordion>
 
+
+
+
 These configuration values are particularly useful when:
 - Debugging with [LangSmith](https://docs.smith.langchain.com/) tracing
 - Implementing custom logging or monitoring
@@ -1189,8 +1273,7 @@ These configuration values are particularly useful when:
 - Tracking invocations across complex pipelines
 
 For more information on all supported `RunnableConfig` attributes, see the
-[`RunnableConfig`](https://python.langchain.com/api_reference/core/runnables/langchain_core.runnables.config.RunnableConfig.html#runnableconfig)
-reference.
+[`RunnableConfig`](https://python.langchain.com/api_reference/core/runnables/langchain_core.runnables.config.RunnableConfig.html) reference.
 
 ### Configurable models
 

@@ -2,44 +2,53 @@
 title: Overview
 ---
 
->[Anthropic](https://www.anthropic.com/) is an AI safety and research company, and is the creator of `Claude`.
-This page covers all integrations between `Anthropic` models and `LangChain`.
+All functionality related to Anthropic models..
 
-## Installation and Setup
+[Anthropic](https://www.anthropic.com/) is an AI safety and research company, and is the creator of Claude.
+This page covers all integrations between Anthropic models and LangChain.
 
-To use `Anthropic` models, you need to install a python package:
+## Prompting Best Practices
 
-```bash
-pip install -U langchain-anthropic
+Anthropic models have several prompting best practices compared to OpenAI models.
+
+**System Messages may only be the first message**
+
+Anthropic models require any system messages to be the first one in your prompts.
+
+## `ChatAnthropic`
+
+`ChatAnthropic` is a subclass of LangChain's `ChatModel`, meaning it works best with `ChatPromptTemplate`.
+You can import this wrapper with the following code:
+
+import IntegrationInstallTooltip from '/snippets/javascript-integrations/integration-install-tooltip.mdx';
+
+<IntegrationInstallTooltip/>
+
+```bash npm
+npm install @langchain/anthropic @langchain/core
+```
+```typescript
+import { ChatAnthropic } from "@langchain/anthropic";
+const model = new ChatAnthropic({});
 ```
 
-You need to set the `ANTHROPIC_API_KEY` environment variable.
-You can get an Anthropic API key [here](https://console.anthropic.com/settings/keys)
+When working with ChatModels, it is preferred that you design your prompts as `ChatPromptTemplate`s.
+Here is an example below of doing that:
 
-## Chat Models
+```typescript
+import { ChatPromptTemplate } from "langchain/prompts";
 
-### ChatAnthropic
-
-See a [usage example](/oss/javascript/integrations/chat/anthropic).
-
-```python
-from langchain_anthropic import ChatAnthropic
-
-model = ChatAnthropic(model='claude-3-opus-20240229')
+const prompt = ChatPromptTemplate.fromMessages([
+  ["system", "You are a helpful chatbot"],
+  ["human", "Tell me a joke about {topic}"],
+]);
 ```
 
+You can then use this in a chain as follows:
 
-## LLMs
-
-### [Legacy] AnthropicLLM
-
-**NOTE**: `AnthropicLLM` only supports legacy `Claude 2` models.
-To use the newest `Claude 3` models, please use `ChatAnthropic` instead.
-
-See a [usage example](/oss/javascript/integrations/llms/anthropic).
-
-```python
-from langchain_anthropic import AnthropicLLM
-
-model = AnthropicLLM(model='claude-2.1')
+```typescript
+const chain = prompt.pipe(model);
+await chain.invoke({ topic: "bears" });
 ```
+
+See the [chat model integration page](/oss/javascript/integrations/chat/anthropic/) for more examples, including multimodal inputs.

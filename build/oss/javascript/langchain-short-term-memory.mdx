@@ -35,45 +35,45 @@ To add short-term memory (thread-level persistence) to an agent, you need to spe
 an agent.
 
 <Info>
-LangChain's `create_react_agent()` manages short-term memory as a part of your agent's state.
+LangChain's agent manages short-term memory as a part of your agent's state.
 By storing these in the graph's state, the agent can access the full context for a given conversation while maintaining separation between different threads.
 
 State is persisted to a database (or memory) using a checkpointer so the thread can be resumed at any time. 
 Short-term memory updates when the agent is invoked or a step (like a tool call) is completed, and the state is read at the start of each step.
 </Info>
 
-```python {highlight={2,7,12}}
-from langchain.agents import create_react_agent
-from langgraph.checkpoint.memory import InMemorySaver
 
-agent = create_react_agent(
-    "openai:gpt-5",
-    [get_user_info],
-    checkpointer=InMemorySaver(),
-)
+```ts {highlight={2,4, 9,14}}
+import { createReactAgent } from "langchain";
+import { MemorySaver } from "@langchain/langgraph";
 
-agent.invoke(
-    {"messages": [{"role": "user", "content": "Hi! My name is Bob."}]},
-    {"configurable": {"thread_id": "1"}},
-)
+const checkpointer = new MemorySaver();
+
+const agent = createReactAgent({
+  model: "anthropic:claude-3-7-sonnet-latest",
+  tools: [],
+  checkpointer,
+});
+
+await agent.invoke(
+  { messages: [{ role: "user", content: "hi! i am Bob" }] },
+  { configurable: { thread_id: "1" } }
+);
 ```
+
 
 ### In production
 
 In production, use a checkpointer backed by a database:
 
-```python {highlight={2,9}}
-from langchain.agents import create_react_agent
-from langgraph.checkpoint.postgres import PostgresSaver
 
-DB_URI = "postgresql://postgres:postgres@localhost:5442/postgres?sslmode=disable"
-with PostgresSaver.from_conn_string(DB_URI) as checkpointer:
-    agent = create_react_agent(
-        "openai:gpt-5",
-        [get_user_info],
-        checkpointer=checkpointer,
-    )
+```ts
+import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
+
+const DB_URI = "postgresql://postgres:postgres@localhost:5442/postgres?sslmode=disable";
+const checkpointer = PostgresSaver.fromConnString(DB_URI);
 ```
+
 
 
 ## Customizing agent memory
@@ -83,20 +83,25 @@ Users can subclass `AgentState` to add additional fields to the state.
 
 This custom state can then be accessed via tools and dynamic prompt / model functions.
 
-```python {highlight={3,10}}
-from langchain.agents import create_react_agent, AgentState
-from langgraph.checkpoint.memory import InMemorySaver
 
-class CustomAgentState(AgentState):
-    user_id: str
+```typescript highlight={4-7,13}
+import { z } from "zod";
+import { createReactAgent } from "langchain";
+import { MemorySaver } from "@langchain/langgraph";
 
-agent = create_react_agent(
-    "openai:gpt-5",
-    [get_user_info],
-    state_schema=CustomAgentState,
-    checkpointer=InMemorySaver(),
-)
+const stateSchema = z.object({
+  messages: z.array(z.any()),
+});
+
+const checkpointer = new MemorySaver();
+const agent = createReactAgent({
+  model: "openai:gpt-5",
+  tools: [],
+  stateSchema,
+  checkpointer,
+});
 ```
+
 
 ## Common Patterns
 
@@ -122,25 +127,32 @@ trim messages utility and specify the number of tokens to keep from the list, as
 To trim message history in an agent, use `stateModifier` with the [`trimMessages`](https://js.langchain.com/docs/how_to/trim_messages/) function:
 
 ```typescript
-import { trimMessages } from "@langchain/core/messages";
-import { createReactAgent } from "@langchain/langgraph/prebuilt";
+import {
+  createReactAgent,
+  trimMessages,
+  MemorySaver,
+  type AgentState,
+} from "langchain";
 
 // This function will be called every time before the node that calls LLM
-const stateModifier = async (state) => {
-    return trimMessages(state.messages, {
-    strategy: "last",
-    maxTokens: 384,
-    startOn: "human",
-    endOn: ["human", "tool"],
-    });
+const stateModifier = async (state: AgentState) => {
+  return {
+    messages: await trimMessages(state.messages, {
+      strategy: "last",
+      maxTokens: 384,
+      startOn: "human",
+      endOn: ["human", "tool"],
+      tokenCounter: (msgs) => msgs.length,
+    }),
+  };
 };
 
 const checkpointer = new MemorySaver();
 const agent = createReactAgent({
-    llm: model,
-    tools,
-    stateModifier,
-    checkpointer,
+  model: "openai:gpt-5",
+  tools: [],
+  preModelHook: stateModifier,
+  checkpointer,
 });
 ```
 
@@ -184,49 +196,56 @@ const deleteMessages = (state) => {
 
 ```typescript
 import { RemoveMessage } from "@langchain/core/messages";
-import { ChatAnthropic } from "@langchain/anthropic";
-import { StateGraph, START, MessagesZodState, MemorySaver } from "@langchain/langgraph";
-import { z } from "zod";
+import { MemorySaver } from "@langchain/langgraph";
+import { AgentState, createReactAgent } from "langchain";
 
-const model = new ChatAnthropic({ model: "claude-3-5-sonnet-20241022" });
-
-const deleteMessages = (state: z.infer<typeof MessagesZodState>) => {
-const messages = state.messages;
-if (messages.length > 2) {
+const deleteMessages = (state: AgentState) => {
+  const messages = state.messages;
+  if (messages.length > 2) {
     // remove the earliest two messages
-    return { messages: messages.slice(0, 2).map(m => new RemoveMessage({ id: m.id })) };
-}
-return {};
+    return {
+      messages: messages
+        .slice(0, 2)
+        .map((m) => new RemoveMessage({ id: m.id! })),
+    };
+  }
+  return {};
 };
 
-const callModel = async (state: z.infer<typeof MessagesZodState>) => {
-const response = await model.invoke(state.messages);
-return { messages: [response] };
-};
-
-const builder = new StateGraph(MessagesZodState)
-.addNode("call_model", callModel)
-.addNode("delete_messages", deleteMessages)
-.addEdge(START, "call_model")
-.addEdge("call_model", "delete_messages");
-
-const checkpointer = new MemorySaver();
-const app = builder.compile({ checkpointer });
+const agent = createReactAgent({
+  model: "openai:gpt-5-nano",
+  tools: [],
+  prompt: "Please be concise and to the point.",
+  postModelHook: deleteMessages,
+  checkpointer: new MemorySaver(),
+});
 
 const config = { configurable: { thread_id: "1" } };
 
-for await (const event of await app.stream(
-{ messages: [{ role: "user", content: "hi! I'm bob" }] },
-{ ...config, streamMode: "values" }
-)) {
-console.log(event.messages.map(message => [message.getType(), message.content]));
+const streamA = await agent.stream(
+  { messages: [{ role: "user", content: "hi! I'm bob" }] },
+  { ...config, streamMode: "values" }
+);
+for await (const event of streamA) {
+  const messageDetails = event.messages.map((message) => [
+    message.getType(),
+    message.content,
+  ]);
+  console.log(messageDetails);
 }
 
-for await (const event of await app.stream(
-{ messages: [{ role: "user", content: "what's my name?" }] },
-{ ...config, streamMode: "values" }
-)) {
-console.log(event.messages.map(message => [message.getType(), message.content]));
+const streamB = await agent.stream(
+  {
+    messages: [{ role: "user", content: "what's my name?" }],
+  },
+  { ...config, streamMode: "values" }
+);
+for await (const event of streamB) {
+  const messageDetails = event.messages.map((message) => [
+    message.getType(),
+    message.content,
+  ]);
+  console.log(messageDetails);
 }
 ```
 
@@ -248,6 +267,8 @@ Because of this, some applications benefit from a more sophisticated approach of
 
 
 
+TODO
+
 
 ## Access
 
@@ -264,36 +285,50 @@ You can access the short-term memory of an agent in a few different ways:
 Access short term memory (state) in a tool by injecting the agent's state into the tool signature with the `InjectedState` annotation.
 This annotation hides the state from the tool signature (so the model doesn't see it), but the tool can access it.
 
-```python
-from typing import Annotated
-from langchain.agents import create_react_agent, AgentState
-from langchain.agents.tool_node import InjectedState
 
-class CustomState(AgentState):
-    user_id: str
+```typescript
+import { z } from "zod";
+import { createReactAgent, tool } from "langchain";
 
-def get_user_info(
-    state: Annotated[CustomState, InjectedState]
-) -> str:
-    """Look up user info."""
-    user_id = state["user_id"]
-    return "User is John Smith" if user_id == "user_123" else "Unknown user"
+const stateSchema = z.object({
+  userId: z.string(),
+});
 
-agent = create_react_agent(
-    model="openai:gpt-5-nano",
-    tools=[get_user_info],
-    state_schema=CustomState,
-)
+const getUserInfo = tool(
+  async (_, config) => {
+    const userId = config.context?.userId;
+    return { userId };
+  },
+  {
+    name: "get_user_info",
+    description: "Get user info",
+    schema: z.object({}),
+  }
+);
 
-result = agent.invoke({
-    "messages": "look up user information",
-    "user_id": "user_123"
-})
-print(result["messages"][-1].content)
-#> User is John Smith.
+const agent = createReactAgent({
+  model: "openai:gpt-5-nano",
+  tools: [getUserInfo],
+  stateSchema,
+});
+
+const result = await agent.invoke(
+  {
+    messages: [{ role: "user", content: "what's my name?" }],
+  },
+  {
+    context: {
+      userId: "user_123",
+    },
+  }
+);
+
+console.log(result.messages.at(-1)?.content);
+// outputs: "User is John Smith."
 ```
 
-### Write short-term memory from tools
+
+#### Write short-term memory from tools
 
 To modify the agent's short-term memory (state) during execution, you can return state updates directly from the tools. 
 This is useful for persisting intermediate results or making information accessible to subsequent tools or prompts.
@@ -301,14 +336,9 @@ This is useful for persisting intermediate results or making information accessi
 
 
 ```typescript
-import { tool } from "@langchain/core/tools";
 import { z } from "zod";
-import {
-  MessagesZodState,
-  LangGraphRunnableConfig,
-  Command,
-} from "@langchain/langgraph";
-import { createReactAgent } from "@langchain/langgraph/prebuilt";
+import { tool, createReactAgent } from "langchain";
+import { MessagesZodState, Command } from "@langchain/langgraph";
 
 const CustomState = z.object({
   messages: MessagesZodState.shape.messages,
@@ -316,8 +346,8 @@ const CustomState = z.object({
 });
 
 const updateUserInfo = tool(
-  async (_, config: LangGraphRunnableConfig) => {
-    const userId = config.configurable?.userId;
+  async (_, config) => {
+    const userId = config.context?.userId;
     const name = userId === "user_123" ? "John Smith" : "Unknown user";
     return new Command({
       update: {
@@ -341,8 +371,8 @@ const updateUserInfo = tool(
 );
 
 const greet = tool(
-  async (_, config: LangGraphRunnableConfig) => {
-    const userName = config.configurable?.userName;
+  async (_, config) => {
+    const userName = config.context?.userName;
     return `Hello ${userName}!`;
   },
   {
@@ -360,7 +390,7 @@ const agent = createReactAgent({
 
 await agent.invoke(
   { messages: [{ role: "user", content: "greet the user" }] },
-  { configurable: { userId: "user_123" } }
+  { context: { userId: "user_123" } }
 );
 ```
 
@@ -369,118 +399,156 @@ await agent.invoke(
 
 Access short term memory (state) in a dynamic prompt function by injecting the agent's state into the prompt function signature.
 
-```python
-from langchain_core.messages import AnyMessage
-from langchain.agents import create_react_agent, AgentState
-from langgraph.runtime import get_runtime
-from typing import TypedDict
 
+```typescript
+import { z } from "zod";
+import { createReactAgent, tool, SystemMessage } from "langchain";
 
-class CustomContext(TypedDict):
-    user_name: str
+const contextSchema = z.object({
+  userName: z.string(),
+});
 
+const getWeather = tool(
+  async ({ city }, config) => {
+    return `The weather in ${city} is always sunny!`;
+  },
+  {
+    name: "get_weather",
+    description: "Get user info",
+    schema: z.object({
+      city: z.string(),
+    }),
+  }
+);
 
-def get_weather(city: str) -> str:
-    """Get the weather in a city."""
-    return f"The weather in {city} is always sunny!"
+const agent = createReactAgent({
+  model: "openai:gpt-5-nano",
+  tools: [getWeather],
+  contextSchema,
+  prompt: (state, config) => {
+    return [
+      new SystemMessage(
+        `You are a helpful assistant. Address the user as ${config.context?.userName}.`
+      ),
+      ...state.messages,
+    ];
+  },
+});
 
+const result = await agent.invoke(
+  {
+    messages: [{ role: "user", content: "What is the weather in SF?" }],
+  },
+  {
+    context: {
+      userName: "John Smith",
+    },
+  }
+);
 
-def prompt(state: AgentState) -> list[AnyMessage]:
-    user_name = get_runtime(CustomContext).context["user_name"]
-    system_msg = f"You are a helpful assistant. Address the user as {user_name}."
-    return [{"role": "system", "content": system_msg}] + state["messages"]
-
-
-agent = create_react_agent(
-    model="openai:gpt-5-nano",
-    tools=[get_weather],
-    prompt=prompt,
-    context_schema=CustomContext,
-)
-
-result = agent.invoke(
-    {"messages": [{"role": "user", "content": "What is the weather in SF?"}]},
-    context=CustomContext(user_name="John Smith"),
-)
-for msg in result["messages"]:
-    msg.pretty_print()
+for (const message of result.messages) {
+  console.log(message);
+}
+/**
+ * HumanMessage {
+ *   "content": "What is the weather in SF?",
+ *   // ...
+ * }
+ * AIMessage {
+ *   // ...
+ *   "tool_calls": [
+ *     {
+ *       "name": "get_weather",
+ *       "args": {
+ *         "city": "San Francisco"
+ *       },
+ *       "type": "tool_call",
+ *       "id": "call_tCidbv0apTpQpEWb3O2zQ4Yx"
+ *     }
+ *   ],
+ *   // ...
+ * }
+ * ToolMessage {
+ *   "content": "The weather in San Francisco is always sunny!",
+ *   "tool_call_id": "call_tCidbv0apTpQpEWb3O2zQ4Yx"
+ *   // ...
+ * }
+ * AIMessage {
+ *   "content": "John Smith, here’s the latest: The weather in San Francisco is always sunny!\n\nIf you’d like more details (temperature, wind, humidity) or a forecast for the next few days, I can pull that up. What would you like?",
+ *   // ...
+ * }
+ */
 ```
 
-```shell title="Output"
-================================ Human Message =================================
-
-What is the weather in SF?
-================================== Ai Message ==================================
-Tool Calls:
-  get_weather (call_WFQlOGn4b2yoJrv7cih342FG)
- Call ID: call_WFQlOGn4b2yoJrv7cih342FG
-  Args:
-    city: San Francisco
-================================= Tool Message =================================
-Name: get_weather
-
-The weather in San Francisco is always sunny!
-================================== Ai Message ==================================
-
-Hi John Smith, the weather in San Francisco is always sunny!
-```
 
 ### Pre Model Hook
 
 Access short term memory (state) in a pre model hook by injecting the agent's state into the hook signature.
 
-```python
-from langchain_core.messages.utils import trim_messages, count_tokens_approximately
-from langchain_core.messages import BaseMessage
-from langgraph.checkpoint.memory import InMemorySaver
-from langchain.agents import create_react_agent, AgentState
 
+```typescript
+import {
+  createReactAgent,
+  type AgentState,
+  trimMessages,
+  type BaseMessage,
+} from "langchain";
 
-def pre_model_hook(state: AgentState) -> dict[str, list[BaseMessage]]:
-    """
-    This function will be called prior to every llm call to prepare the messages for the llm.
-    """
-    trimmed_messages = trim_messages(
-        state["messages"],
-        strategy="last",
-        token_counter=count_tokens_approximately,
-        max_tokens=384,
-        start_on="human",
-        end_on=("human", "tool"),
-    )
-    return {"llm_input_messages": trimmed_messages}
+const preModelHook = async (state: AgentState) => {
+  return {
+    messages: await trimMessages(state.messages, {
+      maxTokens: 384,
+      strategy: "last",
+      startOn: "human",
+      endOn: ["human", "tool"],
+      tokenCounter: (msgs: BaseMessage[]) => msgs.length,
+    }),
+  };
+};
 
-agent = create_react_agent(
-    model="openai:gpt-5-nano",
-    tools=[],
-    pre_model_hook=pre_model_hook,
-    checkpointer=InMemorySaver(),
-)
+const agent = createReactAgent({
+  model: "openai:gpt-5-nano",
+  tools: [],
+  preModelHook,
+});
 
-result = agent.invoke({"messages": "hi, my name is bob"}, {"configurable": {"thread_id": "1"}})
-print(result["messages"][-1].content)
+const result = await agent.invoke(
+  {
+    messages: [{ role: "user", content: "hi, my name is bob" }],
+  },
+  {
+    context: { thread_id: "1" },
+  }
+);
+console.log(result.messages.at(-1)?.content);
 ```
+
 
 ### Post Model Hook
 
 Access short term memory (state) in a post model hook by injecting the agent's state into the hook signature.
 
-```python
-from langchain.agents import create_react_agent, AgentState
 
-STOP_WORDS = ["password", "secret"]
+```typescript
+import { RemoveMessage } from "@langchain/core/messages";
+import { createReactAgent, type AgentState } from "langchain";
 
-def validate_response(state: AgentState) -> dict[str, list[BaseMessage]]:
-    """Confirm the response doesn't have any content that is in the stop words list."""
-    last_message = state["messages"][-1]
-    if any(word in last_message.content for word in STOP_WORDS):
-        return {"messages": [RemoveMessage(id=last_message.id)]}
-    return {}
+function validateResponse(state: AgentState) {
+  const lastMessage = state.messages.at(-1)?.content;
+  if (
+    typeof lastMessage === "string" &&
+    lastMessage.toLowerCase().includes("confidential")
+  ) {
+    return {
+      messages: [new RemoveMessage({ id: "all" }), ...state.messages],
+    };
+  }
+  return {};
+}
 
-agent = create_react_agent(
-    model="openai:gpt-5-nano",
-    tools=[],
-    post_model_hook=validate_response,
-    checkpointer=InMemorySaver(),
-)
+const agent = createReactAgent({
+  model: "openai:gpt-5",
+  tools: [],
+  postModelHook: validateResponse,
+});
 ```

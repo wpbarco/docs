@@ -2,229 +2,174 @@
 title: ChatCloudflareWorkersAI
 ---
 
-This will help you get started with CloudflareWorkersAI [chat models](/oss/javascript/concepts/chat_models). For detailed documentation of all ChatCloudflareWorkersAI features and configurations head to the [API reference](https://python.langchain.com/docs/integrations/chat/cloudflare_workersai/).
+[Workers AI](https://developers.cloudflare.com/workers-ai/) allows you to run machine learning models, on the Cloudflare network, from your own code.
 
+This will help you getting started with Cloudflare Workers AI [chat models](/oss/javascript/concepts/chat_models). For detailed documentation of all `ChatCloudflareWorkersAI` features and configurations head to the [API reference](https://api.js.langchain.com/classes/langchain_cloudflare.ChatCloudflareWorkersAI.html).
 
 ## Overview
 ### Integration details
 
-
-| Class | Package | Local | Serializable | [JS support](https://js.langchain.com/docs/integrations/chat/cloudflare) | Package downloads | Package latest |
-| :--- | :--- |:-----:|:------------:|:------------------------------------------------------------------------:| :---: | :---: |
-| [ChatCloudflareWorkersAI](https://python.langchain.com/docs/integrations/chat/cloudflare_workersai/) | [langchain-cloudflare](https://pypi.org/project/langchain-cloudflare/) |   ✅   |      ❌       |                                     ❌                                     | ![PyPI - Downloads](https://img.shields.io/pypi/dm/langchain-cloudflare?style=flat-square&label=%20) | ![PyPI - Version](https://img.shields.io/pypi/v/langchain-cloudflare?style=flat-square&label=%20) |
+| Class | Package | Local | Serializable | PY support | Package downloads | Package latest |
+| :--- | :--- | :---: | :---: |  :---: | :---: | :---: |
+| [`ChatCloudflareWorkersAI`](https://api.js.langchain.com/classes/langchain_cloudflare.ChatCloudflareWorkersAI.html) | [`@langchain/cloudflare`](https://npmjs.com/@langchain/cloudflare) | ❌ | ✅ | ❌ | ![NPM - Downloads](https://img.shields.io/npm/dm/@langchain/cloudflare?style=flat-square&label=%20&) | ![NPM - Version](https://img.shields.io/npm/v/@langchain/cloudflare?style=flat-square&label=%20&) |
 
 ### Model features
-| [Tool calling](/oss/javascript/how-to/tool_calling) | [Structured output](/oss/javascript/how-to/structured_output/) | JSON mode | [Image input](/oss/javascript/how-to/multimodal_inputs/) | Audio input | Video input | [Token-level streaming](/oss/javascript/how-to/chat_streaming/) | Native async | [Token usage](/oss/javascript/how-to/chat_token_usage_tracking/) | [Logprobs](/oss/javascript/how-to/logprobs/) |
-|:-----------------------------------------:|:----------------------------------------------------:|:---------:|:----------------------------------------------:|:-----------:|:-----------:|:-----------------------------------------------------:|:------------:|:------------------------------------------------------:|:----------------------------------:|
-|                     ✅                     |                          ✅                           |     ✅     |                       ❌                        |      ❌      |      ❌      |                           ❌                           |      ❌       |                             ✅                            |                 ❌                  | 
+
+See the links in the table headers below for guides on how to use specific features.
+
+| [Tool calling](/oss/javascript/how-to/tool_calling) | [Structured output](/oss/javascript/how-to/structured_output/) | JSON mode | [Image input](/oss/javascript/how-to/multimodal_inputs/) | Audio input | Video input | [Token-level streaming](/oss/javascript/how-to/chat_streaming/) | [Token usage](/oss/javascript/how-to/chat_token_usage_tracking/) | [Logprobs](/oss/javascript/how-to/logprobs/) |
+| :---: | :---: | :---: | :---: |  :---: | :---: | :---: | :---: | :---: |
+| ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ | 
 
 ## Setup
 
-To access CloudflareWorkersAI models you'll need to create a/an CloudflareWorkersAI account, get an API key, and install the `langchain-cloudflare` integration package.
+To access Cloudflare Workers AI models you'll need to create a Cloudflare account, get an API key, and install the `@langchain/cloudflare` integration package.
 
 ### Credentials
 
+Head [to this page](https://developers.cloudflare.com/workers-ai/) to sign up to Cloudflare and generate an API key. Once you've done this, note your `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN`.
 
-Head to https://www.cloudflare.com/developer-platform/products/workers-ai/ to sign up to CloudflareWorkersAI and generate an API key. Once you've done this set the CF_AI_API_KEY environment variable and the CF_ACCOUNT_ID environment variable:
-
-
-```python
-import getpass
-import os
-
-if not os.getenv("CF_AI_API_KEY"):
-    os.environ["CF_AI_API_KEY"] = getpass.getpass(
-        "Enter your CloudflareWorkersAI API key: "
-    )
-
-if not os.getenv("CF_ACCOUNT_ID"):
-    os.environ["CF_ACCOUNT_ID"] = getpass.getpass(
-        "Enter your CloudflareWorkersAI account ID: "
-    )
-```
-
-If you want to get automated tracing of your model calls you can also set your [LangSmith](https://docs.smith.langchain.com/) API key by uncommenting below:
-
-
-```python
-# os.environ["LANGSMITH_TRACING"] = "true"
-# os.environ["LANGSMITH_API_KEY"] = getpass.getpass("Enter your LangSmith API key: ")
-```
+Passing a binding within a Cloudflare Worker is not yet supported.
 
 ### Installation
 
-The LangChain CloudflareWorkersAI integration lives in the `langchain-cloudflare` package:
+The LangChain ChatCloudflareWorkersAI integration lives in the `@langchain/cloudflare` package:
 
+```{=mdx}
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
 
-```python
-%pip install -qU langchain-cloudflare
+<Npm2Yarn>
+  @langchain/cloudflare @langchain/core
+</Npm2Yarn>
+
 ```
-
 ## Instantiation
 
 Now we can instantiate our model object and generate chat completions:
 
-- Update model instantiation with relevant params.
 
+```typescript
+// @lc-docs-hide-cell
 
-```python
-from langchain_cloudflare.chat_models import ChatCloudflareWorkersAI
+// @ts-expect-error Deno is not recognized
+const CLOUDFLARE_ACCOUNT_ID = Deno.env.get("CLOUDFLARE_ACCOUNT_ID");
+// @ts-expect-error Deno is not recognized
+const CLOUDFLARE_API_TOKEN = Deno.env.get("CLOUDFLARE_API_TOKEN");
+```
+```typescript
+import { ChatCloudflareWorkersAI } from "@langchain/cloudflare";
 
-llm = ChatCloudflareWorkersAI(
-    model="@cf/meta/llama-3.3-70b-instruct-fp8-fast",
-    temperature=0,
-    max_tokens=1024,
-    # other params...
-)
+const llm = new ChatCloudflareWorkersAI({
+  model: "@cf/meta/llama-2-7b-chat-int8", // Default value
+  cloudflareAccountId: CLOUDFLARE_ACCOUNT_ID,
+  cloudflareApiToken: CLOUDFLARE_API_TOKEN,
+  // Pass a custom base URL to use Cloudflare AI Gateway
+  // baseUrl: `https://gateway.ai.cloudflare.com/v1/{YOUR_ACCOUNT_ID}/{GATEWAY_NAME}/workers-ai/`,
+});
 ```
 
 ## Invocation
 
 
-
-```python
-messages = [
-    (
-        "system",
-        "You are a helpful assistant that translates English to French. Translate the user sentence.",
-    ),
-    ("human", "I love programming."),
-]
-ai_msg = llm.invoke(messages)
-ai_msg
+```typescript
+const aiMsg = await llm.invoke([
+  [
+    "system",
+    "You are a helpful assistant that translates English to French. Translate the user sentence.",
+  ],
+  ["human", "I love programming."],
+])
+aiMsg
 ```
 
 
 
 ```output
-AIMessage(content="J'adore la programmation.", additional_kwargs={}, response_metadata={'token_usage': {'prompt_tokens': 37, 'completion_tokens': 9, 'total_tokens': 46}, 'model_name': '@cf/meta/llama-3.3-70b-instruct-fp8-fast'}, id='run-995d1970-b6be-49f3-99ae-af4cdba02304-0', usage_metadata={'input_tokens': 37, 'output_tokens': 9, 'total_tokens': 46})
+AIMessage {
+  lc_serializable: true,
+  lc_kwargs: {
+    content: 'I can help with that! The translation of "I love programming" in French is:\n' +
+      "\n" +
+      `"J'adore le programmati`... 4 more characters,
+    tool_calls: [],
+    invalid_tool_calls: [],
+    additional_kwargs: {},
+    response_metadata: {}
+  },
+  lc_namespace: [ "langchain_core", "messages" ],
+  content: 'I can help with that! The translation of "I love programming" in French is:\n' +
+    "\n" +
+    `"J'adore le programmati`... 4 more characters,
+  name: undefined,
+  additional_kwargs: {},
+  response_metadata: {},
+  tool_calls: [],
+  invalid_tool_calls: []
+}
 ```
 
 
 
-```python
-print(ai_msg.content)
+```typescript
+console.log(aiMsg.content)
 ```
 ```output
-J'adore la programmation.
+I can help with that! The translation of "I love programming" in French is:
+
+"J'adore le programmation."
 ```
 ## Chaining
 
 We can [chain](/oss/javascript/how-to/sequence/) our model with a prompt template like so:
 
 
+```typescript
+import { ChatPromptTemplate } from "@langchain/core/prompts"
 
-```python
-from langchain_core.prompts import ChatPromptTemplate
-
-prompt = ChatPromptTemplate(
+const prompt = ChatPromptTemplate.fromMessages(
+  [
     [
-        (
-            "system",
-            "You are a helpful assistant that translates {input_language} to {output_language}.",
-        ),
-        ("human", "{input}"),
-    ]
+      "system",
+      "You are a helpful assistant that translates {input_language} to {output_language}.",
+    ],
+    ["human", "{input}"],
+  ]
 )
 
-chain = prompt | llm
-chain.invoke(
-    {
-        "input_language": "English",
-        "output_language": "German",
-        "input": "I love programming.",
-    }
+const chain = prompt.pipe(llm);
+await chain.invoke(
+  {
+    input_language: "English",
+    output_language: "German",
+    input: "I love programming.",
+  }
 )
 ```
 
 
 
 ```output
-AIMessage(content='Ich liebe das Programmieren.', additional_kwargs={}, response_metadata={'token_usage': {'prompt_tokens': 32, 'completion_tokens': 7, 'total_tokens': 39}, 'model_name': '@cf/meta/llama-3.3-70b-instruct-fp8-fast'}, id='run-d1b677bc-194e-4473-90f1-aa65e8e46d50-0', usage_metadata={'input_tokens': 32, 'output_tokens': 7, 'total_tokens': 39})
-```
-
-
-## Structured Outputs
-
-
-```python
-json_schema = {
-    "title": "joke",
-    "description": "Joke to tell user.",
-    "type": "object",
-    "properties": {
-        "setup": {
-            "type": "string",
-            "description": "The setup of the joke",
-        },
-        "punchline": {
-            "type": "string",
-            "description": "The punchline to the joke",
-        },
-        "rating": {
-            "type": "integer",
-            "description": "How funny the joke is, from 1 to 10",
-            "default": None,
-        },
-    },
-    "required": ["setup", "punchline"],
+AIMessage {
+  lc_serializable: true,
+  lc_kwargs: {
+    content: "Das Programmieren ist für mich sehr Valent sein!",
+    tool_calls: [],
+    invalid_tool_calls: [],
+    additional_kwargs: {},
+    response_metadata: {}
+  },
+  lc_namespace: [ "langchain_core", "messages" ],
+  content: "Das Programmieren ist für mich sehr Valent sein!",
+  name: undefined,
+  additional_kwargs: {},
+  response_metadata: {},
+  tool_calls: [],
+  invalid_tool_calls: []
 }
-structured_llm = llm.with_structured_output(json_schema)
-
-structured_llm.invoke("Tell me a joke about cats")
-```
-
-
-
-```output
-{'setup': 'Why did the cat join a band?',
- 'punchline': 'Because it wanted to be the purr-cussionist',
- 'rating': '8'}
-```
-
-
-## Bind tools
-
-
-```python
-from typing import List
-
-from langchain_core.tools import tool
-
-
-@tool
-def validate_user(user_id: int, addresses: List[str]) -> bool:
-    """Validate user using historical addresses.
-
-    Args:
-        user_id (int): the user ID.
-        addresses (List[str]): Previous addresses as a list of strings.
-    """
-    return True
-
-
-llm_with_tools = llm.bind_tools([validate_user])
-
-result = llm_with_tools.invoke(
-    "Could you validate user 123? They previously lived at "
-    "123 Fake St in Boston MA and 234 Pretend Boulevard in "
-    "Houston TX."
-)
-result.tool_calls
-```
-
-
-
-```output
-[{'name': 'validate_user',
-  'args': {'user_id': '123',
-   'addresses': '["123 Fake St in Boston MA", "234 Pretend Boulevard in Houston TX"]'},
-  'id': '31ec7d6a-9ce5-471b-be64-8ea0492d1387',
-  'type': 'tool_call'}]
 ```
 
 
 ## API reference
 
-https://developers.cloudflare.com/workers-ai/
-https://developers.cloudflare.com/agents/
+For detailed documentation of all `ChatCloudflareWorkersAI` features and configurations head to the API reference: https://api.js.langchain.com/classes/langchain_cloudflare.ChatCloudflareWorkersAI.html

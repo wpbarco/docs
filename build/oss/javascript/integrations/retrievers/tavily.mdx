@@ -1,119 +1,156 @@
 ---
-title: TavilySearchAPI
----
+title: TavilySearchAPIRetriever
+----
 
->[Tavily's Search API](https://tavily.com) is a search engine built specifically for AI agents (LLMs), delivering real-time, accurate, and factual results at speed.
+[Tavily's Search API](https://tavily.com) is a search engine built specifically for AI agents (LLMs), delivering real-time, accurate, and factual results at speed.
 
-We can use this as a [retriever](/docs/how_to#retrievers). It will show functionality specific to this integration. After going through, it may be useful to explore [relevant use-case pages](/docs/how_to#qa-with-rag) to learn how to use this vectorstore as part of a larger chain.
+## Overview
+
+This will help you getting started with the Tavily Search API [retriever](/oss/javascript/concepts/retrievers). For detailed documentation of all `TavilySearchAPIRetriever` features and configurations head to the [API reference](https://api.js.langchain.com/classes/langchain_community_retrievers_tavily_search_api.TavilySearchAPIRetriever.html).
 
 ### Integration details
 
-<ItemTable category="external_retrievers" item="TavilySearchAPIRetriever" />
+| Retriever | Source | Package |
+| :--- | :--- | :---: |
+[`TavilySearchAPIRetriever`](https://api.js.langchain.com/classes/langchain_community_retrievers_tavily_search_api.TavilySearchAPIRetriever.html) | Information on the web. | [`@langchain/community`](https://npmjs.com/@langchain/community/) |
 
 ## Setup
 
+You will need to populate a `TAVILY_API_KEY` environment variable with your Tavily API key or pass it into the constructor as `apiKey`. Obtain a key by signing up [on their website](https://tavily.com/).
+
 If you want to get automated tracing from individual queries, you can also set your [LangSmith](https://docs.smith.langchain.com/) API key by uncommenting below:
 
-
-```python
-# os.environ["LANGSMITH_API_KEY"] = getpass.getpass("Enter your LangSmith API key: ")
-# os.environ["LANGSMITH_TRACING"] = "true"
+```typescript
+// process.env.LANGSMITH_API_KEY = "<YOUR API KEY HERE>";
+// process.env.LANGSMITH_TRACING = "true";
 ```
 
 ### Installation
 
-The integration lives in the `langchain-community` package. We also need to install the `tavily-python` package itself.
+This retriever lives in the `@langchain/community` package:
 
+```{=mdx}
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
 
-```python
-%pip install -qU langchain-community tavily-python
+<Npm2Yarn>
+  @langchain/community @langchain/core
+</Npm2Yarn>
 ```
-
-We also need to set our Tavily API key.
-
-
-```python
-import getpass
-import os
-
-os.environ["TAVILY_API_KEY"] = getpass.getpass()
-```
-
 ## Instantiation
 
 Now we can instantiate our retriever:
 
 
-```python
-from langchain_community.retrievers import TavilySearchAPIRetriever
+```typescript
+import { TavilySearchAPIRetriever } from "@langchain/community/retrievers/tavily_search_api";
 
-retriever = TavilySearchAPIRetriever(k=3)
+const retriever = new TavilySearchAPIRetriever({
+  k: 3,
+});
 ```
+For a full list of allowed arguments, see [the official documentation](https://docs.tavily.com/docs/tavily-api/rest_api#parameters). You can pass any param to the SDK via a `kwargs` object.
 
 ## Usage
 
 
-```python
-query = "what year was breath of the wild released?"
+```typescript
+const query = "what is the current weather in SF?";
 
-retriever.invoke(query)
+await retriever.invoke(query);
 ```
-
-
-
 ```output
-[Document(metadata={'title': 'The Legend of Zelda: Breath of the Wild - Nintendo Switch Wiki', 'source': 'https://nintendo-switch.fandom.com/wiki/The_Legend_of_Zelda:_Breath_of_the_Wild', 'score': 0.9961155, 'images': []}, page_content='The Legend of Zelda: Breath of the Wild is an open world action-adventure game published by Nintendo for the Wii U and as a launch title for the Nintendo Switch, and was released worldwide on March 3, 2017. It is the nineteenth installment of the The Legend of Zelda series and the first to be developed with a HD resolution. The game features a gigantic open world, with the player being able to ...'),
- Document(metadata={'title': 'The Legend of Zelda: Breath of the Wild - Zelda Wiki', 'source': 'https://zelda.fandom.com/wiki/The_Legend_of_Zelda:_Breath_of_the_Wild', 'score': 0.9804313, 'images': []}, page_content='[]\nReferences\nThe Legend of Zelda \xa0·\nThe Adventure of Link \xa0·\nA Link to the Past (& Four Swords) \xa0·\nLink\'s Awakening (DX; Nintendo Switch) \xa0·\nOcarina of Time (Master Quest; 3D) \xa0·\nMajora\'s Mask (3D) \xa0·\nOracle of Ages \xa0·\nOracle of Seasons \xa0·\nFour Swords (Anniversary Edition) \xa0·\nThe Wind Waker (HD) \xa0·\nFour Swords Adventures \xa0·\nThe Minish Cap \xa0·\nTwilight Princess (HD) \xa0·\nPhantom Hourglass \xa0·\nSpirit Tracks \xa0·\nSkyward Sword (HD) \xa0·\nA Link Between Worlds \xa0·\nTri Force Heroes \xa0·\nBreath of the Wild \xa0·\nTears of the Kingdom\nZelda (Game & Watch) \xa0·\nThe Legend of Zelda Game Watch \xa0·\nLink\'s Crossbow Training \xa0·\nMy Nintendo Picross: Twilight Princess \xa0·\nCadence of Hyrule \xa0·\nGame & Watch: The Legend of Zelda\nCD-i Games\n Listings[]\nCharacters[]\nBosses[]\nEnemies[]\nDungeons[]\nLocations[]\nItems[]\nTranslations[]\nCredits[]\nReception[]\nSales[]\nEiji Aonuma and Hidemaro Fujibayashi accepting the "Game of the Year" award for Breath of the Wild at The Game Awards 2017\nBreath of the Wild was estimated to have sold approximately 1.3 million copies in its first three weeks and around 89% of Switch owners were estimated to have also purchased the game.[52] Sales of the game have remained strong and as of June 30, 2022, the Switch version has sold 27.14 million copies worldwide while the Wii U version has sold 1.69 million copies worldwide as of December 31, 2019,[53]\[54] giving Breath of the Wild a cumulative total of 28.83 million copies sold.\n It also earned a Metacritic score of 97 from more than 100 critics, placing it among the highest-rated games of all time.[59]\[60] Notably, the game received the most perfect review scores for any game listed on Metacritic up to that point.[61]\nIn 2022, Breath of the Wild was chosen as the best Legend of Zelda game of all time in their "Top 10 Best Zelda Games" list countdown; but was then placed as the "second" best Zelda game in their new revamped version of their "Top 10 Best Zelda Games" list in 2023, right behind it\'s successor Tears of Video Game Canon ranks Breath of the Wild as one of the best video games of all time.[74] Metacritic ranked Breath of the Wild as the single best game of the 2010s.[75]\nFan Reception[]\nWatchMojo placed Breath of the Wild at the #2 spot in their "Top 10 Legend of Zelda Games of All Time" list countdown, right behind Ocarina of Time.[76] The Faces of Evil \xa0·\nThe Wand of Gamelon \xa0·\nZelda\'s Adventure\nHyrule Warriors Series\nHyrule Warriors (Legends; Definitive Edition) \xa0·\nHyrule Warriors: Age of Calamity\nSatellaview Games\nBS The Legend of Zelda \xa0·\nAncient Stone Tablets\nTingle Series\nFreshly-Picked Tingle\'s Rosy Rupeeland \xa0·\nTingle\'s Balloon Fight DS \xa0·\n'),
- Document(metadata={'title': 'The Legend of Zelda: Breath of the Wild - Zelda Wiki', 'source': 'https://zeldawiki.wiki/wiki/The_Legend_of_Zelda:_Breath_of_the_Wild', 'score': 0.9627432, 'images': []}, page_content='The Legend of Zelda\xa0•\nThe Adventure of Link\xa0•\nA Link to the Past (& Four Swords)\xa0•\nLink\'s Awakening (DX; Nintendo Switch)\xa0•\nOcarina of Time (Master Quest; 3D)\xa0•\nMajora\'s Mask (3D)\xa0•\nOracle of Ages\xa0•\nOracle of Seasons\xa0•\nFour Swords (Anniversary Edition)\xa0•\nThe Wind Waker (HD)\xa0•\nFour Swords Adventures\xa0•\nThe Minish Cap\xa0•\nTwilight Princess (HD)\xa0•\nPhantom Hourglass\xa0•\nSpirit Tracks\xa0•\nSkyward Sword (HD)\xa0•\nA Link Between Worlds\xa0•\nTri Force Heroes\xa0•\nBreath of the Wild\xa0•\nTears of the Kingdom\nZelda (Game & Watch)\xa0•\nThe Legend of Zelda Game Watch\xa0•\nHeroes of Hyrule\xa0•\nLink\'s Crossbow Training\xa0•\nMy Nintendo Picross: Twilight Princess\xa0•\nCadence of Hyrule\xa0•\nVermin\nThe Faces of Evil\xa0•\nThe Wand of Gamelon\xa0•\nZelda\'s Adventure\nHyrule Warriors (Legends; Definitive Edition)\xa0•\nHyrule Warriors: Age of Calamity\nBS The Legend of Zelda\xa0•\nAncient Stone Tablets\nFreshly-Picked Tingle\'s Rosy Rupeeland\xa0•\nTingle\'s Balloon Fight DS\xa0•\nToo Much Tingle Pack\xa0•\nRipened Tingle\'s Balloon Trip of Love\nSoulcalibur II\xa0•\nWarioWare Series\xa0•\nCaptain Rainbow\xa0•\nNintendo Land\xa0•\nScribblenauts Unlimited\xa0•\nMario Kart 8\xa0•\nSplatoon 3\nSuper Smash Bros (Series)\nSuper Smash Bros.\xa0•\nSuper Smash Bros. Melee\xa0•\nSuper Smash Bros. Brawl\xa0•\nSuper Smash Bros. for Nintendo 3DS / Wii U\xa0•\n It also earned a Metacritic score of 97 from more than 100 critics, placing it among the highest-rated games of all time.[60]\[61] Notably, the game received the most perfect review scores for any game listed on Metacritic up to that point.[62]\nAwards\nThroughout 2016, Breath of the Wild won several awards as a highly anticipated game, including IGN\'s and Destructoid\'s Best of E3,[63]\[64] at the Game Critic Awards 2016,[65] and at The Game Awards 2016.[66] Following its release, Breath of the Wild received the title of "Game of the Year" from the Japan Game Awards 2017,[67] the Golden Joystick Awards 2017,<ref"Our final award is for the Ultimate Game of the Year. Official website(s)\nOfficial website(s)\nCanonicity\nCanonicity\nCanon[citation needed]\nPredecessor\nPredecessor\nTri Force Heroes\nSuccessor\nSuccessor\nTears of the Kingdom\nThe Legend of Zelda: Breath of the Wild guide at StrategyWiki\nBreath of the Wild Guide at Zelda Universe\nThe Legend of Zelda: Breath of the Wild is the nineteenth main installment of The Legend of Zelda series. Listings\nCharacters\nBosses\nEnemies\nDungeons\nLocations\nItems\nTranslations\nCredits\nReception\nSales\nBreath of the Wild was estimated to have sold approximately 1.3 million copies in its first three weeks and around 89% of Switch owners were estimated to have also purchased the game.[53] Sales of the game have remained strong and as of September 30, 2023, the Switch version has sold 31.15 million copies worldwide while the Wii U version has sold 1.7 million copies worldwide as of December 31, 2021,[54]\[55] giving Breath of the Wild a cumulative total of 32.85 million copies sold.\n The Legend of Zelda: Breath of the Wild\nThe Legend of Zelda: Breath of the Wild\nThe Legend of Zelda: Breath of the Wild\nDeveloper(s)\nDeveloper(s)\nPublisher(s)\nPublisher(s)\nNintendo\nDesigner(s)\nDesigner(s)\n')]
+[
+  Document {
+    pageContent: "{'location': {'name': 'San Francisco', 'region': 'California', 'country': 'United States of America', 'lat': 37.78, 'lon': -122.42, 'tz_id': 'America/Los_Angeles', 'localtime_epoch': 1722900266, 'localtime': '2024-08-05 16:24'}, 'current': {'last_updated_epoch': 1722899700, 'last_updated': '2024-08-05 16:15', 'temp_c': 16.8, 'temp_f': 62.2, 'is_day': 1, 'condition': {'text': 'Partly Cloudy', 'icon': '//cdn.weatherapi.com/weather/64x64/day/116.png', 'code': 1003}, 'wind_mph': 13.2, 'wind_kph': 21.2, 'wind_degree': 261, 'wind_dir': 'W', 'pressure_mb': 1014.0, 'pressure_in': 29.94, 'precip_mm': 0.0, 'precip_in': 0.0, 'humidity': 74, 'cloud': 60, 'feelslike_c': 16.8, 'feelslike_f': 62.2, 'windchill_c': 16.8, 'windchill_f': 62.2, 'heatindex_c': 16.8, 'heatindex_f': 62.2, 'dewpoint_c': 12.3, 'dewpoint_f': 54.1, 'vis_km': 10.0, 'vis_miles': 6.0, 'uv': 5.0, 'gust_mph': 17.3, 'gust_kph': 27.8}}",
+    metadata: {
+      title: 'Weather in San Francisco',
+      source: 'https://www.weatherapi.com/',
+      score: 0.9947009,
+      images: []
+    },
+    id: undefined
+  },
+  Document {
+    pageContent: 'Current Weather for Popular Cities . San Francisco, CA 56 ° F Mostly Cloudy; Manhattan, NY warning 85 ° F Fair; Schiller Park, IL (60176) 71 ° F Mostly Cloudy; Boston, MA warning 84 ° F Partly ...',
+    metadata: {
+      title: 'San Francisco, CA Hourly Weather Forecast | Weather Underground',
+      source: 'https://www.wunderground.com/hourly/us/ca/san-francisco/date/2024-08-02',
+      score: 0.9859904,
+      images: []
+    },
+    id: undefined
+  },
+  Document {
+    pageContent: 'San Francisco CA 37.77°N 122.41°W (Elev. 131 ft) Last Update: 2:42 pm PDT Aug 4, 2024. Forecast Valid: 5pm PDT Aug 4, 2024-6pm PDT Aug 11, 2024 . Forecast Discussion . Additional Resources. Radar & Satellite Image. Hourly Weather Forecast. ... Severe Weather ; Current Outlook Maps ; Drought ; Fire Weather ; Fronts/Precipitation Maps ; Current ...',
+    metadata: {
+      title: 'National Weather Service',
+      source: 'https://forecast.weather.gov/zipcity.php?inputstring=San+Francisco,CA',
+      score: 0.98141783,
+      images: []
+    },
+    id: undefined
+  }
+]
 ```
-
-
 ## Use within a chain
 
-We can easily combine this retriever in to a chain.
+Like other retrievers, `TavilySearchAPIRetriever` can be incorporated into LLM applications via [chains](/oss/javascript/how-to/sequence/).
+
+We will need a LLM or chat model:
+
+```{=mdx}
+<ChatModelTabs customVarName="llm" />
+```
+```typescript
+// @lc-docs-hide-cell
+
+import { ChatOpenAI } from "@langchain/openai";
+
+const llm = new ChatOpenAI({
+  model: "gpt-4o-mini",
+  temperature: 0,
+});
+```
 
 
-```python
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import RunnablePassthrough
-from langchain_openai import ChatOpenAI
+```typescript
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { RunnablePassthrough, RunnableSequence } from "@langchain/core/runnables";
+import { StringOutputParser } from "@langchain/core/output_parsers";
 
-prompt = ChatPromptTemplate.from_template(
-    """Answer the question based only on the context provided.
+import type { Document } from "@langchain/core/documents";
+
+const prompt = ChatPromptTemplate.fromTemplate(`
+Answer the question based only on the context provided.
 
 Context: {context}
 
-Question: {question}"""
-)
+Question: {question}`);
 
-llm = ChatOpenAI(model="gpt-4o-mini")
+const formatDocs = (docs: Document[]) => {
+  return docs.map((doc) => doc.pageContent).join("\n\n");
+}
 
-
-def format_docs(docs):
-    return "\n\n".join(doc.page_content for doc in docs)
-
-
-chain = (
-    {"context": retriever | format_docs, "question": RunnablePassthrough()}
-    | prompt
-    | llm
-    | StrOutputParser()
-)
+// See https://js.langchain.com/docs/tutorials/rag
+const ragChain = RunnableSequence.from([
+  {
+    context: retriever.pipe(formatDocs),
+    question: new RunnablePassthrough(),
+  },
+  prompt,
+  llm,
+  new StringOutputParser(),
+]);
 ```
 
 
-```python
-chain.invoke("how many units did bretch of the wild sell in 2020")
+```typescript
+await ragChain.invoke(query);
 ```
-
-
-
 ```output
-'As of August 2020, The Legend of Zelda: Breath of the Wild had sold over 20.1 million copies worldwide on Nintendo Switch and Wii U.'
+The current weather in San Francisco is partly cloudy with a temperature of 16.8°C (62.2°F). The wind is coming from the west at 13.2 mph (21.2 kph), and the humidity is at 74%. There is no precipitation, and visibility is 10 km (6 miles).
 ```
-
-
 ## API reference
 
-For detailed documentation of all `TavilySearchAPIRetriever` features and configurations head to the [API reference](https://python.langchain.com/api_reference/community/retrievers/langchain_community.retrievers.tavily_search_api.TavilySearchAPIRetriever.html).
+For detailed documentation of all `TavilySearchAPIRetriever` features and configurations head to the [API reference](https://api.js.langchain.com/classes/langchain_community_retrievers_tavily_search_api.TavilySearchAPIRetriever.html).

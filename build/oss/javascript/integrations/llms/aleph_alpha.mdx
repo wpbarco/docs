@@ -1,79 +1,24 @@
 ---
-title: Aleph Alpha
+title: AlephAlpha
 ---
 
-[The Luminous series](https://docs.aleph-alpha.com/docs/category/luminous/) is a family of large language models.
+LangChain.js supports AlephAlpha's Luminous family of models. You'll need to sign up for an API key [on their website](https://www.aleph-alpha.com/).
 
-This example goes over how to use LangChain to interact with Aleph Alpha models
+Here's an example:
 
+import IntegrationInstallTooltip from '/snippets/javascript-integrations/integration-install-tooltip.mdx';
 
-```python
-# Installing the langchain package needed to use the integration
-%pip install -qU langchain-community
+<IntegrationInstallTooltip/>
+
+```bash npm
+npm install @langchain/community @langchain/core
 ```
 
+import AlephAlpha from "/snippets/javascript-integrations/examples/models/llm/aleph_alpha.mdx";
 
-```python
-# Install the package
-%pip install --upgrade --quiet  aleph-alpha-client
-```
+<AlephAlpha />
 
+## Related
 
-```python
-# create a new token: https://docs.aleph-alpha.com/docs/account/#create-a-new-token
-
-from getpass import getpass
-
-ALEPH_ALPHA_API_KEY = getpass()
-```
-```output
-········
-```
-
-```python
-from langchain_community.llms import AlephAlpha
-from langchain_core.prompts import PromptTemplate
-```
-
-
-```python
-template = """Q: {question}
-
-A:"""
-
-prompt = PromptTemplate.from_template(template)
-```
-
-
-```python
-llm = AlephAlpha(
-    model="luminous-extended",
-    maximum_tokens=20,
-    stop_sequences=["Q:"],
-    aleph_alpha_api_key=ALEPH_ALPHA_API_KEY,
-)
-```
-
-
-```python
-llm_chain = prompt | llm
-```
-
-
-```python
-question = "What is AI?"
-
-llm_chain.invoke({"question": question})
-```
-
-
-
-```output
-' Artificial Intelligence is the simulation of human intelligence processes by machines.\n\n'
-```
-
-
-
-```python
-
-```
+- LLM [conceptual guide](/oss/javascript/concepts/text_llms)
+- LLM [how-to guides](/oss/javascript/how-to/#llms)
