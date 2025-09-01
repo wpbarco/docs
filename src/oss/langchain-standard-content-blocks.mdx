@@ -19,15 +19,12 @@ Before standard content blocks, developers faced several challenges:
 
 These issues made it difficult to build robust, provider-agnostic applications that could handle the rich, multimodal outputs that modern LLMs produce.
 
-### Preserving simplicity while solving real problems
-
 We designed standard content blocks with a core principle: **maintain the beautiful simplicity of "messages in, messages out" while eliminating portability barriers**. Rather than adding complexity to the API surface, we standardize the *representation* of content that models already return.
 
-Standard content blocks don't change what models can do—they ensure that **identical capabilities are represented identically** across providers. This means developers can access the full power of modern LLMs without sacrificing the portability that makes LLM applications maintainable.
 
 ## What are content blocks?
 
-Standard content blocks are a comprehensive set of typed data structures that normalize content across all LLM providers. At a glance, they include:
+Standard content blocks ensure that **identical capabilities are represented identically** across providers. In practice, they are a set of typed data structures that normalize message content across all LLM providers. They include:
 
 - Standard text output from models (including citations)
 - Model reasoning and chain-of-thought output
@@ -73,6 +70,7 @@ The decision to standardize content blocks came from observing real-world challe
 The new system operates on two levels:
 
 **Runtime Content Block Access**
+
 Every LangChain message now provides a `.content_blocks` property that returns fully-typed content blocks:
 
 ```python
@@ -89,9 +87,8 @@ content_blocks = response.content_blocks
 ```
 
 **Configurable Output Versioning**
-You can control the format written to `.content` using the `output_version` parameter.
 
-This is useful for applications that need to serialize the new blocks.
+You can control the format written to `.content` using the `output_version` parameter. This is useful for applications that need to serialize content.
 
 ```python
 # `content` left unchanged from previous versions (default for backward compatibility)
