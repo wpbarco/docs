@@ -89,6 +89,28 @@ Runnable[LanguageModelInput, AIMessage]:
 
 </Accordion>
 
+<Accordion title="Default message format for OpenAI Responses API">
+
+When interacting with the Responses API, `langchain-openai` now defaults to storing
+response items in message `content`. This behavior was previously opt-in by specifying
+`output_version="responses/v1"` when instantiating `ChatOpenAI`. This was done to
+resolve BadRequestErrors that can arise in some multi-turn contexts.
+
+**To restore previous behavior**, set the `LC_OUTPUT_VERSION` environment variable to `v0`,
+or specify `output_version="v0"` when instantiating `ChatOpenAI`:
+
+```python
+os.environ["LC_OUTPUT_VERSION"] = "v0"
+
+# or
+
+from langchain_openai import ChatOpenAI
+
+llm = ChatOpenA(model="...", output_version="v0")
+```
+
+</Accordion>
+
 <Accordion title="Default `max_tokens` in `langchain-anthropic`">
 
 The `max_tokens` parameter in `ChatAnthropic` will now default to new values that are
