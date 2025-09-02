@@ -7,7 +7,6 @@ import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
 
 <AlphaCallout />
 
-
 ## Overview
 
 [LLMs](https://en.wikipedia.org/wiki/Large_language_model) are machine learning
@@ -272,7 +271,7 @@ console.log(response);
 
 A list of messages can be provided to a model to represent conversation history.
 Each message has a role that models use to indicate who sent the message in the
-conversation. See the [messages](./langchain-messages.mdx) guide for more detail
+conversation. See the [messages](/oss/langchain-messages.mdx) guide for more detail
 on roles, types, and content.
 
 :::python
@@ -284,10 +283,10 @@ on roles, types, and content.
 import { HumanMessage, AIMessage, SystemMessage } from "langchain";
 
 const conversation = [
-  new SystemMessage("You are a helpful assistant that translates English to French."),
-  new HumanMessage("Translate: I love programming."),
-  new AIMessage("J'adore la programmation."),
-  new HumanMessage("Translate: I love building applications.")
+    new SystemMessage("You are a helpful assistant that translates English to French."),
+    new HumanMessage("Translate: I love programming."),
+    new AIMessage("J'adore la programmation."),
+    new HumanMessage("Translate: I love building applications.")
 ];
 
 const response = await model.invoke(conversation);
@@ -355,10 +354,9 @@ each chunk in real-time:
 </CodeGroup>
 :::
 
-As opposed to `invoke()`, which returns a single @[`AIMessage`][AIMessage] after
-the model has finished generating its full response, `stream()` returns multiple
-@[`AIMessageChunk`][AIMessageChunk] objects, each containing a portion of the
-output text.
+As opposed to `invoke()`, which returns a single`AIMessage` after the model has
+finished generating its full response, `stream()` returns multiple
+`AIMessageChunk` objects, each containing a portion of the output text.
 
 :::python
 Importantly, each `AIMessageChunk` in a stream is designed to be gathered into a
