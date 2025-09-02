@@ -471,7 +471,7 @@ message history and passed back to the model as conversational context.
     the code that was using invoke is concerned; however, while the chat model
     is being streamed, LangChain will take care of invoking `on_llm_new_token`
     events in LangChain's callback system.
-
+    
     :::python
     Callback events allow LangGraph `stream()` and
     @[`astream_events()`][BaseChatModel.astream_events] to surface the chat
@@ -487,8 +487,6 @@ message history and passed back to the model as conversational context.
     :::python
     LangChain chat models can also stream semantic events using `astream_events()`.
 
-    This simplifies filtering based on event types and other metadata, and will
-    aggregate the full message in the background. See below for an example.
         This simplifies filtering based on event types and other metadata, and
         will aggregate the full message in the background. See below for an
         example.
