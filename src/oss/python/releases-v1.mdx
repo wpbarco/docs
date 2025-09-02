@@ -1,385 +1,114 @@
 ---
-title: v1.0
-description: LangChain and LangGraph Python v1 release information
+title: LangChain Python v1.0
+sidebarTitle: v1.0
+description: LangChain Python v1 release information
 ---
 
 import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
 
 <AlphaCallout />
 
-# LangChain Python v1.0
+<Note>
 
-TODO: better way to section the packages (e.g. `core` vs `langchain`)
+1.0 Alpha releases are available for the following packages:
 
-This page provides information about the v1 release of LangChain and LangGraph
-Python packages (`langchain-core` and `langchain`).
+- `langchain`
+- `langchain-core`
+- `langchain-anthropic`
+- `langchain-openai`
 
-## What's changed
+Broader support will be rolled out during the alpha period.
 
-### Content format
+</Note>
 
-LangChain v1.0 introduces a [**standardized message content format**](#standardized-content-blocks)
-based on new content blocks that provides type safety, consistency across
-providers, and better multimodal support. This addresses the core challenge of
-having different output formats across LLM providers.
+## New features
 
-**There are no breaking changes associated with existing message content.** The standard
-content can be lazily-parsed off of existing v0 messages using the `content_blocks`
-property.
+LangChain 1.0 introduces new features:
 
-### Python Version Support
+- A new `.content_blocks` property on message objects. This property provides a fully
+typed view of message content and standardizes modern LLM features across providers,
+including reasoning, citations, server-side tool calls, and more. There are no breaking
+changes associated with the new message content. Refer to the new docs
+[here](/oss/langchain-messages#content).
 
-- <Icon icon="python" /> **Dropped support for Python 3.9** - Minimum version is now Python 3.10
+- New prebuilt `langgraph` chains and agents in `langchain`. The surface area of the
+`langchain` package has been reduced to focus on popular and essential abstractions.
+A new `langchain-legacy` package is available for backward compatibility. Refer to the
+new docs [here](/oss/langchain-agents) and to the
+[release notes](https://github.com/langchain-ai/langchain/releases/tag/langchain%3D%3D1.0.0a1)
+for more detail.
 
-## <Icon icon="sparkles" /> What's new
+## Breaking changes
 
-### Standardized content blocks
+<Accordion title="Dropped Python 3.9 support">
 
-The new content block system includes:
+Python 3.9 is [end of life](https://devguide.python.org/versions/) in October 2025.
 
-<AccordionGroup>
-    <Accordion title="Core" icon="cube">
-        <AccordionGroup>
-            <Accordion title="TextContentBlock" icon="text">
-                **Purpose:** Standard text output
-                
-                <ParamField body="text" type="string" required>
-                    The text content
-                </ParamField>
-                
-                <ParamField body="annotations" type="object[]">
-                    List of annotations for the text
-                </ParamField>
-                
-                <ParamField body="extras" type="object">
-                    Additional provider-specific data
-                </ParamField>
-                
-                **Example:**
-                ```python
-                {
-                    "type": "text",
-                    "text": "Hello world",
-                    "annotations": []
-                }
-                ```
-            </Accordion>
-            <Accordion title="ReasoningContentBlock" icon="brain">
-                **Purpose:** Model reasoning steps
-                
-                <ParamField body="reasoning" type="string" required>
-                    The reasoning content
-                </ParamField>
-                
-                <ParamField body="extras" type="object">
-                    Additional provider-specific data
-                </ParamField>
-                
-                **Example:**
-                ```python
-                {
-                    "type": "reasoning",
-                    "reasoning": "The user is asking about..."
-                    "extras": {
-                        "summary": "The user's intent is to learn about...",
-                        "signature": "abc123"
-                    }
-                }
-                ```
-            </Accordion>
-        </AccordionGroup>
-    </Accordion>
-    
-    <Accordion title="Multimodal" icon="images">
-        <AccordionGroup>
-            <Accordion title="ImageContentBlock" icon="image">
-                **Purpose:** Image data
-                
-                <ParamField body="url" type="string">
-                    URL pointing to the image location.
-                </ParamField>
-                
-                <ParamField body="base64" type="string">
-                    Base64-encoded image data.
-                </ParamField>
-                
-                <ParamField body="id" type="string">
-                    Reference ID to an externally stored image (e.g., in a
-                    provider's file system or in a bucket).
-                </ParamField>
-                
-                <ParamField body="mime_type" type="string">
-                    Image MIME type (e.g., `image/jpeg`, `image/png`)
-                </ParamField>
-            </Accordion>
-            <Accordion title="AudioContentBlock" icon="volume-high">
-                **Purpose:** Audio data
-                
-                <ParamField body="url" type="string">
-                    URL pointing to the audio location.
-                </ParamField>
-                
-                <ParamField body="data" type="string">
-                    Base64-encoded audio data.
-                </ParamField>
+</Accordion>
 
-                <ParamField body="id" type="string">
-                    Reference ID to an externally stored audio file (e.g., in a
-                    provider's file system or in a bucket).
-                </ParamField>
-                
-                <ParamField body="mime_type" type="string">
-                    Audio MIME type (e.g., `audio/mpeg`, `audio/wav`)
-                </ParamField>
-            </Accordion>
-            <Accordion title="VideoContentBlock" icon="video">
-                **Purpose:** Video data
-                
-                <ParamField body="url" type="string">
-                    URL pointing to the video location.
-                </ParamField>
-                
-                <ParamField body="data" type="string">
-                    Base64-encoded video data.
-                </ParamField>
+<Accordion title="Some legacy code moved to langchain-legacy package">
 
-                <ParamField body="id" type="string">
-                    Reference ID to an externally stored video file (e.g., in a
-                    provider's file system or in a bucket).
-                </ParamField>
-                
-                <ParamField body="mime_type" type="string">
-                    Video MIME type (e.g., `video/mp4`, `video/webm`)
-                </ParamField>
-            </Accordion>
-            <Accordion title="FileContentBlock" icon="file">
-                **Purpose:** Generic files (PDF, etc)
-                
-                <ParamField body="url" type="string">
-                    URL pointing to the file location.
-                </ParamField>
-                
-                <ParamField body="data" type="string">
-                    Base64-encoded file data.
-                </ParamField>
+The new `langchain` package features a reduced surface area that focuses on standard
+interfaces for LangChain components (e.g., `init_chat_model` and `init_embeddings`)
+as well as pre-built chains and agents backed by the `langgraph` runtime.
 
-                <ParamField body="id" type="string">
-                    Reference ID to an externally stored file (e.g., in a
-                    provider's file system or in a bucket).
-                </ParamField>
-                
-                <ParamField body="mime_type" type="string">
-                    File MIME type (e.g., `application/pdf`)
-                </ParamField>
-            </Accordion>
-            <Accordion title="PlainTextContentBlock" icon="align-left">
-                **Purpose:** Document text (`.txt`, `.md`)
-                
-                <ParamField body="text" type="string" required>
-                    The text content
-                </ParamField>
-                
-                <ParamField body="mime_type" type="string">
-                    MIME type of the text (e.g., `text/plain`, `text/markdown`)
-                </ParamField>
-            </Accordion>
-        </AccordionGroup>
-    </Accordion>
-    
-    <Accordion title="Tool Calling" icon="wrench">
-        <AccordionGroup>
-            <Accordion title="ToolCall" icon="function">
-                **Purpose:** Function calls
-                
-                <ParamField body="name" type="string" required>
-                    Name of the tool to call
-                </ParamField>
-                
-                <ParamField body="args" type="object" required>
-                    Arguments to pass to the tool
-                </ParamField>
-                
-                <ParamField body="id" type="string" required>
-                    Unique identifier for this tool call
-                </ParamField>
-                
-                **Example:**
-                ```python
-                {
-                    "type": "tool_call",
-                    "name": "search",
-                    "args": {"query": "weather"},
-                    "id": "call_123"
-                }
-                ```
-            </Accordion>
-            <Accordion title="ToolCallChunk" icon="puzzle-piece">
-                **Purpose:** Streaming tool fragments
-                
-                <ParamField body="name" type="string">
-                    Name of the tool being called
-                </ParamField>
-                
-                <ParamField body="args" type="string">
-                    Partial tool arguments (may be incomplete JSON)
-                </ParamField>
-                
-                <ParamField body="id" type="string">
-                    Tool call identifier
-                </ParamField>
-                
-                <ParamField body="index" type="number" required>
-                    Position of this chunk in the stream
-                </ParamField>
-            </Accordion>
-            <Accordion title="InvalidToolCall" icon="triangle-exclamation">
-                **Purpose:** Malformed calls
-                
-                <ParamField body="name" type="string">
-                    Name of the tool that failed to be called
-                </ParamField>
-                
-                <ParamField body="args" type="string">
-                    Raw arguments that failed to parse
-                </ParamField>
-                
-                <ParamField body="error" type="string" required>
-                    Description of what went wrong
-                </ParamField>
-                
-                **Common errors:** Invalid JSON, missing required fields
-            </Accordion>
-        </AccordionGroup>
-    </Accordion>
+Existing functionality outside this focus, such as the indexing API and exports of
+`langchain-community` features, have been moved to the `langchain-legacy` package.
 
-    <Accordion title="Server-Side Tool Execution" icon="server">
-        <AccordionGroup>
-            <Accordion title="WebSearchCall" icon="magnifying-glass">
-                **Purpose:** Built-in web search
-                
-                <ParamField body="query" type="string" required>
-                    The search query to execute
-                </ParamField>
-            </Accordion>
-            <Accordion title="WebSearchResult" icon="globe">
-                **Purpose:** Search results
-                
-                <ParamField body="urls" type="string[]" required>
-                    URLs of the search results
-                </ParamField>
-                
-                <ParamField body="snippets" type="string[]">
-                    Text snippets from the search results
-                </ParamField>
-                
-                **Returns:** Top search results with optional snippets
-            </Accordion>
-            <Accordion title="CodeInterpreterCall" icon="code">
-                **Purpose:** Code execution
-                
-                <ParamField body="language" type="string" required>
-                    Programming language to execute (e.g. `python`,
-                    `javascript`, `sql`)
-                </ParamField>
-                
-                <ParamField body="code" type="string" required>
-                    Code to execute
-                </ParamField>
-            </Accordion>
-            <Accordion title="CodeInterpreterResult" icon="terminal">
-                **Purpose:** Execution results
-                
-                <ParamField body="output" type="string" required>
-                    Output from the code execution
-                </ParamField>
-                
-                <ParamField body="error" type="string">
-                    Error message if execution failed
-                </ParamField>
-            </Accordion>
-        </AccordionGroup>
-    </Accordion>
+To restore the previous behavior, update package installs of `langchain` to
+`langchain-legacy`, and replace imports:
 
-    <Accordion title="Provider-Specific Blocks" icon="plug">
-        <Accordion title="NonStandardContentBlock" icon="asterisk">
-            **Purpose:** Provider-specific escape hatch
-            
-            <ParamField body="type" type="string" required>
-                Must be `"non_standard"`
-            </ParamField>
-            
-            <ParamField body="value" type="object" required>
-                Provider-specific data structure
-            </ParamField>
-            
-            **Usage:** For experimental or provider-unique features
-        </Accordion>
-
-        Additional provider-specific content types may be found within the 
-        [reference documentation](/oss/integrations/providers) of each model provider.
-    </Accordion>
-</AccordionGroup>
-
-### Chat models
-
-- `BaseChatModel` now returns `AIMessage` instead of `BaseMessage`
-- New `output_version` parameter controls serialized content format (`'v0'` or `'v1'`)
-    - `LC_OUTPUT_VERSION` environment variable also supported
-- Final streaming chunks include `chunk_position='last'`
-- All messages now include `model_provider` in `ResponseMetadata`
-
-### Content block access
-
-Two ways to access the new format:
-
-1. **`.content_blocks` property** - Always returns typed content blocks with lazy parsing from existing v0 messages
-2. **`output_version='v1'`** - Writes v1 content blocks directly to `.content`
-    - Used in situations where you need to store/serialize the standard blocks
-
-## <Icon icon="arrow-up" /> How to update your code
-
-Keep existing code unchanged and use `.content_blocks` for new features:
-
+Before:
 ```python
-# Existing code continues to work
-model = ChatOpenAI()
-response = model.invoke("Hello!")
-
-# Access new format via property - lazily parsed from v0 messages
-blocks = response.content_blocks  # Always typed ContentBlocks
-text_content = response.text  # Use new .text property instead of previous .text() method
+from langchain import ...
 ```
 
-If you need to serialize content blocks (e.g., for storage), use the
-`output_version` flag set on chat models (TODO: merge in invocation option):
-
+After:
 ```python
-import os
-os.environ["LC_OUTPUT_VERSION"] = "v1"
-
-# Or per model
-model = ChatOpenAI(output_version="v1")
-response = model.invoke("Hello!")
-# response.content is now List[ContentBlock]
+from langchain_legacy import ...
 ```
 
-### <Icon icon="triangle-exclamation" /> Breaking changes
+</Accordion>
 
-#### Chat model return type signatures
+<Accordion title="Updated return type for chat models">
 
-**The return type signature for chat model invocation has been fixed from `BaseMessage` to `AIMessage`.**
+The return type signature for chat model invocation has been fixed from `BaseMessage`
+to `AIMessage`. Custom chat models implementing `bind_tools` should update their
+return signature to avoid type checker errors:
 
-Custom chat models implementing `bind_tools` should update their return signature to avoid type checker errors:
-
+Before:
 ```python
-# Before
-Runnable[LanguageModelInput, BaseMessage]
-
-# After  
-Runnable[LanguageModelInput, AIMessage]
+Runnable[LanguageModelInput, BaseMessage]:
 ```
 
-#### Text content access
+After:
+```python
+Runnable[LanguageModelInput, AIMessage]:
+```
+
+</Accordion>
+
+<Accordion title="Default max_tokens in langchain-anthropic">
+
+The `max_tokens` parameter in `ChatAnthropic` will now default to new values that are
+higher than the previous default of 1024. The new default will vary based on the
+chosen model.
+
+</Accordion>
+
+<Accordion title="Removal of deprecated objects">
+
+Methods, functions, and other objects that were already deprecated and slated for
+removal in 1.0 have been deleted.
+
+</Accordion>
+
+## Deprecations
+
+<Accordion title=".text() is now a property">
+
+Use of the `.text()` method on message objects should be updated to drop the
+parentheses:
 
 ```python
 # Before
@@ -389,36 +118,13 @@ text = response.text()  # Method call
 text = response.text    # Property access
 ```
 
-#### Message construction
+Existing usage patterns (i.e., `.text()`) will continue to function but now emit a
+warning.
 
-New `content_blocks` parameter available:
+</Accordion>
 
-```python
-# All existing patterns still work
-AIMessage("Hello")
-AIMessage(content="Hello") 
-AIMessage(["Hello", "world"])
 
-# New typed approach
-AIMessage(content_blocks=[{"type": "text", "text": "Hello"}])
-
-# Or with factories
-from langchain_core.messages.content_blocks import create_text_block
-AIMessage(content_blocks=[create_text_block("Hello")])
-```
-
-#### Partner package updates
-
-The following major partner packages have been updated with v1 support:
-
-- **`langchain-openai`** - Full v1 support, responses API now default
-- **`langchain-anthropic`** - v1 content blocks
-
-### <Icon icon="box-archive" /> Deprecated features
-
-- `.text()` method - Use `.text` property instead
-
-## LangChain package changes
+## Prebuilt agents in `langchain`
 
 The **`langchain`** release focuses on reducing LangChain's surface area and
 narrowing in on popular and essential abstractions.
@@ -525,6 +231,13 @@ from langgraph.prebuilts import create_react_agent, ToolNode, AgentState
 # After
 from langchain.agents import create_react_agent, ToolNode, AgentState
 ```
+
+
+## Reporting issues
+
+Please report any issues discovered with 1.0 on
+[Github](https://github.com/langchain-ai/langchain/issues) using the
+[label v1](https://github.com/langchain-ai/langchain/issues?q=state%3Aopen%20label%3Av1).
 
 ## <Icon icon="book-open" /> See also
 
