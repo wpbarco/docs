@@ -28,25 +28,26 @@ LangChain 1.0 introduces new features:
 - A new `.content_blocks` property on message objects. This property provides a fully
 typed view of message content and standardizes modern LLM features across providers,
 including reasoning, citations, server-side tool calls, and more. There are no breaking
-changes associated with the new message content. Refer to the new docs
-[here](/oss/langchain-messages#content).
+changes associated with the new message content. Refer to the
+[message content](/oss/langchain-messages#content) docs for more info.
 
 - New prebuilt `langgraph` chains and agents in `langchain`. The surface area of the
 `langchain` package has been reduced to focus on popular and essential abstractions.
 A new `langchain-legacy` package is available for backward compatibility. Refer to the
-new docs [here](/oss/langchain-agents) and to the
+new [agents docs](/oss/langchain-agents) and to the
 [release notes](https://github.com/langchain-ai/langchain/releases/tag/langchain%3D%3D1.0.0a1)
 for more detail.
 
 ## Breaking changes
 
-<Accordion title="Dropped Python 3.9 support">
+<Accordion title="Dropped Python 3.9 support" icon="python">
 
-Python 3.9 is [end of life](https://devguide.python.org/versions/) in October 2025.
+Python 3.9 is [end of life](https://devguide.python.org/versions/) in October
+2025. Consequently, all LangChain packages now require Python 3.10 or higher.
 
 </Accordion>
 
-<Accordion title="Some legacy code moved to langchain-legacy package">
+<Accordion title="Some legacy code moved to `langchain-legacy`">
 
 The new `langchain` package features a reduced surface area that focuses on standard
 interfaces for LangChain components (e.g., `init_chat_model` and `init_embeddings`)
@@ -88,11 +89,11 @@ Runnable[LanguageModelInput, AIMessage]:
 
 </Accordion>
 
-<Accordion title="Default max_tokens in langchain-anthropic">
+<Accordion title="Default `max_tokens` in `langchain-anthropic`">
 
 The `max_tokens` parameter in `ChatAnthropic` will now default to new values that are
-higher than the previous default of 1024. The new default will vary based on the
-chosen model.
+higher than the previous default of `1024`. The new default will vary based on the
+model chosen.
 
 </Accordion>
 
@@ -101,11 +102,13 @@ chosen model.
 Methods, functions, and other objects that were already deprecated and slated for
 removal in 1.0 have been deleted.
 
+{/* TODO full list? */}
+
 </Accordion>
 
 ## Deprecations
 
-<Accordion title=".text() is now a property">
+<Accordion title="`.text()` is now a property">
 
 Use of the `.text()` method on message objects should be updated to drop the
 parentheses:
@@ -136,7 +139,7 @@ significant enhancements:
 
 #### Enhanced structured output
 
-`create_react_agent` now supports coercion of outputs to structured data types:
+`create_react_agent` enhances coercion of outputs to structured data types:
 
 ```python
 from langchain.agents import create_react_agent
@@ -207,7 +210,8 @@ Configure behavior via `handle_tool_errors` arg to `ToolNode`.
 
 #### Pre-bound models
 
-`create_react_agent` no longer supports pre-bound models with tools or configuration:
+To better support structured output, `create_react_agent` no longer supports
+pre-bound models with tools or configuration:
 
 ```python
 # No longer supported
@@ -219,7 +223,7 @@ agent = create_react_agent("openai:gpt-4o-mini", tools=[some_tool])
 ```
 
 <Note>
-Dynamic model functions can return pre-bound models IF structured output is not used.
+Dynamic model functions can return pre-bound models if structured output is *not* used.
 </Note>
 
 #### Import changes
@@ -236,7 +240,7 @@ from langchain.agents import create_react_agent, ToolNode, AgentState
 ## Reporting issues
 
 Please report any issues discovered with 1.0 on
-[Github](https://github.com/langchain-ai/langchain/issues) using the
+[GitHub](https://github.com/langchain-ai/langchain/issues) using the
 [label v1](https://github.com/langchain-ai/langchain/issues?q=state%3Aopen%20label%3Av1).
 
 ## <Icon icon="book-open" /> See also
