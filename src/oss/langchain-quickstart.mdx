@@ -9,6 +9,7 @@ import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
 Welcome to LangChain! This quickstart will take you from zero to a fully functional AI agent in just a few minutes. We'll start simple and gradually build up to something more sophisticated.
 
 ## Super quick start
+## Super quick start
 
 Let's begin with the absolute basics - creating a simple agent that can answer questions and use tools:
 
@@ -62,6 +63,7 @@ console.log(
 - The ability to invoke it with messages
 
 ## Building a real-world agent
+## Building a real-world agent
 
 Now let's create something more practical. We'll build a weather forecasting agent that demonstrates the key concepts you'll use in production:
 
@@ -76,16 +78,28 @@ Let's walk through each step:
 <Steps>
     <Step title="Define the system prompt">
         The system prompt is your agent's personality and instructions. Make it specific and actionable:
+<Steps>
+    <Step title="Define the system prompt">
+        The system prompt is your agent's personality and instructions. Make it specific and actionable:
 
+        :::python
+        ```python
+        system_prompt = """You are an expert weather forecaster, who speaks in puns.
         :::python
         ```python
         system_prompt = """You are an expert weather forecaster, who speaks in puns.
 
         You have access to two tools:
+        You have access to two tools:
 
         - get_weather_for_location: use this to get the weather for a specific location
         - get_user_location: use this to get the user's location
+        - get_weather_for_location: use this to get the weather for a specific location
+        - get_user_location: use this to get the user's location
 
+        If a user asks you for the weather, make sure you know the location. If you can tell from the question that they mean whereever they are, use the get_user_location tool to find their location."""
+        ```
+        :::
         If a user asks you for the weather, make sure you know the location. If you can tell from the question that they mean whereever they are, use the get_user_location tool to find their location."""
         ```
         :::
@@ -93,9 +107,15 @@ Let's walk through each step:
         :::js
         ```ts
         const systemPrompt = `You are an expert weather forecaster, who speaks in puns.
+        :::js
+        ```ts
+        const systemPrompt = `You are an expert weather forecaster, who speaks in puns.
 
         You have access to two tools:
+        You have access to two tools:
 
+        - get_weather_for_location: use this to get the weather for a specific location
+        - get_user_location: use this to get the user's location
         - get_weather_for_location: use this to get the weather for a specific location
         - get_user_location: use this to get the user's location
 
@@ -108,16 +128,35 @@ Let's walk through each step:
         [Tools](/oss/langchain-tools) are functions your agent can call. They should be well-documented.
         Oftentimes, tools will want to connect to external systems, and will rely on runtime configuration to do so.
         Notice here how the `get_user_info` tool does exactly that:
+        If a user asks you for the weather, make sure you know the location. If you can tell from the question that they mean whereever they are, use the get_user_location tool to find their location.`;
+        ```
+        :::
+    </Step>
+    <Step title="Create tools">
+        :::python
+        [Tools](/oss/langchain-tools) are functions your agent can call. They should be well-documented.
+        Oftentimes, tools will want to connect to external systems, and will rely on runtime configuration to do so.
+        Notice here how the `get_user_info` tool does exactly that:
 
+        ```python
+        from langchain_core.tools import tool
         ```python
         from langchain_core.tools import tool
 
         def get_weather(city: str) -> str:  # (1)!
             """Get weather for a given city."""
             return f"It's always sunny in {city}!"
+        def get_weather(city: str) -> str:  # (1)!
+            """Get weather for a given city."""
+            return f"It's always sunny in {city}!"
 
         from langchain_core.runnables import RunnableConfig
+        from langchain_core.runnables import RunnableConfig
 
+        USER_LOCATION = {
+            "1": "Florida",
+            "2": "SF"
+        }
         USER_LOCATION = {
             "1": "Florida",
             "2": "SF"
@@ -130,12 +169,26 @@ Let's walk through each step:
             return USER_LOCATION[user_id]
         ```
         :::
+        @tool
+        def get_user_info(config: RunnableConfig) -> str:
+            """Retrieve user information based on user ID."""
+            user_id = config["context"].get("user_id")
+            return USER_LOCATION[user_id]
+        ```
+        :::
 
         :::js
         [Tools](/oss/langchain-tools) are functions your agent can call. They should be well-documented.
         Oftentimes tools will want to connect to external systems, and will rely on runtime configuration to do so.
         Notice here how the `getUserInfo` tool does exactly that:
+        :::js
+        [Tools](/oss/langchain-tools) are functions your agent can call. They should be well-documented.
+        Oftentimes tools will want to connect to external systems, and will rely on runtime configuration to do so.
+        Notice here how the `getUserInfo` tool does exactly that:
 
+        ```ts
+        import { tool } from "langchain";
+        import { z } from "zod";
         ```ts
         import { tool } from "langchain";
         import { z } from "zod";
@@ -147,7 +200,18 @@ Let's walk through each step:
             city: z.string(),
           }),
         });
+        const getWeather = tool(({ city }) => `It's always sunny in ${city}!`, {
+          name: "get_weather",
+          description: "Get the weather for a given city",
+          schema: z.object({
+            city: z.string(),
+          }),
+        });
 
+        const USER_LOCATION = {
+          "1": "Florida",
+          "2": "SF",
+        } as const;
         const USER_LOCATION = {
           "1": "Florida",
           "2": "SF",
@@ -168,42 +232,27 @@ Let's walk through each step:
           }
         );
         ```
+        const getUserInfo = tool(
+          (_, config) => {
+            const { user_id } = config.context as {
+              user_id: keyof typeof USER_LOCATION;
+            };
+            console.log("user_id", config.context);
+            return USER_LOCATION[user_id];
+          },
+          {
+            name: "get_user_info",
+            description: "Retrieve user information based on user ID",
+            schema: z.object({}),
+          }
+        );
+        ```
 
-<Note>
-[Zod](https://zod.dev/) is a library for validating and parsing pre-defined schemas. You can use it to define the input schema for your tools to make sure the agent only calls the tool with the correct arguments.
         <Note>
             [Zod](https://zod.dev/) is a library for validating and parsing pre-defined schemas. You can use it to define the input schema for your tools to make sure the agent only calls the tool with the correct arguments.
 
-Alternatively, you can define the `schema` property as a JSON schema object. Keep in mind that JSON schemas won't be validated at runtime.
             Alternatively, you can define the `schema` property as a JSON schema object. Keep in mind that JSON schemas won't be validated at runtime.
 
-<Accordion title="Example: Using JSON schema for tool input">
-```ts
-const getWeather = tool(
-({ city }) => `It's always sunny in ${city}!`,
-{
-name: "get_weather",
-description: "Get the weather for a given city",
-schema: {
-type: "object",
-properties: {
-city: {
-type: "string",
-description: "The city to get the weather for"
-}
-},
-required: ["city"]
-},
-}
-);
-```
-</Accordion>
-</Note>
-:::
-
-### Step 3: Configure Your Model
-
-Set up your language model with the right parameters for your use case:
             <Accordion title="Example: Using JSON schema for tool input">
               ```ts
               const getWeather = tool(
@@ -234,7 +283,16 @@ Set up your language model with the right parameters for your use case:
         :::python
         ```python
         from langchain.chat_models import init_chat_model
+        :::python
+        ```python
+        from langchain.chat_models import init_chat_model
 
+        model = init_chat_model(
+            "anthropic:claude-3-7-sonnet-latest",
+            temperature=0
+        )
+        ```
+        :::
         model = init_chat_model(
             "anthropic:claude-3-7-sonnet-latest",
             temperature=0
@@ -245,20 +303,10 @@ Set up your language model with the right parameters for your use case:
         :::js
         ```ts
         import { initChatModel } from "langchain/chat_models";
+        :::js
+        ```ts
+        import { initChatModel } from "langchain/chat_models";
 
-const model = await initChatModel(
-  "anthropic:claude-3-7-sonnet-latest",
-  temperature: 0
-);
-```
-:::
-
-### Step 4: Define response format
-
-:::python
-Structured outputs ensure your agent returns data in a predictable format. Here,
-we use Python's [`DataClass`](https://docs.python.org/3/library/dataclasses.html)
-dictionary.
         const model = await initChatModel(
           "anthropic:claude-3-7-sonnet-latest",
           temperature: 0
@@ -274,7 +322,15 @@ dictionary.
 
         ```python
         from dataclasses import dataclass
+        ```python
+        from dataclasses import dataclass
 
+        @dataclass
+        class WeatherResponse:
+            conditions: str
+            punny_response: str
+        ```
+        :::
         @dataclass
         class WeatherResponse:
             conditions: str
@@ -284,7 +340,19 @@ dictionary.
 
         :::js
         Structured outputs ensure your agent returns data in a predictable format.
+        :::js
+        Structured outputs ensure your agent returns data in a predictable format.
 
+        ```ts
+        const responseFormat = z.object({
+          conditions: z.string(),
+          punny_response: z.string(),
+        });
+        ```
+        :::
+    </Step>
+    <Step title="Add memory">
+        Enable your agent to remember conversation history:
         ```ts
         const responseFormat = z.object({
           conditions: z.string(),
@@ -299,11 +367,20 @@ dictionary.
         :::python
         ```python
         from langgraph.checkpoint.memory import InMemorySaver
+        :::python
+        ```python
+        from langgraph.checkpoint.memory import InMemorySaver
 
         checkpointer = InMemorySaver()
         ```
         :::
+        checkpointer = InMemorySaver()
+        ```
+        :::
 
+        :::js
+        ```ts
+        import { MemorySaver } from "langchain";
         :::js
         ```ts
         import { MemorySaver } from "langchain";
@@ -314,7 +391,22 @@ dictionary.
     </Step>
     <Step title="Bring it all together">
         Now assemble your agent with all the components:
+        const checkpointer = new MemorySaver();
+        ```
+        :::
+    </Step>
+    <Step title="Bring it all together">
+        Now assemble your agent with all the components:
 
+        :::python
+        ```python
+        agent = create_agent(
+            model=model,
+            prompt=system_prompt,
+            tools=[get_user_info, get_weather],
+            response_format=WeatherResponse,
+            checkpointer=checkpointer
+        )
         :::python
         ```python
         agent = create_agent(
@@ -332,9 +424,22 @@ dictionary.
             config=config,
             context=context
         )
+        config = {"configurable": {"thread_id": "1"}}
+        context = {"user_id": "1"}
+        response = agent.invoke(
+            {"messages": [{"role": "user", "content": "what is the weather outside?"}]},
+            config=config,
+            context=context
+        )
 
         response['structured_response']
+        response['structured_response']
 
+        response = agent.invoke(
+            {"messages": [{"role": "user", "content": "thank you!"}]},
+            config=config,
+            context=context
+        )
         response = agent.invoke(
             {"messages": [{"role": "user", "content": "thank you!"}]},
             config=config,
@@ -344,7 +449,13 @@ dictionary.
         response['structured_response']
         ```
         :::
+        response['structured_response']
+        ```
+        :::
 
+        :::js
+        ```ts
+        import { createAgent } from "langchain";
         :::js
         ```ts
         import { createAgent } from "langchain";
@@ -356,7 +467,23 @@ dictionary.
           responseFormat,
           checkpointer,
         });
+        const agent = createAgent({
+          model: "anthropic:claude-3-7-sonnet-latest",
+          prompt: systemPrompt,
+          tools: [getUserInfo, getWeather],
+          responseFormat,
+          checkpointer,
+        });
 
+        const config = {
+          configurable: { thread_id: "1" },
+          context: { user_id: "1" },
+        };
+        const response = await agent.invoke(
+          { messages: [{ role: "user", content: "what is the weather outside?" }] },
+          config
+        );
+        console.log(response.structuredResponse);
         const config = {
           configurable: { thread_id: "1" },
           context: { user_id: "1" },
@@ -376,7 +503,17 @@ dictionary.
         :::
     </Step>
 </Steps>
+        const thankYouResponse = await agent.invoke(
+          { messages: [{ role: "user", content: "thank you!" }] },
+          config
+        );
+        console.log(thankYouResponse.structuredResponse);
+        ```
+        :::
+    </Step>
+</Steps>
 
+## What you've built
 ## What you've built
 
 Congratulations! You now have a sophisticated AI agent that can:
