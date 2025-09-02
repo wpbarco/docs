@@ -4,7 +4,7 @@ import { TavilySearchResults } from "@langchain/community/tools/tavily_search";
 import type { PromptTemplate } from "@langchain/core/prompts";
 
 import { pull } from "langchain/hub";
-import { AgentExecutor, createAgent } from "langchain/agents";
+import { AgentExecutor, createReactAgent } from "langchain/agents";
 
 // Define the tools the agent will have access to.
 const tools = [new TavilySearchResults({ maxResults: 1 })];
@@ -19,7 +19,7 @@ const llm = new OpenAI({
 // https://smith.langchain.com/hub/hwchase17/react
 const prompt = await pull<PromptTemplate>("hwchase17/react");
 
-const agent = await createAgent({
+const agent = await createReactAgent({
   llm,
   tools,
   prompt,
@@ -42,7 +42,7 @@ console.log(result);
 // https://smith.langchain.com/hub/hwchase17/react-chat
 const promptWithChat = await pull<PromptTemplate>("hwchase17/react-chat");
 
-const agentWithChat = await createAgent({
+const agentWithChat = await createReactAgent({
   llm,
   tools,
   prompt: promptWithChat,
