@@ -424,7 +424,7 @@ agent = create_agent(
 :::
 :::js
 ```ts wrap
-const agent = createReactAgent({
+const agent = createAgent({
   model,
   tools,
   prompt: "You are a helpful assistant. Be concise and accurate."
@@ -447,7 +447,7 @@ agent = create_agent(
 ```ts wrap
 import { SystemMessage } from "langchain";
 
-const agent = createReactAgent({
+const agent = createAgent({
   model,
   tools,
   prompt: new SystemMessage("You are a research assistant. Cite your sources.")
