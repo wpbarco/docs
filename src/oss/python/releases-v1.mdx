@@ -9,11 +9,10 @@ import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
 
 # LangChain Python v1.0
 
-This page provides information about the v1 release of LangChain and LangGraph
-Python packages.
+TODO: better way to section the packages (e.g. `core` vs `langchain`)
 
-TODO: 
-- LangGraph prebuilt agents in LangChain
+This page provides information about the v1 release of LangChain and LangGraph
+Python packages (`langchain-core` and `langchain`).
 
 ## What's changed
 
@@ -23,6 +22,10 @@ LangChain v1.0 introduces a [**standardized message content format**](#standardi
 based on new content blocks that provides type safety, consistency across
 providers, and better multimodal support. This addresses the core challenge of
 having different output formats across LLM providers.
+
+**There are no breaking changes associated with existing message content.** The standard
+content can be lazily-parsed off of existing v0 messages using the `content_blocks`
+property.
 
 ### Python Version Support
 
@@ -329,7 +332,7 @@ The new content block system includes:
 
 Two ways to access the new format:
 
-1. **`.content_blocks` property** - Always returns typed content blocks (runtime conversion)
+1. **`.content_blocks` property** - Always returns typed content blocks with lazy parsing from existing v0 messages
 2. **`output_version='v1'`** - Writes v1 content blocks directly to `.content`
     - Used in situations where you need to store/serialize the standard blocks
 
@@ -342,7 +345,7 @@ Keep existing code unchanged and use `.content_blocks` for new features:
 model = ChatOpenAI()
 response = model.invoke("Hello!")
 
-# Access new format via property
+# Access new format via property - lazily parsed from v0 messages
 blocks = response.content_blocks  # Always typed ContentBlocks
 text_content = response.text  # Use new .text property instead of previous .text() method
 ```
@@ -361,6 +364,20 @@ response = model.invoke("Hello!")
 ```
 
 ### <Icon icon="triangle-exclamation" /> Breaking changes
+
+#### Chat model return type signatures
+
+**The return type signature for chat model invocation has been fixed from `BaseMessage` to `AIMessage`.**
+
+Custom chat models implementing `bind_tools` should update their return signature to avoid type checker errors:
+
+```python
+# Before
+Runnable[LanguageModelInput, BaseMessage]
+
+# After  
+Runnable[LanguageModelInput, AIMessage]
+```
 
 #### Text content access
 
@@ -400,6 +417,114 @@ The following major partner packages have been updated with v1 support:
 ### <Icon icon="box-archive" /> Deprecated features
 
 - `.text()` method - Use `.text` property instead
+
+## LangChain package changes
+
+The **`langchain`** release focuses on reducing LangChain's surface area and
+narrowing in on popular and essential abstractions.
+
+### <Icon icon="robot" /> ReAct agent migration
+
+**`create_react_agent` has moved from `langgraph` to `langchain`** with
+significant enhancements:
+
+#### Enhanced structured output
+
+`create_react_agent` now supports coercion of outputs to structured data types:
+
+```python
+from langchain.agents import create_react_agent
+from langchain_core.messages import HumanMessage
+from pydantic import BaseModel
+
+class Weather(BaseModel):
+    temperature: float
+    condition: str
+
+def weather_tool(city: str) -> str:
+    """Get the weather for a city."""
+    return f"it's sunny and 70 degrees in {city}"
+
+agent = create_react_agent(
+    "openai:gpt-4o-mini", 
+    tools=[weather_tool], 
+    response_format=Weather
+)
+result = agent.invoke({"messages": [HumanMessage("What's the weather in SF?")]})
+print(repr(result["structured_response"]))
+#> Weather(temperature=70.0, condition='sunny')
+```
+
+#### Structural improvements
+
+- **Main loop integration**: Structured output is now generated in the main loop
+instead of requiring an additional LLM call
+- **Tool/output choice**: Models can choose between calling tools, generating
+structured output, or both
+- **Cost reduction**: Eliminates extra expense from additional LLM calls
+
+#### Advanced configuration
+
+Two strategies for structured output generation:
+
+1. **Artificial tool calling** (default for most models)
+    - LangChain generates tools matching your response format schema
+    - Model calls these tools, LangChain coerces args to desired format
+
+2. **Provider implementations**
+    - Uses native structured output support when available
+    - Configure with `ProviderStrategy` hint
+
+<Warning>
+**Prompted output** is no longer supported via the `response_format` argument.
+</Warning>
+
+### <Icon icon="triangle-exclamation" /> Error handling improvements
+
+#### Structured output errors
+
+Control error handling via the `handle_errors` arg to `ToolStrategy`:
+
+- **Parsing errors**: Model generates data that doesn't match desired structure
+- **Multiple tool calls**: Model generates 2+ tool calls for structured output schemas
+
+#### Tool calling errors
+
+Updated error handling for tool failures:
+
+- **Invocation failure**: Agent returns artificial `ToolMessage` asking model to retry (unchanged)
+- **Execution failure**: Agent now raises `ToolException` by default instead of retrying (prevents infinite loops)
+
+Configure behavior via `handle_tool_errors` arg to `ToolNode`.
+
+### <Icon icon="ban" /> Breaking changes
+
+#### Pre-bound models
+
+`create_react_agent` no longer supports pre-bound models with tools or configuration:
+
+```python
+# No longer supported
+model_with_tools = ChatOpenAI().bind_tools([some_tool])
+agent = create_react_agent(model_with_tools, tools=[])
+
+# Use instead
+agent = create_react_agent("openai:gpt-4o-mini", tools=[some_tool])
+```
+
+<Note>
+Dynamic model functions can return pre-bound models IF structured output is not used.
+</Note>
+
+#### Import changes
+
+```python
+# Before
+from langgraph.prebuilts import create_react_agent, ToolNode, AgentState
+
+# After
+from langchain.agents import create_react_agent, ToolNode, AgentState
+```
 
 ## <Icon icon="book-open" /> See also
 

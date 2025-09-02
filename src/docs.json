@@ -371,6 +371,12 @@
                     ]
                   },
                   {
+                    "group": "LangChain reference",
+                    "pages": [
+                      "oss/python/langchain-api-reference"
+                    ]
+                  },
+                  {
                     "group": "LangGraph reference",
                     "pages": [
                       "oss/python/reference/overview",
@@ -1351,6 +1357,12 @@
                           "oss/javascript/releases-v1"
                         ]
                       }
+                    ]
+                  },
+                  {
+                    "group": "LangChain reference",
+                    "pages": [
+                      "oss/javascript/langchain-api-reference"
                     ]
                   },
                   {
