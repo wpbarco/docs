@@ -2,9 +2,15 @@
 title: Overview
 ---
 
-import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
+<Warning>
+LangChain v1 is under active development and is not recommended for production use.
+* APIs may change without notice
+* The docs are incomplete and subject to change
 
-<AlphaCallout />
+For the latest stable version, see the v0 [LangChain](https://python.langchain.com/docs/introduction/) docs.
+</Warning>
+
+
 
 
 LangChain is the easiest way to start building with LLMs, letting you get started on building agents with OpenAI, Anthropic, Google, and more in under 10 lines of code.
@@ -30,13 +36,13 @@ uv add langchain@pre
 ```python
 # pip install -qU "langchain[anthropic]" to call the model
 
-from langchain.agents import create_react_agent
+from langchain.agents import create_agent
 
 def get_weather(city: str) -> str:
     """Get weather for a given city."""
     return f"It's always sunny in {city}!"
 
-agent = create_react_agent(
+agent = create_agent(
     model="anthropic:claude-3-7-sonnet-latest",
     tools=[get_weather],
     prompt="You are a helpful assistant",

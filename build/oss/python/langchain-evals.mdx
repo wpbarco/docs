@@ -117,11 +117,11 @@ To run an evaluator, you will first need to create a [LangSmith dataset](https:/
 
 ```python
 from langsmith import Client
-from langgraph.prebuilt import create_react_agent
+from langchain.agents import create_agent
 from agentevals.trajectory.match import create_trajectory_match_evaluator
 
 client = Client()
-agent = create_react_agent(...)
+agent = create_agent(...)
 evaluator = create_trajectory_match_evaluator(...)
 
 experiment_results = client.evaluate(

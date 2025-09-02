@@ -15,14 +15,14 @@ Let's begin with the absolute basics - creating a simple agent that can answer q
 
 
 ```ts
-import { createReactAgent, tool } from "langchain";
+import { createAgent, tool } from "langchain";
 
 const getWeather = tool((city: string) => `It's always sunny in ${city}!`, {
   name: "get_weather",
   description: "Get the weather for a given city",
 });
 
-const agent = createReactAgent({
+const agent = createAgent({
   model: "anthropic:claude-3-7-sonnet-latest",
   tools: [getWeather],
 });
@@ -182,7 +182,7 @@ Enable your agent to remember conversation history:
 
 
 ```ts
-import { MemorySaver } from "@langchain/langgraph-checkpoint";
+import { MemorySaver } from "langchain";
 
 const checkpointer = new MemorySaver();
 ```
@@ -195,9 +195,9 @@ Now assemble your agent with all the components:
 
 
 ```ts
-import { createReactAgent } from "langchain";
+import { createAgent } from "langchain";
 
-const agent = createReactAgent({
+const agent = createAgent({
   model: "anthropic:claude-3-7-sonnet-latest",
   prompt: systemPrompt,
   tools: [getUserInfo, getWeather],

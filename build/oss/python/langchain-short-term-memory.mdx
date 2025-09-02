@@ -43,10 +43,10 @@ Short-term memory updates when the agent is invoked or a step (like a tool call)
 </Info>
 
 ```python {highlight={2,7,12}}
-from langchain.agents import create_react_agent
+from langchain.agents import create_agent
 from langgraph.checkpoint.memory import InMemorySaver
 
-agent = create_react_agent(
+agent = create_agent(
     "openai:gpt-5",
     [get_user_info],
     checkpointer=InMemorySaver(),
@@ -65,12 +65,12 @@ agent.invoke(
 In production, use a checkpointer backed by a database:
 
 ```python {highlight={2,9}}
-from langchain.agents import create_react_agent
+from langchain.agents import create_agent
 from langgraph.checkpoint.postgres import PostgresSaver
 
 DB_URI = "postgresql://postgres:postgres@localhost:5442/postgres?sslmode=disable"
 with PostgresSaver.from_conn_string(DB_URI) as checkpointer:
-    agent = create_react_agent(
+    agent = create_agent(
         "openai:gpt-5",
         [get_user_info],
         checkpointer=checkpointer,
@@ -88,13 +88,13 @@ Users can subclass `AgentState` to add additional fields to the state.
 This custom state can then be accessed via tools and dynamic prompt / model functions.
 
 ```python highlight={3-5,10}
-from langchain.agents import create_react_agent, AgentState
+from langchain.agents import create_agent, AgentState
 from langgraph.checkpoint.memory import InMemorySaver
 
 class CustomAgentState(AgentState):
     user_id: str
 
-agent = create_react_agent(
+agent = create_agent(
     "openai:gpt-5",
     [get_user_info],
     state_schema=CustomAgentState,
@@ -123,13 +123,13 @@ and truncate whenever it approaches that limit. If you're using LangChain, you c
 trim messages utility and specify the number of tokens to keep from the list, as well as the `strategy` 
 (e.g., keep the last `maxTokens`) to use for handling the boundary.
 
-To trim message history in an agent, use [`pre_model_hook`](https://langchain-ai.github.io/langgraph/reference/prebuilt/#langgraph.prebuilt.chat_agent_executor.create_react_agent) with the [`trim_messages`](https://python.langchain.com/api_reference/core/messages/langchain_core.messages.utils.trim_messages.html) function:
+To trim message history in an agent, use @[`pre_model_hook`][create_agent] with the [`trim_messages`](https://python.langchain.com/api_reference/core/messages/langchain_core.messages.utils.trim_messages.html) function:
 
 ```python
 from langchain_core.messages.utils import trim_messages, count_tokens_approximately
 from langchain_core.messages import BaseMessage
 from langgraph.checkpoint.memory import InMemorySaver
-from langchain.agents import create_react_agent
+from langchain.agents import create_agent
 from langchain_core.runnables import RunnableConfig
 
 def pre_model_hook(state) -> dict[str, list[BaseMessage]]:
@@ -148,7 +148,7 @@ def pre_model_hook(state) -> dict[str, list[BaseMessage]]:
 
 
 checkpointer = InMemorySaver()
-agent = create_react_agent(
+agent = create_agent(
     "openai:gpt-5-nano",
     tools=[],
     pre_model_hook=pre_model_hook,
@@ -216,7 +216,7 @@ def delete_messages(state):
 
 ```python
 from langchain_core.messages import RemoveMessage
-from langchain.agents import create_react_agent
+from langchain.agents import create_agent
 from langgraph.checkpoint.memory import InMemorySaver
 from langchain_core.runnables import RunnableConfig
 
@@ -228,7 +228,7 @@ def delete_messages(state):
         return {"messages": [RemoveMessage(id=m.id) for m in messages[:2]]}
 
 
-agent = create_react_agent(
+agent = create_agent(
     "openai:gpt-5-nano",
     tools=[],
     prompt="Please be concise and to the point.",
@@ -272,14 +272,14 @@ Because of this, some applications benefit from a more sophisticated approach of
 ![](/oss/images/summary.png)
 
 
-To summarize message history in an agent, use [`pre_model_hook`](https://langchain-ai.github.io/langgraph/reference/prebuilt/#langgraph.prebuilt.chat_agent_executor.create_react_agent) with a prebuilt [`SummarizationNode`](https://langchain-ai.github.io/langmem/reference/short_term/#langmem.short_term.SummarizationNode) abstraction:
+To summarize message history in an agent, use @[`pre_model_hook`][create_agent] with a prebuilt [`SummarizationNode`](https://langchain-ai.github.io/langmem/reference/short_term/#langmem.short_term.SummarizationNode) abstraction:
 
 {/* TODO: FIX THIS EXAMPLE, NOT ABLE TO RUN */}
 
 ```python {highlight={22,30,31}}
 from langmem.short_term import SummarizationNode, RunningSummary
 from langchain_core.messages.utils import count_tokens_approximately
-from langchain.agents import create_react_agent, AgentState
+from langchain.agents import create_agent, AgentState
 from langgraph.checkpoint.memory import InMemorySaver
 from langchain_openai import ChatOpenAI
 from langchain_core.runnables import RunnableConfig
@@ -301,7 +301,7 @@ class State(AgentState):
 
 checkpointer = InMemorySaver()
 
-agent = create_react_agent(
+agent = create_agent(
     model=model,
     tools=[],
     pre_model_hook=summarization_node,
@@ -340,7 +340,7 @@ This annotation hides the state from the tool signature (so the model doesn't se
 
 ```python
 from typing import Annotated
-from langchain.agents import create_react_agent, AgentState
+from langchain.agents import create_agent, AgentState
 from langchain.agents.tool_node import InjectedState
 
 class CustomState(AgentState):
@@ -353,7 +353,7 @@ def get_user_info(
     user_id = state["user_id"]
     return "User is John Smith" if user_id == "user_123" else "Unknown user"
 
-agent = create_react_agent(
+agent = create_agent(
     model="openai:gpt-5-nano",
     tools=[get_user_info],
     state_schema=CustomState,
@@ -379,7 +379,7 @@ from typing import Annotated
 from langchain_core.tools import InjectedToolCallId
 from langchain_core.runnables import RunnableConfig
 from langchain_core.messages import ToolMessage
-from langchain.agents import create_react_agent, AgentState
+from langchain.agents import create_agent, AgentState
 from langchain.agents.tool_node import InjectedState
 from langgraph.runtime import get_runtime
 from langgraph.types import Command
@@ -416,7 +416,7 @@ def greet(
     user_name = state["user_name"]
     return f"Hello {user_name}!"
 
-agent = create_react_agent(
+agent = create_agent(
     model="openai:gpt-5-nano",
     tools=[update_user_info, greet],
     state_schema=CustomState,
@@ -438,7 +438,7 @@ Access short term memory (state) in a dynamic prompt function by injecting the a
 
 ```python
 from langchain_core.messages import AnyMessage
-from langchain.agents import create_react_agent, AgentState
+from langchain.agents import create_agent, AgentState
 from langgraph.runtime import get_runtime
 from typing import TypedDict
 
@@ -458,7 +458,7 @@ def prompt(state: AgentState) -> list[AnyMessage]:
     return [{"role": "system", "content": system_msg}] + state["messages"]
 
 
-agent = create_react_agent(
+agent = create_agent(
     model="openai:gpt-5-nano",
     tools=[get_weather],
     prompt=prompt,
@@ -502,7 +502,7 @@ Access short term memory (state) in a pre model hook by injecting the agent's st
 from langchain_core.messages.utils import trim_messages, count_tokens_approximately
 from langchain_core.messages import BaseMessage
 from langgraph.checkpoint.memory import InMemorySaver
-from langchain.agents import create_react_agent, AgentState
+from langchain.agents import create_agent, AgentState
 
 
 def pre_model_hook(state: AgentState) -> dict[str, list[BaseMessage]]:
@@ -519,7 +519,7 @@ def pre_model_hook(state: AgentState) -> dict[str, list[BaseMessage]]:
     )
     return {"llm_input_messages": trimmed_messages}
 
-agent = create_react_agent(
+agent = create_agent(
     model="openai:gpt-5-nano",
     tools=[],
     pre_model_hook=pre_model_hook,
@@ -537,7 +537,7 @@ print(result["messages"][-1].content)
 Access short term memory (state) in a post model hook by injecting the agent's state into the hook signature.
 
 ```python
-from langchain.agents import create_react_agent, AgentState
+from langchain.agents import create_agent, AgentState
 
 STOP_WORDS = ["password", "secret"]
 
@@ -548,7 +548,7 @@ def validate_response(state: AgentState) -> dict[str, list[BaseMessage]]:
         return {"messages": [RemoveMessage(id=last_message.id)]}
     return {}
 
-agent = create_react_agent(
+agent = create_agent(
     model="openai:gpt-5-nano",
     tools=[],
     post_model_hook=validate_response,

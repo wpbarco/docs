@@ -44,12 +44,11 @@ Short-term memory updates when the agent is invoked or a step (like a tool call)
 
 
 ```ts {highlight={2,4, 9,14}}
-import { createReactAgent } from "langchain";
-import { MemorySaver } from "@langchain/langgraph";
+import { createAgent, MemorySaver } from "langchain";
 
 const checkpointer = new MemorySaver();
 
-const agent = createReactAgent({
+const agent = createAgent({
   model: "anthropic:claude-3-7-sonnet-latest",
   tools: [],
   checkpointer,
@@ -86,15 +85,14 @@ This custom state can then be accessed via tools and dynamic prompt / model func
 
 ```typescript highlight={4-7,13}
 import { z } from "zod";
-import { createReactAgent } from "langchain";
-import { MemorySaver } from "@langchain/langgraph";
+import { createAgent, MemorySaver } from "langchain";
 
 const stateSchema = z.object({
   messages: z.array(z.any()),
 });
 
 const checkpointer = new MemorySaver();
-const agent = createReactAgent({
+const agent = createAgent({
   model: "openai:gpt-5",
   tools: [],
   stateSchema,
@@ -128,7 +126,7 @@ To trim message history in an agent, use `stateModifier` with the [`trimMessages
 
 ```typescript
 import {
-  createReactAgent,
+  createAgent,
   trimMessages,
   MemorySaver,
   type AgentState,
@@ -148,7 +146,7 @@ const stateModifier = async (state: AgentState) => {
 };
 
 const checkpointer = new MemorySaver();
-const agent = createReactAgent({
+const agent = createAgent({
   model: "openai:gpt-5",
   tools: [],
   preModelHook: stateModifier,
@@ -196,8 +194,7 @@ const deleteMessages = (state) => {
 
 ```typescript
 import { RemoveMessage } from "@langchain/core/messages";
-import { MemorySaver } from "@langchain/langgraph";
-import { AgentState, createReactAgent } from "langchain";
+import { AgentState, createAgent, MemorySaver } from "langchain";
 
 const deleteMessages = (state: AgentState) => {
   const messages = state.messages;
@@ -212,7 +209,7 @@ const deleteMessages = (state: AgentState) => {
   return {};
 };
 
-const agent = createReactAgent({
+const agent = createAgent({
   model: "openai:gpt-5-nano",
   tools: [],
   prompt: "Please be concise and to the point.",
@@ -288,7 +285,7 @@ This annotation hides the state from the tool signature (so the model doesn't se
 
 ```typescript
 import { z } from "zod";
-import { createReactAgent, tool } from "langchain";
+import { createAgent, tool } from "langchain";
 
 const stateSchema = z.object({
   userId: z.string(),
@@ -306,7 +303,7 @@ const getUserInfo = tool(
   }
 );
 
-const agent = createReactAgent({
+const agent = createAgent({
   model: "openai:gpt-5-nano",
   tools: [getUserInfo],
   stateSchema,
@@ -337,7 +334,7 @@ This is useful for persisting intermediate results or making information accessi
 
 ```typescript
 import { z } from "zod";
-import { tool, createReactAgent } from "langchain";
+import { tool, createAgent } from "langchain";
 import { MessagesZodState, Command } from "@langchain/langgraph";
 
 const CustomState = z.object({
@@ -382,7 +379,7 @@ const greet = tool(
   }
 );
 
-const agent = createReactAgent({
+const agent = createAgent({
   llm: model,
   tools: [updateUserInfo, greet],
   stateSchema: CustomState,
@@ -402,7 +399,7 @@ Access short term memory (state) in a dynamic prompt function by injecting the a
 
 ```typescript
 import { z } from "zod";
-import { createReactAgent, tool, SystemMessage } from "langchain";
+import { createAgent, tool, SystemMessage } from "langchain";
 
 const contextSchema = z.object({
   userName: z.string(),
@@ -421,7 +418,7 @@ const getWeather = tool(
   }
 );
 
-const agent = createReactAgent({
+const agent = createAgent({
   model: "openai:gpt-5-nano",
   tools: [getWeather],
   contextSchema,
@@ -488,7 +485,7 @@ Access short term memory (state) in a pre model hook by injecting the agent's st
 
 ```typescript
 import {
-  createReactAgent,
+  createAgent,
   type AgentState,
   trimMessages,
   type BaseMessage,
@@ -506,7 +503,7 @@ const preModelHook = async (state: AgentState) => {
   };
 };
 
-const agent = createReactAgent({
+const agent = createAgent({
   model: "openai:gpt-5-nano",
   tools: [],
   preModelHook,
@@ -531,7 +528,7 @@ Access short term memory (state) in a post model hook by injecting the agent's s
 
 ```typescript
 import { RemoveMessage } from "@langchain/core/messages";
-import { createReactAgent, type AgentState } from "langchain";
+import { createAgent, type AgentState } from "langchain";
 
 function validateResponse(state: AgentState) {
   const lastMessage = state.messages.at(-1)?.content;
@@ -546,7 +543,7 @@ function validateResponse(state: AgentState) {
   return {};
 }
 
-const agent = createReactAgent({
+const agent = createAgent({
   model: "openai:gpt-5",
   tools: [],
   postModelHook: validateResponse,

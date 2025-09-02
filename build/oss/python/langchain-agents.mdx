@@ -10,7 +10,7 @@ import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
 
 Agents combine language models with tools to create systems that can reason about tasks, decide which tools to use, and iteratively work towards solutions. 
 
-`create_react_agent()` provides a production-ready ReAct (Reasoning + Acting) agent implementation based on the paper [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629).
+`create_agent()` provides a production-ready ReAct (Reasoning + Acting) agent implementation based on the paper [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629).
 
 
 
@@ -58,7 +58,7 @@ graph TD
 
 
 <Info>
-Under the hood, `create_react_agent()` builds a **graph**-based agent runtime using [LangGraph](./langgraph/overview). A graph consists of nodes (steps) and edges (connections) that define how your agent processes information. The agent moves through this graph, executing nodes like the model node (which calls the model), the tools node (which executes tools), or pre/post model hook nodes. Learn more about the [graph API](./langgraph/graph-api).
+Under the hood, `create_agent()` builds a **graph**-based agent runtime using [LangGraph](./langgraph/overview). A graph consists of nodes (steps) and edges (connections) that define how your agent processes information. The agent moves through this graph, executing nodes like the model node (which calls the model), the tools node (which executes tools), or pre/post model hook nodes. Learn more about the [graph API](./langgraph/graph-api).
 </Info>
 
 ## Core components
@@ -72,9 +72,9 @@ The [model](./langchain-models) is the reasoning engine of your agent. It can be
 Static models are configured once when creating the agent and remain unchanged throughout execution. This is the most common and straightforward approach. To initialize a static model from a model identifier string:
 
 ```python wrap
-from langchain.agents import create_react_agent
+from langchain.agents import create_agent
 
-agent = create_react_agent(
+agent = create_agent(
     "openai:gpt-5", 
     tools=tools
 )
@@ -85,7 +85,7 @@ agent = create_react_agent(
 Model identifier strings use the format `provider:model` (e.g. `"openai:gpt-5"`) and support automatic inference (e.g. `"gpt-5"` will be inferred as `"openai:gpt-5"`). You may want more control over the model configuration, in which case you can initialize a model instance directly using the [provider package](./integrations/providers):
 
 ```python wrap
-from langchain.agents import create_react_agent
+from langchain.agents import create_agent
 from langchain_openai import ChatOpenAI
 
 model = ChatOpenAI(
@@ -94,7 +94,7 @@ model = ChatOpenAI(
     max_tokens=1000,
     timeout=30
 )
-agent = create_react_agent(model, tools=tools)
+agent = create_agent(model, tools=tools)
 ```
 
 Model instances give you complete control over configuration. Use them when you need to set specific parameters like temperature, max tokens, timeouts, or configure API keys, base URLs, and other provider-specific settings. Refer to the [API reference](./integrations/providers) to see available params and methods on your model.
@@ -117,7 +117,7 @@ To use a dynamic model, you need to provide a function that receives the graph s
 
 ```python
 from langchain_openai import ChatOpenAI
-from langchain.agents import create_react_agent, AgentState
+from langchain.agents import create_agent, AgentState
 from langgraph.runtime import Runtime
 
 def select_model(state: AgentState, runtime: Runtime) -> ChatOpenAI:
@@ -130,7 +130,7 @@ def select_model(state: AgentState, runtime: Runtime) -> ChatOpenAI:
     else:
         return ChatOpenAI(model="gpt-5").bind_tools(tools) # Better model for longer conversations
 
-agent = create_react_agent(select_model, tools=tools)
+agent = create_agent(select_model, tools=tools)
 ```
 
 
@@ -161,7 +161,7 @@ Passing a list of tools to the agent will create a `ToolNode` under the hood. Th
 
 ```python wrap
 from langchain_core.tools import tool
-from langchain.agents import create_react_agent
+from langchain.agents import create_agent
 
 @tool
 def search(query: str) -> str:
@@ -173,7 +173,7 @@ def calculate(expression: str) -> str:
     """Perform calculations."""
     return str(eval(expression))
 
-agent = create_react_agent(model, tools=[search, calculate])
+agent = create_agent(model, tools=[search, calculate])
 ```
 
 
@@ -189,7 +189,7 @@ tool_node = ToolNode(
     tools=[search, calculate],
     handle_tool_errors="Please check your input and try again."
 )
-agent = create_react_agent(model, tools=tool_node)
+agent = create_agent(model, tools=tool_node)
 result = agent.invoke({"messages": [...]})
 ```
 
@@ -283,7 +283,7 @@ You can shape how your agent approaches tasks by providing a prompt. The `prompt
 #### String
 
 ```python wrap
-agent = create_react_agent(
+agent = create_agent(
     model,
     tools,
     prompt="You are a helpful assistant. Be concise and accurate."
@@ -295,7 +295,7 @@ agent = create_react_agent(
 #### SystemMessage
 
 ```python wrap
-agent = create_react_agent(
+agent = create_agent(
     model,
     tools,
     prompt=SystemMessage(content="You are a research assistant. Cite your sources.")
@@ -315,7 +315,7 @@ def dynamic_prompt(state):
         else "Provide simple, clear explanations."
     )
     return [system_msg] + state["messages"]
-agent = create_react_agent(model, tools, prompt=dynamic_prompt)
+agent = create_agent(model, tools, prompt=dynamic_prompt)
 ```
 
 
@@ -334,14 +334,14 @@ In some situations, you may want the agent to return an output in a specific for
 
 ```python wrap
 from pydantic import BaseModel
-from langchain.agents import create_react_agent
+from langchain.agents import create_agent
 
 class ContactInfo(BaseModel):
     name: str
     email: str
     phone: str
 
-agent = create_react_agent(
+agent = create_agent(
     model,
     tools=[search_tool],
     response_format=ContactInfo
@@ -370,14 +370,14 @@ Information stored in the state can be thought of as the "short-term memory" of 
 from typing import TypedDict
 from typing_extensions import Annotated
 from langgraph.graph.message import add_messages
-from langchain.agents import create_react_agent
+from langchain.agents import create_agent
 from langchain.agents import AgentState
 
 class CustomAgentState(AgentState):
     messages: Annotated[list, add_messages]
     user_preferences: dict
 
-agent = create_react_agent(
+agent = create_agent(
     model,
     tools=tools,
     state_schema=CustomAgentState
@@ -451,7 +451,7 @@ Example of a pre-model hook that trims messages to fit the context window:
 ```python wrap
 from langchain_core.messages import RemoveMessage
 from langgraph.graph.message import REMOVE_ALL_MESSAGES
-from langchain.agents import create_react_agent
+from langchain.agents import create_agent
 
 def trim_messages(state):
     """Keep only the last few messages to fit context window."""
@@ -471,7 +471,7 @@ def trim_messages(state):
         ]
     }
 
-agent = create_react_agent(
+agent = create_agent(
     model,
     tools=tools,
     pre_model_hook=trim_messages
@@ -559,7 +559,7 @@ def validate_response(state):
     
     return {}
 
-agent = create_react_agent(
+agent = create_agent(
     model,
     tools=tools,
     post_model_hook=validate_response
