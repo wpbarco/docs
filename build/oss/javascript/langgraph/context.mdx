@@ -16,14 +16,14 @@ import AlphaCallout from '/snippets/alpha-lg-callout.mdx';
   * **Cross-conversation context**: Data that persists across multiple conversations or sessions
 
 <Tip>
-  **Runtime context vs LLM context**
-  Runtime context refers to local context: data and dependencies your code needs to run. It does **not** refer to:
-  
-  * The LLM context, which is the data passed into the LLM's prompt.
-  * The "context window", which is the maximum number of tokens that can be passed to the LLM.
-  
-  Runtime context can be used to optimize the LLM context. For example, you can use user metadata
-  in the runtime context to fetch user preferences and feed them into the context window.
+**Runtime context vs LLM context**
+Runtime context refers to local context: data and dependencies your code needs to run. It does **not** refer to:
+
+* The LLM context, which is the data passed into the LLM's prompt.
+* The "context window", which is the maximum number of tokens that can be passed to the LLM.
+
+Runtime context can be used to optimize the LLM context. For example, you can use user metadata
+in the runtime context to fetch user preferences and feed them into the context window.
 </Tip>
 
 LangGraph provides three ways to manage context, which combines the mutability and lifetime dimensions:
@@ -58,27 +58,27 @@ await graph.invoke(
 **Dynamic runtime context** represents mutable data that can evolve during a single run and is managed through the LangGraph state object. This includes conversation history, intermediate results, and values derived from tools or LLM outputs. In LangGraph, the state object acts as [short-term memory](/oss/javascript/langgraph/memory) during a run.
 
 <Tabs>
-  <Tab title="In an agent">
+    <Tab title="In an agent">
     Example shows how to incorporate state into an agent **prompt**.
-    
-    State can also be accessed by the agent's **tools**, which can read or update the state as needed. See [tool calling guide](/oss/javascript/langgraph/call-tools#short-term-memory) for details.
-    
 
-    
+    State can also be accessed by the agent's **tools**, which can read or update the state as needed. See [tool calling guide](/oss/javascript/langgraph/call-tools#short-term-memory) for details.
+
+
+
     ```typescript {highlight={6,12,22}}
     import type { BaseMessage } from "@langchain/core/messages";
     import { createReactAgent } from "@langchain/langgraph/prebuilt";
     import { MessagesZodMeta } from "@langchain/langgraph";
     import { registry } from "@langchain/langgraph/zod";
     import { z } from "zod/v4";
-    
+
     const CustomState = z.object({ // (1)!
       messages: z
         .array(z.custom<BaseMessage>())
         .register(registry, MessagesZodMeta),
       userName: z.string(),
     });
-    
+
     const prompt = (
       state: z.infer<typeof CustomState>
     ): BaseMessage[] => {
@@ -86,40 +86,40 @@ await graph.invoke(
       const systemMsg = `You are a helpful assistant. User's name is ${userName}`;
       return [{ role: "system", content: systemMsg }, ...state.messages];
     };
-    
+
     const agent = createReactAgent({
       llm: model,
       tools: [...],
       stateSchema: CustomState, // (2)!
       stateModifier: prompt,
     });
-    
+
     await agent.invoke({
       messages: [{ role: "user", content: "hi!" }],
       userName: "John Smith",
     });
 ```
-    
+
     1. Define a custom state schema that adds additional fields alongside the existing `messages` field.
     2. Pass the custom state schema to the agent. This allows the agent to access and modify the state during execution.
 
-  </Tab>
-  <Tab title="In a workflow">
+    </Tab>
+    <Tab title="In a workflow">
 
-    
+
     ```typescript {highlight={6,6,14}}
     import type { BaseMessage } from "@langchain/core/messages";
     import { StateGraph, MessagesZodMeta, START } from "@langchain/langgraph";
     import { registry } from "@langchain/langgraph/zod";
     import { z } from "zod/v4";
-    
+
     const CustomState = z.object({ // (1)!
       messages: z
         .array(z.custom<BaseMessage>())
         .register(registry, MessagesZodMeta),
       extraField: z.number(),
     });
-    
+
     const builder = new StateGraph(CustomState)
       .addNode("node", async (state) => { // (2)!
         const messages = state.messages;
@@ -129,20 +129,20 @@ await graph.invoke(
         };
       })
       .addEdge(START, "node");
-    
+
     const graph = builder.compile();
 ```
-    
+
     1. Define a custom state
     2. Access the state in any node or tool
     3. The Graph API is designed to work as easily as possible with state. The return value of a node represents a requested update to the state.
 
-  </Tab>
+    </Tab>
 </Tabs>
 
 <Tip>
-  **Turning on memory**
-  Please see the [memory guide](/oss/javascript/langgraph/add-memory) for more details on how to enable memory. This is a powerful feature that allows you to persist the agent's state across multiple invocations. Otherwise, the state is scoped only to a single run.
+**Turning on memory**
+Please see the [memory guide](/oss/javascript/langgraph/add-memory) for more details on how to enable memory. This is a powerful feature that allows you to persist the agent's state across multiple invocations. Otherwise, the state is scoped only to a single run.
 </Tip>
 
 <a id="store"></a>

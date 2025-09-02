@@ -8,7 +8,7 @@ import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
 
 ## Overview
 
-Agents combine language models with tools to create systems that can reason about tasks, decide which tools to use, and iteratively work towards solutions. 
+Agents combine language models with tools to create systems that can reason about tasks, decide which tools to use, and iteratively work towards solutions.
 
 
 `createAgent()` provides a production-ready ReAct (Reasoning + Acting) agent implementation based on the paper [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629).
@@ -17,7 +17,7 @@ Agents combine language models with tools to create systems that can reason abou
 <Columns cols={2}>
 
 <Card>
-ReAct frames an agent's behavior as an interleaving of `thought` -> `action` -> `observation` steps, where the model writes out its reasoning, picks a tool, sees the tool's result, and then repeats. ReAct reduces hallucinations and makes the decision process auditable: the agent can form hypotheses (`thought`), test them with tools (`action`), and update its plan based on feedback (`observation`). 
+ReAct frames an agent's behavior as an interleaving of `thought` -> `action` -> `observation` steps, where the model writes out its reasoning, picks a tool, sees the tool's result, and then repeats. ReAct reduces hallucinations and makes the decision process auditable: the agent can form hypotheses (`thought`), test them with tools (`action`), and update its plan based on feedback (`observation`).
 
 A ReAct loop runs until a stop condition - i.e. when the model emits a final answer or a max-iterations limit is reached.
 </Card>
@@ -122,7 +122,7 @@ import { ChatOpenAI } from "@langchain/openai";
 
 const selectModel = (state: AgentState) => {
   const messageCount = state.messages.length;
-  
+
   if (messageCount > 10) {
     return new ChatOpenAI({ model: "gpt-4.1" }).bindTools(tools);
   }
@@ -152,7 +152,7 @@ Tools give agents the ability to take actions. Agents go beyond simple model-onl
 
 Tools can be provided to the agent as either:
 
-1. A list of tools (created with `tool` function, or object that represents a builtin provider tool) 
+1. A list of tools (created with `tool` function, or object that represents a builtin provider tool)
 2. A configured `ToolNode`
 
 

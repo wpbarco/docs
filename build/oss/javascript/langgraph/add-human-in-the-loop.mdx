@@ -9,7 +9,7 @@ import AlphaCallout from '/snippets/alpha-lg-callout.mdx';
 To review, edit, and approve tool calls in an agent or workflow, use interrupts to pause a graph and wait for human input. Interrupts use LangGraph's [persistence](/oss/javascript/langgraph/persistence) layer, which saves the graph state, to indefinitely pause graph execution until you resume.
 
 <Info>
-  For more information about human-in-the-loop workflows, see the [Human-in-the-Loop](/oss/javascript/langgraph/human-in-the-loop) conceptual guide.
+For more information about human-in-the-loop workflows, see the [Human-in-the-Loop](/oss/javascript/langgraph/human-in-the-loop) conceptual guide.
 </Info>
 
 ## Pause using `interrupt`
@@ -74,16 +74,16 @@ console.log(await graph.invoke(new Command({ resume: "Edited text" }), config));
 
 <Accordion title="Extended example: using `interrupt`">
 
-  
+
   ```typescript {highlight={12,43}}
   import { z } from "zod/v4";
   import { v4 as uuidv4 } from "uuid";
   import { MemorySaver, StateGraph, START, interrupt, Command } from "@langchain/langgraph";
-  
+
   const StateAnnotation = z.object({
     someText: z.string(),
   });
-  
+
   // Build the graph
   const graphBuilder = new StateGraph(StateAnnotation)
     .addNode("humanNode", (state) => {
@@ -97,17 +97,17 @@ console.log(await graph.invoke(new Command({ resume: "Edited text" }), config));
       };
     })
     .addEdge(START, "humanNode");
-  
+
   const checkpointer = new MemorySaver(); // (4)!
-  
+
   const graph = graphBuilder.compile({ checkpointer });
-  
+
   // Pass a thread ID to the graph to run it.
   const config = { configurable: { thread_id: uuidv4() } };
-  
+
   // Run the graph until the interrupt is hit.
   const result = await graph.invoke({ someText: "original text" }, config); // (5)!
-  
+
   console.log(result.__interrupt__); // (6)!
   // > [
   // >   {
@@ -117,11 +117,11 @@ console.log(await graph.invoke(new Command({ resume: "Edited text" }), config));
   // >     when: 'during'
   // >   }
   // > ]
-  
+
   console.log(await graph.invoke(new Command({ resume: "Edited text" }), config)); // (7)!
   // > { someText: 'Edited text' }
 ```
-  
+
   1. `interrupt(...)` pauses execution at `humanNode`, surfacing the given payload to a human.
   2. Any JSON serializable value can be passed to the `interrupt` function. Here, an object containing the text to revise.
   3. Once resumed, the return value of `interrupt(...)` is the human-provided input, which is used to update the state.
@@ -133,17 +133,17 @@ console.log(await graph.invoke(new Command({ resume: "Edited text" }), config));
 </Accordion>
 
 <Tip>
-  **New in 0.4.0**
+**New in 0.4.0**
 
-  
-  `__interrupt__` is a special key that will be returned when running the graph if the graph is interrupted. Support for `__interrupt__` in `invoke` has been added in version 0.4.0. If you're on an older version, you will only see `__interrupt__` in the result if you use `stream`. You can also use `graph.getState(config)` to get the interrupt value(s).
+
+`__interrupt__` is a special key that will be returned when running the graph if the graph is interrupted. Support for `__interrupt__` in `invoke` has been added in version 0.4.0. If you're on an older version, you will only see `__interrupt__` in the result if you use `stream`. You can also use `graph.getState(config)` to get the interrupt value(s).
 
 </Tip>
 
 <Warning>
 
-  
-  Interrupts are both powerful and ergonomic, but it's important to note that they do not automatically resume execution from the interrupt point. Instead, they rerun the entire where the interrupt was used. For this reason, interrupts are typically best placed at the state of a node or in a dedicated node.
+
+Interrupts are both powerful and ergonomic, but it's important to note that they do not automatically resume execution from the interrupt point. Instead, they rerun the entire where the interrupt was used. For this reason, interrupts are typically best placed at the state of a node or in a dedicated node.
 
 </Warning>
 
@@ -227,7 +227,7 @@ await graph.invoke(new Command({ resume: true }), threadConfig);
 
 <Accordion title="Extended example: approve or reject with interrupt">
 
-  
+
   ```typescript
   import { z } from "zod/v4";
   import { v4 as uuidv4 } from "uuid";
@@ -239,25 +239,25 @@ await graph.invoke(new Command({ resume: true }), threadConfig);
     Command,
     MemorySaver
   } from "@langchain/langgraph";
-  
+
   // Define the shared graph state
   const StateAnnotation = z.object({
     llmOutput: z.string(),
     decision: z.string(),
   });
-  
+
   // Simulate an LLM output node
   function generateLlmOutput(state: z.infer<typeof StateAnnotation>) {
     return { llmOutput: "This is the generated output." };
   }
-  
+
   // Human approval node
   function humanApproval(state: z.infer<typeof StateAnnotation>): Command {
     const decision = interrupt({
       question: "Do you approve the following output?",
       llmOutput: state.llmOutput
     });
-  
+
     if (decision === "approve") {
       return new Command({
         goto: "approvedPath",
@@ -270,19 +270,19 @@ await graph.invoke(new Command({ resume: true }), threadConfig);
       });
     }
   }
-  
+
   // Next steps after approval
   function approvedNode(state: z.infer<typeof StateAnnotation>) {
     console.log("✅ Approved path taken.");
     return state;
   }
-  
+
   // Alternative path after rejection
   function rejectedNode(state: z.infer<typeof StateAnnotation>) {
     console.log("❌ Rejected path taken.");
     return state;
   }
-  
+
   // Build the graph
   const builder = new StateGraph(StateAnnotation)
     .addNode("generateLlmOutput", generateLlmOutput)
@@ -295,10 +295,10 @@ await graph.invoke(new Command({ resume: true }), threadConfig);
     .addEdge("generateLlmOutput", "humanApproval")
     .addEdge("approvedPath", END)
     .addEdge("rejectedPath", END);
-  
+
   const checkpointer = new MemorySaver();
   const graph = builder.compile({ checkpointer });
-  
+
   // Run until interrupt
   const config = { configurable: { thread_id: uuidv4() } };
   const result = await graph.invoke({}, config);
@@ -311,7 +311,7 @@ await graph.invoke(new Command({ resume: true }), threadConfig);
   //   },
   //   ...
   // }]
-  
+
   // Simulate resuming with human input
   // To test rejection, replace resume: "approve" with resume: "reject"
   const finalResult = await graph.invoke(
@@ -363,7 +363,7 @@ await graph.invoke(
 
 <Accordion title="Extended example: edit state with interrupt">
 
-  
+
   ```typescript
   import { z } from "zod/v4";
   import { v4 as uuidv4 } from "uuid";
@@ -375,19 +375,19 @@ await graph.invoke(
     Command,
     MemorySaver
   } from "@langchain/langgraph";
-  
+
   // Define the graph state
   const StateAnnotation = z.object({
     summary: z.string(),
   });
-  
+
   // Simulate an LLM summary generation
   function generateSummary(state: z.infer<typeof StateAnnotation>) {
     return {
       summary: "The cat sat on the mat and looked at the stars."
     };
   }
-  
+
   // Human editing node
   function humanReviewEdit(state: z.infer<typeof StateAnnotation>) {
     const result = interrupt({
@@ -398,13 +398,13 @@ await graph.invoke(
       summary: result.editedSummary
     };
   }
-  
+
   // Simulate downstream use of the edited summary
   function downstreamUse(state: z.infer<typeof StateAnnotation>) {
     console.log(`✅ Using edited summary: ${state.summary}`);
     return state;
   }
-  
+
   // Build the graph
   const builder = new StateGraph(StateAnnotation)
     .addNode("generateSummary", generateSummary)
@@ -414,15 +414,15 @@ await graph.invoke(
     .addEdge("generateSummary", "humanReviewEdit")
     .addEdge("humanReviewEdit", "downstreamUse")
     .addEdge("downstreamUse", END);
-  
+
   // Set up in-memory checkpointing for interrupt support
   const checkpointer = new MemorySaver();
   const graph = builder.compile({ checkpointer });
-  
+
   // Invoke the graph until it hits the interrupt
   const config = { configurable: { thread_id: uuidv4() } };
   const result = await graph.invoke({}, config);
-  
+
   // Output interrupt payload
   console.log(result.__interrupt__);
   // Example output:
@@ -434,7 +434,7 @@ await graph.invoke(
   //   resumable: true,
   //   ...
   // }]
-  
+
   // Resume the graph with human-edited input
   const editedSummary = "The cat lay on the rug, gazing peacefully at the night sky.";
   const resumedResult = await graph.invoke(
@@ -740,7 +740,7 @@ graphBuilder.addNode("humanNode", (state) => {
 
 <Accordion title="Extended example: validating user input">
 
-  
+
   ```typescript
   import { z } from "zod/v4";
   import { v4 as uuidv4 } from "uuid";
@@ -752,19 +752,19 @@ graphBuilder.addNode("humanNode", (state) => {
     Command,
     MemorySaver
   } from "@langchain/langgraph";
-  
+
   // Define graph state
   const StateAnnotation = z.object({
     age: z.number(),
   });
-  
+
   // Node that asks for human input and validates it
   function getValidAge(state: z.infer<typeof StateAnnotation>) {
     let prompt = "Please enter your age (must be a non-negative integer).";
-  
+
     while (true) {
       const userInput = interrupt(prompt);
-  
+
       // Validate the input
       try {
         const age = parseInt(userInput as string);
@@ -777,13 +777,13 @@ graphBuilder.addNode("humanNode", (state) => {
       }
     }
   }
-  
+
   // Node that uses the valid input
   function reportAge(state: z.infer<typeof StateAnnotation>) {
     console.log(`✅ Human is ${state.age} years old.`);
     return state;
   }
-  
+
   // Build the graph
   const builder = new StateGraph(StateAnnotation)
     .addNode("getValidAge", getValidAge)
@@ -791,24 +791,24 @@ graphBuilder.addNode("humanNode", (state) => {
     .addEdge(START, "getValidAge")
     .addEdge("getValidAge", "reportAge")
     .addEdge("reportAge", END);
-  
+
   // Create the graph with a memory checkpointer
   const checkpointer = new MemorySaver();
   const graph = builder.compile({ checkpointer });
-  
+
   // Run the graph until the first interrupt
   const config = { configurable: { thread_id: uuidv4() } };
   let result = await graph.invoke({}, config);
   console.log(result.__interrupt__);  // First prompt: "Please enter your age..."
-  
+
   // Simulate an invalid input (e.g., string instead of integer)
   result = await graph.invoke(new Command({ resume: "not a number" }), config);
   console.log(result.__interrupt__);  // Follow-up prompt with validation message
-  
+
   // Simulate a second invalid input (e.g., negative number)
   result = await graph.invoke(new Command({ resume: "-10" }), config);
   console.log(result.__interrupt__);  // Another retry
-  
+
   // Provide valid input
   const finalResult = await graph.invoke(new Command({ resume: "25" }), config);
   console.log(finalResult);  // Should include the valid age
@@ -827,48 +827,48 @@ When using human-in-the-loop, there are some considerations to keep in mind.
 Place code with side effects, such as API calls, after the `interrupt` or in a separate node to avoid duplication, as these are re-triggered every time the node is resumed.
 
 <Tabs>
-  <Tab title="Side effects after interrupt">
+    <Tab title="Side effects after interrupt">
 
 
-    
+
     ```typescript
     import { interrupt } from "@langchain/langgraph";
-    
+
     function humanNode(state: z.infer<typeof StateAnnotation>) {
       // Human node with validation.
-    
+
       const answer = interrupt(question);
-    
+
       apiCall(answer); // OK as it's after the interrupt
     }
     ```
 
 
-  </Tab>
-  <Tab title="Side effects in a separate node">
+    </Tab>
+    <Tab title="Side effects in a separate node">
 
 
-    
+
     ```typescript
     import { interrupt } from "@langchain/langgraph";
-    
+
     function humanNode(state: z.infer<typeof StateAnnotation>) {
       // Human node with validation.
-    
+
       const answer = interrupt(question);
-    
+
       return {
         answer
       };
     }
-    
+
     function apiCallNode(state: z.infer<typeof StateAnnotation>) {
       apiCall(state.answer); // OK as it's in a separate node
     }
     ```
 
 
-  </Tab>
+    </Tab>
 </Tabs>
 
 ### Using with subgraphs called as functions
@@ -891,26 +891,26 @@ async function nodeInParentGraph(state: z.infer<typeof StateAnnotation>) {
 <Accordion title="Extended example: parent and subgraph execution flow">
 
   Say we have a parent graph with 3 nodes:
-  
+
   **Parent Graph**: `node_1` → `node_2` (subgraph call) → `node_3`
-  
+
   And the subgraph has 3 nodes, where the second node contains an `interrupt`:
-  
+
   **Subgraph**: `sub_node_1` → `sub_node_2` (`interrupt`) → `sub_node_3`
-  
+
   When resuming the graph, the execution will proceed as follows:
-  
+
   1. **Skip `node_1`** in the parent graph (already executed, graph state was saved in snapshot).
   2. **Re-execute `node_2`** in the parent graph from the start.
   3. **Skip `sub_node_1`** in the subgraph (already executed, graph state was saved in snapshot).
   4. **Re-execute `sub_node_2`** in the subgraph from the beginning.
   5. Continue with `sub_node_3` and subsequent nodes.
-  
+
   Here is abbreviated example code that you can use to understand how subgraphs work with interrupts.
   It counts the number of times each node is entered and prints the count.
-  
 
-  
+
+
   ```typescript
   import { v4 as uuidv4 } from "uuid";
   import {
@@ -921,23 +921,23 @@ async function nodeInParentGraph(state: z.infer<typeof StateAnnotation>) {
     MemorySaver
   } from "@langchain/langgraph";
   import { z } from "zod/v4";
-  
+
   const StateAnnotation = z.object({
     stateCounter: z.number(),
   });
-  
+
   // Global variable to track the number of attempts
   let counterNodeInSubgraph = 0;
-  
+
   function nodeInSubgraph(state: z.infer<typeof StateAnnotation>) {
     // A node in the sub-graph.
     counterNodeInSubgraph += 1; // This code will **NOT** run again!
     console.log(`Entered 'nodeInSubgraph' a total of ${counterNodeInSubgraph} times`);
     return {};
   }
-  
+
   let counterHumanNode = 0;
-  
+
   function humanNode(state: z.infer<typeof StateAnnotation>) {
     counterHumanNode += 1; // This code will run again!
     console.log(`Entered humanNode in sub-graph a total of ${counterHumanNode} times`);
@@ -945,58 +945,58 @@ async function nodeInParentGraph(state: z.infer<typeof StateAnnotation>) {
     console.log(`Got an answer of ${answer}`);
     return {};
   }
-  
+
   const checkpointer = new MemorySaver();
-  
+
   const subgraphBuilder = new StateGraph(StateAnnotation)
     .addNode("someNode", nodeInSubgraph)
     .addNode("humanNode", humanNode)
     .addEdge(START, "someNode")
     .addEdge("someNode", "humanNode");
   const subgraph = subgraphBuilder.compile({ checkpointer });
-  
+
   let counterParentNode = 0;
-  
+
   async function parentNode(state: z.infer<typeof StateAnnotation>) {
     // This parent node will invoke the subgraph.
     counterParentNode += 1; // This code will run again on resuming!
     console.log(`Entered 'parentNode' a total of ${counterParentNode} times`);
-  
+
     // Please note that we're intentionally incrementing the state counter
     // in the graph state as well to demonstrate that the subgraph update
     // of the same key will not conflict with the parent graph (until
     const subgraphState = await subgraph.invoke(state);
     return subgraphState;
   }
-  
+
   const builder = new StateGraph(StateAnnotation)
     .addNode("parentNode", parentNode)
     .addEdge(START, "parentNode");
-  
+
   // A checkpointer must be enabled for interrupts to work!
   const graph = builder.compile({ checkpointer });
-  
+
   const config = {
     configurable: {
       thread_id: uuidv4(),
     }
   };
-  
+
   const stream = await graph.stream({ stateCounter: 1 }, config);
   for await (const chunk of stream) {
     console.log(chunk);
   }
-  
+
   console.log('--- Resuming ---');
-  
+
   const resumeStream = await graph.stream(new Command({ resume: "35" }), config);
   for await (const chunk of resumeStream) {
     console.log(chunk);
   }
   ```
-  
+
   This will print out
-  
+
   ```
   Entered 'parentNode' a total of 1 times
   Entered 'nodeInSubgraph' a total of 1 times

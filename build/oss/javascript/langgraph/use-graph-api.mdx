@@ -22,8 +22,8 @@ npm install @langchain/langgraph
 
 
 <Tip>
-  **Set up LangSmith for better debugging**
-  Sign up for [LangSmith](https://smith.langchain.com) to quickly spot issues and improve the performance of your LangGraph projects. LangSmith lets you use trace data to debug, test, and monitor your LLM apps built with LangGraph — read more about how to get started in the [docs](https://docs.smith.langchain.com).
+**Set up LangSmith for better debugging**
+Sign up for [LangSmith](https://smith.langchain.com) to quickly spot issues and improve the performance of your LangGraph projects. LangSmith lets you use trace data to debug, test, and monitor your LLM apps built with LangGraph — read more about how to get started in the [docs](https://docs.smith.langchain.com).
 </Tip>
 
 ## Define and update state
@@ -81,7 +81,7 @@ This node simply appends a message to our message list, and populates an extra f
 
 
 <Warning>
-  Nodes should return updates to the state directly, instead of mutating the state.
+Nodes should return updates to the state directly, instead of mutating the state.
 </Warning>
 
 
@@ -486,9 +486,9 @@ console.log(await graph.invoke({}, { context: { myRuntimeValue: "b" } }));
 
 <Accordion title="Extended example: specifying LLM at runtime">
 
-  
+
   Below we demonstrate a practical example in which we configure what LLM to use at runtime. We will use both OpenAI and Anthropic models.
-  
+
   ```typescript
   import { ChatOpenAI } from "@langchain/openai";
   import { ChatAnthropic } from "@langchain/anthropic";
@@ -537,7 +537,7 @@ console.log(await graph.invoke({}, { context: { myRuntimeValue: "b" } }));
   console.log(response1.messages.at(-1)?.response_metadata?.model);
   console.log(response2.messages.at(-1)?.response_metadata?.model);
   ```
-  
+
   ```
   claude-3-5-haiku-20241022
   gpt-4o-mini-2024-07-18
@@ -547,9 +547,9 @@ console.log(await graph.invoke({}, { context: { myRuntimeValue: "b" } }));
 
 <Accordion title="Extended example: specifying model and system message at runtime">
 
-  
+
   Below we demonstrate a practical example in which we configure two parameters: the LLM and system message to use at runtime.
-  
+
   ```typescript
   import { ChatOpenAI } from "@langchain/openai";
   import { ChatAnthropic } from "@langchain/anthropic";
@@ -557,7 +557,7 @@ console.log(await graph.invoke({}, { context: { myRuntimeValue: "b" } }));
   import { MessagesZodMeta, StateGraph, START, END } from "@langchain/langgraph";
   import { registry } from "@langchain/langgraph/zod";
   import { z } from "zod/v4";
-  
+
   const ConfigSchema = z.object({
     modelProvider: z.string().default("anthropic"),
     systemMessage: z.string().optional(),
@@ -568,31 +568,31 @@ console.log(await graph.invoke({}, { context: { myRuntimeValue: "b" } }));
       .array(z.custom<BaseMessage>())
       .register(registry, MessagesZodMeta),
   });
-  
+
   const MODELS = {
     anthropic: new ChatAnthropic({ model: "claude-3-5-haiku-latest" }),
     openai: new ChatOpenAI({ model: "gpt-4o-mini" }),
   };
-  
+
   const graph = new StateGraph(MessagesZodState, ConfigSchema)
     .addNode("model", async (state, config) => {
       const modelProvider = config?.configurable?.modelProvider || "anthropic";
       const systemMessage = config?.configurable?.systemMessage;
-      
+
       const model = MODELS[modelProvider as keyof typeof MODELS];
       let messages = state.messages;
-      
+
       if (systemMessage) {
         messages = [new SystemMessage(systemMessage), ...messages];
       }
-      
+
       const response = await model.invoke(messages);
       return { messages: [response] };
     })
     .addEdge(START, "model")
     .addEdge("model", END)
     .compile();
-  
+
   // Usage
   const inputMessage = { role: "user", content: "hi" };
   const response = await graph.invoke(
@@ -604,12 +604,12 @@ console.log(await graph.invoke({}, { context: { myRuntimeValue: "b" } }));
       }
     }
   );
-  
+
   for (const message of response.messages) {
     console.log(`${message.getType()}: ${message.content}`);
   }
   ```
-  
+
   ```
   human: hi
   ai: Ciao! Come posso aiutarti oggi?
@@ -642,9 +642,9 @@ By default, the retry policy retries on any exception except for the following:
 
 <Accordion title="Extended example: customizing retry policies">
 
-  
+
   Consider an example in which we are reading from a SQL database. Below we pass two different retry policies to nodes:
-  
+
   ```typescript
   import Database from "better-sqlite3";
   import { ChatAnthropic } from "@langchain/anthropic";
@@ -658,25 +658,25 @@ By default, the retry policy retries on any exception except for the following:
       .array(z.custom<BaseMessage>())
       .register(registry, MessagesZodMeta),
   });
-  
+
   // Create an in-memory database
   const db: typeof Database.prototype = new Database(":memory:");
-  
+
   const model = new ChatAnthropic({ model: "claude-3-5-sonnet-20240620" });
-  
+
   const callModel = async (state: z.infer<typeof MessagesZodState>) => {
     const response = await model.invoke(state.messages);
     return { messages: [response] };
   };
-  
+
   const queryDatabase = async (state: z.infer<typeof MessagesZodState>) => {
     const queryResult: string = JSON.stringify(
       db.prepare("SELECT * FROM Artist LIMIT 10;").all(),
     );
-  
+
     return { messages: [new AIMessage({ content: "queryResult" })] };
   };
-  
+
   const workflow = new StateGraph(MessagesZodState)
     // Define the two nodes we will cycle between
     .addNode("call_model", callModel, { retryPolicy: { maxAttempts: 5 } })
@@ -694,7 +694,7 @@ By default, the retry policy retries on any exception except for the following:
     .addEdge(START, "call_model")
     .addEdge("call_model", "query_database")
     .addEdge("query_database", END);
-  
+
   const graph = workflow.compile();
   ```
 
@@ -705,8 +705,8 @@ By default, the retry policy retries on any exception except for the following:
 ## Create a sequence of steps
 
 <Info>
-  **Prerequisites**
-  This guide assumes familiarity with the above section on [state](#define-and-update-state).
+**Prerequisites**
+This guide assumes familiarity with the above section on [state](#define-and-update-state).
 </Info>
 
 Here we demonstrate how to construct a simple sequence of steps. We will show:
@@ -787,9 +787,9 @@ const step3 = (state: z.infer<typeof State>) => {
 
 
 <Note>
-  Note that when issuing updates to the state, each node can just specify the value of the key it wishes to update.
-  
-  By default, this will **overwrite** the value of the corresponding key. You can also use [reducers](/oss/javascript/langgraph/graph-api#reducers) to control how updates are processed— for example, you can append successive updates to a key instead. See [this section](#process-state-updates-with-reducers) for more detail.
+Note that when issuing updates to the state, each node can just specify the value of the key it wishes to update.
+
+By default, this will **overwrite** the value of the corresponding key. You can also use [reducers](/oss/javascript/langgraph/graph-api#reducers) to control how updates are processed— for example, you can append successive updates to a key instead. See [this section](#process-state-updates-with-reducers) for more detail.
 </Note>
 
 Finally, we define the graph. We use [StateGraph](/oss/javascript/langgraph/graph-api#stategraph) to define a graph that operates on this state.
@@ -815,14 +815,14 @@ const graph = new StateGraph(State)
 
 
 <Tip>
-  **Specifying custom names**
-  You can specify custom names for nodes using `.addNode`:
-  
-  ```typescript
-  const graph = new StateGraph(State)
-    .addNode("myNode", step1)
-    .compile();
-  ```
+**Specifying custom names**
+You can specify custom names for nodes using `.addNode`:
+
+```typescript
+const graph = new StateGraph(State)
+.addNode("myNode", step1)
+.compile();
+```
 </Tip>
 
 
@@ -969,33 +969,33 @@ Adding "D" to ['A', 'B', 'C']
 
 
 <Note>
-  In the above example, nodes `"b"` and `"c"` are executed concurrently in the same [superstep](/oss/javascript/langgraph/graph-api#graphs). Because they are in the same step, node `"d"` executes after both `"b"` and `"c"` are finished.
-  
-  Importantly, updates from a parallel superstep may not be ordered consistently. If you need a consistent, predetermined ordering of updates from a parallel superstep, you should write the outputs to a separate field in the state together with a value with which to order them.
+In the above example, nodes `"b"` and `"c"` are executed concurrently in the same [superstep](/oss/javascript/langgraph/graph-api#graphs). Because they are in the same step, node `"d"` executes after both `"b"` and `"c"` are finished.
+
+Importantly, updates from a parallel superstep may not be ordered consistently. If you need a consistent, predetermined ordering of updates from a parallel superstep, you should write the outputs to a separate field in the state together with a value with which to order them.
 </Note>
 
 <Accordion title="Exception handling?">
   LangGraph executes nodes within [supersteps](/oss/javascript/langgraph/graph-api#graphs), meaning that while parallel branches are executed in parallel, the entire superstep is **transactional**. If any of these branches raises an exception, **none** of the updates are applied to the state (the entire superstep errors).
-  
+
   Importantly, when using a [checkpointer](/oss/javascript/langgraph/persistence), results from successful nodes within a superstep are saved, and don't repeat when resumed.
-  
+
   If you have error-prone (perhaps want to handle flakey API calls), LangGraph provides two ways to address this:
-  
+
   1. You can write regular python code within your node to catch and handle exceptions.
   2. You can set a **[retry_policy](https://langchain-ai.github.io/langgraph/reference/types/#langgraph.types.RetryPolicy)** to direct the graph to retry nodes that raise certain types of exceptions. Only failing branches are retried, so you needn't worry about performing redundant work.
-  
+
   Together, these let you perform parallel execution and fully control exception handling.
 </Accordion>
 
 
 
 <Tip>
-  **Set max concurrency**
-  You can control the maximum number of concurrent tasks by setting `max_concurrency` in the [configuration](https://langchain-ai.github.io/langgraphjs/reference/interfaces/langgraph.LangGraphRunnableConfig.html) when invoking the graph.
-  
-  ```typescript
-  const result = await graph.invoke({ value1: "c" }, {configurable: {max_concurrency: 10}});
-  ```
+**Set max concurrency**
+You can control the maximum number of concurrent tasks by setting `max_concurrency` in the [configuration](https://langchain-ai.github.io/langgraphjs/reference/interfaces/langgraph.LangGraphRunnableConfig.html) when invoking the graph.
+
+```typescript
+const result = await graph.invoke({ value1: "c" }, {configurable: {max_concurrency: 10}});
+```
 </Tip>
 
 
@@ -1050,7 +1050,7 @@ const conditionalEdge = (state: z.infer<typeof State>): "b" | "c" => {
 };
 
 const graph = new StateGraph(State)
-  .addNode("a", nodeA)  
+  .addNode("a", nodeA)
   .addNode("b", nodeB)
   .addNode("c", nodeC)
   .addEdge(START, "a")
@@ -1083,18 +1083,18 @@ Adding "C" to ['A']
 
 
 <Tip>
-  Your conditional edges can route to multiple destination nodes. For example:
-  
+Your conditional edges can route to multiple destination nodes. For example:
 
-  
-  ```typescript
-  const routeBcOrCd = (state: z.infer<typeof State>): string[] => {
-    if (state.which === "cd") {
-      return ["c", "d"];
-    }
-    return ["b", "c"];
-  };
-  ```
+
+
+```typescript
+const routeBcOrCd = (state: z.infer<typeof State>): string[] => {
+if (state.which === "cd") {
+return ["c", "d"];
+}
+return ["b", "c"];
+};
+```
 
 </Tip>
 
@@ -1187,7 +1187,7 @@ You can also set the graph recursion limit when invoking or streaming the graph.
 Let's consider a simple graph with a loop to better understand how these mechanisms work.
 
 <Tip>
-  To return the last value of your state instead of receiving a recursion limit error, see the [next section](#impose-a-recursion-limit).
+To return the last value of your state instead of receiving a recursion limit error, see the [next section](#impose-a-recursion-limit).
 </Tip>
 
 When creating a loop, you can include a conditional edge that specifies a termination condition:
@@ -1385,7 +1385,7 @@ const State = z.object({
 const nodeA = (state: z.infer<typeof State>): Command => {
   console.log("Called A");
   const value = Math.random() > 0.5 ? "b" : "c";
-  // this is a replacement for a conditional edge function  
+  // this is a replacement for a conditional edge function
   const goto = value === "b" ? "nodeB" : "nodeC";
 
   // note how Command allows you to BOTH update the graph state AND route to the next node
@@ -1422,7 +1422,7 @@ const graph = new StateGraph(State)
 ```
 
 <Warning>
-  You might have noticed that we used `ends` to specify which nodes `nodeA` can navigate to. This is necessary for the graph rendering and tells LangGraph that `nodeA` can navigate to `nodeB` and `nodeC`.
+You might have noticed that we used `ends` to specify which nodes `nodeA` can navigate to. This is necessary for the graph rendering and tells LangGraph that `nodeA` can navigate to `nodeB` and `nodeC`.
 </Warning>
 
 ```typescript
@@ -1469,8 +1469,8 @@ const myNode = (state: State): Command => {
 Let's demonstrate this using the above example. We'll do so by changing `nodeA` in the above example into a single-node graph that we'll add as a subgraph to our parent graph.
 
 <Warning>
-  **State updates with `Command.PARENT`**
-  When you send updates from a subgraph node to a parent graph node for a key that's shared by both parent and subgraph [state schemas](/oss/javascript/langgraph/graph-api#schema), you **must** define a [reducer](/oss/javascript/langgraph/graph-api#reducers) for the key you're updating in the parent graph state. See the example below.
+**State updates with `Command.PARENT`**
+When you send updates from a subgraph node to a parent graph node for a key that's shared by both parent and subgraph [state schemas](/oss/javascript/langgraph/graph-api#schema), you **must** define a [reducer](/oss/javascript/langgraph/graph-api#reducers) for the key you're updating in the parent graph state. See the example below.
 </Warning>
 
 
@@ -1492,7 +1492,7 @@ const State = z.object({
 const nodeA = (state: z.infer<typeof State>) => {
   console.log("Called A");
   const value = Math.random() > 0.5 ? "nodeB" : "nodeC";
-  
+
   // note how Command allows you to BOTH update the graph state AND route to the next node
   return new Command({
     update: { foo: "a" },
@@ -1579,7 +1579,7 @@ const lookupUserInfo = tool(
 
 
 <Warning>
-  You MUST include `messages` (or any state key used for the message history) in `Command.update` when returning `Command` from a tool and the list of messages in `messages` MUST contain a `ToolMessage`. This is necessary for the resulting message history to be valid (LLM providers require AI messages with tool calls to be followed by the tool result messages).
+You MUST include `messages` (or any state key used for the message history) in `Command.update` when returning `Command` from a tool and the list of messages in `messages` MUST contain a `ToolMessage`. This is necessary for the resulting message history to be valid (LLM providers require AI messages with tool calls to be followed by the tool result messages).
 </Warning>
 
 If you are using tools that update state via `Command`, we recommend using prebuilt [`ToolNode`](https://langchain-ai.github.io/langgraph/reference/agents/#langgraph.prebuilt.tool_node.ToolNode) which automatically handles tools returning `Command` objects and propagates them to the graph state. If you're writing a custom node that calls tools, you would need to manually propagate `Command` objects returned by the tools as the update from the node.

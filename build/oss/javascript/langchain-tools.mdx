@@ -107,8 +107,8 @@ const toolNode = new ToolNode([searchDatabase, calculate], {
   Controls how tool execution failures are handled.
   Can be:
     - `boolean`
-    - `((error: unknown, toolCall: ToolCall) => ToolMessage | undefined)`
-  
+        - `((error: unknown, toolCall: ToolCall) => ToolMessage | undefined)`
+
   See [Error handling strategies](#error-handling-strategies) below for details.
   Default: `true`
 </ParamField>
@@ -166,7 +166,7 @@ const searchDatabase = tool(
     schema: z.object({
       query: z.string().describe("The query to search the database with")
     })
-  }   
+  }
 );
 
 const sendEmail = tool(
@@ -230,7 +230,7 @@ import { ToolNode, createAgent } from "langchain"
 const getUserName = tool(
   (_, config) => {
     return config.context.user_name
-  }, 
+  },
   {
     name: "get_user_name",
     description: "Get the user's name.",
@@ -261,7 +261,7 @@ const result = await agent.invoke(
 ### Accessing long-term memory inside a tool
 
 <Info>
-**`store`**: LangChain's persistence layer. An agent's long-term memory store, e.g. user-specific or application-specific data stored across conversations. 
+**`store`**: LangChain's persistence layer. An agent's long-term memory store, e.g. user-specific or application-specific data stored across conversations.
 </Info>
 
 

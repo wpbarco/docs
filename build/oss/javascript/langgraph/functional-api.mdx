@@ -4,7 +4,7 @@ sidebarTitle: Overview
 ---
 
 import AlphaCallout from '/snippets/alpha-lg-callout.mdx';
-  
+
 <AlphaCallout />
 
 The **Functional API** allows you to add LangGraph's key features — [persistence](/oss/javascript/langgraph/persistence), [memory](/oss/javascript/langgraph/add-memory), [human-in-the-loop](/oss/javascript/langgraph/human-in-the-loop), and [streaming](/oss/javascript/langgraph/streaming) — to your applications with minimal changes to your existing code.
@@ -16,13 +16,13 @@ The Functional API uses two key building blocks:
 
 
 * **`entrypoint`** – An entrypoint encapsulates workflow logic and manages execution flow, including handling long-running tasks and interrupts.
-* **`task`** – Represents a discrete unit of work, such as an API call or data processing step, that can be executed asynchronously within an entrypoint. Tasks return a future-like object that can be awaited or resolved synchronously.  
+* **`task`** – Represents a discrete unit of work, such as an API call or data processing step, that can be executed asynchronously within an entrypoint. Tasks return a future-like object that can be awaited or resolved synchronously.
 
 
 This provides a minimal abstraction for building workflows with state management and streaming.
 
 <Tip>
-  For information on how to use the functional API, see [Use Functional API](/oss/javascript/langgraph/use-functional-api).
+For information on how to use the functional API, see [Use Functional API](/oss/javascript/langgraph/use-functional-api).
 </Tip>
 
 ## Functional API vs. Graph API
@@ -76,21 +76,21 @@ const workflow = entrypoint(
 
 <Accordion title="Detailed Explanation">
   This workflow will write an essay about the topic "cat" and then pause to get a review from a human. The workflow can be interrupted for an indefinite amount of time until a review is provided.
-  
-  When the workflow is resumed, it executes from the very start, but because the result of the `writeEssay` task was already saved, the task result will be loaded from the checkpoint instead of being recomputed.
-  
 
-  
+  When the workflow is resumed, it executes from the very start, but because the result of the `writeEssay` task was already saved, the task result will be loaded from the checkpoint instead of being recomputed.
+
+
+
   ```typescript
   import { v4 as uuidv4 } from "uuid";
   import { MemorySaver, entrypoint, task, interrupt } from "@langchain/langgraph";
-  
+
   const writeEssay = task("writeEssay", async (topic: string) => {
     // This is a placeholder for a long-running task.
     await new Promise(resolve => setTimeout(resolve, 1000));
     return `An essay about topic: ${topic}`;
   });
-  
+
   const workflow = entrypoint(
     { checkpointer: new MemorySaver(), name: "workflow" },
     async (topic: string) => {
@@ -104,27 +104,27 @@ const workflow = entrypoint(
         // For example, introduce a key called "action" with some instructions.
         action: "Please approve/reject the essay",
       });
-  
+
       return {
         essay, // The essay that was generated
         isApproved, // Response from HIL
       };
     }
   );
-  
+
   const threadId = uuidv4();
-  
+
   const config = {
     configurable: {
       thread_id: threadId
     }
   };
-  
+
   for await (const item of workflow.stream("cat", config)) {
     console.log(item);
   }
   ```
-  
+
   ```console
   { writeEssay: 'An essay about topic: cat' }
   {
@@ -136,25 +136,25 @@ const workflow = entrypoint(
     }]
   }
   ```
-  
+
   An essay has been written and is ready for review. Once the review is provided, we can resume the workflow:
-  
+
   ```typescript
   import { Command } from "@langchain/langgraph";
-  
+
   // Get review from a user (e.g., via a UI)
   // In this case, we're using a bool, but this can be any json-serializable value.
   const humanReview = true;
-  
+
   for await (const item of workflow.stream(new Command({ resume: humanReview }), config)) {
     console.log(item);
   }
   ```
-  
+
   ```console
   { workflow: { essay: 'An essay about topic: cat', isApproved: true } }
   ```
-  
+
   The workflow has been completed and the review has been added to the essay.
 
 </Accordion>
@@ -193,8 +193,8 @@ const myWorkflow = entrypoint(
 
 
 <Warning>
-  **Serialization**
-  The **inputs** and **outputs** of entrypoints must be JSON-serializable to support checkpointing. Please see the [serialization](#serialization) section for more details.
+**Serialization**
+The **inputs** and **outputs** of entrypoints must be JSON-serializable to support checkpointing. Please see the [serialization](#serialization) section for more details.
 </Warning>
 
 
@@ -206,7 +206,7 @@ const myWorkflow = entrypoint(
 Using the [`entrypoint`](#entrypoint) function will return an object that can be executed using the `invoke` and `stream` methods.
 
 <Tabs>
-  <Tab title="Invoke">
+    <Tab title="Invoke">
     ```typescript
     const config = {
       configurable: {
@@ -215,20 +215,20 @@ Using the [`entrypoint`](#entrypoint) function will return an object that can be
     };
     await myWorkflow.invoke(someInput, config); // Wait for the result
     ```
-  </Tab>
-  <Tab title="Stream">
+    </Tab>
+    <Tab title="Stream">
     ```typescript
     const config = {
       configurable: {
         thread_id: "some_thread_id"
       }
     };
-    
+
     for await (const chunk of myWorkflow.stream(someInput, config)) {
       console.log(chunk);
     }
     ```
-  </Tab>
+    </Tab>
 </Tabs>
 
 
@@ -239,39 +239,39 @@ Using the [`entrypoint`](#entrypoint) function will return an object that can be
 Resuming an execution after an [interrupt](https://langchain-ai.github.io/langgraphjs/reference/functions/langgraph.interrupt-2.html) can be done by passing a **resume** value to the [`Command`](https://langchain-ai.github.io/langgraphjs/reference/classes/langgraph.Command.html) primitive.
 
 <Tabs>
-  <Tab title="Invoke">
+    <Tab title="Invoke">
     ```typescript
     import { Command } from "@langchain/langgraph";
-    
+
     const config = {
       configurable: {
         thread_id: "some_thread_id"
       }
     };
-    
+
     await myWorkflow.invoke(new Command({ resume: someResumeValue }), config);
     ```
-  </Tab>
-  <Tab title="Stream">
+    </Tab>
+    <Tab title="Stream">
     ```typescript
     import { Command } from "@langchain/langgraph";
-    
+
     const config = {
       configurable: {
         thread_id: "some_thread_id"
       }
     };
-    
+
     const stream = await myWorkflow.stream(
       new Command({ resume: someResumableValue }),
       config,
     )
-    
+
     for await (const chunk of stream) {
       console.log(chunk);
     }
     ```
-  </Tab>
+    </Tab>
 </Tabs>
 
 
@@ -284,30 +284,30 @@ To resume after an error, run the `entrypoint` with `null` and the same **thread
 This assumes that the underlying **error** has been resolved and execution can proceed successfully.
 
 <Tabs>
-  <Tab title="Invoke">
+    <Tab title="Invoke">
     ```typescript
     const config = {
       configurable: {
         thread_id: "some_thread_id"
       }
     };
-    
+
     await myWorkflow.invoke(null, config);
     ```
-  </Tab>
-  <Tab title="Stream">
+    </Tab>
+    <Tab title="Stream">
     ```typescript
     const config = {
       configurable: {
         thread_id: "some_thread_id"
       }
     };
-    
+
     for await (const chunk of myWorkflow.stream(null, config)) {
       console.log(chunk);
     }
     ```
-  </Tab>
+    </Tab>
 </Tabs>
 
 
@@ -403,8 +403,8 @@ const slowComputation = task("slowComputation", async (inputValue: any) => {
 
 
 <Warning>
-  **Serialization**
-  The **outputs** of tasks must be JSON-serializable to support checkpointing.
+**Serialization**
+The **outputs** of tasks must be JSON-serializable to support checkpointing.
 </Warning>
 
 ### Execution
@@ -472,15 +472,15 @@ Idempotency ensures that running the same operation multiple times produces the 
 Encapsulate side effects (e.g., writing to a file, sending an email) in tasks to ensure they are not executed multiple times when resuming a workflow.
 
 <Tabs>
-  <Tab title="Incorrect">
+    <Tab title="Incorrect">
     In this example, a side effect (writing to a file) is directly included in the workflow, so it will be executed a second time when resuming the workflow.
-    
 
-    
+
+
     ```typescript
     import { entrypoint, interrupt } from "@langchain/langgraph";
     import fs from "fs";
-    
+
     const myWorkflow = entrypoint(
       { checkpointer, name: "workflow },
       async (inputs: Record<string, any>) => {
@@ -493,20 +493,20 @@ Encapsulate side effects (e.g., writing to a file, sending an email) in tasks to
     );
     ```
 
-  </Tab>
-  <Tab title="Correct">
+    </Tab>
+    <Tab title="Correct">
     In this example, the side effect is encapsulated in a task, ensuring consistent execution upon resumption.
-    
 
-    
+
+
     ```typescript
     import { entrypoint, task, interrupt } from "@langchain/langgraph";
     import * as fs from "fs";
-    
+
     const writeToFile = task("writeToFile", async () => {
       fs.writeFileSync("output.txt", "Side effect executed");
     });
-    
+
     const myWorkflow = entrypoint(
       { checkpointer, name: "workflow" },
       async (inputs: Record<string, any>) => {
@@ -518,7 +518,7 @@ Encapsulate side effects (e.g., writing to a file, sending an email) in tasks to
     );
     ```
 
-  </Tab>
+    </Tab>
 </Tabs>
 
 ### Non-deterministic control flow
@@ -538,21 +538,21 @@ If order of execution is not maintained when resuming, one `interrupt` call may 
 Please read the section on [determinism](#determinism) for more details.
 
 <Tabs>
-  <Tab title="Incorrect">
+    <Tab title="Incorrect">
     In this example, the workflow uses the current time to determine which task to execute. This is non-deterministic because the result of the workflow depends on the time at which it is executed.
-    
 
-    
+
+
     ```typescript
     import { entrypoint, interrupt } from "@langchain/langgraph";
-    
+
     const myWorkflow = entrypoint(
       { checkpointer, name: "workflow" },
       async (inputs: { t0: number }) => {
         const t1 = Date.now();
-    
+
         const deltaT = t1 - inputs.t0;
-    
+
         if (deltaT > 1000) {
           const result = await slowTask(1);
           const value = interrupt("question");
@@ -566,24 +566,24 @@ Please read the section on [determinism](#determinism) for more details.
     );
     ```
 
-  </Tab>
-  <Tab title="Correct">
+    </Tab>
+    <Tab title="Correct">
 
-    
+
     In this example, the workflow uses the input `t0` to determine which task to execute. This is deterministic because the result of the workflow depends only on the input.
-    
+
     ```typescript
     import { entrypoint, task, interrupt } from "@langchain/langgraph";
-    
+
     const getTime = task("getTime", () => Date.now());
-    
+
     const myWorkflow = entrypoint(
       { checkpointer, name: "workflow" },
       async (inputs: { t0: number }): Promise<any> => {
         const t1 = await getTime();
-    
+
         const deltaT = t1 - inputs.t0;
-    
+
         if (deltaT > 1000) {
           const result = await slowTask(1);
           const value = interrupt("question");
@@ -597,5 +597,5 @@ Please read the section on [determinism](#determinism) for more details.
     );
     ```
 
-  </Tab>
+    </Tab>
 </Tabs>

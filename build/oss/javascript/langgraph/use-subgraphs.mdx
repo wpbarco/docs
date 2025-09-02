@@ -23,8 +23,8 @@ npm install @langchain/langgraph
 
 
 <Tip>
-  **Set up LangSmith for LangGraph development**
-  Sign up for [LangSmith](https://smith.langchain.com) to quickly spot issues and improve the performance of your LangGraph projects. LangSmith lets you use trace data to debug, test, and monitor your LLM apps built with LangGraph — read more about how to get started [here](https://docs.smith.langchain.com).
+**Set up LangSmith for LangGraph development**
+Sign up for [LangSmith](https://smith.langchain.com) to quickly spot issues and improve the performance of your LangGraph projects. LangSmith lets you use trace data to debug, test, and monitor your LLM apps built with LangGraph — read more about how to get started [here](https://docs.smith.langchain.com).
 </Tip>
 
 ## Shared state schemas
@@ -66,17 +66,17 @@ const graph = builder.compile();
 
 <Accordion title="Full example: shared state schemas">
 
-  
+
   ```typescript
   import { StateGraph, START } from "@langchain/langgraph";
   import { z } from "zod/v4";
-  
+
   // Define subgraph
   const SubgraphState = z.object({
-    foo: z.string(),  // (1)! 
+    foo: z.string(),  // (1)!
     bar: z.string(),  // (2)!
   });
-  
+
   const subgraphBuilder = new StateGraph(SubgraphState)
     .addNode("subgraphNode1", (state) => {
       return { bar: "bar" };
@@ -88,14 +88,14 @@ const graph = builder.compile();
     })
     .addEdge(START, "subgraphNode1")
     .addEdge("subgraphNode1", "subgraphNode2");
-  
+
   const subgraph = subgraphBuilder.compile();
-  
+
   // Define parent graph
   const ParentState = z.object({
     foo: z.string(),
   });
-  
+
   const builder = new StateGraph(ParentState)
     .addNode("node1", (state) => {
       return { foo: "hi! " + state.foo };
@@ -103,17 +103,17 @@ const graph = builder.compile();
     .addNode("node2", subgraph)
     .addEdge(START, "node1")
     .addEdge("node1", "node2");
-  
+
   const graph = builder.compile();
-  
+
   for await (const chunk of await graph.stream({ foo: "foo" })) {
     console.log(chunk);
   }
   ```
-  
+
   1. This key is shared with the parent graph state
   2. This key is private to the `SubgraphState` and is not visible to the parent graph
-  
+
   ```
   { node1: { foo: 'hi! foo' } }
   { node2: { foo: 'hi! foobar' } }
@@ -167,18 +167,18 @@ const graph = builder.compile();
 
 <Accordion title="Full example: different state schemas">
 
-  
+
   ```typescript
   import { StateGraph, START } from "@langchain/langgraph";
   import { z } from "zod/v4";
-  
+
   // Define subgraph
   const SubgraphState = z.object({
     // note that none of these keys are shared with the parent graph state
     bar: z.string(),
     baz: z.string(),
   });
-  
+
   const subgraphBuilder = new StateGraph(SubgraphState)
     .addNode("subgraphNode1", (state) => {
       return { baz: "baz" };
@@ -188,14 +188,14 @@ const graph = builder.compile();
     })
     .addEdge(START, "subgraphNode1")
     .addEdge("subgraphNode1", "subgraphNode2");
-  
+
   const subgraph = subgraphBuilder.compile();
-  
+
   // Define parent graph
   const ParentState = z.object({
     foo: z.string(),
   });
-  
+
   const builder = new StateGraph(ParentState)
     .addNode("node1", (state) => {
       return { foo: "hi! " + state.foo };
@@ -206,20 +206,20 @@ const graph = builder.compile();
     })
     .addEdge(START, "node1")
     .addEdge("node1", "node2");
-  
+
   const graph = builder.compile();
-  
+
   for await (const chunk of await graph.stream(
-    { foo: "foo" }, 
+    { foo: "foo" },
     { subgraphs: true }
   )) {
     console.log(chunk);
   }
   ```
-  
+
   1. Transform the state to the subgraph state
   2. Transform response back to the parent state
-  
+
   ```
   [[], { node1: { foo: 'hi! foo' } }]
   [['node2:9c36dd0f-151a-cb42-cbad-fa2f851f9ab7'], { subgraphNode1: { baz: 'baz' } }]
@@ -231,18 +231,18 @@ const graph = builder.compile();
 
 <Accordion title="Full example: different state schemas (two levels of subgraphs)">
   This is an example with two levels of subgraphs: parent -> child -> grandchild.
-  
 
-  
+
+
   ```typescript
   import { StateGraph, START, END } from "@langchain/langgraph";
   import { z } from "zod/v4";
-  
+
   // Grandchild graph
   const GrandChildState = z.object({
     myGrandchildKey: z.string(),
   });
-  
+
   const grandchild = new StateGraph(GrandChildState)
     .addNode("grandchild1", (state) => {
       // NOTE: child or parent keys will not be accessible here
@@ -250,14 +250,14 @@ const graph = builder.compile();
     })
     .addEdge(START, "grandchild1")
     .addEdge("grandchild1", END);
-  
+
   const grandchildGraph = grandchild.compile();
-  
+
   // Child graph
   const ChildState = z.object({
     myChildKey: z.string(),
   });
-  
+
   const child = new StateGraph(ChildState)
     .addNode("child1", async (state) => {
       // NOTE: parent or grandchild keys won't be accessible here
@@ -267,14 +267,14 @@ const graph = builder.compile();
     }) // (3)!
     .addEdge(START, "child1")
     .addEdge("child1", END);
-  
+
   const childGraph = child.compile();
-  
+
   // Parent graph
   const ParentState = z.object({
     myKey: z.string(),
   });
-  
+
   const parent = new StateGraph(ParentState)
     .addNode("parent1", (state) => {
       // NOTE: child or grandchild keys won't be accessible here
@@ -292,24 +292,24 @@ const graph = builder.compile();
     .addEdge("parent1", "child")
     .addEdge("child", "parent2")
     .addEdge("parent2", END);
-  
+
   const parentGraph = parent.compile();
-  
+
   for await (const chunk of await parentGraph.stream(
-    { myKey: "Bob" }, 
+    { myKey: "Bob" },
     { subgraphs: true }
   )) {
     console.log(chunk);
   }
   ```
-  
+
   1. We're transforming the state from the child state channels (`myChildKey`) to the grandchild state channels (`myGrandchildKey`)
   2. We're transforming the state from the grandchild state channels (`myGrandchildKey`) back to the child state channels (`myChildKey`)
   3. We're passing a function here instead of just compiled graph (`grandchildGraph`)
   4. We're transforming the state from the parent state channels (`myKey`) to the child state channels (`myChildKey`)
   5. We're transforming the state from the child state channels (`myChildKey`) back to the parent state channels (`myKey`)
   6. We're passing a function here instead of just a compiled graph (`childGraph`)
-  
+
   ```
   [[], { parent1: { myKey: 'hi Bob' } }]
   [['child:2e26e9ce-602f-862c-aa66-1ea5a4655e3b', 'child1:781bb3b1-3971-84ce-810b-acf819a03f9c'], { grandchild1: { myGrandchildKey: 'hi Bob, how are you' } }]
@@ -320,7 +320,7 @@ const graph = builder.compile();
 
 </Accordion>
 
-## Add persistence 
+## Add persistence
 
 You only need to **provide the checkpointer when compiling the parent graph**. LangGraph will automatically propagate the checkpointer to the child subgraphs.
 
@@ -373,21 +373,21 @@ You can inspect the graph state via `graph.getState(config)`. To view the subgra
 
 
 <Warning>
-  **Available **only** when interrupted**
-  Subgraph state can only be viewed **when the subgraph is interrupted**. Once you resume the graph, you won't be able to access the subgraph state.
+**Available **only** when interrupted**
+Subgraph state can only be viewed **when the subgraph is interrupted**. Once you resume the graph, you won't be able to access the subgraph state.
 </Warning>
 
 <Accordion title="View interrupted subgraph state">
 
-  
+
   ```typescript
   import { StateGraph, START, MemorySaver, interrupt, Command } from "@langchain/langgraph";
   import { z } from "zod/v4";
-  
+
   const State = z.object({
     foo: z.string(),
   });
-  
+
   // Subgraph
   const subgraphBuilder = new StateGraph(State)
     .addNode("subgraphNode1", (state) => {
@@ -395,27 +395,27 @@ You can inspect the graph state via `graph.getState(config)`. To view the subgra
       return { foo: state.foo + value };
     })
     .addEdge(START, "subgraphNode1");
-  
+
   const subgraph = subgraphBuilder.compile();
-  
+
   // Parent graph
   const builder = new StateGraph(State)
     .addNode("node1", subgraph)
     .addEdge(START, "node1");
-  
+
   const checkpointer = new MemorySaver();
   const graph = builder.compile({ checkpointer });
-  
+
   const config = { configurable: { thread_id: "1" } };
-  
+
   await graph.invoke({ foo: "" }, config);
   const parentState = await graph.getState(config);
   const subgraphState = (await graph.getState(config, { subgraphs: true })).tasks[0].state; // (1)!
-  
+
   // resume the subgraph
   await graph.invoke(new Command({ resume: "bar" }), config);
   ```
-  
+
   1. This will be available only when the subgraph is interrupted. Once you resume the graph, you won't be able to access the subgraph state.
 
 </Accordion>
@@ -443,17 +443,17 @@ for await (const chunk of await graph.stream(
 
 <Accordion title="Stream from subgraphs">
 
-  
+
   ```typescript
   import { StateGraph, START } from "@langchain/langgraph";
   import { z } from "zod/v4";
-  
+
   // Define subgraph
   const SubgraphState = z.object({
     foo: z.string(),
     bar: z.string(),
   });
-  
+
   const subgraphBuilder = new StateGraph(SubgraphState)
     .addNode("subgraphNode1", (state) => {
       return { bar: "bar" };
@@ -465,14 +465,14 @@ for await (const chunk of await graph.stream(
     })
     .addEdge(START, "subgraphNode1")
     .addEdge("subgraphNode1", "subgraphNode2");
-  
+
   const subgraph = subgraphBuilder.compile();
-  
+
   // Define parent graph
   const ParentState = z.object({
     foo: z.string(),
   });
-  
+
   const builder = new StateGraph(ParentState)
     .addNode("node1", (state) => {
       return { foo: "hi! " + state.foo };
@@ -480,9 +480,9 @@ for await (const chunk of await graph.stream(
     .addNode("node2", subgraph)
     .addEdge(START, "node1")
     .addEdge("node1", "node2");
-  
+
   const graph = builder.compile();
-  
+
   for await (const chunk of await graph.stream(
     { foo: "foo" },
     {
@@ -493,9 +493,9 @@ for await (const chunk of await graph.stream(
     console.log(chunk);
   }
   ```
-  
+
   1. Set `subgraphs: true` to stream outputs from subgraphs.
-  
+
   ```
   [[], { node1: { foo: 'hi! foo' } }]
   [['node2:e58e5673-a661-ebb0-70d4-e298a7fc28b7'], { subgraphNode1: { bar: 'bar' } }]

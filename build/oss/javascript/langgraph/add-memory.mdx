@@ -51,15 +51,15 @@ const graph = builder.compile({ checkpointer });
 
 <Accordion title="Example: using Postgres checkpointer">
 
-  
+
   ```
   npm install @langchain/langgraph-checkpoint-postgres
   ```
-  
-  <Tip>
+
+    <Tip>
     You need to call `checkpointer.setup()` the first time you're using Postgres checkpointer
-  </Tip>
-  
+    </Tip>
+
   ```typescript
   import { ChatAnthropic } from "@langchain/anthropic";
   import { StateGraph, MessagesZodMeta, START } from "@langchain/langgraph";
@@ -73,35 +73,35 @@ const graph = builder.compile({ checkpointer });
       .array(z.custom<BaseMessage>())
       .register(registry, MessagesZodMeta),
   });
-  
+
   const model = new ChatAnthropic({ model: "claude-3-5-haiku-20241022" });
-  
+
   const DB_URI = "postgresql://postgres:postgres@localhost:5442/postgres?sslmode=disable";
   const checkpointer = PostgresSaver.fromConnString(DB_URI);
   // await checkpointer.setup();
-  
+
   const builder = new StateGraph(MessagesZodState)
     .addNode("call_model", async (state) => {
       const response = await model.invoke(state.messages);
       return { messages: [response] };
     })
     .addEdge(START, "call_model");
-  
+
   const graph = builder.compile({ checkpointer });
-  
+
   const config = {
     configurable: {
       thread_id: "1"
     }
   };
-  
+
   for await (const chunk of await graph.stream(
     { messages: [{ role: "user", content: "hi! I'm bob" }] },
     { ...config, streamMode: "values" }
   )) {
     console.log(chunk.messages.at(-1)?.content);
   }
-  
+
   for await (const chunk of await graph.stream(
     { messages: [{ role: "user", content: "what's my name?" }] },
     { ...config, streamMode: "values" }
@@ -187,15 +187,15 @@ const graph = builder.compile({ store });
 
 <Accordion title="Example: using Postgres store">
 
-  
+
   ```
   npm install @langchain/langgraph-checkpoint-postgres
   ```
-  
-  <Tip>
+
+    <Tip>
     You need to call `store.setup()` the first time you're using Postgres store
-  </Tip>
-  
+    </Tip>
+
   ```typescript
   import { ChatAnthropic } from "@langchain/anthropic";
   import { StateGraph, MessagesZodMeta, START, LangGraphRunnableConfig } from "@langchain/langgraph";
@@ -210,16 +210,16 @@ const graph = builder.compile({ store });
       .array(z.custom<BaseMessage>())
       .register(registry, MessagesZodMeta),
   });
-  
+
   const model = new ChatAnthropic({ model: "claude-3-5-haiku-20241022" });
-  
+
   const DB_URI = "postgresql://postgres:postgres@localhost:5442/postgres?sslmode=disable";
-  
+
   const store = PostgresStore.fromConnString(DB_URI);
   const checkpointer = PostgresSaver.fromConnString(DB_URI);
   // await store.setup();
   // await checkpointer.setup();
-  
+
   const callModel = async (
     state: z.infer<typeof MessagesZodState>,
     config: LangGraphRunnableConfig,
@@ -229,51 +229,51 @@ const graph = builder.compile({ store });
     const memories = await config.store?.search(namespace, { query: state.messages.at(-1)?.content });
     const info = memories?.map(d => d.value.data).join("\n") || "";
     const systemMsg = `You are a helpful assistant talking to the user. User info: ${info}`;
-  
+
     // Store new memories if the user asks the model to remember
     const lastMessage = state.messages.at(-1);
     if (lastMessage?.content?.toLowerCase().includes("remember")) {
       const memory = "User name is Bob";
       await config.store?.put(namespace, uuidv4(), { data: memory });
     }
-  
+
     const response = await model.invoke([
       { role: "system", content: systemMsg },
       ...state.messages
     ]);
     return { messages: [response] };
   };
-  
+
   const builder = new StateGraph(MessagesZodState)
     .addNode("call_model", callModel)
     .addEdge(START, "call_model");
-  
+
   const graph = builder.compile({
     checkpointer,
     store,
   });
-  
+
   const config = {
     configurable: {
       thread_id: "1",
       userId: "1",
     }
   };
-  
+
   for await (const chunk of await graph.stream(
     { messages: [{ role: "user", content: "Hi! Remember: my name is Bob" }] },
     { ...config, streamMode: "values" }
   )) {
     console.log(chunk.messages.at(-1)?.content);
   }
-  
+
   const config2 = {
     configurable: {
       thread_id: "2",
       userId: "1",
     }
   };
-  
+
   for await (const chunk of await graph.stream(
     { messages: [{ role: "user", content: "what is my name?" }] },
     { ...config2, streamMode: "values" }
@@ -317,7 +317,7 @@ const items = await store.search(["user_123", "memories"], {
 
 <Accordion title="Long-term memory with semantic search">
 
-  
+
   ```typescript
   import { OpenAIEmbeddings, ChatOpenAI } from "@langchain/openai";
   import { StateGraph, START, MessagesZodMeta, InMemoryStore } from "@langchain/langgraph";
@@ -330,9 +330,9 @@ const items = await store.search(["user_123", "memories"], {
       .array(z.custom<BaseMessage>())
       .register(registry, MessagesZodMeta),
   });
-  
+
   const llm = new ChatOpenAI({ model: "gpt-4o-mini" });
-  
+
   // Create store with semantic search enabled
   const embeddings = new OpenAIEmbeddings({ model: "text-embedding-3-small" });
   const store = new InMemoryStore({
@@ -341,10 +341,10 @@ const items = await store.search(["user_123", "memories"], {
       dims: 1536,
     }
   });
-  
+
   await store.put(["user_123", "memories"], "1", { text: "I love pizza" });
   await store.put(["user_123", "memories"], "2", { text: "I am a plumber" });
-  
+
   const chat = async (state: z.infer<typeof MessagesZodState>, config) => {
     // Search based on user's last message
     const items = await config.store.search(
@@ -353,20 +353,20 @@ const items = await store.search(["user_123", "memories"], {
     );
     const memories = items.map(item => item.value.text).join("\n");
     const memoriesText = memories ? `## Memories of user\n${memories}` : "";
-  
+
     const response = await llm.invoke([
       { role: "system", content: `You are a helpful assistant.\n${memoriesText}` },
       ...state.messages,
     ]);
-  
+
     return { messages: [response] };
   };
-  
+
   const builder = new StateGraph(MessagesZodState)
     .addNode("chat", chat)
     .addEdge(START, "chat");
   const graph = builder.compile({ store });
-  
+
   for await (const [message, metadata] of await graph.stream(
     { messages: [{ role: "user", content: "I'm hungry" }] },
     { streamMode: "messages" }
@@ -421,7 +421,7 @@ const builder = new StateGraph(MessagesZodState)
 
 <Accordion title="Full example: trim messages">
 
-  
+
   ```typescript
   import { trimMessages, BaseMessage } from "@langchain/core/messages";
   import { ChatAnthropic } from "@langchain/anthropic";
@@ -434,9 +434,9 @@ const builder = new StateGraph(MessagesZodState)
       .array(z.custom<BaseMessage>())
       .register(registry, MessagesZodMeta),
   });
-  
+
   const model = new ChatAnthropic({ model: "claude-3-5-sonnet-20241022" });
-  
+
   const callModel = async (state: z.infer<typeof MessagesZodState>) => {
     const messages = trimMessages(state.messages, {
       strategy: "last",
@@ -448,22 +448,22 @@ const builder = new StateGraph(MessagesZodState)
     const response = await model.invoke(messages);
     return { messages: [response] };
   };
-  
+
   const checkpointer = new MemorySaver();
   const builder = new StateGraph(MessagesZodState)
     .addNode("call_model", callModel)
     .addEdge(START, "call_model");
   const graph = builder.compile({ checkpointer });
-  
+
   const config = { configurable: { thread_id: "1" } };
   await graph.invoke({ messages: [{ role: "user", content: "hi, my name is bob" }] }, config);
   await graph.invoke({ messages: [{ role: "user", content: "write a short poem about cats" }] }, config);
   await graph.invoke({ messages: [{ role: "user", content: "now do the same but for dogs" }] }, config);
   const finalResponse = await graph.invoke({ messages: [{ role: "user", content: "what's my name?" }] }, config);
-  
+
   console.log(finalResponse.messages.at(-1)?.content);
   ```
-  
+
   ```
   Your name is Bob, as you mentioned when you first introduced yourself.
   ```
@@ -498,15 +498,15 @@ const deleteMessages = (state) => {
 
 
 <Warning>
-  When deleting messages, **make sure** that the resulting message history is valid. Check the limitations of the LLM provider you're using. For example:
-  
-  * some providers expect message history to start with a `user` message
-  * most providers require `assistant` messages with tool calls to be followed by corresponding `tool` result messages.
+When deleting messages, **make sure** that the resulting message history is valid. Check the limitations of the LLM provider you're using. For example:
+
+* some providers expect message history to start with a `user` message
+* most providers require `assistant` messages with tool calls to be followed by corresponding `tool` result messages.
 </Warning>
 
 <Accordion title="Full example: delete messages">
 
-  
+
   ```typescript
   import { RemoveMessage, BaseMessage } from "@langchain/core/messages";
   import { ChatAnthropic } from "@langchain/anthropic";
@@ -519,9 +519,9 @@ const deleteMessages = (state) => {
       .array(z.custom<BaseMessage>())
       .register(registry, MessagesZodMeta),
   });
-  
+
   const model = new ChatAnthropic({ model: "claude-3-5-sonnet-20241022" });
-  
+
   const deleteMessages = (state: z.infer<typeof MessagesZodState>) => {
     const messages = state.messages;
     if (messages.length > 2) {
@@ -530,30 +530,30 @@ const deleteMessages = (state) => {
     }
     return {};
   };
-  
+
   const callModel = async (state: z.infer<typeof MessagesZodState>) => {
     const response = await model.invoke(state.messages);
     return { messages: [response] };
   };
-  
+
   const builder = new StateGraph(MessagesZodState)
     .addNode("call_model", callModel)
     .addNode("delete_messages", deleteMessages)
     .addEdge(START, "call_model")
     .addEdge("call_model", "delete_messages");
-  
+
   const checkpointer = new MemorySaver();
   const app = builder.compile({ checkpointer });
-  
+
   const config = { configurable: { thread_id: "1" } };
-  
+
   for await (const event of await app.stream(
     { messages: [{ role: "user", content: "hi! I'm bob" }] },
     { ...config, streamMode: "values" }
   )) {
     console.log(event.messages.map(message => [message.getType(), message.content]));
   }
-  
+
   for await (const event of await app.stream(
     { messages: [{ role: "user", content: "what's my name?" }] },
     { ...config, streamMode: "values" }
@@ -561,7 +561,7 @@ const deleteMessages = (state) => {
     console.log(event.messages.map(message => [message.getType(), message.content]));
   }
   ```
-  
+
   ```
   [['human', "hi! I'm bob"]]
   [['human', "hi! I'm bob"], ['ai', 'Hi Bob! How are you doing today? Is there anything I can help you with?']]
@@ -639,7 +639,7 @@ const summarizeConversation = async (state: z.infer<typeof State>) => {
 
 <Accordion title="Full example: summarize messages">
 
-  
+
   ```typescript
   import { ChatAnthropic } from "@langchain/anthropic";
   import {
@@ -659,9 +659,9 @@ const summarizeConversation = async (state: z.infer<typeof State>) => {
   import { registry } from "@langchain/langgraph/zod";
   import { z } from "zod/v4";
   import { v4 as uuidv4 } from "uuid";
-  
+
   const memory = new MemorySaver();
-  
+
   // We will add a `summary` attribute (in addition to `messages` key,
   // which MessagesZodState already has)
   const GraphState = z.object({
@@ -670,10 +670,10 @@ const summarizeConversation = async (state: z.infer<typeof State>) => {
       .register(registry, MessagesZodMeta),
     summary: z.string().default(""),
   });
-  
+
   // We will use this model for both the conversation and the summarization
   const model = new ChatAnthropic({ model: "claude-3-haiku-20240307" });
-  
+
   // Define the logic to call the model
   const callModel = async (state: z.infer<typeof GraphState>) => {
     // If a summary exists, we add this in as a system message
@@ -690,7 +690,7 @@ const summarizeConversation = async (state: z.infer<typeof State>) => {
     // We return an object, because this will get added to the existing state
     return { messages: [response] };
   };
-  
+
   // We now define the logic for determining whether to end or summarize the conversation
   const shouldContinue = (state: z.infer<typeof GraphState>) => {
     const messages = state.messages;
@@ -701,7 +701,7 @@ const summarizeConversation = async (state: z.infer<typeof State>) => {
     // Otherwise we can just end
     return END;
   };
-  
+
   const summarizeConversation = async (state: z.infer<typeof GraphState>) => {
     // First, we summarize the conversation
     const { summary, messages } = state;
@@ -715,27 +715,27 @@ const summarizeConversation = async (state: z.infer<typeof State>) => {
     } else {
       summaryMessage = "Create a summary of the conversation above:";
     }
-  
+
     const allMessages = [
       ...messages,
       new HumanMessage({ id: uuidv4(), content: summaryMessage }),
     ];
-  
+
     const response = await model.invoke(allMessages);
-  
+
     // We now need to delete messages that we no longer want to show up
     // I will delete all but the last two messages, but you can change this
     const deleteMessages = messages
       .slice(0, -2)
       .map((m) => new RemoveMessage({ id: m.id! }));
-  
+
     if (typeof response.content !== "string") {
       throw new Error("Expected a string response from the model");
     }
-  
+
     return { summary: response.content, messages: deleteMessages };
   };
-  
+
   // Define a new graph
   const workflow = new StateGraph(GraphState)
     // Define the conversation node and the summarize node
@@ -754,7 +754,7 @@ const summarizeConversation = async (state: z.infer<typeof State>) => {
     // We now add a normal edge from `summarize_conversation` to END.
     // This means that after `summarize_conversation` is called, we end.
     .addEdge("summarize_conversation", END);
-  
+
   // Finally, we compile it!
   const app = workflow.compile({ checkpointer: memory });
   ```

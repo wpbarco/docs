@@ -9,7 +9,7 @@ import AlphaCallout from '/snippets/alpha-lg-callout.mdx';
 The [**Functional API**](/oss/javascript/langgraph/functional-api) allows you to add LangGraph's key features — [persistence](/oss/javascript/langgraph/persistence), [memory](/oss/javascript/langgraph/add-memory), [human-in-the-loop](/oss/javascript/langgraph/human-in-the-loop), and [streaming](/oss/javascript/langgraph/streaming) — to your applications with minimal changes to your existing code.
 
 <Tip>
-  For conceptual information on the functional API, see [Functional API](/oss/javascript/langgraph/functional-api).
+For conceptual information on the functional API, see [Functional API](/oss/javascript/langgraph/functional-api).
 </Tip>
 
 ## Creating a simple workflow
@@ -36,24 +36,24 @@ await myWorkflow.invoke({ value: 1, anotherValue: 2 });
 
 <Accordion title="Extended example: simple workflow">
 
-  
+
   ```typescript
   import { v4 as uuidv4 } from "uuid";
   import { entrypoint, task, MemorySaver } from "@langchain/langgraph";
-  
+
   // Task that checks if a number is even
   const isEven = task("isEven", async (number: number) => {
     return number % 2 === 0;
   });
-  
+
   // Task that formats a message
   const formatMessage = task("formatMessage", async (isEven: boolean) => {
     return isEven ? "The number is even." : "The number is odd.";
   });
-  
+
   // Create a checkpointer for persistence
   const checkpointer = new MemorySaver();
-  
+
   const workflow = entrypoint(
     { checkpointer, name: "workflow" },
     async (inputs: { number: number }) => {
@@ -62,7 +62,7 @@ await myWorkflow.invoke({ value: 1, anotherValue: 2 });
       return await formatMessage(even);
     }
   );
-  
+
   // Run the workflow with a unique thread ID
   const config = { configurable: { thread_id: uuidv4() } };
   const result = await workflow.invoke({ number: 7 }, config);
@@ -75,16 +75,16 @@ await myWorkflow.invoke({ value: 1, anotherValue: 2 });
   This example demonstrates how to use the `@task` and `@entrypoint` decorators
   syntactically. Given that a checkpointer is provided, the workflow results will
   be persisted in the checkpointer.
-  
 
-  
+
+
   ```typescript
   import { v4 as uuidv4 } from "uuid";
   import { ChatOpenAI } from "@langchain/openai";
   import { entrypoint, task, MemorySaver } from "@langchain/langgraph";
-  
+
   const llm = new ChatOpenAI({ model: "gpt-3.5-turbo" });
-  
+
   // Task: generate essay using an LLM
   const composeEssay = task("composeEssay", async (topic: string) => {
     // Generate an essay about the given topic
@@ -94,10 +94,10 @@ await myWorkflow.invoke({ value: 1, anotherValue: 2 });
     ]);
     return response.content as string;
   });
-  
+
   // Create a checkpointer for persistence
   const checkpointer = new MemorySaver();
-  
+
   const workflow = entrypoint(
     { checkpointer, name: "workflow" },
     async (topic: string) => {
@@ -105,7 +105,7 @@ await myWorkflow.invoke({ value: 1, anotherValue: 2 });
       return await composeEssay(topic);
     }
   );
-  
+
   // Execute the workflow
   const config = { configurable: { thread_id: uuidv4() } };
   const result = await workflow.invoke("the history of flight", config);
@@ -136,17 +136,17 @@ const graph = entrypoint(
 
 <Accordion title="Extended example: parallel LLM calls">
   This example demonstrates how to run multiple LLM calls in parallel using `@task`. Each call generates a paragraph on a different topic, and results are joined into a single text output.
-  
 
-  
+
+
   ```typescript
   import { v4 as uuidv4 } from "uuid";
   import { ChatOpenAI } from "@langchain/openai";
   import { entrypoint, task, MemorySaver } from "@langchain/langgraph";
-  
+
   // Initialize the LLM model
   const llm = new ChatOpenAI({ model: "gpt-3.5-turbo" });
-  
+
   // Task that generates a paragraph about a given topic
   const generateParagraph = task("generateParagraph", async (topic: string) => {
     const response = await llm.invoke([
@@ -155,10 +155,10 @@ const graph = entrypoint(
     ]);
     return response.content as string;
   });
-  
+
   // Create a checkpointer for persistence
   const checkpointer = new MemorySaver();
-  
+
   const workflow = entrypoint(
     { checkpointer, name: "workflow" },
     async (topics: string[]) => {
@@ -167,14 +167,14 @@ const graph = entrypoint(
       return paragraphs.join("\n\n");
     }
   );
-  
+
   // Run the workflow
   const config = { configurable: { thread_id: uuidv4() } };
   const result = await workflow.invoke(["quantum computing", "climate change", "history of aviation"], config);
   console.log(result);
   ```
 
-  
+
   This example uses LangGraph's concurrency model to improve execution time, especially when tasks involve I/O like LLM completions.
 </Accordion>
 
@@ -210,18 +210,18 @@ const someWorkflow = entrypoint(
 
 <Accordion title="Extended example: calling a simple graph from the functional API">
 
-  
+
   ```typescript
   import { v4 as uuidv4 } from "uuid";
   import { entrypoint, MemorySaver } from "@langchain/langgraph";
   import { StateGraph } from "@langchain/langgraph";
   import { z } from "zod/v4";
-  
+
   // Define the shared state type
   const State = z.object({
     foo: z.number(),
   });
-  
+
   // Build the graph using the Graph API
   const builder = new StateGraph(State)
     .addNode("double", (state) => {
@@ -229,10 +229,10 @@ const someWorkflow = entrypoint(
     })
     .addEdge("__start__", "double");
   const graph = builder.compile();
-  
+
   // Define the functional API workflow
   const checkpointer = new MemorySaver();
-  
+
   const workflow = entrypoint(
     { checkpointer, name: "workflow" },
     async (x: number) => {
@@ -240,7 +240,7 @@ const someWorkflow = entrypoint(
       return { bar: result.foo };
     }
   );
-  
+
   // Execute the workflow
   const config = { configurable: { thread_id: uuidv4() } };
   console.log(await workflow.invoke(5, config)); // Output: { bar: 10 }
@@ -275,14 +275,14 @@ const myWorkflow = entrypoint(
 
 <Accordion title="Extended example: calling another entrypoint">
 
-  
+
   ```typescript
   import { v4 as uuidv4 } from "uuid";
   import { entrypoint, MemorySaver } from "@langchain/langgraph";
-  
+
   // Initialize a checkpointer
   const checkpointer = new MemorySaver();
-  
+
   // A reusable sub-workflow that multiplies a number
   const multiply = entrypoint(
     { name: "multiply" },
@@ -290,7 +290,7 @@ const myWorkflow = entrypoint(
       return inputs.a * inputs.b;
     }
   );
-  
+
   // Main workflow that invokes the sub-workflow
   const main = entrypoint(
     { checkpointer, name: "main" },
@@ -299,7 +299,7 @@ const myWorkflow = entrypoint(
       return { product: result };
     }
   );
-  
+
   // Execute the main workflow
   const config = { configurable: { thread_id: uuidv4() } };
   console.log(await main.invoke({ x: 6, y: 7 }, config)); // Output: { product: 42 }

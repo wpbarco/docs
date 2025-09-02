@@ -31,9 +31,9 @@ The main question when adding subgraphs is how the parent graph and subgraph com
       .array(z.custom<BaseMessage>())
       .register(registry, MessagesZodMeta),
   });
-  
+
   // Subgraph
-  
+
   const subgraphBuilder = new StateGraph(MessagesZodState).addNode(
     "callModel",
     async (state) => {
@@ -43,9 +43,9 @@ The main question when adding subgraphs is how the parent graph and subgraph com
   );
   // ... other nodes and edges
   const subgraph = subgraphBuilder.compile();
-  
+
   // Parent graph
-  
+
   const builder = new StateGraph(MessagesZodState)
     .addNode("subgraphNode", subgraph)
     .addEdge(START, "subgraphNode");
@@ -61,21 +61,21 @@ The main question when adding subgraphs is how the parent graph and subgraph com
   import { BaseMessage } from "@langchain/core/messages";
   import { registry } from "@langchain/langgraph/zod";
   import { z } from "zod/v4";
-  
+
   const MessagesZodState = z.object({
     messages: z
       .array(z.custom<BaseMessage>())
       .register(registry, MessagesZodMeta),
   });
-  
+
   const SubgraphState = z.object({
     subgraphMessages: z
       .array(z.custom<BaseMessage>())
       .register(registry, MessagesZodMeta),
   });
-  
+
   // Subgraph
-  
+
   const subgraphBuilder = new StateGraph(SubgraphState)
     .addNode("callModelFromSubgraph", async (state) => {
       const response = await model.invoke(state.subgraphMessages);
@@ -84,9 +84,9 @@ The main question when adding subgraphs is how the parent graph and subgraph com
     .addEdge(START, "callModelFromSubgraph");
   // ...
   const subgraph = subgraphBuilder.compile();
-  
+
   // Parent graph
-  
+
   const builder = new StateGraph(MessagesZodState)
     .addNode("subgraphNode", async (state) => {
       const response = await subgraph.invoke({

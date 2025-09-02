@@ -57,17 +57,17 @@ While most users will interact with Pregel through the [StateGraph](https://lang
 Below are a few different examples to give you a sense of the Pregel API.
 
 <Tabs>
-  <Tab title="Single node">
+    <Tab title="Single node">
     ```python
     from langgraph.channels import EphemeralValue
     from langgraph.pregel import Pregel, NodeBuilder
-    
+
     node1 = (
         NodeBuilder().subscribe_only("a")
         .do(lambda x: x + x)
         .write_to("b")
     )
-    
+
     app = Pregel(
         nodes={"node1": node1},
         channels={
@@ -77,35 +77,35 @@ Below are a few different examples to give you a sense of the Pregel API.
         input_channels=["a"],
         output_channels=["b"],
     )
-    
+
     app.invoke({"a": "foo"})
     ```
-    
+
     ```con
     {'b': 'foofoo'}
     ```
 
-    
 
-  </Tab>
-  <Tab title="Multiple nodes">
+
+    </Tab>
+    <Tab title="Multiple nodes">
     ```python
     from langgraph.channels import LastValue, EphemeralValue
     from langgraph.pregel import Pregel, NodeBuilder
-    
+
     node1 = (
         NodeBuilder().subscribe_only("a")
         .do(lambda x: x + x)
         .write_to("b")
     )
-    
+
     node2 = (
         NodeBuilder().subscribe_only("b")
         .do(lambda x: x + x)
         .write_to("c")
     )
-    
-    
+
+
     app = Pregel(
         nodes={"node1": node1, "node2": node2},
         channels={
@@ -116,34 +116,34 @@ Below are a few different examples to give you a sense of the Pregel API.
         input_channels=["a"],
         output_channels=["b", "c"],
     )
-    
+
     app.invoke({"a": "foo"})
     ```
-    
+
     ```con
     {'b': 'foofoo', 'c': 'foofoofoofoo'}
     ```
 
-    
 
-  </Tab>
-  <Tab title="Topic">
+
+    </Tab>
+    <Tab title="Topic">
     ```python
     from langgraph.channels import EphemeralValue, Topic
     from langgraph.pregel import Pregel, NodeBuilder
-    
+
     node1 = (
         NodeBuilder().subscribe_only("a")
         .do(lambda x: x + x)
         .write_to("b", "c")
     )
-    
+
     node2 = (
         NodeBuilder().subscribe_to("b")
         .do(lambda x: x["b"] + x["b"])
         .write_to("c")
     )
-    
+
     app = Pregel(
         nodes={"node1": node1, "node2": node2},
         channels={
@@ -154,43 +154,43 @@ Below are a few different examples to give you a sense of the Pregel API.
         input_channels=["a"],
         output_channels=["c"],
     )
-    
+
     app.invoke({"a": "foo"})
     ```
-    
+
     ```pycon
     {'c': ['foofoo', 'foofoofoofoo']}
     ```
 
-    
 
-  </Tab>
-  <Tab title="BinaryOperatorAggregate">
+
+    </Tab>
+    <Tab title="BinaryOperatorAggregate">
     This examples demonstrates how to use the BinaryOperatorAggregate channel to implement a reducer.
-    
+
     ```python
     from langgraph.channels import EphemeralValue, BinaryOperatorAggregate
     from langgraph.pregel import Pregel, NodeBuilder
-    
-    
+
+
     node1 = (
         NodeBuilder().subscribe_only("a")
         .do(lambda x: x + x)
         .write_to("b", "c")
     )
-    
+
     node2 = (
         NodeBuilder().subscribe_only("b")
         .do(lambda x: x + x)
         .write_to("c")
     )
-    
+
     def reducer(current, update):
         if current:
             return current + " | " + update
         else:
             return update
-    
+
     app = Pregel(
         nodes={"node1": node1, "node2": node2},
         channels={
@@ -201,28 +201,28 @@ Below are a few different examples to give you a sense of the Pregel API.
         input_channels=["a"],
         output_channels=["c"],
     )
-    
+
     app.invoke({"a": "foo"})
     ```
 
-    
 
-  </Tab>
-  <Tab title="Cycle">
+
+    </Tab>
+    <Tab title="Cycle">
     This example demonstrates how to introduce a cycle in the graph, by having
     a chain write to a channel it subscribes to. Execution will continue
     until a `None` value is written to the channel.
-    
+
     ```python
     from langgraph.channels import EphemeralValue
     from langgraph.pregel import Pregel, NodeBuilder, ChannelWriteEntry
-    
+
     example_node = (
         NodeBuilder().subscribe_only("value")
         .do(lambda x: x + x if len(x) < 10 else None)
         .write_to(ChannelWriteEntry("value", skip_none=True))
     )
-    
+
     app = Pregel(
         nodes={"example_node": example_node},
         channels={
@@ -231,17 +231,17 @@ Below are a few different examples to give you a sense of the Pregel API.
         input_channels=["value"],
         output_channels=["value"],
     )
-    
+
     app.invoke({"value": "a"})
     ```
-    
+
     ```pycon
     {'value': 'aaaaaaaaaaaaaaaa'}
     ```
 
-    
 
-  </Tab>
+
+    </Tab>
 </Tabs>
 
 ## High-level API
@@ -249,63 +249,63 @@ Below are a few different examples to give you a sense of the Pregel API.
 LangGraph provides two high-level APIs for creating a Pregel application: the [StateGraph (Graph API)](/oss/python/langgraph/graph-api) and the [Functional API](/oss/python/langgraph/functional-api).
 
 <Tabs>
-  <Tab title="StateGraph (Graph API)">
+    <Tab title="StateGraph (Graph API)">
     The [StateGraph (Graph API)](https://langchain-ai.github.io/langgraph/reference/graphs/#langgraph.graph.StateGraph) is a higher-level abstraction that simplifies the creation of Pregel applications. It allows you to define a graph of nodes and edges. When you compile the graph, the StateGraph API automatically creates the Pregel application for you.
-    
+
     ```python
     from typing import TypedDict, Optional
-    
+
     from langgraph.constants import START
     from langgraph.graph import StateGraph
-    
+
     class Essay(TypedDict):
         topic: str
         content: Optional[str]
         score: Optional[float]
-    
+
     def write_essay(essay: Essay):
         return {
             "content": f"Essay about {essay['topic']}",
         }
-    
+
     def score_essay(essay: Essay):
         return {
             "score": 10
         }
-    
+
     builder = StateGraph(Essay)
     builder.add_node(write_essay)
     builder.add_node(score_essay)
     builder.add_edge(START, "write_essay")
-    
+
     # Compile the graph.
     # This will return a Pregel instance.
     graph = builder.compile()
     ```
 
-    
 
-    
+
+
     The compiled Pregel instance will be associated with a list of nodes and channels. You can inspect the nodes and channels by printing them.
-    
+
     ```python
     print(graph.nodes)
     ```
-    
+
     You will see something like this:
-    
+
     ```pycon
     {'__start__': <langgraph.pregel.read.PregelNode at 0x7d05e3ba1810>,
      'write_essay': <langgraph.pregel.read.PregelNode at 0x7d05e3ba14d0>,
      'score_essay': <langgraph.pregel.read.PregelNode at 0x7d05e3ba1710>}
     ```
-    
+
     ```python
     print(graph.channels)
     ```
-    
+
     You should see something like this
-    
+
     ```pycon
     {'topic': <langgraph.channels.last_value.LastValue at 0x7d05e3294d80>,
      'content': <langgraph.channels.last_value.LastValue at 0x7d05e3295040>,
@@ -322,38 +322,38 @@ LangGraph provides two high-level APIs for creating a Pregel application: the [S
      'start:write_essay': <langgraph.channels.ephemeral_value.EphemeralValue at 0x7d05e2d8b280>}
     ```
 
-    
 
-  </Tab>
-  <Tab title="Functional API">
+
+    </Tab>
+    <Tab title="Functional API">
     In the [Functional API](/oss/python/langgraph/functional-api), you can use an [`entrypoint`](https://langchain-ai.github.io/langgraph/reference/func/#langgraph.func.entrypoint) to create a Pregel application. The `entrypoint` decorator allows you to define a function that takes input and returns output.
-    
+
     ```python
     from typing import TypedDict, Optional
-    
+
     from langgraph.checkpoint.memory import InMemorySaver
     from langgraph.func import entrypoint
-    
+
     class Essay(TypedDict):
         topic: str
         content: Optional[str]
         score: Optional[float]
-    
-    
+
+
     checkpointer = InMemorySaver()
-    
+
     @entrypoint(checkpointer=checkpointer)
     def write_essay(essay: Essay):
         return {
             "content": f"Essay about {essay['topic']}",
         }
-    
+
     print("Nodes: ")
     print(write_essay.nodes)
     print("Channels: ")
     print(write_essay.channels)
     ```
-    
+
     ```pycon
     Nodes:
     {'write_essay': <langgraph.pregel.read.PregelNode object at 0x7d05e2f9aad0>}
@@ -361,7 +361,7 @@ LangGraph provides two high-level APIs for creating a Pregel application: the [S
     {'__start__': <langgraph.channels.ephemeral_value.EphemeralValue object at 0x7d05e2c906c0>, '__end__': <langgraph.channels.last_value.LastValue object at 0x7d05e2c90c40>, '__previous__': <langgraph.channels.last_value.LastValue object at 0x7d05e1007280>}
     ```
 
-    
 
-  </Tab>
+
+    </Tab>
 </Tabs>
