@@ -919,6 +919,10 @@ must adhere to one of the following block types:
                         <Accordion title="TextContentBlock" icon="text">
                 **Purpose:** Standard text output
 
+                <ParamField body="type" type="string" required>
+                    Always `"text"`
+                </ParamField>
+
                 <ParamField body="text" type="string" required>
                     The text content
                 </ParamField>
@@ -943,7 +947,11 @@ must adhere to one of the following block types:
                         <Accordion title="ReasoningContentBlock" icon="brain">
                 **Purpose:** Model reasoning steps
 
-                <ParamField body="reasoning" type="string" required>
+                <ParamField body="type" type="string" required>
+                    Always `"reasoning"`
+                </ParamField>
+
+                <ParamField body="reasoning" type="string">
                     The reasoning content
                 </ParamField>
 
@@ -968,6 +976,10 @@ must adhere to one of the following block types:
             <Accordion title="ImageContentBlock" icon="image">
                 **Purpose:** Image data
 
+                <ParamField body="type" type="string" required>
+                    Always `"image"`
+                </ParamField>
+
                 <ParamField body="url" type="string">
                     URL pointing to the image location.
                 </ParamField>
@@ -988,6 +1000,10 @@ must adhere to one of the following block types:
             </Accordion>
             <Accordion title="AudioContentBlock" icon="volume-high">
                 **Purpose:** Audio data
+
+                <ParamField body="type" type="string" required>
+                    Always `"audio"`
+                </ParamField>
 
                 <ParamField body="url" type="string">
                     URL pointing to the audio location.
@@ -1010,6 +1026,10 @@ must adhere to one of the following block types:
             <Accordion title="VideoContentBlock" icon="video">
                 **Purpose:** Video data
 
+                <ParamField body="type" type="string" required>
+                    Always `"video"`
+                </ParamField>
+
                 <ParamField body="url" type="string">
                     URL pointing to the video location.
                 </ParamField>
@@ -1030,6 +1050,10 @@ must adhere to one of the following block types:
             </Accordion>
             <Accordion title="FileContentBlock" icon="file">
                 **Purpose:** Generic files (PDF, etc)
+
+                <ParamField body="type" type="string" required>
+                    Always `"file"`
+                </ParamField>
 
                 <ParamField body="url" type="string">
                     URL pointing to the file location.
@@ -1052,7 +1076,11 @@ must adhere to one of the following block types:
             <Accordion title="PlainTextContentBlock" icon="align-left">
                 **Purpose:** Document text (`.txt`, `.md`)
 
-                <ParamField body="text" type="string" required>
+                <ParamField body="type" type="string" required>
+                    Always `"text-plain"`
+                </ParamField>
+
+                <ParamField body="text" type="string">
                     The text content
                 </ParamField>
 
@@ -1068,6 +1096,10 @@ must adhere to one of the following block types:
         <AccordionGroup>
             <Accordion title="ToolCall" icon="function">
                 **Purpose:** Function calls
+
+                <ParamField body="type" type="string" required>
+                    Always `"tool_call"`
+                </ParamField>
 
                 <ParamField body="name" type="string" required>
                     Name of the tool to call
@@ -1094,6 +1126,10 @@ must adhere to one of the following block types:
                         <Accordion title="ToolCallChunk" icon="puzzle-piece">
                 **Purpose:** Streaming tool fragments
 
+                <ParamField body="type" type="string" required>
+                    Always `"tool_call_chunk"`
+                </ParamField>
+
                 <ParamField body="name" type="string">
                     Name of the tool being called
                 </ParamField>
@@ -1106,12 +1142,16 @@ must adhere to one of the following block types:
                     Tool call identifier
                 </ParamField>
 
-                <ParamField body="index" type="number" required>
+                <ParamField body="index" type="number">
                     Position of this chunk in the stream
                 </ParamField>
             </Accordion>
             <Accordion title="InvalidToolCall" icon="triangle-exclamation">
-                **Purpose:** Malformed calls
+                **Purpose:** Malformed calls, intended to catch JSON parsing errors.
+
+                <ParamField body="type" type="string" required>
+                    Always `"invalid_tool_call"`
+                </ParamField>
 
                 <ParamField body="name" type="string">
                     Name of the tool that failed to be called
@@ -1121,11 +1161,9 @@ must adhere to one of the following block types:
                     Raw arguments that failed to parse
                 </ParamField>
 
-                <ParamField body="error" type="string" required>
+                <ParamField body="error" type="string">
                     Description of what went wrong
                 </ParamField>
-
-                **Common errors:** Invalid JSON, missing required fields
             </Accordion>
         </AccordionGroup>
     </Accordion>
@@ -1146,37 +1184,41 @@ must adhere to one of the following block types:
                         <Accordion title="WebSearchResult" icon="globe">
                 **Purpose:** Search results
 
-                <ParamField body="urls" type="string[]" required>
+                <ParamField body="type" type="string" required>
+                    Always `"web_search_result"`
+                </ParamField>
+
+                <ParamField body="urls" type="string[]">
                     URLs of the search results
                 </ParamField>
 
-                <ParamField body="snippets" type="string[]">
-                    Text snippets from the search results
-                </ParamField>
-
-                **Returns:** Top search results with optional snippets
+                **Returns:** Top search results with associated URLs.
             </Accordion>
             <Accordion title="CodeInterpreterCall" icon="code">
                 **Purpose:** Code execution
 
-                <ParamField body="language" type="string" required>
+                <ParamField body="type" type="string" required>
+                    Always `"code_interpreter_call"`
+                </ParamField>
+
+                <ParamField body="language" type="string">
                     Programming language to execute (e.g. `python`,
                     `javascript`, `sql`)
                 </ParamField>
 
-                <ParamField body="code" type="string" required>
+                <ParamField body="code" type="string">
                     Code to execute
                                 </ParamField>
                         </Accordion>
                         <Accordion title="CodeInterpreterResult" icon="terminal">
                 **Purpose:** Execution results
 
-                <ParamField body="output" type="string" required>
-                    Output from the code execution
+                <ParamField body="type" type="string" required>
+                    Always `"code_interpreter_result"`
                 </ParamField>
 
-                <ParamField body="error" type="string">
-                    Error message if execution failed
+                <ParamField body="output" type="CodeInterpreterOutput[]">
+                    Output from the code execution
                 </ParamField>
             </Accordion>
         </AccordionGroup>
