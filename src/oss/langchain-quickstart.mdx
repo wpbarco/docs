@@ -171,7 +171,6 @@ const getUserInfo = tool(
   }
 );
 ```
-:::
 
 <Note>
     [Zod](https://zod.dev/) is a library for validating and parsing pre-defined schemas. You can use it to define the input schema for your tools to make sure the agent only calls the tool with the correct arguments.
@@ -200,6 +199,7 @@ const getUserInfo = tool(
       ```
     </Accordion>
 </Note>
+:::
 
 ### Step 3: Configure Your Model
 
@@ -229,11 +229,11 @@ const model = await initChatModel(
 
 ### Step 4: Define response format
 
+:::python
 Structured outputs ensure your agent returns data in a predictable format. Here,
 we use Python's [`DataClass`](https://docs.python.org/3/library/dataclasses.html)
 dictionary.
 
-:::python
 ```python
 from dataclasses import dataclass
 
@@ -245,6 +245,8 @@ class WeatherResponse:
 :::
 
 :::js
+Structured outputs ensure your agent returns data in a predictable format.
+
 ```ts
 const responseFormat = z.object({
   conditions: z.string(),
