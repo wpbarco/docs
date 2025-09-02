@@ -643,7 +643,7 @@ You can initialize an `InMemoryStore` to store long-term memory:
 
 ```ts wrap
 import { z } from "zod";
-import { createAgent, InMemoryStore } from "langchain";
+import { createReactAgent, InMemoryStore } from "langchain";
 import { ChatOpenAI } from "@langchain/openai";
 
 const store = new InMemoryStore();
@@ -721,13 +721,16 @@ agent.invoke({
 :::js
 ```ts wrap expandable
 import { z } from "zod";
-import { createAgent, tool, InMemoryStore } from "langchain";
+import { createReactAgent, tool, InMemoryStore } from "langchain";
 import { ChatOpenAI } from "@langchain/openai";
 
 const store = new InMemoryStore();
 
 const getUserInfo = tool(
   async ({ user_id }) => {
+    const value = await store.get(["users"], user_id);
+    console.log("get_user_info", user_id, value);
+    return value;
     const value = await store.get(["users"], user_id);
     console.log("get_user_info", user_id, value);
     return value;
