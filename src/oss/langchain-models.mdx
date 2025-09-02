@@ -33,7 +33,7 @@ Maybe this is better suited somewhere else
 
 Providers like OpenAI, Anthropic, and Google offer access to a range of models each
 suited to different tasks. Consequently, providers tend to each have unique interaction
-patterns for their models, typically through a user interface or an API where [messages](./langchain-messages.mdx) are exchanged with a user.
+patterns for their models, typically through a user interface or an API where [messages](/oss/langchain-messages) are exchanged with a user.
 Because the APIs are not unified, it can be difficult to swap between models and providers without significant code changes.
 LangChain simplifies this by providing a chat model abstraction to interact with models across a number of providers and models.
 This lets you focus on the logic of your application rather than the implementation details of the underlying provider API. */}
@@ -271,7 +271,7 @@ console.log(response);
 
 A list of messages can be provided to a model to represent conversation history.
 Each message has a role that models use to indicate who sent the message in the
-conversation. See the [messages](/oss/langchain-messages.mdx) guide for more detail
+conversation. See the [messages](/oss/langchain-messages) guide for more detail
 on roles, types, and content.
 
 :::python
@@ -422,7 +422,7 @@ message history and passed back to the model as conversational context.
         the entire application, including intermediate results from the chat
         model.
 
-        In [LangGraph agents](./langchain-agents), for example, you can
+        In [LangGraph agents](/oss/langchain-agents), for example, you can
         call `model.invoke()` within nodes, but LangChain will automatically
         delegate to streaming if running in a streaming mode.
 
@@ -436,12 +436,14 @@ message history and passed back to the model as conversational context.
         `on_llm_new_token` events in LangChain's callback system.
         
         :::python
-        Callback events allow LangGraph `stream()` and @[astream_events][`astream_events()`]
-        to surface the chat model's output in real-time.
+        Callback events allow LangGraph `stream()` and
+        @[`astream_events()`][BaseChatModel.astream_events] to surface the chat
+        model's output in real-time.
         :::
         :::js
-        Callback events allow LangGraph `stream()` and @[BaseChatModel.streamEvents][`streamEvents()`]
-        to surface the chat model's output in real-time.
+        Callback events allow LangGraph `stream()` and
+        @[`streamEvents()`][BaseChatModel.streamEvents] to surface the chat
+        model's output in real-time.
         :::
     </Accordion>
 
@@ -480,12 +482,13 @@ message history and passed back to the model as conversational context.
     Full message: Hi there! How can I help today?
     ```
 
-    See the @[astream_events][`astream_events()`][BaseChatModel.astream_events]
+    See the @[`astream_events()`][BaseChatModel.astream_events]
     reference for event types and other details.
     :::
 
     :::js
-    LangChain chat models can also stream semantic events using [`streamEvents()`][BaseChatModel.streamEvents].
+    LangChain chat models can also stream semantic events using
+    [`streamEvents()`][BaseChatModel.streamEvents].
 
     This simplifies filtering based on event types and other metadata, and will
     aggregate the full message in the background. See below for an example.
@@ -649,7 +652,7 @@ call any of the bound tools as needed.
 :::
 
 Some model providers offer built-in tools that can be enabled via model
-parameters. Check the respective [provider reference](./integrations/providers.mdx)
+parameters. Check the respective [provider reference](/oss/integrations/providers)
 for details.
 
 <Tip>
@@ -1278,7 +1281,7 @@ const modelWithStructure = model.withStructuredOutput(MovieDetails);
 LangChain supports all major model providers, including OpenAI, Anthropic,
 Google, Azure, AWS Bedrock, and more. Each provider offers a variety of models
 with different capabilities. For a full list of supported models in LangChain,
-see the [integrations page](./integrations/providers).
+see the [integrations page](/oss/integrations/providers).
 
 ## Advanced configuration
 
@@ -1286,7 +1289,7 @@ see the [integrations page](./integrations/providers).
 
 Certain models can process and return non-textual data such as images, audio,
 and video. You can pass non-textual data to a model by providing
-[content blocks](./langchain-messages.mdx#content).
+[content blocks](/oss/langchain-messages#content).
 
 <Tip>
 All LangChain chat models with underlying multimodal capabilities support:
@@ -1498,7 +1501,7 @@ console.log(response.contentBlocks);
 ```
 :::
 
-See the [integrations page](./integrations/providers) for details on specific
+See the [integrations page](/oss/integrations/providers) for details on specific
 providers.
 
 ### Reasoning
@@ -1550,7 +1553,7 @@ reasoning entirely. This may take the form of categorical "tiers" of reasoning
 (e.g., `'low'` or `'high'`) or integer token budgets.
 
 For details, see the relevant chat model in the
-[integrations page](./integrations/providers).
+[integrations page](/oss/integrations/providers).
 
 
 ### Local models
@@ -1559,9 +1562,9 @@ LangChain supports running models locally on your own hardware. This is useful
 for scenarios where data privacy is critical, or when you want to avoid the cost
 of using a cloud-based model.
 
-[Ollama](./integrations/providers/ollama.mdx) is one of the easiest ways to run
+[Ollama](/oss/integrations/providers/ollama) is one of the easiest ways to run
 models locally. See the full list of local integrations on the
-[integrations page](./integrations/providers).
+[integrations page](/oss/integrations/providers).
 
 ### Caching
 
@@ -1778,7 +1781,7 @@ print(response.response_metadata["logprobs"])
 A number of model providers return token usage information as part of the
 invocation response. When available, this information will be included on the
 `AIMessage` objects produced by the corresponding model. For more details, see
-the [messages](./langchain-messages) guide.
+the [messages](/oss/langchain-messages) guide.
 
 <Note>
 
