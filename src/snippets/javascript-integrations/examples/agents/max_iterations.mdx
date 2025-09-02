@@ -4,7 +4,7 @@ import type { BasePromptTemplate } from "@langchain/core/prompts";
 
 import { Calculator } from "@langchain/community/tools/calculator";
 import { pull } from "langchain/hub";
-import { AgentExecutor, createReactAgent } from "langchain/agents";
+import { AgentExecutor, createAgent } from "langchain/agents";
 
 // Define the tools the agent will have access to.
 const tools = [new Calculator()];
@@ -19,7 +19,7 @@ const llm = new ChatOpenAI({
 // https://smith.langchain.com/hub/hwchase17/react
 const prompt = await pull<BasePromptTemplate>("hwchase17/react");
 
-const agent = await createReactAgent({
+const agent = await createAgent({
   llm,
   tools,
   prompt,

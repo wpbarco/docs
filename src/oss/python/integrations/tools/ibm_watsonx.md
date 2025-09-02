@@ -284,10 +284,10 @@ llm = ChatWatsonx(
 
 
 ```python
-from langgraph.prebuilt import create_react_agent
+from langgraph.prebuilt import create_agent
 
 tools = [weather_tool]
-agent = create_react_agent(llm, tools)
+agent = create_agent(llm, tools)
 ```
 
 
