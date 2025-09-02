@@ -139,6 +139,7 @@ const response = await model.invoke(messages);
 ### Dictionary format
 
 You can also specify messages directly in OpenAI chat completions format.
+You can also specify messages directly in OpenAI chat completions format.
 
 :::python
 ```python
@@ -671,7 +672,9 @@ AI providers, as each structure means you have to write custom code to handle fo
 # OpenAI format
 openai_message = {
     "role": "user",
+    "role": "user",
     "content": [
+        {"type": "text", "text": "What's in this image?"},
         {"type": "text", "text": "What's in this image?"},
         {"type": "image_url", "image_url": {"url": "..."}}
     ]
@@ -916,21 +919,17 @@ must adhere to one of the following block types:
                         <Accordion title="TextContentBlock" icon="text">
                 **Purpose:** Standard text output
 
-                <ParamField body="type" type="string" required>
-                    Always `"text"`
-                </ParamField>
-
                 <ParamField body="text" type="string" required>
                     The text content
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="annotations" type="object[]">
+                <ParamField body="annotations" type="object[]">
                     List of annotations for the text
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="extras" type="object">
+                <ParamField body="extras" type="object">
                     Additional provider-specific data
-                                </ParamField>
+                </ParamField>
 
                 **Example:**
                 ```python
@@ -944,17 +943,13 @@ must adhere to one of the following block types:
                         <Accordion title="ReasoningContentBlock" icon="brain">
                 **Purpose:** Model reasoning steps
 
-                <ParamField body="type" type="string" required>
-                    Always `"reasoning"`
+                <ParamField body="reasoning" type="string" required>
+                    The reasoning content
                 </ParamField>
 
-                <ParamField body="reasoning" type="string">
-                    The reasoning content
-                                </ParamField>
-
-                                <ParamField body="extras" type="object">
+                <ParamField body="extras" type="object">
                     Additional provider-specific data
-                                </ParamField>
+                </ParamField>
 
                 **Example:**
                 ```python
@@ -964,31 +959,27 @@ must adhere to one of the following block types:
                     "extras": {"signature": "abc123"},
                 }
                 ```
-                        </Accordion>
-                </AccordionGroup>
-        </Accordion>
+            </Accordion>
+        </AccordionGroup>
+    </Accordion>
 
-        <Accordion title="Multimodal" icon="images">
-                <AccordionGroup>
-                        <Accordion title="ImageContentBlock" icon="image">
+    <Accordion title="Multimodal" icon="images">
+        <AccordionGroup>
+            <Accordion title="ImageContentBlock" icon="image">
                 **Purpose:** Image data
-
-                <ParamField body="type" type="string" required>
-                    Always `"image"`
-                </ParamField>
 
                 <ParamField body="url" type="string">
                     URL pointing to the image location.
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="base64" type="string">
+                <ParamField body="base64" type="string">
                     Base64-encoded image data.
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="id" type="string">
+                <ParamField body="id" type="string">
                     Reference ID to an externally stored image (e.g., in a
                     provider's file system or in a bucket).
-                                </ParamField>
+                </ParamField>
 
                 <ParamField body="mime_type" type="string">
                     Image [MIME type](https://www.iana.org/assignments/media-types/media-types.xhtml#image)
@@ -998,22 +989,18 @@ must adhere to one of the following block types:
             <Accordion title="AudioContentBlock" icon="volume-high">
                 **Purpose:** Audio data
 
-                <ParamField body="type" type="string" required>
-                    Always `"audio"`
-                </ParamField>
-
                 <ParamField body="url" type="string">
                     URL pointing to the audio location.
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="data" type="string">
+                <ParamField body="data" type="string">
                     Base64-encoded audio data.
                                 </ParamField>
 
                                 <ParamField body="id" type="string">
                     Reference ID to an externally stored audio file (e.g., in a
                     provider's file system or in a bucket).
-                                </ParamField>
+                </ParamField>
 
                 <ParamField body="mime_type" type="string">
                     Audio [MIME type](https://www.iana.org/assignments/media-types/media-types.xhtml#audio)
@@ -1023,22 +1010,18 @@ must adhere to one of the following block types:
             <Accordion title="VideoContentBlock" icon="video">
                 **Purpose:** Video data
 
-                <ParamField body="type" type="string" required>
-                    Always `"video"`
-                </ParamField>
-
                 <ParamField body="url" type="string">
                     URL pointing to the video location.
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="data" type="string">
+                <ParamField body="data" type="string">
                     Base64-encoded video data.
                                 </ParamField>
 
                                 <ParamField body="id" type="string">
                     Reference ID to an externally stored video file (e.g., in a
                     provider's file system or in a bucket).
-                                </ParamField>
+                </ParamField>
 
                 <ParamField body="mime_type" type="string">
                     Video [MIME type](https://www.iana.org/assignments/media-types/media-types.xhtml#video)
@@ -1048,22 +1031,18 @@ must adhere to one of the following block types:
             <Accordion title="FileContentBlock" icon="file">
                 **Purpose:** Generic files (PDF, etc)
 
-                <ParamField body="type" type="string" required>
-                    Always `"file"`
-                </ParamField>
-
                 <ParamField body="url" type="string">
                     URL pointing to the file location.
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="data" type="string">
+                <ParamField body="data" type="string">
                     Base64-encoded file data.
                                 </ParamField>
 
                                 <ParamField body="id" type="string">
                     Reference ID to an externally stored file (e.g., in a
                     provider's file system or in a bucket).
-                                </ParamField>
+                </ParamField>
 
                 <ParamField body="mime_type" type="string">
                     File [MIME type](https://www.iana.org/assignments/media-types/media-types.xhtml)
@@ -1073,13 +1052,9 @@ must adhere to one of the following block types:
             <Accordion title="PlainTextContentBlock" icon="align-left">
                 **Purpose:** Document text (`.txt`, `.md`)
 
-                <ParamField body="type" type="string" required>
-                    Always `"text-plain"`
-                </ParamField>
-
-                <ParamField body="text" type="string">
+                <ParamField body="text" type="string" required>
                     The text content
-                                </ParamField>
+                </ParamField>
 
                 <ParamField body="mime_type" type="string">
                     [MIME type](https://www.iana.org/assignments/media-types/media-types.xhtml)
@@ -1089,26 +1064,22 @@ must adhere to one of the following block types:
         </AccordionGroup>
     </Accordion>
 
-        <Accordion title="Tool Calling" icon="wrench">
-                <AccordionGroup>
-                        <Accordion title="ToolCall" icon="function">
+    <Accordion title="Tool Calling" icon="wrench">
+        <AccordionGroup>
+            <Accordion title="ToolCall" icon="function">
                 **Purpose:** Function calls
-
-                <ParamField body="type" type="string" required>
-                    Always `"tool_call"`
-                </ParamField>
 
                 <ParamField body="name" type="string" required>
                     Name of the tool to call
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="args" type="object" required>
+                <ParamField body="args" type="object" required>
                     Arguments to pass to the tool
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="id" type="string" required>
+                <ParamField body="id" type="string" required>
                     Unique identifier for this tool call
-                                </ParamField>
+                </ParamField>
 
                 **Example:**
                 ```python
@@ -1123,44 +1094,38 @@ must adhere to one of the following block types:
                         <Accordion title="ToolCallChunk" icon="puzzle-piece">
                 **Purpose:** Streaming tool fragments
 
-                <ParamField body="type" type="string" required>
-                    Always `"tool_call_chunk"`
-                </ParamField>
-
                 <ParamField body="name" type="string">
                     Name of the tool being called
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="args" type="string">
+                <ParamField body="args" type="string">
                     Partial tool arguments (may be incomplete JSON)
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="id" type="string">
+                <ParamField body="id" type="string">
                     Tool call identifier
-                                </ParamField>
+                </ParamField>
 
-                <ParamField body="index" type="number">
+                <ParamField body="index" type="number" required>
                     Position of this chunk in the stream
                 </ParamField>
             </Accordion>
             <Accordion title="InvalidToolCall" icon="triangle-exclamation">
-                **Purpose:** Malformed calls, intended to catch JSON parsing errors.
+                **Purpose:** Malformed calls
 
-                <ParamField body="type" type="string" required>
-                    Always `"invalid_tool_call"`
+                <ParamField body="name" type="string">
+                    Name of the tool that failed to be called
                 </ParamField>
 
-                                <ParamField body="name" type="string">
-                    Name of the tool that failed to be called
-                                </ParamField>
-
-                                <ParamField body="args" type="string">
+                <ParamField body="args" type="string">
                     Raw arguments that failed to parse
-                                </ParamField>
+                </ParamField>
 
-                <ParamField body="error" type="string">
+                <ParamField body="error" type="string" required>
                     Description of what went wrong
                 </ParamField>
+
+                **Common errors:** Invalid JSON, missing required fields
             </Accordion>
         </AccordionGroup>
     </Accordion>
@@ -1181,41 +1146,37 @@ must adhere to one of the following block types:
                         <Accordion title="WebSearchResult" icon="globe">
                 **Purpose:** Search results
 
-                <ParamField body="type" type="string" required>
-                    Always `"web_search_result"`
-                </ParamField>
-
-                <ParamField body="urls" type="string[]">
+                <ParamField body="urls" type="string[]" required>
                     URLs of the search results
                 </ParamField>
 
-                **Returns:** Top search results with associated URLs.
+                <ParamField body="snippets" type="string[]">
+                    Text snippets from the search results
+                </ParamField>
+
+                **Returns:** Top search results with optional snippets
             </Accordion>
             <Accordion title="CodeInterpreterCall" icon="code">
                 **Purpose:** Code execution
 
-                <ParamField body="type" type="string" required>
-                    Always `"code_interpreter_call"`
-                </ParamField>
-
-                <ParamField body="language" type="string">
+                <ParamField body="language" type="string" required>
                     Programming language to execute (e.g. `python`,
                     `javascript`, `sql`)
-                                </ParamField>
+                </ParamField>
 
-                <ParamField body="code" type="string">
+                <ParamField body="code" type="string" required>
                     Code to execute
                                 </ParamField>
                         </Accordion>
                         <Accordion title="CodeInterpreterResult" icon="terminal">
                 **Purpose:** Execution results
 
-                <ParamField body="type" type="string" required>
-                    Always `"code_interpreter_result"`
+                <ParamField body="output" type="string" required>
+                    Output from the code execution
                 </ParamField>
 
-                <ParamField body="output" type="CodeInterpreterOutput[]">
-                    Output from the code execution
+                <ParamField body="error" type="string">
+                    Error message if execution failed
                 </ParamField>
             </Accordion>
         </AccordionGroup>
@@ -1225,17 +1186,19 @@ must adhere to one of the following block types:
                 <Accordion title="NonStandardContentBlock" icon="asterisk">
             **Purpose:** Provider-specific escape hatch
 
+
             <ParamField body="type" type="string" required>
                 Always `"non_standard"`
             </ParamField>
 
-                        <ParamField body="value" type="object" required>
+            <ParamField body="value" type="object" required>
                 Provider-specific data structure
-                        </ParamField>
+            </ParamField>
 
             **Usage:** For experimental or provider-unique features
                 </Accordion>
 
+        Additional provider-specific content types may be found within the
         Additional provider-specific content types may be found within the
         [reference documentation](/oss/integrations/providers) of each model provider.
         </Accordion>
@@ -1253,13 +1216,13 @@ must adhere to one of the following block types:
                         <Accordion title="ContentBlock.Text" icon="text">
                 **Purpose:** Standard text output
 
-                                <ParamField body="text" type="string" required>
+                <ParamField body="text" type="string" required>
                     The text content
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="annotations" type="Citation[]">
+                <ParamField body="annotations" type="Citation[]">
                     List of annotations for the text
-                                </ParamField>
+                </ParamField>
 
                 **Example:**
                 ```typescript
@@ -1273,9 +1236,9 @@ must adhere to one of the following block types:
                         <Accordion title="ContentBlock.Reasoning" icon="brain">
                 **Purpose:** Model reasoning steps
 
-                                <ParamField body="reasoning" type="string" required>
+                <ParamField body="reasoning" type="string" required>
                     The reasoning content
-                                </ParamField>
+                </ParamField>
 
                 **Example:**
                 ```typescript
@@ -1284,13 +1247,13 @@ must adhere to one of the following block types:
                     reasoning: "The user is asking about..."
                 }
                 ```
-                        </Accordion>
-                </AccordionGroup>
-        </Accordion>
+            </Accordion>
+        </AccordionGroup>
+    </Accordion>
 
-        <Accordion title="Multimodal" icon="images">
-                <AccordionGroup>
-                        <Accordion title="ContentBlock.Multimodal.PlainText" icon="align-left">
+    <Accordion title="Multimodal" icon="images">
+        <AccordionGroup>
+            <Accordion title="ContentBlock.Multimodal.PlainText" icon="align-left">
                 **Purpose:** Document text (`.txt`, `.md`)
 
                                 <ParamField body="text" type="string" required>
@@ -1299,111 +1262,111 @@ must adhere to one of the following block types:
 
                                 <ParamField body="title" type="string">
                     Title of the text content
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="mimeType" type="string">
+                <ParamField body="mimeType" type="string">
                     MIME type of the text (e.g., `text/plain`, `text/markdown`)
                                 </ParamField>
                         </Accordion>
                         <Accordion title="ContentBlock.Multimodal.Image" icon="image">
                 **Purpose:** Image data
 
-                                <ParamField body="url" type="string">
+                <ParamField body="url" type="string">
                     URL pointing to the image location.
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="data" type="string">
+                <ParamField body="data" type="string">
                     Base64-encoded image data.
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="fileId" type="string">
+                <ParamField body="fileId" type="string">
                     Reference ID to an externally stored image (e.g., in a
                     provider's file system or in a bucket).
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="mimeType" type="string">
+                <ParamField body="mimeType" type="string">
                     Image MIME type (e.g., `image/jpeg`, `image/png`)
                                 </ParamField>
                         </Accordion>
                         <Accordion title="ContentBlock.Multimodal.Audio" icon="volume-high">
                 **Purpose:** Audio data
 
-                                <ParamField body="url" type="string">
+                <ParamField body="url" type="string">
                     URL pointing to the audio location.
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="data" type="string">
+                <ParamField body="data" type="string">
                     Base64-encoded audio data.
                                 </ParamField>
 
                                 <ParamField body="fileId" type="string">
                     Reference ID to an externally stored audio file (e.g., in a
                     provider's file system or in a bucket).
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="mimeType" type="string">
+                <ParamField body="mimeType" type="string">
                     Audio MIME type (e.g., `audio/mpeg`, `audio/wav`)
                                 </ParamField>
                         </Accordion>
                         <Accordion title="ContentBlock.Multimodal.Video" icon="video">
                 **Purpose:** Video data
 
-                                <ParamField body="url" type="string">
+                <ParamField body="url" type="string">
                     URL pointing to the video location.
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="data" type="string">
+                <ParamField body="data" type="string">
                     Base64-encoded video data.
                                 </ParamField>
 
                                 <ParamField body="fileId" type="string">
                     Reference ID to an externally stored video file (e.g., in a
                     provider's file system or in a bucket).
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="mimeType" type="string">
+                <ParamField body="mimeType" type="string">
                     Video MIME type (e.g., `video/mp4`, `video/webm`)
                                 </ParamField>
                         </Accordion>
                         <Accordion title="ContentBlock.Multimodal.File" icon="file">
                 **Purpose:** Generic files (PDF, etc)
 
-                                <ParamField body="url" type="string">
+                <ParamField body="url" type="string">
                     URL pointing to the file location.
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="data" type="string">
+                <ParamField body="data" type="string">
                     Base64-encoded file data.
                                 </ParamField>
 
                                 <ParamField body="fileId" type="string">
                     Reference ID to an externally stored file (e.g., in a
                     provider's file system or in a bucket).
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="mimeType" type="string">
+                <ParamField body="mimeType" type="string">
                     File MIME type (e.g., `application/pdf`)
-                                </ParamField>
-                        </Accordion>
-                </AccordionGroup>
-        </Accordion>
+                </ParamField>
+            </Accordion>
+        </AccordionGroup>
+    </Accordion>
 
-        <Accordion title="Tool Calling" icon="wrench">
-                <AccordionGroup>
-                        <Accordion title="ContentBlock.Tools.ToolCall" icon="function">
+    <Accordion title="Tool Calling" icon="wrench">
+        <AccordionGroup>
+            <Accordion title="ContentBlock.Tools.ToolCall" icon="function">
                 **Purpose:** Function calls
 
-                                <ParamField body="name" type="string" required>
+                <ParamField body="name" type="string" required>
                     Name of the tool to call
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="args" type="object" required>
+                <ParamField body="args" type="object" required>
                     Arguments to pass to the tool
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="id" type="string" required>
+                <ParamField body="id" type="string" required>
                     Unique identifier for this tool call
-                                </ParamField>
+                </ParamField>
 
                 **Example:**
                 ```typescript
@@ -1418,36 +1381,36 @@ must adhere to one of the following block types:
                         <Accordion title="ContentBlock.Tools.ToolCallChunk" icon="puzzle-piece">
                 **Purpose:** Streaming tool fragments
 
-                                <ParamField body="name" type="string">
+                <ParamField body="name" type="string">
                     Name of the tool being called
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="args" type="string">
+                <ParamField body="args" type="string">
                     Partial tool arguments (may be incomplete JSON)
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="id" type="string">
+                <ParamField body="id" type="string">
                     Tool call identifier
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="index" type="number" required>
+                <ParamField body="index" type="number" required>
                     Position of this chunk in the stream
                                 </ParamField>
                         </Accordion>
                         <Accordion title="ContentBlock.Tools.InvalidToolCall" icon="triangle-exclamation">
                 **Purpose:** Malformed calls
 
-                                <ParamField body="name" type="string">
+                <ParamField body="name" type="string">
                     Name of the tool that failed to be called
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="args" type="string">
+                <ParamField body="args" type="string">
                     Raw arguments that failed to parse
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="error" type="string" required>
+                <ParamField body="error" type="string" required>
                     Description of what went wrong
-                                </ParamField>
+                </ParamField>
 
                 **Common errors:** Invalid JSON, missing required fields
                         </Accordion>
@@ -1459,39 +1422,39 @@ must adhere to one of the following block types:
                         <Accordion title="ContentBlock.Tools.WebSearchCall" icon="magnifying-glass">
                 **Purpose:** Built-in web search
 
-                                <ParamField body="query" type="string" required>
+                <ParamField body="query" type="string" required>
                     The search query to execute
                                 </ParamField>
                         </Accordion>
                         <Accordion title="ContentBlock.Tools.WebSearchResult" icon="globe">
                 **Purpose:** Search results
 
-                                <ParamField body="urls" type="string[]" required>
+                <ParamField body="urls" type="string[]" required>
                     URLs of the search results
-                                </ParamField>
+                </ParamField>
 
                 **Returns:** Top search results with optional snippets
                         </Accordion>
                         <Accordion title="ContentBlock.Tools.CodeInterpreterCall" icon="code">
                 **Purpose:** Code execution
 
-                                <ParamField body="language" type="string" required>
+                <ParamField body="language" type="string" required>
                     Programming language to execute (e.g. `python`,
                     `javascript`, `sql`)
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="code" type="string" required>
+                <ParamField body="code" type="string" required>
                     Code to execute
                                 </ParamField>
                         </Accordion>
                         <Accordion title="ContentBlock.Tools.CodeInterpreterResult" icon="terminal">
                 **Purpose:** Execution results
 
-                                <ParamField body="output" type="string" required>
+                <ParamField body="output" type="string" required>
                     Output from the code execution
-                                </ParamField>
+                </ParamField>
 
-                                <ParamField body="error" type="string">
+                <ParamField body="error" type="string">
                     Error message if execution failed
                                 </ParamField>
                         </Accordion>
@@ -1653,14 +1616,18 @@ while True:
     if user_input.lower() == "quit":
         break
 
+
     # Add user message
     messages.append(HumanMessage(user_input))
+
 
     # Get model response
     response = model.invoke(messages)
 
+
     # Add assistant response to history
     messages.append(response)
+
 
     print(f"Assistant: {response.content}")
 ```
@@ -1679,8 +1646,10 @@ while True:
     user_input = input("You: ")
     messages.append(HumanMessage(user_input))
 
+
     # Trim conversation to fit context window
     messages = manage_conversation_window(messages)
+
 
     response = model.invoke(messages)
     messages.append(response)
@@ -1708,11 +1677,14 @@ while (true) {
     // Add user message
     messages.push(new HumanMessage(userInput));
 
+
     // Get model response
     const response = await model.invoke(messages);
 
+
     // Add assistant response to history
     messages.push(response);
+
 
     console.log(`Assistant: ${response.content}`);
 }
@@ -1735,8 +1707,10 @@ while (true) {
     const userInput = await getNextMessage();
     messages.push(new HumanMessage(userInput));
 
+
     // Trim conversation to fit context window
     messages = manageConversationWindow(messages);
+
 
     const response = await model.invoke(messages);
     messages.push(response);
@@ -1843,9 +1817,10 @@ Manage context window limits with intelligent trimming:
         <Accordion title="Token-based" icon="calculator">
         Control message history size based on token counts to fit within model context windows.
 
-                <CodeGroup>
+        <CodeGroup>
         ```python Basic token trimming
         from langchain_core.messages import trim_messages
+
 
         messages = [
             SystemMessage("You are a helpful assistant"),
@@ -1853,6 +1828,7 @@ Manage context window limits with intelligent trimming:
             AIMessage("Python is a programming language..."),
             # ... many more messages ...
         ]
+
 
         # Keep last 1000 tokens
         trimmed = trim_messages(
@@ -1862,6 +1838,7 @@ Manage context window limits with intelligent trimming:
             token_counter=model  # Use model's token counter
         )
         ```
+
 
         ```python Preserve system message highlight={6}
         # Always keep system message
@@ -1874,6 +1851,7 @@ Manage context window limits with intelligent trimming:
         )
         ```
 
+
         ```python Custom token counter
         # Use custom token counter
         def count_tokens(messages):
@@ -1884,6 +1862,7 @@ Manage context window limits with intelligent trimming:
                 total += len(msg.content) // 4
             return total
 
+
         trimmed = trim_messages(
             messages,
             max_tokens=1000,
@@ -1891,13 +1870,13 @@ Manage context window limits with intelligent trimming:
             token_counter=count_tokens
         )
         ```
-                </CodeGroup>
-        </Accordion>
+        </CodeGroup>
+    </Accordion>
 
-        <Accordion title="Message count" icon="hashtag">
+    <Accordion title="Message count" icon="hashtag">
         Limit conversation history by number of messages rather than tokens.
 
-                <CodeGroup>
+        <CodeGroup>
         ```python Keep recent messages
         # Keep last N messages
         recent_messages = trim_messages(
@@ -1906,6 +1885,7 @@ Manage context window limits with intelligent trimming:
             strategy="last"
         )
         ```
+
 
         ```python Keep initial context
         # Keep first N messages after system
@@ -1916,6 +1896,7 @@ Manage context window limits with intelligent trimming:
             include_system=True
         )
         ```
+
 
         ```python Preserve tool messages
         # Custom trimming with tool message preservation
@@ -1933,19 +1914,20 @@ Manage context window limits with intelligent trimming:
             trimmed_other = other_messages[-max_messages:]
             return sorted(trimmed_other + tool_messages, key=lambda m: m.id)
         ```
-                </CodeGroup>
-        </Accordion>
+        </CodeGroup>
+    </Accordion>
 
-        <Accordion title="Intelligent trimming strategies" icon="brain">
+    <Accordion title="Intelligent trimming strategies" icon="brain">
         Advanced strategies that preserve important context while trimming.
 
-                <AccordionGroup>
-                        <Accordion title="Importance-based trimming" icon="star">
+        <AccordionGroup>
+            <Accordion title="Importance-based trimming" icon="star">
                 ```python
                 def smart_trim(messages, max_tokens=2000):
                     """Trim while preserving important context"""
                     # Always keep system message
                     system = filter_messages(messages, include_types=["system"])
+
 
                     # Keep messages with high importance
                     important = filter_messages(
@@ -1953,41 +1935,48 @@ Manage context window limits with intelligent trimming:
                         filter_func=lambda m: m.metadata.get("important", False)
                     )
 
+
                     # Keep recent messages
                     recent = messages[-5:]
+
 
                     # Combine and deduplicate
                     combined = list({m.id: m for m in system + important + recent}.values())
 
+
                     # Trim if still over limit
                     return trim_messages(combined, max_tokens=max_tokens, strategy="last")
                 ```
-                        </Accordion>
+            </Accordion>
 
-                        <Accordion title="Sliding window approach" icon="window-restore">
+            <Accordion title="Sliding window approach" icon="window-restore">
                 ```python
                 def sliding_window_trim(messages, window_size=10, overlap=2):
                     """Keep a sliding window of messages with overlap"""
                     if len(messages) <= window_size:
                         return messages
 
+
                     # Keep system message
                     system = filter_messages(messages, include_types=["system"])
+
 
                     # Get the window
                     start_idx = max(0, len(messages) - window_size)
                     window = messages[start_idx:]
+
 
                     # Add overlap from previous context
                     if start_idx > 0:
                         overlap_msgs = messages[max(0, start_idx - overlap):start_idx]
                         window = overlap_msgs + window
 
+
                     return system + window
                 ```
-                        </Accordion>
+            </Accordion>
 
-                        <Accordion title="Topic-aware trimming" icon="tags">
+            <Accordion title="Topic-aware trimming" icon="tags">
                 ```python
                 def topic_aware_trim(messages, max_tokens=2000):
                     """Keep messages related to current topic"""
@@ -1995,24 +1984,28 @@ Manage context window limits with intelligent trimming:
                     recent = messages[-3:]
                     topics = extract_topics(recent)  # Custom topic extraction
 
+
                     # Keep topic-relevant messages
                     relevant = filter_messages(
                         messages,
                         filter_func=lambda m: any(
                             topic in m.content.lower()
+                            topic in m.content.lower()
                             for topic in topics
                         )
                     )
+
 
                     # Combine with system and recent
                     system = filter_messages(messages, include_types=["system"])
                     combined = system + relevant + recent
 
+
                     return trim_messages(combined, max_tokens=max_tokens)
                 ```
-                        </Accordion>
-                </AccordionGroup>
-        </Accordion>
+            </Accordion>
+        </AccordionGroup>
+    </Accordion>
 </AccordionGroup>
 
 #### Summarization
@@ -2027,6 +2020,7 @@ from langchain_core.prompts import ChatPromptTemplate
 def summarize_messages(messages, model, max_summary_length=500):
     """Summarize a conversation history"""
 
+
     # Create summarization prompt
     prompt = ChatPromptTemplate.from_messages([
         ("system", "Summarize this conversation in {max_length} words or less. "
@@ -2034,11 +2028,13 @@ def summarize_messages(messages, model, max_summary_length=500):
         ("human", "Conversation to summarize:\n{conversation}")
     ])
 
+
     # Format conversation as text
     conversation_text = "\n".join([
         f"{msg.__class__.__name__}: {msg.text}"
         for msg in messages
     ])
+
 
     # Generate summary
     summary_msg = model.invoke(
@@ -2047,6 +2043,7 @@ def summarize_messages(messages, model, max_summary_length=500):
             conversation=conversation_text
         )
     )
+
 
     return SystemMessage(
         content=f"Previous conversation summary: {summary_msg.text}",
@@ -2063,10 +2060,12 @@ from langchain_core.prompts import ChatPromptTemplate
 class ConversationSummarizer:
     """Progressively summarize conversations"""
 
+
     def __init__(self, model, chunk_size=10):
         self.model = model
         self.chunk_size = chunk_size
         self.summaries = []
+
 
     def add_messages(self, messages):
         """Add messages and summarize if needed"""
@@ -2075,10 +2074,12 @@ class ConversationSummarizer:
             summary = self.summarize_chunk(messages)
             self.summaries.append(summary)
 
+
             # Return summary + recent messages
             recent = messages[-3:]  # Keep last 3 messages
             return [self.get_combined_summary()] + recent
         return messages
+
 
     def summarize_chunk(self, messages):
         """Summarize a chunk of messages"""
@@ -2087,16 +2088,19 @@ class ConversationSummarizer:
             ("human", "{messages}")
         ])
 
+
         messages_text = "\n".join([f"{m.type}: {m.text}" for m in messages])
         response = self.model.invoke(
             prompt.format_messages(messages=messages_text)
         )
         return response.text
 
+
     def get_combined_summary(self):
         """Get combined summary of all chunks"""
         if not self.summaries:
             return None
+
 
         combined = " ".join(self.summaries)
         return SystemMessage(
@@ -2106,3 +2110,4 @@ class ConversationSummarizer:
 ```
 
 */}
+
