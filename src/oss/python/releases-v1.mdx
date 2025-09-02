@@ -21,7 +21,7 @@ Broader support will be rolled out during the alpha period.
 
 </Note>
 
-## New features
+## <Icon icon="sparkles" /> New features
 
 LangChain 1.0 introduces new features:
 
@@ -38,7 +38,7 @@ new [agents docs](/oss/langchain-agents) and to the
 [release notes](https://github.com/langchain-ai/langchain/releases/tag/langchain%3D%3D1.0.0a1)
 for more detail.
 
-## Breaking changes
+## <Icon icon="ban" /> Breaking changes
 
 <Accordion title="Dropped Python 3.9 support" icon="python">
 
@@ -106,7 +106,7 @@ removal in 1.0 have been deleted.
 
 </Accordion>
 
-## Deprecations
+## <Icon icon="box-archive" /> Deprecations
 
 <Accordion title="`.text()` is now a property">
 
@@ -127,17 +127,17 @@ warning.
 </Accordion>
 
 
-## Prebuilt agents in `langchain`
+## <Icon icon="robot" /> Prebuilt agents
 
 The **`langchain`** release focuses on reducing LangChain's surface area and
 narrowing in on popular and essential abstractions.
 
-### <Icon icon="robot" /> ReAct agent migration
+### ReAct agent migration
 
 **`create_react_agent` has moved from `langgraph` to `langchain`** with
 significant enhancements:
 
-#### Enhanced structured output
+**Enhanced structured output**
 
 `create_react_agent` enhances coercion of outputs to structured data types:
 
@@ -164,7 +164,7 @@ print(repr(result["structured_response"]))
 #> Weather(temperature=70.0, condition='sunny')
 ```
 
-#### Structural improvements
+**Structural improvements**
 
 - **Main loop integration**: Structured output is now generated in the main loop
 instead of requiring an additional LLM call
@@ -172,7 +172,7 @@ instead of requiring an additional LLM call
 structured output, or both
 - **Cost reduction**: Eliminates extra expense from additional LLM calls
 
-#### Advanced configuration
+**Advanced configuration**
 
 Two strategies for structured output generation:
 
@@ -188,16 +188,16 @@ Two strategies for structured output generation:
 **Prompted output** is no longer supported via the `response_format` argument.
 </Warning>
 
-### <Icon icon="triangle-exclamation" /> Error handling improvements
+### Error handling
 
-#### Structured output errors
+**Structured output errors**
 
 Control error handling via the `handle_errors` arg to `ToolStrategy`:
 
 - **Parsing errors**: Model generates data that doesn't match desired structure
 - **Multiple tool calls**: Model generates 2+ tool calls for structured output schemas
 
-#### Tool calling errors
+**Tool calling errors**
 
 Updated error handling for tool failures:
 
@@ -206,9 +206,9 @@ Updated error handling for tool failures:
 
 Configure behavior via `handle_tool_errors` arg to `ToolNode`.
 
-### <Icon icon="ban" /> Breaking changes
+### Breaking changes
 
-#### Pre-bound models
+**Pre-bound models**
 
 To better support structured output, `create_react_agent` no longer supports
 pre-bound models with tools or configuration:
@@ -226,7 +226,7 @@ agent = create_react_agent("openai:gpt-4o-mini", tools=[some_tool])
 Dynamic model functions can return pre-bound models if structured output is *not* used.
 </Note>
 
-#### Import changes
+**Import changes**
 
 ```python
 # Before
@@ -237,13 +237,13 @@ from langchain.agents import create_react_agent, ToolNode, AgentState
 ```
 
 
-## Reporting issues
+## <Icon icon="bullhorn" /> Reporting issues
 
 Please report any issues discovered with 1.0 on
 [GitHub](https://github.com/langchain-ai/langchain/issues) using the
 [label v1](https://github.com/langchain-ai/langchain/issues?q=state%3Aopen%20label%3Av1).
 
-## <Icon icon="book-open" /> See also
+## See also
 
 - [Versioning](/oss/versioning) - Understanding version numbers
 - [Release policy](/oss/release-policy) - Detailed release policies
