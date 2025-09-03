@@ -85,7 +85,7 @@ graph LR
 | Complex, human-like conversation between specialists? | ❌ Limited    | ✅ Strong |
 
 <Tip>
-  You can also combine these patterns — e.g., use a top-level **tool-calling controller** for high-level routing, but allow **handoffs** within a team of related agents for smoother conversation.
+    You can also combine these patterns — e.g., use a top-level **tool-calling controller** for high-level routing, but allow **handoffs** within a team of related agents for smoother conversation.
 </Tip>
 
 ## How handoffs work
@@ -102,7 +102,7 @@ When an agent decides to hand off, it returns a special `Command` that:
 from langgraph.types import Command
 
 def agent(state) -> Command[Literal["agent", "another_agent"]]:
-    # the condition for routing/halting can be anything, e.g. LLM tool call / structured output, etc.
+    # The condition for routing/halting can be anything, e.g. LLM tool call / structured output, etc.
     goto = get_next_agent(...)  # 'agent' / 'another_agent'
     return Command(
         # Specify which agent to call next
@@ -120,13 +120,13 @@ def agent(state) -> Command[Literal["agent", "another_agent"]]:
 import { Command } from "@langchain/langgraph";
 
 const agent = (state) => {
-    // the condition for routing/halting can be anything, e.g. LLM tool call / structured output, etc.
+    // The condition for routing/halting can be anything, e.g. LLM tool call / structured output, etc.
     const goto = getNextAgent(...); // 'agent' / 'another_agent'
     return new Command({
-      // Specify which agent to call next
-      goto,
-      // Update the graph state
-      update: { myStateKey: "myStateValue" }
+        // Specify which agent to call next
+        goto,
+        // Update the graph state
+        update: { myStateKey: "myStateValue" }
     });
 };
 ```
@@ -165,22 +165,22 @@ import { Command } from "@langchain/langgraph";
 import { z } from "zod";
 
 const transferToBob = tool(
-  async () => {
-    return new Command({
-      // name of the agent (node) to go to
-      goto: "bob",
-      // data to send to the agent
-      update: { myStateKey: "myStateValue" },
-      // indicate to LangGraph that we need to navigate to
-      // agent node in a parent graph
-      graph: Command.PARENT,
-    });
-  },
-  {
-    name: "transfer_to_bob",
-    description: "Transfer to bob.",
-    schema: z.object({}),
-  }
+    async () => {
+        return new Command({
+        // name of the agent (node) to go to
+        goto: "bob",
+        // data to send to the agent
+        update: { myStateKey: "myStateValue" },
+        // indicate to LangGraph that we need to navigate to
+        // agent node in a parent graph
+        graph: Command.PARENT,
+        });
+    },
+    {
+        name: "transfer_to_bob",
+        description: "Transfer to bob.",
+        schema: z.object({}),
+    }
 );
 ```
 
@@ -250,54 +250,54 @@ import { ChatOpenAI } from "@langchain/openai";
 const model = new ChatOpenAI();
 
 const agent1 = async (state: typeof MessagesAnnotation.State) => {
-  // you can pass relevant parts of the state to the LLM (e.g., state.messages)
-  // to determine which agent to call next. a common pattern is to call the model
-  // with a structured output (e.g. force it to return an output with a "next_agent" field)
-  const response = await model.invoke(...);
-  // route to one of the agents or exit based on the LLM's decision
-  // if the LLM returns "__end__", the graph will finish execution
-  return new Command({
-    goto: response.nextAgent,
-    update: { messages: [response.content] },
-  });
+    // You can pass relevant parts of the state to the LLM (e.g., state.messages)
+    // to determine which agent to call next. a common pattern is to call the model
+    // with a structured output (e.g. force it to return an output with a "next_agent" field)
+    const response = await model.invoke(...);
+    // Route to one of the agents or exit based on the LLM's decision
+    // if the LLM returns "__end__", the graph will finish execution
+    return new Command({
+        goto: response.nextAgent,
+        update: { messages: [response.content] },
+    });
 };
 
 const agent2 = async (state: typeof MessagesAnnotation.State) => {
-  const response = await model.invoke(...);
-  return new Command({
-    goto: response.nextAgent,
-    update: { messages: [response.content] },
-  });
+    const response = await model.invoke(...);
+    return new Command({
+        goto: response.nextAgent,
+        update: { messages: [response.content] },
+    });
 };
 
 const agent3 = async (state: typeof MessagesAnnotation.State) => {
-  // ...
-  return new Command({
-    goto: response.nextAgent,
-    update: { messages: [response.content] },
-  });
+    // ...
+    return new Command({
+        goto: response.nextAgent,
+        update: { messages: [response.content] },
+    });
 };
 
 const builder = new StateGraph(MessagesAnnotation)
-  .addNode("agent1", agent1, {
-    ends: ["agent2", "agent3", END]
-  })
-  .addNode("agent2", agent2, {
-    ends: ["agent1", "agent3", END]
-  })
-  .addNode("agent3", agent3, {
-    ends: ["agent1", "agent2", END]
-  })
-  .addEdge(START, "agent1");
+    .addNode("agent1", agent1, {
+        ends: ["agent2", "agent3", END]
+    })
+    .addNode("agent2", agent2, {
+        ends: ["agent1", "agent3", END]
+    })
+    .addNode("agent3", agent3, {
+        ends: ["agent1", "agent2", END]
+    })
+    .addEdge(START, "agent1");
 
 const network = builder.compile();
 ```
 
 :::
-  </Accordion>
+    </Accordion>
 
-  <Accordion title="Supervisor" icon="user-crown">
-    In this architecture, we define agents as nodes and add a supervisor node (LLM) that decides which agent nodes should be called next. This architecture also lends itself well to running multiple agents in parallel or using map-reduce patterns.
+    <Accordion title="Supervisor" icon="user-crown">
+        In this architecture, we define agents as nodes and add a supervisor node (LLM) that decides which agent nodes should be called next. This architecture also lends itself well to running multiple agents in parallel or using map-reduce patterns.
 
 :::python
 
@@ -310,16 +310,16 @@ from langgraph.graph import StateGraph, MessagesState, START, END
 model = ChatOpenAI()
 
 def supervisor(state: MessagesState) -> Command[Literal["agent_1", "agent_2", END]]:
-    # you can pass relevant parts of the state to the LLM (e.g., state["messages"])
+    # You can pass relevant parts of the state to the LLM (e.g., state["messages"])
     # to determine which agent to call next. a common pattern is to call the model
     # with a structured output (e.g. force it to return an output with a "next_agent" field)
     response = model.invoke(...)
-    # route to one of the agents or exit based on the supervisor's decision
+    # Route to one of the agents or exit based on the supervisor's decision
     # if the supervisor returns "__end__", the graph will finish execution
     return Command(goto=response["next_agent"])
 
 def agent_1(state: MessagesState) -> Command[Literal["supervisor"]]:
-    # you can pass relevant parts of the state to the LLM (e.g., state["messages"])
+    # You can pass relevant parts of the state to the LLM (e.g., state["messages"])
     # and add any additional logic (different models, custom prompts, structured output, etc.)
     response = model.invoke(...)
     return Command(
@@ -355,56 +355,56 @@ import { ChatOpenAI } from "@langchain/openai";
 const model = new ChatOpenAI();
 
 const supervisor = async (state: typeof MessagesAnnotation.State) => {
-  // you can pass relevant parts of the state to the LLM (e.g., state.messages)
-  // to determine which agent to call next. a common pattern is to call the model
-  // with a structured output (e.g. force it to return an output with a "next_agent" field)
-  const response = await model.invoke(...);
-  // route to one of the agents or exit based on the supervisor's decision
-  // if the supervisor returns "__end__", the graph will finish execution
-  return new Command({ goto: response.nextAgent });
+    // You can pass relevant parts of the state to the LLM (e.g., state.messages)
+    // to determine which agent to call next. a common pattern is to call the model
+    // with a structured output (e.g. force it to return an output with a "next_agent" field)
+    const response = await model.invoke(...);
+    // Route to one of the agents or exit based on the supervisor's decision
+    // if the supervisor returns "__end__", the graph will finish execution
+    return new Command({ goto: response.nextAgent });
 };
 
 const agent1 = async (state: typeof MessagesAnnotation.State) => {
-  // you can pass relevant parts of the state to the LLM (e.g., state.messages)
-  // and add any additional logic (different models, custom prompts, structured output, etc.)
-  const response = await model.invoke(...);
-  return new Command({
-    goto: "supervisor",
-    update: { messages: [response] },
-  });
+    // You can pass relevant parts of the state to the LLM (e.g., state.messages)
+    // and add any additional logic (different models, custom prompts, structured output, etc.)
+    const response = await model.invoke(...);
+    return new Command({
+        goto: "supervisor",
+        update: { messages: [response] },
+    });
 };
 
 const agent2 = async (state: typeof MessagesAnnotation.State) => {
-  const response = await model.invoke(...);
-  return new Command({
-    goto: "supervisor",
-    update: { messages: [response] },
-  });
+    const response = await model.invoke(...);
+    return new Command({
+        goto: "supervisor",
+        update: { messages: [response] },
+    });
 };
 
 const builder = new StateGraph(MessagesAnnotation)
-  .addNode("supervisor", supervisor, {
-    ends: ["agent1", "agent2", END]
-  })
-  .addNode("agent1", agent1, {
-    ends: ["supervisor"]
-  })
-  .addNode("agent2", agent2, {
-    ends: ["supervisor"]
-  })
-  .addEdge(START, "supervisor");
+    .addNode("supervisor", supervisor, {
+        ends: ["agent1", "agent2", END]
+    })
+    .addNode("agent1", agent1, {
+        ends: ["supervisor"]
+    })
+    .addNode("agent2", agent2, {
+        ends: ["supervisor"]
+    })
+    .addEdge(START, "supervisor");
 
 const supervisorGraph = builder.compile();
 ```
 
 :::
-  </Accordion>
+    </Accordion>
 
-  <Accordion title="Supervisor (tool-calling)" icon="toolbox">
-    In this variant of the supervisor architecture, we define a supervisor agent which is responsible for calling sub-agents. The sub-agents are exposed to the supervisor as tools:
+    <Accordion title="Supervisor (tool-calling)" icon="toolbox">
+        In this variant of the supervisor architecture, we define a supervisor agent which is responsible for calling sub-agents. The sub-agents are exposed to the supervisor as tools:
 
 <Tabs>
-  <Tab title="Supervisor (from scratch)">
+    <Tab title="Supervisor (from scratch)">
     :::python
 
     ```python
@@ -415,15 +415,15 @@ const supervisorGraph = builder.compile();
 
     model = ChatOpenAI()
 
-    # this is the agent function that will be called as tool
+    # This is the agent function that will be called as tool
     # notice that you can pass the state to the tool via InjectedState annotation
     @tool
     def agent_1(instructions: str, state: Annotated[dict, InjectedState]):
         """Give instructions to agent 1."""
-        # you can pass relevant parts of the state to the LLM (e.g., state["messages"])
+        # You can pass relevant parts of the state to the LLM (e.g., state["messages"])
         # and add any additional logic (different models, custom prompts, structured output, etc.)
         response = model.invoke(...)
-        # return the LLM response as a string (expected tool response format)
+        # Return the LLM response as a string (expected tool response format)
         # this will be automatically turned to ToolMessage
         # by the prebuilt create_react_agent (supervisor)
         return response.content
@@ -435,7 +435,7 @@ const supervisorGraph = builder.compile();
         return response.content
 
     tools = [agent_1, agent_2]
-    # the simplest way to build a supervisor w/ tool-calling is to use prebuilt ReAct agent graph
+    # The simplest way to build a supervisor w/ tool-calling is to use prebuilt ReAct agent graph
     # that consists of a tool-calling LLM node (i.e. supervisor) and a tool-executing node
     supervisor = create_react_agent(model, tools)
     ```
@@ -451,45 +451,45 @@ const supervisorGraph = builder.compile();
 
     const model = new ChatOpenAI();
 
-    // this is the agent function that will be called as tool
+    // This is the agent function that will be called as tool
     // notice that you can pass the state to the tool via config parameter
     const agent1 = tool(
-      async ({ instructions }, config) => {
-        const state = config.configurable?.state;
-        // you can pass relevant parts of the state to the LLM (e.g., state.messages)
-        // and add any additional logic (different models, custom prompts, structured output, etc.)
-        const response = await model.invoke(...);
-        // return the LLM response as a string (expected tool response format)
-        // this will be automatically turned to ToolMessage
-        // by the prebuilt createAgent (supervisor)
-        return response.content;
-      },
-      {
-        name: "agent1",
-        description: "Give instructions to agent 1.",
-        schema: z.object({
-          instructions: z.string().describe("Instructions for agent 1"),
-        }),
-      }
+        async ({ instructions }, config) => {
+            const state = config.configurable?.state;
+            // You can pass relevant parts of the state to the LLM (e.g., state.messages)
+            // and add any additional logic (different models, custom prompts, structured output, etc.)
+            const response = await model.invoke(...);
+            // Return the LLM response as a string (expected tool response format)
+            // this will be automatically turned to ToolMessage
+            // by the prebuilt createAgent (supervisor)
+            return response.content;
+        },
+        {
+            name: "agent1",
+            description: "Give instructions to agent 1.",
+            schema: z.object({
+            instructions: z.string().describe("Instructions for agent 1"),
+            }),
+        }
     );
 
     const agent2 = tool(
-      async ({ instructions }, config) => {
-        const state = config.configurable?.state;
-        const response = await model.invoke(...);
-        return response.content;
-      },
-      {
-        name: "agent2",
-        description: "Give instructions to agent 2.",
-        schema: z.object({
-          instructions: z.string().describe("Instructions for agent 2"),
-        }),
-      }
+        async ({ instructions }, config) => {
+            const state = config.configurable?.state;
+            const response = await model.invoke(...);
+            return response.content;
+        },
+        {
+            name: "agent2",
+            description: "Give instructions to agent 2.",
+            schema: z.object({
+            instructions: z.string().describe("Instructions for agent 2"),
+            }),
+        }
     );
 
     const tools = [agent1, agent2];
-    // the simplest way to build a supervisor w/ tool-calling is to use prebuilt ReAct agent graph
+    // The simplest way to build a supervisor w/ tool-calling is to use prebuilt ReAct agent graph
     // that consists of a tool-calling LLM node (i.e. supervisor) and a tool-executing node
     const supervisor = createAgent({ llm: model, tools });
     ```
@@ -560,50 +560,50 @@ const supervisorGraph = builder.compile();
     const model = new ChatOpenAI();
 
     function bookHotel(hotelName: string): string {
-      return `Successfully booked a stay at ${hotelName}.`;
+        return `Successfully booked a stay at ${hotelName}.`;
     }
 
     function bookFlight(fromAirport: string, toAirport: string): string {
-      return `Successfully booked a flight from ${fromAirport} to ${toAirport}.`;
+        return `Successfully booked a flight from ${fromAirport} to ${toAirport}.`;
     }
 
     const flightAssistant = createAgent({
-      llm: model,
-      tools: [bookFlight],
-      stateModifier: "You are a flight booking assistant",
+        llm: model,
+        tools: [bookFlight],
+        stateModifier: "You are a flight booking assistant",
     });
 
     const hotelAssistant = createAgent({
-      llm: model,
-      tools: [bookHotel],
-      stateModifier: "You are a hotel booking assistant",
+        llm: model,
+        tools: [bookHotel],
+        stateModifier: "You are a hotel booking assistant",
     });
 
     const supervisor = createSupervisor({
-      llm: model,
-      stateModifier:
-        "You manage a hotel booking assistant and a" +
-        "flight booking assistant. Assign work to them.",
-      agents: [flightAssistant, hotelAssistant],
+        llm: model,
+        stateModifier:
+            "You manage a hotel booking assistant and a" +
+            "flight booking assistant. Assign work to them.",
+        agents: [flightAssistant, hotelAssistant],
     }).compile();
 
     const response = await supervisor.invoke({
-      messages: [
-        {
-          role: "user",
-          content: "book a flight from BOS to JFK and a stay at McKittrick Hotel"
-        }
-      ]
+        messages: [
+            {
+            role: "user",
+            content: "book a flight from BOS to JFK and a stay at McKittrick Hotel"
+            }
+        ]
     });
     ```
 
     :::
-  </Tab>
+    </Tab>
 </Tabs>
-  </Accordion>
+    </Accordion>
 
-  <Accordion title="Hierarchical" icon="sitemap">
-    As you add more agents to your system, it might become too hard for the supervisor to manage all of them. To address this, you can design your system hierarchically:
+    <Accordion title="Hierarchical" icon="sitemap">
+        As you add more agents to your system, it might become too hard for the supervisor to manage all of them. To address this, you can design your system hierarchically:
 
 :::python
 
@@ -615,7 +615,7 @@ from langgraph.types import Command
 
 model = ChatOpenAI()
 
-# define team 1 (same as the single supervisor example above)
+# Define team 1 (same as the single supervisor example above)
 def team_1_supervisor(state: MessagesState) -> Command[Literal["team_1_agent_1", "team_1_agent_2", END]]:
     response = model.invoke(...)
     return Command(goto=response["next_agent"])
@@ -635,10 +635,10 @@ team_1_builder.add_node(team_1_agent_2)
 team_1_builder.add_edge(START, "team_1_supervisor")
 team_1_graph = team_1_builder.compile()
 
-# define team 2 (similar structure)
+# Define team 2 (similar structure)
 # ... (team 2 implementation)
 
-# define top-level supervisor
+# Define top-level supervisor
 def top_level_supervisor(state: MessagesState) -> Command[Literal["team_1_graph", "team_2_graph", END]]:
     response = model.invoke(...)
     return Command(goto=response["next_team"])
@@ -663,68 +663,68 @@ import { ChatOpenAI } from "@langchain/openai";
 
 const model = new ChatOpenAI();
 
-// define team 1 (same as the single supervisor example above)
+// Define team 1 (same as the single supervisor example above)
 const team1Supervisor = async (state: typeof MessagesAnnotation.State) => {
-  const response = await model.invoke(...);
-  return new Command({ goto: response.nextAgent });
+    const response = await model.invoke(...);
+    return new Command({ goto: response.nextAgent });
 };
 
 const team1Agent1 = async (state: typeof MessagesAnnotation.State) => {
-  const response = await model.invoke(...);
-  return new Command({
-    goto: "team1Supervisor",
-    update: { messages: [response] }
-  });
+    const response = await model.invoke(...);
+    return new Command({
+        goto: "team1Supervisor",
+        update: { messages: [response] }
+    });
 };
 
 const team1Agent2 = async (state: typeof MessagesAnnotation.State) => {
-  const response = await model.invoke(...);
-  return new Command({
-    goto: "team1Supervisor",
-    update: { messages: [response] }
-  });
+    const response = await model.invoke(...);
+    return new Command({
+        goto: "team1Supervisor",
+        update: { messages: [response] }
+    });
 };
 
 const team1Builder = new StateGraph(MessagesAnnotation)
-  .addNode("team1Supervisor", team1Supervisor, {
-    ends: ["team1Agent1", "team1Agent2", END]
-  })
-  .addNode("team1Agent1", team1Agent1, {
-    ends: ["team1Supervisor"]
-  })
-  .addNode("team1Agent2", team1Agent2, {
-    ends: ["team1Supervisor"]
-  })
-  .addEdge(START, "team1Supervisor");
+    .addNode("team1Supervisor", team1Supervisor, {
+        ends: ["team1Agent1", "team1Agent2", END]
+    })
+    .addNode("team1Agent1", team1Agent1, {
+        ends: ["team1Supervisor"]
+    })
+    .addNode("team1Agent2", team1Agent2, {
+        ends: ["team1Supervisor"]
+    })
+    .addEdge(START, "team1Supervisor");
 const team1Graph = team1Builder.compile();
 
-// define team 2 (similar structure)
+// Define team 2 (similar structure)
 // ... (team 2 implementation)
 
-// define top-level supervisor
+// Define top-level supervisor
 const topLevelSupervisor = async (state: typeof MessagesAnnotation.State) => {
-  const response = await model.invoke(...);
-  return new Command({ goto: response.nextTeam });
+    const response = await model.invoke(...);
+    return new Command({ goto: response.nextTeam });
 };
 
 const builder = new StateGraph(MessagesAnnotation)
-  .addNode("topLevelSupervisor", topLevelSupervisor, {
-    ends: ["team1Graph", "team2Graph", END]
-  })
-  .addNode("team1Graph", team1Graph)
-  .addNode("team2Graph", team2Graph)
-  .addEdge(START, "topLevelSupervisor")
-  .addEdge("team1Graph", "topLevelSupervisor")
-  .addEdge("team2Graph", "topLevelSupervisor");
+    .addNode("topLevelSupervisor", topLevelSupervisor, {
+        ends: ["team1Graph", "team2Graph", END]
+    })
+    .addNode("team1Graph", team1Graph)
+    .addNode("team2Graph", team2Graph)
+    .addEdge(START, "topLevelSupervisor")
+    .addEdge("team1Graph", "topLevelSupervisor")
+    .addEdge("team2Graph", "topLevelSupervisor");
 
 const graph = builder.compile();
 ```
 
 :::
-  </Accordion>
+    </Accordion>
 
-  <Accordion title="Custom multi-agent workflow" icon="route">
-    In this architecture we add individual agents as graph nodes and define the order in which agents are called ahead of time:
+    <Accordion title="Custom multi-agent workflow" icon="route">
+        In this architecture we add individual agents as graph nodes and define the order in which agents are called ahead of time:
 
 :::python
 
@@ -761,25 +761,25 @@ import { ChatOpenAI } from "@langchain/openai";
 const model = new ChatOpenAI();
 
 const agent1 = async (state: typeof MessagesAnnotation.State) => {
-  const response = await model.invoke(...);
-  return { messages: [response] };
+    const response = await model.invoke(...);
+    return { messages: [response] };
 };
 
 const agent2 = async (state: typeof MessagesAnnotation.State) => {
-  const response = await model.invoke(...);
-  return { messages: [response] };
+    const response = await model.invoke(...);
+    return { messages: [response] };
 };
 
 const builder = new StateGraph(MessagesAnnotation)
-  .addNode("agent1", agent1)
-  .addNode("agent2", agent2)
-  // define the flow explicitly
-  .addEdge(START, "agent1")
-  .addEdge("agent1", "agent2");
+    .addNode("agent1", agent1)
+    .addNode("agent2", agent2)
+    // Define the flow explicitly
+    .addEdge(START, "agent1")
+    .addEdge("agent1", "agent2");
 ```
 
 :::
-  </Accordion>
+    </Accordion>
 </AccordionGroup>
 
 ## Communication and state management
@@ -802,8 +802,8 @@ LangGraph gives you fine-grained control over this process, allowing you to:
 When agents communicate via a shared message list, you have two main strategies:
 
 <AccordionGroup>
-  <Accordion title="Sharing full thought process" icon="brain">
-    Agents can share the full history of their thought process (i.e., "scratchpad") with all other agents:
+    <Accordion title="Sharing full thought process" icon="brain">
+        Agents can share the full history of their thought process (i.e., "scratchpad") with all other agents:
 
 :::python
 
@@ -833,38 +833,38 @@ def booking_agent(instructions: str) -> str:
 
 ```typescript
 const bookingAgent = tool(
-  async ({ instructions }) => {
-    const result = await flightAssistant.invoke({
-      messages: [{
-        role: "user",
-        content: instructions
-      }]
-    });
+    async ({ instructions }) => {
+        const result = await flightAssistant.invoke({
+        messages: [{
+            role: "user",
+            content: instructions
+        }]
+        });
 
-    // Include full message history in the response
-    let content = "<history>";
-    for (const msg of result.messages.slice(0, -1)) {
-      content += `<message role='${msg.role}'>${msg.content}</message>`;
+        // Include full message history in the response
+        let content = "<history>";
+        for (const msg of result.messages.slice(0, -1)) {
+        content += `<message role='${msg.role}'>${msg.content}</message>`;
+        }
+        content += "</history>";
+        content += `<result>${result.messages[result.messages.length - 1].content}</result>`;
+        return content;
+    },
+    {
+        name: "booking_agent",
+        description: "Use an agent to book a flight.",
+        schema: z.object({
+        instructions: z.string(),
+        }),
     }
-    content += "</history>";
-    content += `<result>${result.messages[result.messages.length - 1].content}</result>`;
-    return content;
-  },
-  {
-    name: "booking_agent",
-    description: "Use an agent to book a flight.",
-    schema: z.object({
-      instructions: z.string(),
-    }),
-  }
 );
 ```
 
 :::
-  </Accordion>
+    </Accordion>
 
-  <Accordion title="Sharing only final results" icon="message-check">
-    Agents can have their own private "scratchpad" and only share the final result:
+    <Accordion title="Sharing only final results" icon="message-check">
+        Agents can have their own private "scratchpad" and only share the final result:
 
 :::python
 
@@ -888,35 +888,35 @@ def booking_agent(instructions: str):
 
 ```typescript
 const bookingAgent = tool(
-  async ({ instructions }) => {
-    const results = await flightAssistant.invoke({
-      messages: [{
-        role: "user",
-        content: instructions
-      }]
-    });
-    // Only return the final result
-    return results.messages[results.messages.length - 1].content;
-  },
-  {
-    name: "booking_agent",
-    description: "Give instructions to the booking agent about what flight to book.",
-    schema: z.object({
-      instructions: z.string(),
-    }),
-  }
+    async ({ instructions }) => {
+        const results = await flightAssistant.invoke({
+        messages: [{
+            role: "user",
+            content: instructions
+        }]
+        });
+        // Only return the final result
+        return results.messages[results.messages.length - 1].content;
+    },
+    {
+        name: "booking_agent",
+        description: "Give instructions to the booking agent about what flight to book.",
+        schema: z.object({
+        instructions: z.string(),
+        }),
+    }
 );
 ```
 
 :::
-  </Accordion>
+    </Accordion>
 </AccordionGroup>
 
 ### State management for subagents
 
 <AccordionGroup>
-  <Accordion title="Managing separate message lists" icon="list-tree">
-    If you want to maintain separate message lists for each agent while still having a shared conversation:
+    <Accordion title="Managing separate message lists" icon="list-tree">
+        If you want to maintain separate message lists for each agent while still having a shared conversation:
 
 :::python
 
@@ -948,12 +948,12 @@ class MultiAgentState(TypedDict):
 ```typescript
 // Option 1: Filter messages before passing to subagent
 const agentNode = async (state: typeof MessagesAnnotation.State) => {
-  // Filter out tool calls from other agents
-  const filteredMessages = state.messages.filter(
-    msg => !(msg._getType() === "ai" && msg.tool_calls?.length && msg.name !== "current_agent")
-  );
-  const response = await model.invoke(filteredMessages);
-  return { messages: [response] };
+    // Filter out tool calls from other agents
+    const filteredMessages = state.messages.filter(
+        msg => !(msg._getType() === "ai" && msg.tool_calls?.length && msg.name !== "current_agent")
+    );
+    const response = await model.invoke(filteredMessages);
+    return { messages: [response] };
 };
 
 // Option 2: Maintain separate message lists
@@ -961,25 +961,25 @@ import { Annotation } from "@langchain/langgraph";
 import { BaseMessage } from "@langchain/core/messages";
 
 const MultiAgentAnnotation = Annotation.Root({
-  messages: Annotation<BaseMessage[]>({
-    reducer: (x, y) => x.concat(y),
-  }),
-  aliceMessages: Annotation<BaseMessage[]>({
-    reducer: (x, y) => x.concat(y),
-  }),
-  bobMessages: Annotation<BaseMessage[]>({
-    reducer: (x, y) => x.concat(y),
-  }),
+    messages: Annotation<BaseMessage[]>({
+        reducer: (x, y) => x.concat(y),
+    }),
+    aliceMessages: Annotation<BaseMessage[]>({
+        reducer: (x, y) => x.concat(y),
+    }),
+    bobMessages: Annotation<BaseMessage[]>({
+        reducer: (x, y) => x.concat(y),
+    }),
 });
 ```
 
 :::
-  </Accordion>
+    </Accordion>
 
-  <Accordion title="Using different state schemas" icon="shapes">
-    An agent might need to have a different state schema from the rest of the agents. You can achieve this by:
+    <Accordion title="Using different state schemas" icon="shapes">
+        An agent might need to have a different state schema from the rest of the agents. You can achieve this by:
 
-    1. **Defining subgraph agents** with a separate state schema:
+        1. **Defining subgraph agents** with a separate state schema:
 
 :::python
 
@@ -1018,8 +1018,8 @@ import { StateGraph } from "@langchain/langgraph";
 import { AIMessage } from "@langchain/core/messages";
 
 const SearchAgentAnnotation = Annotation.Root({
-  query: Annotation<string>(),
-  documents: Annotation<Document[]>(),
+    query: Annotation<string>(),
+    documents: Annotation<Document[]>(),
 });
 
 // Define search agent as a subgraph
@@ -1029,22 +1029,22 @@ const searchAgent = searchBuilder.compile();
 
 // Add to main graph with state transformation
 const transformToSearchState = (state: typeof MessagesAnnotation.State) => {
-  return {
-    query: state.messages[state.messages.length - 1].content,
-    documents: []
-  };
+    return {
+        query: state.messages[state.messages.length - 1].content,
+        documents: []
+    };
 };
 
 const transformFromSearchState = (searchState: typeof SearchAgentAnnotation.State) => {
-  return {
-    messages: [new AIMessage(`Found ${searchState.documents.length} documents`)]
-  };
+    return {
+        messages: [new AIMessage(`Found ${searchState.documents.length} documents`)]
+    };
 };
 
 // In main graph
 builder.addNode("searchAgent", (state) =>
-  searchAgent.invoke(transformToSearchState(state))
-    .then(transformFromSearchState)
+    searchAgent.invoke(transformToSearchState(state))
+        .then(transformFromSearchState)
 );
 ```
 
@@ -1078,24 +1078,24 @@ def specialized_agent(state: MessagesState) -> dict:
 
 ```typescript
 interface PrivateAgentInput {
-  task: string;
-  context: Record<string, any>;
+    task: string;
+    context: Record<string, any>;
 }
 
 const specializedAgent = async (state: typeof MessagesAnnotation.State) => {
-  // Transform main state to private input
-  const privateInput: PrivateAgentInput = {
-    task: state.messages[state.messages.length - 1].content,
-    context: { history: state.messages.slice(0, -1) }
-  };
-  // Process with private schema
-  const result = await processTask(privateInput);
-  return { messages: [new AIMessage(result)] };
+    // Transform main state to private input
+    const privateInput: PrivateAgentInput = {
+        task: state.messages[state.messages.length - 1].content,
+        context: { history: state.messages.slice(0, -1) }
+    };
+    // Process with private schema
+    const result = await processTask(privateInput);
+    return { messages: [new AIMessage(result)] };
 };
 ```
 
 :::
-  </Accordion>
+    </Accordion>
 </AccordionGroup>
 
 ## Summary
