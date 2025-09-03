@@ -145,11 +145,11 @@ from langgraph.types import Command
 def transfer_to_bob():
     """Transfer to bob."""
     return Command(
-        # name of the agent (node) to go to
+        # Name of the agent (node) to go to
         goto="bob",
-        # data to send to the agent
+        # Data to send to the agent
         update={"my_state_key": "my_state_value"},
-        # indicate to LangGraph that we need to navigate to
+        # Indicate to LangGraph that we need to navigate to
         # agent node in a parent graph
         graph=Command.PARENT,
     )
@@ -167,11 +167,11 @@ import { z } from "zod";
 const transferToBob = tool(
     async () => {
         return new Command({
-        // name of the agent (node) to go to
+        // Name of the agent (node) to go to
         goto: "bob",
-        // data to send to the agent
+        // Data to send to the agent
         update: { myStateKey: "myStateValue" },
-        // indicate to LangGraph that we need to navigate to
+        // Indicate to LangGraph that we need to navigate to
         // agent node in a parent graph
         graph: Command.PARENT,
         });
@@ -191,8 +191,8 @@ const transferToBob = tool(
 There are several ways to connect agents in a multi-agent system:
 
 <AccordionGroup>
-  <Accordion title="Network" icon="network-wired">
-    In this architecture, each agent can communicate with every other agent (many-to-many connections). This architecture is good for problems that do not have a clear hierarchy of agents or a specific sequence in which agents should be called.
+    <Accordion title="Network" icon="network-wired">
+        In this architecture, each agent can communicate with every other agent (many-to-many connections). This architecture is good for problems that do not have a clear hierarchy of agents or a specific sequence in which agents should be called.
 
 :::python
 
