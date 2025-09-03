@@ -205,11 +205,11 @@ from langgraph.graph import StateGraph, MessagesState, START, END
 model = ChatOpenAI()
 
 def agent_1(state: MessagesState) -> Command[Literal["agent_2", "agent_3", END]]:
-    # you can pass relevant parts of the state to the LLM (e.g., state["messages"])
+    # You can pass relevant parts of the state to the LLM (e.g., state["messages"])
     # to determine which agent to call next. a common pattern is to call the model
     # with a structured output (e.g. force it to return an output with a "next_agent" field)
     response = model.invoke(...)
-    # route to one of the agents or exit based on the LLM's decision
+    # Route to one of the agents or exit based on the LLM's decision
     # if the LLM returns "__end__", the graph will finish execution
     return Command(
         goto=response["next_agent"],
@@ -812,10 +812,12 @@ When agents communicate via a shared message list, you have two main strategies:
 def booking_agent(instructions: str) -> str:
     """Use an agent to book a flight."""
     result = flight_assistant.invoke({
-        "messages": [{
-            "role": "user",
-            "content": instructions
-        }]
+        "messages": [
+            {
+                "role": "user",
+                "content": instructions
+            }
+        ]
     })
 
     # Include full message history in the response
@@ -873,10 +875,12 @@ const bookingAgent = tool(
 def booking_agent(instructions: str):
     """Give instructions to the booking agent about what flight to book."""
     results = flight_assistant.invoke({
-        "messages": [{
-        "role": "user",
-        "content": instructions
-        }]
+        "messages": [
+            {
+                "role": "user",
+                "content": instructions
+            }
+        ]
     })
     # Only return the final result
     return results['messages'][-1].content
