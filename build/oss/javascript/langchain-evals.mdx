@@ -12,16 +12,16 @@ To evaluate your agent's performance you can use `LangSmith` [evaluations](https
 
 ```typescript
 type EvaluatorParams = {
-  outputs: Record<string, any>;
-  referenceOutputs: Record<string, any>;
+    outputs: Record<string, any>;
+    referenceOutputs: Record<string, any>;
 };
 
 function evaluator({ outputs, referenceOutputs }: EvaluatorParams) {
-  // compare agent outputs against reference outputs
-  const outputMessages = outputs.messages;
-  const referenceMessages = referenceOutputs.messages;
-  const score = compareMessages(outputMessages, referenceMessages);
-  return { key: "evaluator_score", score: score };
+    // compare agent outputs against reference outputs
+    const outputMessages = outputs.messages;
+    const referenceMessages = referenceOutputs.messages;
+    const score = compareMessages(outputMessages, referenceMessages);
+    return { key: "evaluator_score", score: score };
 }
 ```
 
@@ -45,37 +45,37 @@ A common way to evaluate agent performance is by comparing its trajectory (the o
 import { createTrajectoryMatchEvaluator } from "agentevals/trajectory/match";
 
 const outputs = [
-  {
-    role: "assistant",
-    tool_calls: [
-      {
-        function: {
-          name: "get_weather",
-          arguments: JSON.stringify({ city: "san francisco" }),
+    {
+        role: "assistant",
+        tool_calls: [
+        {
+            function: {
+            name: "get_weather",
+            arguments: JSON.stringify({ city: "san francisco" }),
+            },
         },
-      },
-      {
-        function: {
-          name: "get_directions",
-          arguments: JSON.stringify({ destination: "presidio" }),
+        {
+            function: {
+            name: "get_directions",
+            arguments: JSON.stringify({ destination: "presidio" }),
+            },
         },
-      },
-    ],
-  },
+        ],
+    },
 ];
 
 const referenceOutputs = [
-  {
-    role: "assistant",
-    tool_calls: [
-      {
-        function: {
-          name: "get_weather",
-          arguments: JSON.stringify({ city: "san francisco" }),
+    {
+        role: "assistant",
+        tool_calls: [
+        {
+            function: {
+            name: "get_weather",
+            arguments: JSON.stringify({ city: "san francisco" }),
+            },
         },
-      },
-    ],
-  },
+        ],
+    },
 ];
 
 // Create the evaluator
@@ -86,8 +86,8 @@ const evaluator = createTrajectoryMatchEvaluator({
 
 // Run the evaluator
 const result = evaluator({
-  outputs: outputs,
-  referenceOutputs: referenceOutputs,
+    outputs: outputs,
+    referenceOutputs: referenceOutputs,
 });
 ```
 
@@ -104,13 +104,13 @@ You can use LLM-as-a-judge evaluator that uses an LLM to compare the trajectory 
 
 ```typescript
 import {
-  createTrajectoryLlmAsJudge,
-  TRAJECTORY_ACCURACY_PROMPT_WITH_REFERENCE,
+    createTrajectoryLlmAsJudge,
+    TRAJECTORY_ACCURACY_PROMPT_WITH_REFERENCE,
 } from "agentevals/trajectory/llm";
 
 const evaluator = createTrajectoryLlmAsJudge({
-  prompt: TRAJECTORY_ACCURACY_PROMPT_WITH_REFERENCE,
-  model: "openai:o3-mini",
+    prompt: TRAJECTORY_ACCURACY_PROMPT_WITH_REFERENCE,
+    model: "openai:o3-mini",
 });
 ```
 

@@ -9,12 +9,13 @@ import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
 ## Overview
 
 Streaming is crucial for enhancing the responsiveness of applications built on LLMs.
-By displaying output progressively, even before a complete response is ready, streaming significantly
-improves user experience (UX), particularly when dealing with the latency of LLMs.
+
+By displaying output progressively, even before a complete response is ready, streaming significantly improves user experience (UX), particularly when dealing with the latency of LLMs.
 
 ## Stream from an agent
 
 LangChain's streaming system lets you surface live feedback from agent runs to your application.
+
 There are three main categories of data you can stream:
 
 1. [Agent progress](/oss/javascript/langchain-streaming#agent-progress) — get state updates after each agent step.
@@ -43,30 +44,30 @@ import z from "zod";
 import { createAgent, tool } from "langchain";
 
 const getWeather = tool(
-  async ({ city }) => {
-    return `The weather in ${city} is always sunny!`;
-  },
-  {
-    name: "get_weather",
-    description: "Get weather for a given city.",
-    schema: z.object({
-      city: z.string(),
-    }),
-  }
+    async ({ city }) => {
+        return `The weather in ${city} is always sunny!`;
+    },
+    {
+        name: "get_weather",
+        description: "Get weather for a given city.",
+        schema: z.object({
+        city: z.string(),
+        }),
+    }
 );
 
 const agent = createAgent({
-  model: "openai:gpt-5-nano",
-  tools: [getWeather],
+    model: "openai:gpt-5-nano",
+    tools: [getWeather],
 });
 
 for await (const chunk of await agent.stream(
-  { messages: [{ role: "user", content: "what is the weather in sf" }] },
-  { streamMode: "updates" }
+    { messages: [{ role: "user", content: "what is the weather in sf" }] },
+    { streamMode: "updates" }
 )) {
-  const [step, content] = Object.entries(chunk)[0];
-  console.log(`step: ${step}`);
-  console.log(`content: ${JSON.stringify(content, null, 2)}`);
+    const [step, content] = Object.entries(chunk)[0];
+    console.log(`step: ${step}`);
+    console.log(`content: ${JSON.stringify(content, null, 2)}`);
 }
 /**
  * step: agent
@@ -128,29 +129,29 @@ import z from "zod";
 import { createAgent, tool } from "langchain";
 
 const getWeather = tool(
-  async ({ city }) => {
-    return `The weather in ${city} is always sunny!`;
-  },
-  {
-    name: "get_weather",
-    description: "Get weather for a given city.",
-    schema: z.object({
-      city: z.string(),
-    }),
-  }
+    async ({ city }) => {
+        return `The weather in ${city} is always sunny!`;
+    },
+    {
+        name: "get_weather",
+        description: "Get weather for a given city.",
+        schema: z.object({
+        city: z.string(),
+        }),
+    }
 );
 
 const agent = createAgent({
-  model: "openai:gpt-4o-mini",
-  tools: [getWeather],
+    model: "openai:gpt-4o-mini",
+    tools: [getWeather],
 });
 
 for await (const [token, metadata] of await agent.stream(
-  { messages: [{ role: "user", content: "what is the weather in sf" }] },
-  { streamMode: "messages" }
+    { messages: [{ role: "user", content: "what is the weather in sf" }] },
+    { streamMode: "messages" }
 )) {
-  console.log(`node: ${metadata.langgraph_node}`);
-  console.log(`content: ${JSON.stringify(token.contentBlocks, null, 2)}`);
+    console.log(`node: ${metadata.langgraph_node}`);
+    console.log(`content: ${JSON.stringify(token.contentBlocks, null, 2)}`);
 }
 ```
 
@@ -167,32 +168,32 @@ import { tool, createAgent } from "langchain";
 import { LangGraphRunnableConfig } from "@langchain/langgraph";
 
 const getWeather = tool(
-  async (input, config: LangGraphRunnableConfig) => {
-    // Stream any arbitrary data
-    config.writer?.(`Looking up data for city: ${input.city}`);
-    // ... fetch city data
-    config.writer?.(`Acquired data for city: ${input.city}`);
-    return `It's always sunny in ${input.city}!`;
-  },
-  {
-    name: "get_weather",
-    description: "Get weather for a given city.",
-    schema: z.object({
-      city: z.string().describe("The city to get weather for."),
-    }),
-  }
+    async (input, config: LangGraphRunnableConfig) => {
+        // Stream any arbitrary data
+        config.writer?.(`Looking up data for city: ${input.city}`);
+        // ... fetch city data
+        config.writer?.(`Acquired data for city: ${input.city}`);
+        return `It's always sunny in ${input.city}!`;
+    },
+    {
+        name: "get_weather",
+        description: "Get weather for a given city.",
+        schema: z.object({
+        city: z.string().describe("The city to get weather for."),
+        }),
+    }
 );
 
 const agent = createAgent({
-  model: "openai:gpt-4o-mini",
-  tools: [getWeather],
+    model: "openai:gpt-4o-mini",
+    tools: [getWeather],
 });
 
 for await (const chunk of await agent.stream(
-  { messages: [{ role: "user", content: "what is the weather in sf" }] },
-  { streamMode: "custom" }
+    { messages: [{ role: "user", content: "what is the weather in sf" }] },
+    { streamMode: "custom" }
 )) {
-  console.log(chunk);
+    console.log(chunk);
 }
 ```
 
@@ -202,7 +203,7 @@ Acquired data for city: San Francisco
 ```
 
 <Note>
-If you add the `writer` parameter to your tool, you won't be able to invoke the tool outside of a LangGraph execution context without providing a writer function.
+    If you add the `writer` parameter to your tool, you won't be able to invoke the tool outside of a LangGraph execution context without providing a writer function.
 </Note>
 
 
@@ -218,32 +219,32 @@ import { tool, createAgent } from "langchain";
 import { LangGraphRunnableConfig } from "@langchain/langgraph";
 
 const getWeather = tool(
-  async (input, config: LangGraphRunnableConfig) => {
-    // Stream any arbitrary data
-    config.writer?.(`Looking up data for city: ${input.city}`);
-    // ... fetch city data
-    config.writer?.(`Acquired data for city: ${input.city}`);
-    return `It's always sunny in ${input.city}!`;
-  },
-  {
-    name: "get_weather",
-    description: "Get weather for a given city.",
-    schema: z.object({
-      city: z.string().describe("The city to get weather for."),
-    }),
-  }
+    async (input, config: LangGraphRunnableConfig) => {
+        // Stream any arbitrary data
+        config.writer?.(`Looking up data for city: ${input.city}`);
+        // ... fetch city data
+        config.writer?.(`Acquired data for city: ${input.city}`);
+        return `It's always sunny in ${input.city}!`;
+    },
+    {
+        name: "get_weather",
+        description: "Get weather for a given city.",
+        schema: z.object({
+        city: z.string().describe("The city to get weather for."),
+        }),
+    }
 );
 
 const agent = createAgent({
-  model: "openai:gpt-4o-mini",
-  tools: [getWeather],
+    model: "openai:gpt-4o-mini",
+    tools: [getWeather],
 });
 
 for await (const [streamMode, chunk] of await agent.stream(
-  { messages: [{ role: "user", content: "what is the weather in sf" }] },
-  { streamMode: ["updates", "messages", "custom"] }
+    { messages: [{ role: "user", content: "what is the weather in sf" }] },
+    { streamMode: ["updates", "messages", "custom"] }
 )) {
-  console.log(`${streamMode}: ${JSON.stringify(chunk, null, 2)}`);
+    console.log(`${streamMode}: ${JSON.stringify(chunk, null, 2)}`);
 }
 ```
 
@@ -251,6 +252,7 @@ for await (const [streamMode, chunk] of await agent.stream(
 ### Disable streaming
 
 In some applications you might need to disable streaming of individual tokens for a given model.
+
 This is useful in [multi-agent](/oss/javascript/multi-agent) systems to control which agents stream their output.
 
 See the [Models](/oss/javascript/models#disable-streaming) guide to learn how to disable streaming.

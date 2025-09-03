@@ -9,12 +9,13 @@ import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
 ## Overview
 
 Streaming is crucial for enhancing the responsiveness of applications built on LLMs.
-By displaying output progressively, even before a complete response is ready, streaming significantly
-improves user experience (UX), particularly when dealing with the latency of LLMs.
+
+By displaying output progressively, even before a complete response is ready, streaming significantly improves user experience (UX), particularly when dealing with the latency of LLMs.
 
 ## Stream from an agent
 
 LangChain's streaming system lets you surface live feedback from agent runs to your application.
+
 There are three main categories of data you can stream:
 
 1. [Agent progress](/oss/python/langchain-streaming#agent-progress) — get state updates after each agent step.
@@ -73,8 +74,7 @@ content: [{'type': 'text', 'text': 'It’s always sunny in San Francisco!'}]
 
 ### LLM tokens
 
-To stream tokens as they are produced by the LLM, use `stream_mode="messages"`. Below
-you can see the output of the agent streaming tool calls and the final response.
+To stream tokens as they are produced by the LLM, use `stream_mode="messages"`. Below you can see the output of the agent streaming tool calls and the final response.
 
 ```python {highlight={14}} title="Streaming LLM tokens"
 from langchain.agents import create_agent
@@ -232,7 +232,7 @@ Acquired data for city: San Francisco
 ```
 
 <Note>
-If you add `get_stream_writer` inside your tool, you won't be able to invoke the tool outside of a LangGraph execution context.
+    If you add `get_stream_writer` inside your tool, you won't be able to invoke the tool outside of a LangGraph execution context.
 </Note>
 
 
@@ -294,6 +294,7 @@ content: {'agent': {'messages': [AIMessage(content='San Francisco weather: It’
 ### Disable streaming
 
 In some applications you might need to disable streaming of individual tokens for a given model.
+
 This is useful in [multi-agent](/oss/python/multi-agent) systems to control which agents stream their output.
 
 See the [Models](/oss/python/models#disable-streaming) guide to learn how to disable streaming.
