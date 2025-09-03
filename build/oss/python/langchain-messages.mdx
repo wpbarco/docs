@@ -400,8 +400,23 @@ response = model.invoke(messages)  # Model processes the result
 ## Content
 
 You can think of a message's content as the payload of data that gets
-sent to the model. Within a message, you can content either as a string or a
-list of LangChain content blocks.
+sent to the model. Messages have a `content` attribute that is loosely-typed,
+supporting strings and lists of untyped objects (e.g., dictionaries). This allows
+support for provider-native structures directly in LangChain chat models, such as
+[multimodal](#multimodal) content and other data.
+
+Separately, LangChain provides dedicated content types for text, reasoning, citations, multi-modal data,
+server-side tool calls, and other message content. See
+[content blocks](#standard-content-blocks) below.
+
+LangChain chat models accept message content in the `.content` attribute, and can
+contain:
+
+1. A string
+2. A list of content blocks in a provider-native format
+3. A list of [LangChain's standard content blocks](#standard-content-blocks)
+
+See below for an example using [multimodal](#multimodal) inputs:
 
 ```python
 from langchain_core.messages import HumanMessage
@@ -409,137 +424,209 @@ from langchain_core.messages import HumanMessage
 # String content
 human_message = HumanMessage("Hello, how are you?")
 
-# List of content blocks
+# Provider-native format (e.g., OpenAI)
+human_message = HumanMessage(content=[
+    {"type": "text", "text": "Hello, how are you?"},
+    {"type": "image_url", "image_url": {"url": "https://example.com/image.jpg"}}
+])
+
+# List of standard content blocks
 human_message = HumanMessage(content_blocks=[
     {"type": "text", "text": "Hello, how are you?"},
     {"type": "image", "url": "https://example.com/image.jpg"},
 ])
 ```
 
+<Tip>
 
+Specifying `content_blocks` when initializing a message will still populate message
+`content`, but provides a type-safe interface for doing so.
 
-
-Most providers have an opinionated format of representing message content.
-This makes it difficult to build applications that need to work across multiple
-AI providers, as each structure means you have to write custom code to handle
-format.
-
-```python Provider-specific format examples
-# OpenAI format
-openai_message = {
-    "role": "user",
-    "content": [
-        {"type": "text", "text": "What's in this image?"},
-        {"type": "image_url", "image_url": {"url": "..."}}
-    ]
-}
-
-# Anthropic format
-anthropic_message = {
-    "role": "user",
-    "content": [
-        {"type": "text", "text": "What's in this image?"},
-        {"type": "image", "source": {"type": "url", "media_type": "image/jpeg", "url": "..."}}
-    ]
-}
-```
+</Tip>
 
 
 
 
-By default, `AIMessage` objects will store the output of the model inside of the
-`content` attribute. If you want to access content in a way that won't change
-between providers, you can access the `content_blocks` attribute, which will
-return a list of content blocks that adhere to the
-[standard content format](#content-block-reference).
+### Standard content blocks
 
-```python Access content blocks
-message = model.invoke("Why do parrots have different colors?")
+LangChain maintains a standard set of types for message content that works across
+providers (see the [reference](#content-block-reference) section below).
+
+Messages also implement a `content_blocks` property that will lazily parse
+the `content` attribute into this standard, type-safe representation. For example,
+messages generated from [ChatAnthropic](/oss/python/integrations/chat/anthropic) or
+[ChatOpenAI](/oss/python/integrations/openai) will include `thinking` or `reasoning` blocks
+in the format of the respective provider, but these can be lazily parsed into a
+consistent [`ReasoningContentBlock`](#content-block-reference) representation:
+
+<Tabs>
+<Tab title="Anthropic">
+```python Anthropic
+from langchain_core.messages import AIMessage
+
+message = AIMessage(
+    content=[
+        {"type": "thinking", "thinking": "...", "signature": "WaUjzkyp..."},
+        {"type": "text", "text": "..."},
+    ],
+    response_metadata={"model_provider": "anthropic"}
+)
 message.content_blocks
 ```
+```
+[{'type': 'reasoning',
+  'reasoning': '...',
+  'extras': {'signature': 'WaUjzkyp...'}},
+ {'type': 'text', 'text': '...'}]
+```
+</Tab>
+
+<Tab title="OpenAI">
+```python
+from langchain_core.messages import AIMessage
+
+message = AIMessage(
+    content=[
+        {
+            "type": "reasoning",
+            "id": "rs_abc123",
+            "summary": [
+                {"type": "summary_text", "text": "summary 1"},
+                {"type": "summary_text", "text": "summary 2"},
+            ],
+        },
+        {"type": "text", "text": "...", "id": "msg_abc123"},
+    ],
+    response_metadata={"model_provider": "openai"}
+)
+message.content_blocks
+```
+```
+[{'type': 'reasoning', 'id': 'rs_abc123', 'reasoning': 'summary 1'},
+ {'type': 'reasoning', 'id': 'rs_abc123', 'reasoning': 'summary 2'},
+ {'type': 'text', 'text': '...', 'id': 'msg_abc123'}]
+```
+</Tab>
+</Tabs>
 
 
 
 
-Because each provider handles `content` differently, you can also initialize a
-message with a list of content blocks. This will ensure that the message is
-always in the standard format, regardless of the provider.
+See the [integrations guide](/oss/python/integrations/providers) to get started with the
+inference provider of your choice.
 
-```python Initialize with content blocks
-universal_message = HumanMessage(content_blocks=[
-    {"type": "text", "text": "What's in this image?"},
-    {"type": "image", "url": "..."}  # Works with any provider
-])
+**Serializing standard content**
+
+If an application outside of LangChain needs access to the standard content block
+representation, you can opt-in to storing content blocks in message content.
+
+To do this, you can set the `LC_OUTPUT_VERSION` environment variable to `v1`. Or,
+initialize any chat model with `output_version="v1"`:
+
+```python
+from langchain.chat_models import init_chat_model
+
+model = init_chat_model("openai:gpt-5-nano", output_version="v1")
 ```
 
 
 
 
-### Examples
+### Multimodal
 
-```python Multimodal message
-multimodal_message = HumanMessage(content_blocks=[
-    {"type": "text", "text": "Compare this image and document:"},
-    {"type": "image", "url": "chart.jpg"},
-    {"type": "file", "base64": pdf_data, "mime_type": "application/pdf"},
-    {"type": "text", "text": "Which data source is more reliable? Explain reasoning."}
-])
+**Multimodality** refers to the ability to work with data that comes in different
+forms, such as text, audio, images, and video. LangChain includes standard types
+for these data that can be used across providers.
 
-response = model.invoke([multimodal_message])
-```
-
-
-
+[Chat models](/oss/python/langchain-models) can accept multimodal data as input and generate
+it as output. Below we show short examples of input messages featuring multimodal data:
 
 <CodeGroup>
-```python PDF document analysis
-import base64
-from langchain_core.messages import HumanMessage
+    ```python Image input
+    # From URL
+    response = model.invoke([
+        {"type": "text", "text": "Describe the content of this image."},
+        {"type": "image", "url": "https://example.com/path/to/image.jpg"},
+    ])
 
-# Read and encode PDF
-with open("report.pdf", "rb") as f:
-    pdf_data = base64.b64encode(f.read()).decode()
+    # From base64 data
+    response = model.invoke([
+        {"type": "text", "text": "Describe the content of this image."},
+        {
+            "type": "image",
+            "base64": "AAAAIGZ0eXBtcDQyAAAAAGlzb21tcDQyAAACAGlzb2...",
+            "mime_type": "image/jpeg",
+        },
+    ])
 
-message = HumanMessage(content_blocks=[
-    {"type": "text", "text": "Summarize the key findings in this report"},
-    {"type": "file", "base64": pdf_data, "mime_type": "application/pdf"}
-])
+    # From provider-managed File ID
+    response = model.invoke([
+        {"type": "text", "text": "Describe the content of this image."},
+        {"type": "image", "file_id": "file-abc123"},
+    ])
+    ```
 
-response = model.invoke([message])
-```
+    ```python PDF document input
+    # From URL
+    response = model.invoke([
+        {"type": "text", "text": "Describe the content of this document."},
+        {"type": "file", "url": "https://example.com/path/to/document.pdf"},
+    ])
 
-```python Audio transcription
-import base64
-from langchain_core.messages import HumanMessage
+    # From base64 data
+    response = model.invoke([
+        {"type": "text", "text": "Describe the content of this document."},
+        {
+            "type": "file",
+            "base64": "AAAAIGZ0eXBtcDQyAAAAAGlzb21tcDQyAAACAGlzb2...",
+            "mime_type": "application/pdf",
+        },
+    ])
 
-# Read and encode audio file
-with open("meeting.mp3", "rb") as f:
-    audio_data = base64.b64encode(f.read()).decode()
+    # From provider-managed File ID
+    response = model.invoke([
+        {"type": "text", "text": "Describe the content of this document."},
+        {"type": "file", "file_id": "file-abc123"},
+    ])
+    ```
 
-message = HumanMessage(content_blocks=[
-    {"type": "text", "text": "Transcribe this audio and identify the main topics discussed"},
-    {"type": "audio", "base64": audio_data, "mime_type": "audio/mpeg"}
-])
+    ```python Audio input
+    # From base64 data
+    response = model.invoke([
+        {"type": "text", "text": "Describe the content of this audio."},
+        {
+            "type": "audio",
+            "base64": "AAAAIGZ0eXBtcDQyAAAAAGlzb21tcDQyAAACAGlzb2...",
+            "mime_type": "audio/wav",
+        },
+    ])
 
-response = model.invoke([message])
-```
+    # From provider-managed File ID
+    response = model.invoke([
+        {"type": "text", "text": "Describe the content of this audio."},
+        {"type": "audio", "file_id": "file-abc123"},
+    ])
+    ```
 
-```python Video analysis
-import base64
-from langchain_core.messages import HumanMessage
+    ```python Video input
+    # From base64 data
+    response = model.invoke([
+        {"type": "text", "text": "Describe the content of this video."},
+        {
+            "type": "video",
+            "base64": "AAAAIGZ0eXBtcDQyAAAAAGlzb21tcDQyAAACAGlzb2...",
+            "mime_type": "video/mp4",
+        },
+    ])
 
-# Read and encode video file
-with open("demo.mp4", "rb") as f:
-    video_data = base64.b64encode(f.read()).decode()
-
-message = HumanMessage(content_blocks=[
-    {"type": "text", "text": "Describe what happens in this video"},
-    {"type": "video", "base64": video_data, "mime_type": "video/mp4"}
-])
-
-response = model.invoke([message])
-```
+    # From provider-managed File ID
+    response = model.invoke([
+        {"type": "text", "text": "Describe the content of this video."},
+        {"type": "video", "file_id": "file-abc123"},
+    ])
+    ```
 </CodeGroup>
+
 
 
 
