@@ -1,0 +1,84 @@
+---
+title: Installation
+---
+
+import AlphaCallout from '/snippets/alpha-lg-callout.mdx';
+
+<AlphaCallout />
+
+To install the base LangGraph package:
+
+:::python
+<CodeGroup>
+```bash pip
+pip install --pre -U langgraph
+```
+
+```bash uv
+uv add langgraph@pre
+```
+</CodeGroup>
+:::
+
+:::js
+<CodeGroup>
+```bash npm
+npm install @langchain/langgraph @langchain/core
+```
+
+```bash pnpm
+pnpm add @langchain/langgraph @langchain/core
+```
+
+```bash yarn
+yarn add @langchain/langgraph @langchain/core
+```
+
+```bash bun
+bun add @langchain/langgraph @langchain/core
+```
+</CodeGroup>
+:::
+
+To use LangGraph you will usually want to access LLMs and define tools.
+You can do this however you see fit.
+
+One way to do this (which we will use in the docs) is to use [LangChain](/oss/langchain-overview).
+
+Install LangChain with:
+
+:::python
+<CodeGroup>
+```bash pip
+pip install --pre -U langchain
+```
+
+```bash uv
+uv add langchain@pre
+```
+</CodeGroup>
+:::
+
+:::js
+<CodeGroup>
+```bash npm
+npm install langchain@next
+```
+
+```bash pnpm
+pnpm add langchain@next
+```
+
+```bash yarn
+yarn add langchain@next
+```
+
+```bash bun
+bun add langchain@next
+```
+</CodeGroup>
+:::
+
+To work with specific LLM provider packages, you will need install them separately.
+
+Refer to the [integrations](/oss/integrations/providers) page for provider-specific installation instructions.
