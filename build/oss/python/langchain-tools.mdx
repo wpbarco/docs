@@ -1,7 +1,8 @@
 ---
 title: Tools
 ---
-import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
+
+import AlphaCallout from "/snippets/alpha-lc-callout.mdx";
 
 <AlphaCallout />
 
@@ -118,9 +119,7 @@ Define complex inputs with Pydantic models or JSON schemas:
 
 Agents go beyond simple tool binding by adding reasoning loops, state management, and multi-step execution.
 
-<Tip>
-    To see examples of how to use tools with agents, see [Agents](./langchain-agents).
-</Tip>
+<Tip>To see examples of how to use tools with agents, see [Agents](/oss/python/langchain-agents).</Tip>
 
 ## Advanced tool patterns
 
@@ -150,6 +149,7 @@ tool_node = ToolNode(
 
 <ParamField path="tools" required>
     A list of tools that this node can execute. Can include:
+
     - LangChain `@tool` decorated functions
     - Callable objects (e.g. functions) with proper type hints and a docstring
 </ParamField>
@@ -187,6 +187,7 @@ To customize the error handling behavior, you can configure `handle_tool_errors`
 - **`False`**: Disable error handling entirely, allowing exceptions to propagate.
 
 `handle_tool_errors` defaults to a callable `_default_handle_tool_errors` that:
+
 - catches tool invocation errors `ToolInvocationError` (due to invalid arguments provided by the model) and returns a descriptive error message
 - ignores tool execution errors (they will be re-raised with the template string `TOOL_CALL_ERROR_TEMPLATE = "Error: {error}\n Please fix your mistakes."`)
 
@@ -273,6 +274,7 @@ agent.invoke({
 When you pass a `ToolNode` to `create_agent()`, the agent uses your exact configuration including error handling, custom names, and tags. This is useful when you need fine-grained control over tool execution behavior.
 
 
+
 ### State, context, and memory
 
 <AccordionGroup>
@@ -280,7 +282,6 @@ When you pass a `ToolNode` to `create_agent()`, the agent uses your exact config
         <Info>
             **`state`**: The agent maintains state throughout its execution - this includes messages, custom fields, and any data your tools need to track. State flows through the graph and can be accessed and modified by tools.
         </Info>
-
 
         <Info>
             **`InjectedState`**: An annotation that allows tools to access the current graph state without exposing it to the LLM. This lets tools read information like message history or custom state fields while keeping the tool's schema simple.
@@ -355,8 +356,8 @@ When you pass a `ToolNode` to `create_agent()`, the agent uses your exact config
             """Update the user's name."""
             return Command(update={"user_name": new_name})
         ```
-
     </Accordion>
+
 
     <Accordion title="Accessing runtime context inside a tool">
         <Info>
@@ -490,4 +491,3 @@ When you pass a `ToolNode` to `create_agent()`, the agent uses your exact config
 
     </Accordion>
 </AccordionGroup>
-
