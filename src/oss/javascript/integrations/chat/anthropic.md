@@ -45,16 +45,19 @@ If you want to get automated tracing of your model calls you can also set your [
 
 The LangChain `ChatAnthropic` integration lives in the `@langchain/anthropic` package:
 
-```{=mdx}
-
-import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
-<IntegrationInstallTooltip></IntegrationInstallTooltip>
-
-<Npm2Yarn>
-  @langchain/anthropic @langchain/core
-</Npm2Yarn>
-
+<CodeGroup>
+```bash npm
+npm install @langchain/anthropic @langchain/core
 ```
+
+```bash yarn
+yarn add @langchain/anthropic @langchain/core
+```
+
+```bash pnpm
+pnpm add @langchain/anthropic @langchain/core
+```
+</CodeGroup>
 
 ## Instantiation
 

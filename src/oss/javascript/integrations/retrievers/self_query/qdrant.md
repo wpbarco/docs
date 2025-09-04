@@ -37,14 +37,19 @@ The vector store lives in the `@langchain/qdrant` package. You'll also need to i
 
 For this example, we'll also use OpenAI embeddings, so you'll need to install the `@langchain/openai` package and [obtain an API key](https://platform.openai.com):
 
-```{=mdx}
-import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
-<IntegrationInstallTooltip></IntegrationInstallTooltip>
-
-<Npm2Yarn>
-  @langchain/qdrant langchain @langchain/community @langchain/openai @langchain/core
-</Npm2Yarn>
+<CodeGroup>
+```bash npm
+npm install @langchain/qdrant langchain @langchain/community @langchain/openai @langchain/core
 ```
+
+```bash yarn
+yarn add @langchain/qdrant langchain @langchain/community @langchain/openai @langchain/core
+```
+
+```bash pnpm
+pnpm add @langchain/qdrant langchain @langchain/community @langchain/openai @langchain/core
+```
+</CodeGroup>
 
 The official Qdrant SDK (`@qdrant/js-client-rest`) is automatically installed as a dependency of `@langchain/qdrant`, but you may wish to install it independently as well.
 

@@ -41,14 +41,19 @@ You will also need to install the official Pinecone SDK (`@pinecone-database/pin
 
 For this example, we'll also use OpenAI embeddings, so you'll need to install the `@langchain/openai` package and [obtain an API key](https://platform.openai.com):
 
-```{=mdx}
-import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
-<IntegrationInstallTooltip></IntegrationInstallTooltip>
-
-<Npm2Yarn>
-  @langchain/pinecone langchain @langchain/openai @langchain/core @pinecone-database/pinecone
-</Npm2Yarn>
+<CodeGroup>
+```bash npm
+npm install @langchain/pinecone langchain @langchain/openai @langchain/core @pinecone-database/pinecone
 ```
+
+```bash yarn
+yarn add @langchain/pinecone langchain @langchain/openai @langchain/core @pinecone-database/pinecone
+```
+
+```bash pnpm
+pnpm add @langchain/pinecone langchain @langchain/openai @langchain/core @pinecone-database/pinecone
+```
+</CodeGroup>
 
 ## Instantiation
 

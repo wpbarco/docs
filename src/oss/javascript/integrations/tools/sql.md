@@ -30,14 +30,19 @@ process.env.LANGSMITH_API_KEY="your-api-key"
 
 This toolkit lives in the `langchain` package. You'll also need to install the `typeorm` peer dependency.
 
-```{=mdx}
-import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
-<IntegrationInstallTooltip></IntegrationInstallTooltip>
-
-<Npm2Yarn>
-  langchain @langchain/core typeorm
-</Npm2Yarn>
+<CodeGroup>
+```bash npm
+npm install langchain @langchain/core typeorm
 ```
+
+```bash yarn
+yarn add langchain @langchain/core typeorm
+```
+
+```bash pnpm
+pnpm add langchain @langchain/core typeorm
+```
+</CodeGroup>
 
 ## Instantiation
 

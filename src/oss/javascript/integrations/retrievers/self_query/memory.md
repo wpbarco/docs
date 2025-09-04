@@ -33,14 +33,19 @@ The vector store lives in the `@langchain/community` package. You'll also need t
 
 For this example, we'll also use OpenAI embeddings, so you'll need to install the `@langchain/openai` package and [obtain an API key](https://platform.openai.com):
 
-```{=mdx}
-import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
-<IntegrationInstallTooltip></IntegrationInstallTooltip>
-
-<Npm2Yarn>
-  @langchain/community langchain @langchain/openai @langchain/core
-</Npm2Yarn>
+<CodeGroup>
+```bash npm
+npm install @langchain/community langchain @langchain/openai @langchain/core
 ```
+
+```bash yarn
+yarn add @langchain/community langchain @langchain/openai @langchain/core
+```
+
+```bash pnpm
+pnpm add @langchain/community langchain @langchain/openai @langchain/core
+```
+</CodeGroup>
 
 ## Instantiation
 

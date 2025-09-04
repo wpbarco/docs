@@ -20,15 +20,19 @@ The Arcjet Redact object is not an LLM itself, instead it wraps an LLM. It redac
 
 Install the Arcjet Redaction Library:
 
-```{=mdx}
-import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
-<IntegrationInstallTooltip></IntegrationInstallTooltip>
-
-<Npm2Yarn>
-  @arcjet/redact
-</Npm2Yarn>
-
+<CodeGroup>
+```bash npm
+npm install @arcjet/redact
 ```
+
+```bash yarn
+yarn add @arcjet/redact
+```
+
+```bash pnpm
+pnpm add @arcjet/redact
+```
+</CodeGroup>
 
 And install LangChain Community:
 

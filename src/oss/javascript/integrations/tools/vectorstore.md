@@ -19,14 +19,19 @@ process.env.LANGSMITH_API_KEY="your-api-key"
 
 This toolkit lives in the `langchain` package:
 
-```{=mdx}
-import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
-<IntegrationInstallTooltip></IntegrationInstallTooltip>
-
-<Npm2Yarn>
-  langchain @langchain/core
-</Npm2Yarn>
+<CodeGroup>
+```bash npm
+npm install langchain @langchain/core
 ```
+
+```bash yarn
+yarn add langchain @langchain/core
+```
+
+```bash pnpm
+pnpm add langchain @langchain/core
+```
+</CodeGroup>
 
 ## Instantiation
 
