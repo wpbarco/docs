@@ -440,11 +440,12 @@ const result = await agent.invoke({
 
 When you pass a `ToolNode` to `createAgent()`, the agent uses your exact configuration including error handling, custom names, and tags. This is useful when you need fine-grained control over tool execution behavior.
 :::
-:::python
 
 ### State, context, and memory
 
+
 <AccordionGroup>
+:::python
     <Accordion title="Accessing agent state inside a tool">
         <Info>
             **`state`**: The agent maintains state throughout its execution - this includes messages, custom fields, and any data your tools need to track. State flows through the graph and can be accessed and modified by tools.
@@ -524,9 +525,8 @@ When you pass a `ToolNode` to `createAgent()`, the agent uses your exact configu
             """Update the user's name."""
             return Command(update={"user_name": new_name})
         ```
-        :::
     </Accordion>
-
+:::    
     <Accordion title="Accessing runtime context inside a tool">
         <Info>
             **`runtime`**: The execution environment of your agent, containing immutable configuration and contextual data that persists throughout the agent's execution (e.g., user IDs, session details, or application-specific configuration).
