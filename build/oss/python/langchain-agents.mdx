@@ -75,7 +75,7 @@ Static models are configured once when creating the agent and remain unchanged t
 from langchain.agents import create_agent
 
 agent = create_agent(
-    "openai:gpt-5", 
+    "openai:gpt-5",
     tools=tools
 )
 ```
@@ -402,13 +402,13 @@ Pre-model hook is an optional node that can process state before the model is ca
 
 ```mermaid
 %%{
-  init: {
-    "fontFamily": "monospace",
-    "flowchart": {
-      "curve": "curve"
-    },
-    "themeVariables": {"edgeLabelBackground": "transparent"}
-  }
+    init: {
+        "fontFamily": "monospace",
+        "flowchart": {
+        "curve": "curve"
+        },
+        "themeVariables": {"edgeLabelBackground": "transparent"}
+    }
 }%%
 graph TD
     S(["\_\_start\_\_"])
@@ -503,13 +503,13 @@ Post-model hook is an optional node that can process the model's response before
 
 ```mermaid
 %%{
-  init: {
-    "fontFamily": "monospace",
-    "flowchart": {
-      "curve": "curve"
-    },
-    "themeVariables": {"edgeLabelBackground": "transparent"}
-  }
+    init: {
+        "fontFamily": "monospace",
+        "flowchart": {
+        "curve": "curve"
+        },
+        "themeVariables": {"edgeLabelBackground": "transparent"}
+    }
 }%%
 graph TD
     S(["\_\_start\_\_"])
