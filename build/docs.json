@@ -551,7 +551,8 @@
                       "langgraph-platform/graph-rebuild",
                       "langgraph-platform/langgraph-cli",
                       "langgraph-platform/sdk",
-                      "langgraph-platform/egress-metrics-metadata"
+                      "langgraph-platform/egress-metrics-metadata",
+                      "langgraph-platform/monorepo-support"
                     ]
                   }
                 ]
@@ -1535,7 +1536,8 @@
                       "langgraph-platform/graph-rebuild",
                       "langgraph-platform/langgraph-cli",
                       "langgraph-platform/sdk",
-                      "langgraph-platform/egress-metrics-metadata"
+                      "langgraph-platform/egress-metrics-metadata",
+                      "langgraph-platform/monorepo-support"
                     ]
                   }
                 ]
