@@ -70,9 +70,9 @@ Place your `langgraph.json` file in your agent directory (not the monorepo root)
     ```
     
     The Python implementation automatically handles packages in parent directories by:
-    - Detecting relative paths that start with `"."`
-    - Adding parent directories to the Docker build context as needed
-    - Supporting both real packages (with `pyproject.toml`/`setup.py`) and simple Python modules
+    - Detecting relative paths that start with `"."`.
+    - Adding parent directories to the Docker build context as needed.
+    - Supporting both real packages (with `pyproject.toml`/`setup.py`) and simple Python modules.
   </Tab>
   <Tab title="JS">
     ```json
