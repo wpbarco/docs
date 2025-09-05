@@ -72,12 +72,12 @@ Let's walk through each step:
 
     </Step>
     <Step title="Create tools">
-        [Tools](/oss/python/langchain-tools) are functions your agent can call. They should be well-documented. Oftentimes, tools will want to connect to external systems, and will rely on runtime configuration to do so. Notice here how the `get_user_info` tool does exactly that:
+        [Tools](/oss/python/langchain-tools) are functions your agent can call. They should be well-documented. Oftentimes, tools will want to connect to external systems, and will rely on runtime configuration to do so. Notice here how the `get_user_location` tool does exactly that:
 
         ```python
         from langchain_core.tools import tool
 
-        def get_weather(city: str) -> str:  # (1)!
+        def get_weather_for_location(city: str) -> str:  # (1)!
             """Get weather for a given city."""
             return f"It's always sunny in {city}!"
 
@@ -89,7 +89,7 @@ Let's walk through each step:
         }
 
         @tool
-        def get_user_info(config: RunnableConfig) -> str:
+        def get_user_location(config: RunnableConfig) -> str:
             """Retrieve user information based on user ID."""
             user_id = config["context"].get("user_id")
             return USER_LOCATION[user_id]
@@ -149,7 +149,7 @@ Let's walk through each step:
         agent = create_agent(
             model=model,
             prompt=system_prompt,
-            tools=[get_user_info, get_weather],
+            tools=[get_user_location, get_weather_for_location],
             response_format=WeatherResponse,
             checkpointer=checkpointer
         )

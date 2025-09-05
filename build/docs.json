@@ -164,6 +164,13 @@
                     ]
                   },
                   {
+                    "group": "Tutorials",
+                    "pages": [
+                      "oss/python/langchain-knowledge-base",
+                      "oss/python/langchain-rag"
+                    ]
+                  },
+                  {
                     "group": "Production",
                     "pages": [
                       "oss/python/langchain-studio",
@@ -251,6 +258,12 @@
                         ]
                       },
                       "oss/python/langgraph/pregel"
+                    ]
+                  },
+                  {
+                    "group": "Tutorials",
+                    "pages": [
+                      "oss/python/langgraph/langgraph-agentic-rag"
                     ]
                   },
                   {
@@ -933,7 +946,8 @@
                       "langsmith/self-host-ttl",
                       "langsmith/self-host-ingress",
                       "langsmith/self-host-mirroring-images",
-                      "langsmith/self-host-playground-environment-settings"
+                      "langsmith/self-host-playground-environment-settings",
+                      "langsmith/troubleshooting"
                     ]
                   },
                   {
@@ -996,7 +1010,6 @@
                     "group": "Additional resources",
                     "pages": [
                       "langsmith/faq",
-                      "langsmith/troubleshooting",
                       "langsmith/cloud-architecture-and-scalability",
                       "langsmith/regions-faq",
                       "langsmith/authentication-methods",
@@ -1155,6 +1168,13 @@
                     ]
                   },
                   {
+                    "group": "Tutorials",
+                    "pages": [
+                      "oss/javascript/langchain-knowledge-base",
+                      "oss/javascript/langchain-rag"
+                    ]
+                  },
+                  {
                     "group": "Production",
                     "pages": [
                       "oss/javascript/langchain-studio",
@@ -1242,6 +1262,12 @@
                         ]
                       },
                       "oss/javascript/langgraph/pregel"
+                    ]
+                  },
+                  {
+                    "group": "Tutorials",
+                    "pages": [
+                      "oss/javascript/langgraph/langgraph-agentic-rag"
                     ]
                   },
                   {
@@ -1934,7 +1960,8 @@
                       "langsmith/self-host-ttl",
                       "langsmith/self-host-ingress",
                       "langsmith/self-host-mirroring-images",
-                      "langsmith/self-host-playground-environment-settings"
+                      "langsmith/self-host-playground-environment-settings",
+                      "langsmith/troubleshooting"
                     ]
                   },
                   {
@@ -1997,7 +2024,6 @@
                     "group": "Additional resources",
                     "pages": [
                       "langsmith/faq",
-                      "langsmith/troubleshooting",
                       "langsmith/cloud-architecture-and-scalability",
                       "langsmith/regions-faq",
                       "langsmith/authentication-methods",

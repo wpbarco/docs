@@ -75,14 +75,14 @@ Let's walk through each step:
     <Step title="Create tools">
 
 
-        [Tools](/oss/javascript/langchain-tools) are functions your agent can call. They should be well-documented. Oftentimes tools will want to connect to external systems, and will rely on runtime configuration to do so. Notice here how the `getUserInfo` tool does exactly that:
+        [Tools](/oss/javascript/langchain-tools) are functions your agent can call. They should be well-documented. Oftentimes tools will want to connect to external systems, and will rely on runtime configuration to do so. Notice here how the `getUserLocation` tool does exactly that:
 
         ```ts
         import { tool } from "langchain";
         import { z } from "zod";
 
         const getWeather = tool(({ city }) => `It's always sunny in ${city}!`, {
-            name: "get_weather",
+            name: "get_weather_for_location",
             description: "Get the weather for a given city",
             schema: z.object({
                 city: z.string(),
@@ -94,7 +94,7 @@ Let's walk through each step:
             "2": "SF",
         } as const;
 
-        const getUserInfo = tool(
+        const getUserLocation = tool(
             (_, config) => {
                 const { user_id } = config.context as {
                     user_id: keyof typeof USER_LOCATION;
@@ -103,7 +103,7 @@ Let's walk through each step:
                 return USER_LOCATION[user_id];
             },
             {
-                name: "get_user_info",
+                name: "get_user_location",
                 description: "Retrieve user information based on user ID",
                 schema: z.object({}),
             }
@@ -120,7 +120,7 @@ Let's walk through each step:
                 const getWeather = tool(
                     ({ city }) => `It's always sunny in ${city}!`,
                 {
-                    name: "get_weather",
+                    name: "get_weather_for_location",
                     description: "Get the weather for a given city",
                     schema: {
                     type: "object",
@@ -189,7 +189,7 @@ Let's walk through each step:
         const agent = createAgent({
             model: "anthropic:claude-3-7-sonnet-latest",
             prompt: systemPrompt,
-            tools: [getUserInfo, getWeather],
+            tools: [getUserLocation, getWeather],
             responseFormat,
             checkpointer,
         });
