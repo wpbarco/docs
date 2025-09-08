@@ -46,9 +46,7 @@ pnpm add langchain @langchain/core typeorm
 
 First, we need to define our LLM to be used in the toolkit.
 
-```{=mdx}
 <ChatModelTabs customVarName="llm" />
-```
 
 ```typescript
 // @lc-docs-hide-cell
@@ -121,11 +119,17 @@ console.log(tools.map((tool) => ({
 
 First, ensure you have LangGraph installed:
 
-```{=mdx}
-<Npm2Yarn>
-  @langchain/langgraph
-</Npm2Yarn>
+<CodeGroup>
+```bash npm
+npm install @langchain/langgraph
 ```
+```bash yarn
+yarn add @langchain/langgraph
+```
+```bash pnpm
+pnpm add @langchain/langgraph
+```
+</CodeGroup>
 
 ```typescript
 import { createAgent } from "langchain"

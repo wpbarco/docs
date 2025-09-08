@@ -2,8 +2,6 @@
 title: OpenApi Toolkit
 ---
 
-```{=mdx}
-
 <Warning>
 **Disclaimer ⚠️**
 
@@ -17,8 +15,6 @@ Consider adding limitations to what actions can be performed via the agent, what
 In addition, consider implementing measures to validate URLs before sending requests, and to securely handle and protect sensitive data such as credentials.
 
 </Warning>
-
-```
 
 This will help you getting started with the [OpenApiToolkit](/oss/concepts/tools/#toolkits). For detailed documentation of all OpenApiToolkit features and configurations head to the [API reference](https://api.js.langchain.com/classes/langchain.agents.OpenApiToolkit.html).
 
@@ -45,22 +41,23 @@ process.env.LANGSMITH_API_KEY="your-api-key"
 
 This toolkit lives in the `langchain` package:
 
-```{=mdx}
-import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
-<IntegrationInstallTooltip></IntegrationInstallTooltip>
-
-<Npm2Yarn>
-  langchain @langchain/core
-</Npm2Yarn>
+<CodeGroup>
+```bash npm
+npm install langchain @langchain/core
 ```
+```bash yarn
+yarn add langchain @langchain/core
+```
+```bash pnpm
+pnpm add langchain @langchain/core
+```
+</CodeGroup>
 
 ## Instantiation
 
 Now we can instantiate our toolkit. First, we need to define the LLM we would like to use in the toolkit.
 
-```{=mdx}
 <ChatModelTabs customVarName="llm" />
-```
 
 ```typescript
 // @lc-docs-hide-cell
@@ -139,11 +136,17 @@ console.log(tools.map((tool) => ({
 
 First, ensure you have LangGraph installed:
 
-```{=mdx}
-<Npm2Yarn>
-  @langchain/langgraph
-</Npm2Yarn>
+<CodeGroup>
+```bash npm
+npm install @langchain/langgraph
 ```
+```bash yarn
+yarn add @langchain/langgraph
+```
+```bash pnpm
+pnpm add @langchain/langgraph
+```
+</CodeGroup>
 
 ```typescript
 import { createAgent } from "langchain"

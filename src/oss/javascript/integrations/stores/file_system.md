@@ -2,17 +2,12 @@
 title: LocalFileStore
 ---
 
-```{=mdx}
-
 <Tip>
 **Compatibility**
-
 
 Only available on Node.js.
 
 </Tip>
-
-```
 
 This will help you get started with [LocalFileStore](/oss/concepts/key_value_stores). For detailed documentation of all LocalFileStore features and configurations head to the [API reference](https://api.js.langchain.com/classes/langchain.storage_file_system.LocalFileStore.html).
 
@@ -22,12 +17,8 @@ The `LocalFileStore` is a wrapper around the `fs` module for storing data as key
 Each key value pair has its own file nested inside the directory passed to the `.fromPath` method.
 The file name is the key and inside contains the value of the key.
 
-```{=mdx}
-
 <Info>
 **The path passed to the `.fromPath` must be a directory, not a file.**
-
-
 </Info>
 
 <Warning>
@@ -36,8 +27,6 @@ The file name is the key and inside contains the value of the key.
 Make sure that the path you specify when initializing the store is free of other files.
 
 </Warning>
-
-```
 
 ### Integration details
 
@@ -51,16 +40,17 @@ Make sure that the path you specify when initializing the store is free of other
 
 The LangChain `LocalFileStore` integration lives in the `langchain` package:
 
-```{=mdx}
-
-import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
-<IntegrationInstallTooltip></IntegrationInstallTooltip>
-
-<Npm2Yarn>
-  langchain @langchain/core
-</Npm2Yarn>
-
+<CodeGroup>
+```bash npm
+npm install langchain @langchain/core
 ```
+```bash yarn
+yarn add langchain @langchain/core
+```
+```bash pnpm
+pnpm add langchain @langchain/core
+```
+</CodeGroup>
 
 ## Instantiation
 

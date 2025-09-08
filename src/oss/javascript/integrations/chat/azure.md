@@ -257,13 +257,17 @@ If you are using the deprecated Azure OpenAI SDK with the `@langchain/azure-open
 
 1. Install the new `@langchain/openai` package and remove the previous `@langchain/azure-openai` package:
 
-```{=mdx}
-
-<Npm2Yarn>
-  @langchain/openai
-</Npm2Yarn>
-
+<CodeGroup>
+```bash npm
+npm install @langchain/openai
 ```
+```bash yarn
+yarn add @langchain/openai
+```
+```bash pnpm
+pnpm add @langchain/openai
+```
+</CodeGroup>
 
 ```bash
 npm uninstall @langchain/azure-openai

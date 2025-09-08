@@ -36,11 +36,10 @@ You can create an index from the [Upstash Console](https://console.upstash.com/l
 
 Upstash vector also has built in embedding support. Which means you can use it directly without the need for an additional embedding model. Check the [embedding models documentation](https://upstash.com/docs/vector/features/embeddingmodels) for more details.
 
-```{=mdx}
+
 <Note>
 To use the built-in Upstash embeddings, you'll need to select an embedding model when creating the index.
 </Note>
-```
 
 ### Credentials
 

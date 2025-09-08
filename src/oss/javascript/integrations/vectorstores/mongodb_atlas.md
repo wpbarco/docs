@@ -2,7 +2,6 @@
 title: MongoDB Atlas
 ---
 
-```{=mdx}
 <Tip>
 **Compatibility**
 
@@ -14,7 +13,6 @@ You can still create API routes that use MongoDB with Next.js by setting the `ru
 
 You can read more about Edge runtimes in the Next.js documentation [here](https://nextjs.org/docs/app/building-your-application/rendering/edge-and-nodejs-runtimes).
 </Tip>
-```
 
 This guide provides a quick overview for getting started with MongoDB Atlas [vector stores](/oss/concepts/#vectorstores). For detailed documentation of all `MongoDBAtlasVectorSearch` features and configurations head to the [API reference](https://api.js.langchain.com/classes/langchain_mongodb.MongoDBAtlasVectorSearch.html).
 
@@ -71,14 +69,17 @@ This guide will also use [OpenAI embeddings](/oss/integrations/text_embedding/op
 
 Install the following packages:
 
-```{=mdx}
-import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
-<IntegrationInstallTooltip></IntegrationInstallTooltip>
-
-<Npm2Yarn>
-  @langchain/mongodb mongodb @langchain/openai @langchain/core
-</Npm2Yarn>
+<CodeGroup>
+```bash npm
+npm install @langchain/mongodb mongodb @langchain/openai @langchain/core
 ```
+```bash yarn
+yarn add @langchain/mongodb mongodb @langchain/openai @langchain/core
+```
+```bash pnpm
+pnpm add @langchain/mongodb mongodb @langchain/openai @langchain/core
+```
+</CodeGroup>
 
 ### Credentials
 

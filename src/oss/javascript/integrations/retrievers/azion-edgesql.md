@@ -115,9 +115,7 @@ Like other retrievers, AzionRetriever can be incorporated into LLM applications 
 
 We will need a LLM or chat model:
 
-```{=mdx}
 <ChatModelTabs customVarName="llm" />
-```
 
 ```typescript
 // @lc-docs-hide-cell

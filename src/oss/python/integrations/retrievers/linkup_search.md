@@ -78,9 +78,7 @@ Like other retrievers, LinkupSearchRetriever can be incorporated into LLM applic
 
 We will need a LLM or chat model:
 
-```{=mdx}
 <ChatModelTabs customVarName="llm" />
-```
 
 ```python
 # | output: false

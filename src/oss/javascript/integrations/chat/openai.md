@@ -252,14 +252,11 @@ await fineTunedLlm.invoke("Hi there!");
 
 If you need additional information like logprobs or token usage, these will be returned directly in the `.invoke` response within the `response_metadata` field on the message.
 
-```{=mdx}
-
 <Tip>
 **Requires `@langchain/core` version >=0.1.48.**
 
 :::
 
-```
 
 ```typescript
 import { ChatOpenAI } from "@langchain/openai";
@@ -433,15 +430,11 @@ console.log(result);
 
 As of Aug 6, 2024, OpenAI supports a `strict` argument when calling tools that will enforce that the tool argument schema is respected by the model. See more [here](https://platform.openai.com/docs/guides/function-calling).
 
-```{=mdx}
-
 </Tip>info Requires ``@langchain/openai >= 0.2.6``
 
 **Note**: If ``strict: true`` the tool definition will also be validated, and a subset of JSON schema are accepted. Crucially, schema cannot have optional args (those with default values). Read the full docs on what types of schema are supported here: https://platform.openai.com/docs/guides/structured-outputs/supported-schemas.
+
 :::
-
-
-```
 
 Here's an example with tool calling. Passing an extra `strict: true` argument to `.bindTools` will pass the param through to all tool definitions:
 
@@ -819,15 +812,12 @@ const response = await llmWithImageGeneration.invoke(
 
 ### Reasoning models
 
-```{=mdx}
 <Warning>
 **Compatibility**
-
 
 The below points apply to `@langchain/openai>=0.4.0`. Please see here for a [guide on upgrading](/oss/how-to/installation/#installing-integration-packages).
 
 </Warning>
-```
 
 When using reasoning models like `o1`, the default method for `withStructuredOutput` is OpenAI's built-in method for structured output (equivalent to passing `method: "jsonSchema"` as an option into `withStructuredOutput`). JSON schema mostly works the same as other models, but with one important caveat: when defining schema, `z.optional()` is not respected, and you should instead use `z.nullable()`.
 

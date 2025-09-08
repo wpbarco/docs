@@ -10,17 +10,11 @@ You can learn more about Azure OpenAI and its difference with the OpenAI API on 
 
 This will help you get started with AzureOpenAIEmbeddings [embedding models](/oss/concepts/embedding_models) using LangChain. For detailed documentation on `AzureOpenAIEmbeddings` features and configuration options, please refer to the [API reference](https://api.js.langchain.com/classes/langchain_openai.AzureOpenAIEmbeddings.html).
 
-```{=mdx}
-
 <Info>
 **Previously, LangChain.js supported integration with Azure OpenAI using the dedicated [Azure OpenAI SDK](https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/openai/openai). This SDK is now deprecated in favor of the new Azure integration in the OpenAI SDK, which allows to access the latest OpenAI models and features the same day they are released, and allows seamless transition between the OpenAI API and Azure OpenAI.**
 
-
 If you are using Azure OpenAI with the deprecated SDK, see the [migration guide](#migration-from-azure-openai-sdk) to update to the new API.
-
 </Info>
-
-```
 
 ## Overview
 
@@ -60,27 +54,26 @@ If you want to get automated tracing of your model calls you can also set your [
 
 The LangChain AzureOpenAIEmbeddings integration lives in the `@langchain/openai` package:
 
-```{=mdx}
-import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
-<IntegrationInstallTooltip></IntegrationInstallTooltip>
+<CodeGroup>
+```bash npm
+npm install @langchain/openai @langchain/core
+```
+```bash yarn
+yarn add @langchain/openai @langchain/core
+```
+```bash pnpm
+pnpm add @langchain/openai @langchain/core
+```
+</CodeGroup>
 
-<Npm2Yarn>
-  @langchain/openai @langchain/core
-</Npm2Yarn>
 
 <Info>
 **You can find the list of supported API versions in the [Azure OpenAI documentation](https://learn.microsoft.com/azure/ai-services/openai/reference).**
-
-
 </Info>
 
 <Tip>
 **If `AZURE_OPENAI_API_EMBEDDINGS_DEPLOYMENT_NAME` is not defined, it will fall back to the value of `AZURE_OPENAI_API_DEPLOYMENT_NAME` for the deployment name. The same applies to the `azureOpenAIApiEmbeddingsDeploymentName` parameter in the `AzureOpenAIEmbeddings` constructor, which will fall back to the value of `azureOpenAIApiDeploymentName` if not defined.**
-
-
 </Tip>
-
-```
 
 ## Instantiation
 

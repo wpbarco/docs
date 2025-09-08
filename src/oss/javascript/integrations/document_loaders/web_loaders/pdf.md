@@ -186,12 +186,17 @@ By default we use the `pdfjs` build bundled with `pdf-parse`, which is compatibl
 
 In the following example we use the "legacy" (see [pdfjs docs](https://github.com/mozilla/pdf.js/wiki/Frequently-Asked-Questions#which-browsersenvironments-are-supported)) build of `pdfjs-dist`, which includes several polyfills not included in the default build.
 
-```{=mdx}
-<Npm2Yarn>
-  pdfjs-dist
-</Npm2Yarn>
-
+<CodeGroup>
+```bash npm
+npm install pdfjs-dist
 ```
+```bash yarn
+yarn add pdfjs-dist
+```
+```bash pnpm
+pnpm add pdfjs-dist
+```
+</CodeGroup>
 
 ```typescript
 import { WebPDFLoader } from "@langchain/community/document_loaders/web/pdf";

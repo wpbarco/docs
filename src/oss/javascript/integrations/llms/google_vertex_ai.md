@@ -2,16 +2,12 @@
 title: Google Vertex AI
 ---
 
-```{=mdx}
-
 <Warning>
 **You are currently on a page documenting the use of Google Vertex models as [text completion models](/oss/concepts/text_llms). Many popular models available on Google Vertex are [chat completion models](/oss/concepts/chat_models).**
 
 
 You may be looking for [this page instead](/oss/integrations/chat/google_vertex_ai/).
 </Warning>
-
-```
 
 [Google Vertex](https://cloud.google.com/vertex-ai) is a service that exposes all foundation models available in Google Cloud, like `gemini-1.5-pro`, `gemini-1.5-flash`, etc.
 
@@ -86,21 +82,32 @@ If you want to get automated tracing of your model calls you can also set your [
 
 The LangChain VertexAI integration lives in the `@langchain/google-vertexai` package:
 
-```{=mdx}
-import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
-<IntegrationInstallTooltip></IntegrationInstallTooltip>
+<CodeGroup>
+```bash npm
+npm install @langchain/google-vertexai @langchain/core
+```
+```bash yarn
+yarn add @langchain/google-vertexai @langchain/core
+```
+```bash pnpm
+pnpm add @langchain/google-vertexai @langchain/core
+```
+</CodeGroup>
 
-<Npm2Yarn>
-  @langchain/google-vertexai @langchain/core
-</Npm2Yarn>
 
 or for web environments:
 
-<Npm2Yarn>
-  @langchain/google-vertexai-web @langchain/core
-</Npm2Yarn>
-
+<CodeGroup>
+```bash npm
+npm install @langchain/google-vertexai-web @langchain/core
 ```
+```bash yarn
+yarn add @langchain/google-vertexai-web @langchain/core
+```
+```bash pnpm
+pnpm add @langchain/google-vertexai-web @langchain/core
+```
+</CodeGroup>
 
 ## Instantiation
 

@@ -2,16 +2,12 @@
 title: Ollama
 ---
 
-```{=mdx}
-
 <Warning>
 **You are currently on a page documenting the use of Ollama models as [text completion models](/oss/concepts/text_llms). Many popular models available on Ollama are [chat completion models](/oss/concepts/chat_models).**
 
 
 You may be looking for [this page instead](/oss/integrations/chat/ollama/).
 </Warning>
-
-```
 
 This will help you get started with Ollama [text completion models (LLMs)](/oss/concepts/text_llms) using LangChain. For detailed documentation on `Ollama` features and configuration options, please refer to the [API reference](https://api.js.langchain.com/classes/langchain_ollama.Ollama.html).
 
@@ -47,15 +43,17 @@ If you want to get automated tracing of your model calls you can also set your [
 
 The LangChain Ollama integration lives in the `@langchain/ollama` package:
 
-```{=mdx}
-import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
-<IntegrationInstallTooltip></IntegrationInstallTooltip>
-
-<Npm2Yarn>
-  @langchain/ollama @langchain/core
-</Npm2Yarn>
-
+<CodeGroup>
+```bash npm
+npm install @langchain/ollama @langchain/core
 ```
+```bash yarn
+yarn add @langchain/ollama @langchain/core
+```
+```bash pnpm
+pnpm add @langchain/ollama @langchain/core
+```
+</CodeGroup>
 
 ## Instantiation
 

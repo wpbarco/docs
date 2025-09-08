@@ -191,9 +191,7 @@ Like other retrievers, ExaRetriever can be incorporated into LLM applications vi
 
 We will need a LLM or chat model:
 
-```{=mdx}
 <ChatModelTabs customVarName="llm" />
-```
 
 ```typescript
 // @lc-docs-hide-cell

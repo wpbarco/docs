@@ -2,16 +2,12 @@
 title: Fireworks
 ---
 
-```{=mdx}
-
 <Warning>
 **You are currently on a page documenting the use of Fireworks models as [text completion models](/oss/concepts/text_llms). Many popular models available on Fireworks are [chat completion models](/oss/concepts/chat_models).**
 
 
 You may be looking for [this page instead](/oss/integrations/chat/fireworks/).
 </Warning>
-
-```
 
 [Fireworks AI](https://fireworks.ai/) is an AI inference platform to run and customize models. For a list of all models served by Fireworks see the [Fireworks docs](https://fireworks.ai/models).
 
@@ -48,15 +44,17 @@ If you want to get automated tracing of your model calls you can also set your [
 
 The LangChain Fireworks integration lives in the `@langchain/community` package:
 
-```{=mdx}
-import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
-<IntegrationInstallTooltip></IntegrationInstallTooltip>
-
-<Npm2Yarn>
-  @langchain/community @langchain/core
-</Npm2Yarn>
-
+<CodeGroup>
+```bash npm
+npm install @langchain/community @langchain/core
 ```
+```bash yarn
+yarn add @langchain/community @langchain/core
+```
+```bash pnpm
+pnpm add @langchain/community @langchain/core
+```
+</CodeGroup>
 
 ## Instantiation
 

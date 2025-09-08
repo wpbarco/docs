@@ -34,16 +34,19 @@ pnpm add @arcjet/redact
 
 And install LangChain Community:
 
-```{=mdx}
-<IntegrationInstallTooltip></IntegrationInstallTooltip>
-
-<Npm2Yarn>
-  @langchain/community @langchain/core
-</Npm2Yarn>
+<CodeGroup>
+```bash npm
+npm install @langchain/community @langchain/core
+```
+```bash yarn
+yarn add @langchain/community @langchain/core
+```
+```bash pnpm
+pnpm add @langchain/community @langchain/core
+```
+</CodeGroup>
 
 And now you're ready to start protecting your LLM calls with Arcjet Redaction!
-
-```
 
 ## Usage
 

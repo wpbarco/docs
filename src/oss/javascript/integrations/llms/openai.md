@@ -2,16 +2,12 @@
 title: OpenAI
 ---
 
-```{=mdx}
-
 <Warning>
 **You are currently on a page documenting the use of OpenAI [text completion models](/oss/concepts/text_llms). The latest and most popular OpenAI models are [chat completion models](/oss/concepts/chat_models).**
 
 
 Unless you are specifically using `gpt-3.5-turbo-instruct`, you are probably looking for [this page instead](/oss/integrations/chat/openai/).
 </Warning>
-
-```
 
 [OpenAI](https://en.wikipedia.org/wiki/OpenAI) is an artificial intelligence (AI) research laboratory.
 
@@ -48,15 +44,17 @@ If you want to get automated tracing of your model calls you can also set your [
 
 The LangChain OpenAI integration lives in the `@langchain/openai` package:
 
-```{=mdx}
-import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
-<IntegrationInstallTooltip></IntegrationInstallTooltip>
-
-<Npm2Yarn>
-  @langchain/openai @langchain/core
-</Npm2Yarn>
-
+<CodeGroup>
+```bash npm
+npm install @langchain/openai @langchain/core
 ```
+```bash yarn
+yarn add @langchain/openai @langchain/core
+```
+```bash pnpm
+pnpm add @langchain/openai @langchain/core
+```
+</CodeGroup>
 
 ## Instantiation
 

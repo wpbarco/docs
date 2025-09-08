@@ -110,11 +110,7 @@ ToolMessage {
 
 We can use our tool in a chain by first binding it to a [tool-calling model](/oss/how-to/tool_calling) and then calling it:
 
-```{=mdx}
-
 <ChatModelTabs customVarName="llm" />
-
-```
 
 ```typescript
 // @lc-docs-hide-cell
@@ -187,15 +183,21 @@ We can create LangChain tools which use the `ExaRetriever` and the `createRetrie
 
 We'll use LangGraph to create the agent. Make sure you have `@langchain/langgraph` installed:
 
-```{=mdx}
-<Npm2Yarn>
-  @langchain/langgraph
-</Npm2Yarn>
+<CodeGroup>
+```bash npm
+npm install @langchain/langgraph
+```
+```bash yarn
+yarn add @langchain/langgraph
+```
+```bash pnpm
+pnpm add @langchain/langgraph
+```
+</CodeGroup>
 
 Then, define the LLM to use with the agent
 
 <ChatModelTabs customVarName="llmForAgent" />
-```
 
 ```typescript
 // @lc-docs-hide-cell

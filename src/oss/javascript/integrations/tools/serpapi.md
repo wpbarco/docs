@@ -103,9 +103,7 @@ ToolMessage {
 
 We can use our tool in a chain by first binding it to a [tool-calling model](/oss/how-to/tool_calling/) and then calling it:
 
-```{=mdx}
 <ChatModelTabs customVarName="llm" />
-```
 
 ```typescript
 // @lc-docs-hide-cell

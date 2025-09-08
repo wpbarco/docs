@@ -105,9 +105,7 @@ Like other retrievers, `TavilySearchAPIRetriever` can be incorporated into LLM a
 
 We will need a LLM or chat model:
 
-```{=mdx}
 <ChatModelTabs customVarName="llm" />
-```
 
 ```typescript
 // @lc-docs-hide-cell

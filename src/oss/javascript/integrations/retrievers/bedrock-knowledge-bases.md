@@ -85,9 +85,7 @@ Like other retrievers, AmazonKnowledgeBaseRetriever can be incorporated into LLM
 
 We will need a LLM or chat model:
 
-```{=mdx}
 <ChatModelTabs customVarName="llm" />
-```
 
 ```typescript
 // @lc-docs-hide-cell
@@ -130,15 +128,9 @@ const ragChain = RunnableSequence.from([
 ]);
 ```
 
-```{=mdx}
-
 <Tip>
 **See [our RAG tutorial](docs/tutorials/rag) for more information and examples on `RunnableSequence`'s like the one above.**
-
-
 </Tip>
-
-```
 
 ```typescript
 await ragChain.invoke("...")

@@ -367,15 +367,11 @@ AIMessage {
 
 ## Prompt caching
 
-```{=mdx}
-
 <Warning>
 **Compatibility**
 
 This feature is currently in beta.
 </Warning>
-
-```
 
 Anthropic supports [caching parts of your prompt](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching) in order to reduce costs for use-cases that require long context. You can cache tools and both entire messages and individual blocks.
 

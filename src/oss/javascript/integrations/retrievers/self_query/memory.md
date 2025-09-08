@@ -139,9 +139,7 @@ const vectorStore = await MemoryVectorStore.fromDocuments(docs, embeddings);
 
 Now we can instantiate our retriever:
 
-```{=mdx}
 <ChatModelTabs customVarName="llm" />
-```
 
 ```typescript
 // @lc-docs-hide-cell
