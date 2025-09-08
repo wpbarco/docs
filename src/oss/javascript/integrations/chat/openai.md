@@ -430,11 +430,10 @@ console.log(result);
 
 As of Aug 6, 2024, OpenAI supports a `strict` argument when calling tools that will enforce that the tool argument schema is respected by the model. See more [here](https://platform.openai.com/docs/guides/function-calling).
 
-</Tip>info Requires ``@langchain/openai >= 0.2.6``
+<Tip>info Requires ``@langchain/openai >= 0.2.6``
 
 **Note**: If ``strict: true`` the tool definition will also be validated, and a subset of JSON schema are accepted. Crucially, schema cannot have optional args (those with default values). Read the full docs on what types of schema are supported here: https://platform.openai.com/docs/guides/structured-outputs/supported-schemas.
-
-:::
+</Tip>
 
 Here's an example with tool calling. Passing an extra `strict: true` argument to `.bindTools` will pass the param through to all tool definitions:
 
