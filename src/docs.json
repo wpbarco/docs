@@ -380,7 +380,7 @@
                   {
                     "group": "LangChain reference",
                     "pages": [
-                      "oss/python/langchain/api-reference"
+                      "oss/python/langchain-api-reference"
                     ]
                   },
                   {
@@ -1384,7 +1384,7 @@
                   {
                     "group": "LangChain reference",
                     "pages": [
-                      "oss/javascript/langchain/api-reference"
+                      "oss/javascript/langchain-api-reference"
                     ]
                   },
                   {
