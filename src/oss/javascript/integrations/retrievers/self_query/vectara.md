@@ -37,14 +37,17 @@ If you want to get automated tracing from individual queries, you can also set y
 
 The vector store lives in the `@langchain/community` package. You'll also need to install the `langchain` package to import the main `SelfQueryRetriever` class.
 
-```{=mdx}
-import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
-<IntegrationInstallTooltip></IntegrationInstallTooltip>
-
-<Npm2Yarn>
-  @langchain/community langchain @langchain/core
-</Npm2Yarn>
+<CodeGroup>
+```bash npm
+npm install @langchain/community langchain @langchain/core
 ```
+```bash yarn
+yarn add @langchain/community langchain @langchain/core
+```
+```bash pnpm
+pnpm add @langchain/community langchain @langchain/core
+```
+</CodeGroup>
 
 ## Instantiation
 

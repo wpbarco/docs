@@ -20,14 +20,17 @@ To use Upstash vector stores, you'll need to create an Upstash account, create a
 
 This guide will also use [OpenAI embeddings](/oss/integrations/text_embedding/openai), which require you to install the `@langchain/openai` integration package. You can also use [other supported embeddings models](/oss/integrations/text_embedding) if you wish.
 
-```{=mdx}
-import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
-<IntegrationInstallTooltip></IntegrationInstallTooltip>
-
-<Npm2Yarn>
-  @langchain/community @langchain/core @upstash/vector @langchain/openai
-</Npm2Yarn>
+<CodeGroup>
+```bash npm
+npm install @langchain/community @langchain/core @upstash/vector @langchain/openai
 ```
+```bash yarn
+yarn add @langchain/community @langchain/core @upstash/vector @langchain/openai
+```
+```bash pnpm
+pnpm add @langchain/community @langchain/core @upstash/vector @langchain/openai
+```
+</CodeGroup>
 
 You can create an index from the [Upstash Console](https://console.upstash.com/login). For further reference, see [the official docs](https://upstash.com/docs/vector/overall/getstarted).
 

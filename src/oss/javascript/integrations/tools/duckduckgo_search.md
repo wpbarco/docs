@@ -18,14 +18,17 @@ DuckDuckGoSearch offers a privacy-focused search API designed for LLM Agents. It
 
 The integration lives in the `@langchain/community` package, along with the `duck-duck-scrape` dependency:
 
-```{=mdx}
-import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
-<IntegrationInstallTooltip></IntegrationInstallTooltip>
-
-<Npm2Yarn>
-  @langchain/community @langchain/core duck-duck-scrape
-</Npm2Yarn>
+<CodeGroup>
+```bash npm
+npm install @langchain/community @langchain/core duck-duck-scrape
 ```
+```bash yarn
+yarn add @langchain/community @langchain/core duck-duck-scrape
+```
+```bash pnpm
+pnpm add @langchain/community @langchain/core duck-duck-scrape
+```
+</CodeGroup>
 
 ### Credentials
 

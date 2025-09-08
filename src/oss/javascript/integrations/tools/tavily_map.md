@@ -18,14 +18,17 @@ This guide provides a quick overview for getting started with the Tavily [tool](
 
 The integration lives in the `@langchain/tavily` package, which you can install as shown below:
 
-```{=mdx}
-import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
-<IntegrationInstallTooltip></IntegrationInstallTooltip>
-
-<Npm2Yarn>
-  @langchain/tavily @langchain/core
-</Npm2Yarn>
+<CodeGroup>
+```bash npm
+npm install @langchain/tavily @langchain/core
 ```
+```bash yarn
+yarn add @langchain/tavily @langchain/core
+```
+```bash pnpm
+pnpm add @langchain/tavily @langchain/core
+```
+</CodeGroup>
 
 ### Credentials
 

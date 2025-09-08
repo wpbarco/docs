@@ -42,14 +42,17 @@ The official Weaviate SDK (`weaviate-client`) is automatically installed as a de
 
 For this example, we'll also use OpenAI embeddings, so you'll need to install the `@langchain/openai` package and [obtain an API key](https://platform.openai.com):
 
-```{=mdx}
-import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
-<IntegrationInstallTooltip></IntegrationInstallTooltip>
-
-<Npm2Yarn>
-  @langchain/weaviate langchain @langchain/openai @langchain/core weaviate-client
-</Npm2Yarn>
+<CodeGroup>
+```bash npm
+npm install @langchain/weaviate langchain @langchain/openai @langchain/core weaviate-client
 ```
+```bash yarn
+yarn add @langchain/weaviate langchain @langchain/openai @langchain/core weaviate-client
+```
+```bash pnpm
+pnpm add @langchain/weaviate langchain @langchain/openai @langchain/core weaviate-client
+```
+</CodeGroup>
 
 ## Instantiation
 
