@@ -93,7 +93,7 @@ To instantiate the vector store, call the `.initialize()` static method. This wi
 
 User-generated data such as usernames should not be used as input for table and column names.
 **This may lead to SQL Injection!**
-</Warning>:
+</Warning>
 
 ```typescript
 import {

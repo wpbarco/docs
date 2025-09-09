@@ -254,9 +254,7 @@ If you need additional information like logprobs or token usage, these will be r
 
 <Tip>
 **Requires `@langchain/core` version >=0.1.48.**
-
-:::
-
+</Tip>
 
 ```typescript
 import { ChatOpenAI } from "@langchain/openai";
@@ -379,9 +377,7 @@ const result = await agent.invoke("Use the tool to calculate 3^3");
 console.log(result);
 ```
 
-<details>
-<summary>Context-free grammars</summary>
-
+<Accordion title="Context-free grammars">
 OpenAI supports the specification of a [context-free grammar](https://platform.openai.com/docs/guides/function-calling#context-free-grammars) for custom tool inputs in `lark` or `regex` format. See [OpenAI docs](https://platform.openai.com/docs/guides/function-calling#context-free-grammars) for details. The `format` parameter can be passed into `customTool` as shown below:
 
 ```typescript
@@ -423,16 +419,17 @@ const agent = createAgent({
 const result = await agent.invoke("Use the tool to calculate 3^3");
 console.log(result);
 ```
+</Accordion>
 
-</details>
-
-## ``strict: true``
+## `strict: true`
 
 As of Aug 6, 2024, OpenAI supports a `strict` argument when calling tools that will enforce that the tool argument schema is respected by the model. See more [here](https://platform.openai.com/docs/guides/function-calling).
 
-<Tip>info Requires ``@langchain/openai >= 0.2.6``
+<Tip>
 
-**Note**: If ``strict: true`` the tool definition will also be validated, and a subset of JSON schema are accepted. Crucially, schema cannot have optional args (those with default values). Read the full docs on what types of schema are supported here: https://platform.openai.com/docs/guides/structured-outputs/supported-schemas.
+Requires `@langchain/openai >= 0.2.6`
+
+**Note**: If `strict: true` the tool definition will also be validated, and a subset of JSON schema are accepted. Crucially, schema cannot have optional args (those with default values). Read the full docs on what types of schema are supported here: https://platform.openai.com/docs/guides/structured-outputs/supported-schemas.
 </Tip>
 
 Here's an example with tool calling. Passing an extra `strict: true` argument to `.bindTools` will pass the param through to all tool definitions:
