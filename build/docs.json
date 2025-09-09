@@ -191,7 +191,8 @@
                     "pages": [
                       "oss/python/langgraph/overview",
                       "oss/python/langgraph/installation",
-                      "oss/python/langgraph/quickstart"
+                      "oss/python/langgraph/quickstart",
+                      "oss/python/langgraph/workflows-agents"
                     ]
                   },
                   {
@@ -418,7 +419,8 @@
                       "oss/python/langgraph/INVALID_CHAT_HISTORY",
                       "oss/python/langgraph/INVALID_CONCURRENT_GRAPH_UPDATE",
                       "oss/python/langgraph/INVALID_GRAPH_NODE_RETURN_VALUE",
-                      "oss/python/langgraph/MULTIPLE_SUBGRAPHS"
+                      "oss/python/langgraph/MULTIPLE_SUBGRAPHS",
+                      "oss/python/langgraph/MISSING_CHECKPOINTER"
                     ]
                   }
                 ]
@@ -1200,7 +1202,8 @@
                     "pages": [
                       "oss/javascript/langgraph/overview",
                       "oss/javascript/langgraph/installation",
-                      "oss/javascript/langgraph/quickstart"
+                      "oss/javascript/langgraph/quickstart",
+                      "oss/javascript/langgraph/workflows-agents"
                     ]
                   },
                   {
@@ -1422,7 +1425,8 @@
                       "oss/javascript/langgraph/INVALID_CHAT_HISTORY",
                       "oss/javascript/langgraph/INVALID_CONCURRENT_GRAPH_UPDATE",
                       "oss/javascript/langgraph/INVALID_GRAPH_NODE_RETURN_VALUE",
-                      "oss/javascript/langgraph/MULTIPLE_SUBGRAPHS"
+                      "oss/javascript/langgraph/MULTIPLE_SUBGRAPHS",
+                      "oss/javascript/langgraph/MISSING_CHECKPOINTER"
                     ]
                   }
                 ]
