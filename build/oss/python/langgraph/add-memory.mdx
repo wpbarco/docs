@@ -384,7 +384,7 @@ graph = builder.compile(checkpointer=checkpointer)
 
 
 
-If you want the subgraph to have its own memory, you can compile it with the appropriate checkpointer option. This is useful in [multi-agent](/oss/python/langgraph/multi-agent) systems, if you want agents to keep track of their internal message histories.
+If you want the subgraph to have its own memory, you can compile it with the appropriate checkpointer option. This is useful in [multi-agent](/oss/python/langchain/multi-agent) systems, if you want agents to keep track of their internal message histories.
 
 ```python {highlight={2}}
 subgraph_builder = StateGraph(...)
@@ -1046,7 +1046,7 @@ The problem with trimming or removing messages, as shown above, is that you may 
 ![](/oss/images/summary.png)
 
 
-Prompting and orchestration logic can be used to summarize the message history. For example, in LangGraph you can extend the [`MessagesState`](/oss/python/graph-api#working-with-messages-in-graph-state) to include a `summary` key:
+Prompting and orchestration logic can be used to summarize the message history. For example, in LangGraph you can extend the [`MessagesState`](/oss/python/langgraph/graph-api#working-with-messages-in-graph-state) to include a `summary` key:
 
 ```python
 from langgraph.graph import MessagesState

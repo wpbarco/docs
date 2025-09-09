@@ -425,7 +425,7 @@ Specifying `content_blocks` when initializing a message will still populate mess
 LangChain maintains a standard set of types for message content that works across
 providers (see the [reference](#content-block-reference) section below).
 
-Messages also implement a `content_blocks` property that will lazily parse the `content` attribute into this standard, type-safe representation. For example, messages generated from [ChatAnthropic](/oss/python/integrations/chat/anthropic) or [ChatOpenAI](/oss/python/integrations/openai) will include `thinking` or `reasoning` blocks in the format of the respective provider, but these can be lazily parsed into a consistent [`ReasoningContentBlock`](#content-block-reference) representation:
+Messages also implement a `content_blocks` property that will lazily parse the `content` attribute into this standard, type-safe representation. For example, messages generated from [ChatAnthropic](/oss/python/integrations/chat/anthropic) or [ChatOpenAI](/oss/python/integrations/chat/openai) will include `thinking` or `reasoning` blocks in the format of the respective provider, but these can be lazily parsed into a consistent [`ReasoningContentBlock`](#content-block-reference) representation:
 
 <Tabs>
 <Tab title="Anthropic">

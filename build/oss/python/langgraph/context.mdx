@@ -85,7 +85,7 @@ graph.invoke( # (1)!
     )
 ```
 
-    * See [Agents](/oss/python/langgraph/prebuilts) for details.
+    * See [Agents](/oss/python/langchain/agents) for details.
     </Tab>
     <Tab title="Workflow node">
     ```python {highlight={3}}
@@ -111,7 +111,7 @@ graph.invoke( # (1)!
         return email
 ```
 
-    See the [tool calling guide](/oss/python/langgraph/call-tools#configuration) for details.
+    See the [tool calling guide](/oss/python/langchain/tools#configuration) for details.
     </Tab>
 </Tabs>
 
@@ -132,7 +132,7 @@ See the [Runtime][langgraph.runtime.Runtime] documentation for details.
     <Tab title="In an agent">
     Example shows how to incorporate state into an agent **prompt**.
 
-    State can also be accessed by the agent's **tools**, which can read or update the state as needed. See [tool calling guide](/oss/python/langgraph/call-tools#short-term-memory) for details.
+    State can also be accessed by the agent's **tools**, which can read or update the state as needed. See [tool calling guide](/oss/python/langchain/tools#short-term-memory) for details.
 
     ```python {highlight={6,10,19}}
     from langchain_core.messages import AnyMessage

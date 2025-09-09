@@ -23,6 +23,7 @@ A ReAct loop runs until a stop condition - i.e. when the model emits a final ans
 </Card>
 
 <Card>
+
 ```mermaid
 %%{
   init: {
@@ -51,21 +52,22 @@ graph TD
   class QUERY blueHighlight;
   class ANSWER blueHighlight;
 ```
+
 </Card>
 
 </Columns>
 
-
-
 <Info>
-Under the hood, `create_agent()` builds a **graph**-based agent runtime using [LangGraph](./langgraph/overview). A graph consists of nodes (steps) and edges (connections) that define how your agent processes information. The agent moves through this graph, executing nodes like the model node (which calls the model), the tools node (which executes tools), or pre/post model hook nodes. Learn more about the [graph API](./langgraph/graph-api).
+
+Under the hood, `create_agent()` builds a **graph**-based agent runtime using [LangGraph](/oss/javascript/langgraph/overview). A graph consists of nodes (steps) and edges (connections) that define how your agent processes information. The agent moves through this graph, executing nodes like the model node (which calls the model), the tools node (which executes tools), or pre/post model hook nodes. Learn more about the [graph API](/oss/javascript/langgraph/graph-api).
+
 </Info>
 
 ## Core components
 
 ### Model
 
-The [model](./langchain-models) is the reasoning engine of your agent. It can be specified in multiple ways, supporting both static and dynamic model selection.
+The [model](/oss/javascript/langchain/models) is the reasoning engine of your agent. It can be specified in multiple ways, supporting both static and dynamic model selection.
 
 #### Static model
 
@@ -83,7 +85,7 @@ const agent = createAgent({
 
 
 
-Model identifier strings use the format `provider:model` (e.g. `"openai:gpt-5"`). You may want more control over the model configuration, in which case you can initialize a model instance directly using the [provider package](./integrations/providers):
+Model identifier strings use the format `provider:model` (e.g. `"openai:gpt-5"`). You may want more control over the model configuration, in which case you can initialize a model instance directly using the provider package:
 
 ```ts wrap
 import { createAgent } from "langchain";
@@ -102,7 +104,7 @@ const agent = createAgent({
 });
 ```
 
-Model instances give you complete control over configuration. Use them when you need to set specific parameters like temperature, max tokens, timeouts, or configure API keys, base URLs, and other provider-specific settings. Refer to the [API reference](./integrations/providers) to see available params and methods on your model.
+Model instances give you complete control over configuration. Use them when you need to set specific parameters like temperature, max tokens, timeouts, or configure API keys, base URLs, and other provider-specific settings. Refer to the [API reference](/oss/javascript/integrations/providers/) to see available params and methods on your model.
 
 
 #### Dynamic model
@@ -137,7 +139,7 @@ const agent = createAgent({
 
 
 <Tip>
-For model configuration details, see [Models](./langchain-models).
+For model configuration details, see [Models](/oss/javascript/langchain/models).
 </Tip>
 
 ### Tools
@@ -233,7 +235,7 @@ const toolNode = new ToolNode({
 
 
 <Tip>
-To learn more about error handling in `ToolNode`, see [ToolNode](./langchain-tools#toolnode).
+To learn more about error handling in `ToolNode`, see [ToolNode](/oss/javascript/langchain/tools#toolnode).
 </Tip>
 
 ### Tool use in the ReAct loop
@@ -298,7 +300,7 @@ I found wireless headphones (model WH-1000XM5) with 10 units in stock...
 </Card>
 
 <Tip>
-To learn more about tools, see [Tools](./langchain-tools).
+To learn more about tools, see [Tools](/oss/javascript/langchain/tools).
 </Tip>
 
 ### Prompt
@@ -358,7 +360,7 @@ const agent = createAgent({
 When no `prompt` is provided, the agent will infer its task from the messages directly.
 
 <Tip>
-For more details on message types and formatting, see [Messages](./langchain-messages).
+For more details on message types and formatting, see [Messages](/oss/javascript/langchain/messages).
 </Tip>
 
 ## Advanced configuration
@@ -405,7 +407,7 @@ console.log(result.structuredResponse);
 ```
 
 <Tip>
-To learn about structured output, see [Structured Output](./langchain-structured-output).
+To learn about structured output, see [Structured Output](/oss/javascript/langchain/structured-output).
 </Tip>
 
 ### Memory
@@ -434,7 +436,7 @@ const CustomAgentState = createAgent({
 
 
 <Tip>
-To learn more about memory, including how to implement long-term memory that persists across sessions, see [Memory](./langchain-memory).
+To learn more about memory, including how to implement long-term memory that persists across sessions, see [Memory](/oss/javascript/langgraph/memory).
 </Tip>
 
 ### Pre-model hook
@@ -642,5 +644,5 @@ for await (const chunk of stream) {
 
 
 <Tip>
-For more details on streaming, see [Streaming](./langchain-streaming).
+For more details on streaming, see [Streaming](/oss/javascript/langchain/streaming).
 </Tip>

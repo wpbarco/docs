@@ -477,7 +477,7 @@ Prompt caching can be used in [multi-turn conversations](https://docs.anthropic.
 
 We can enable incremental caching by marking the final message with `cache_control`. Claude will automatically use the longest previously-cached prefix for follow-up messages.
 
-Below, we implement a simple chatbot that incorporates this feature. We follow the LangChain [chatbot tutorial](/oss/python/tutorials/chatbot/), but add a custom [reducer](https://langchain-ai.github.io/langgraph/concepts/low_level/#reducers) that automatically marks the last content block in each user message with `cache_control`. See below:
+Below, we implement a simple chatbot that incorporates this feature. We follow the LangChain [chatbot tutorial](/oss/python/tutorials/chatbot/), but add a custom [reducer](/oss/python/langgraph/graph-api#reducers) that automatically marks the last content block in each user message with `cache_control`. See below:
 
 ```python
 import requests

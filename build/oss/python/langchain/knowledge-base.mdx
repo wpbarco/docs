@@ -99,8 +99,7 @@ However, the LangChain ecosystem implements [document loaders](/oss/python/langc
 
 ### Loading documents
 
-Let's load a PDF into a sequence of `Document` objects. There is a sample PDF in the LangChain repo [here](https://github.com/langchain-ai/langchain/tree/master/docs/docs/example_data) -- a 10-k filing for Nike from 2023. We can consult the LangChain documentation for [available PDF document loaders](/oss/python/integrations/document_loaders/#pdfs). Let's select [PyPDFLoader](/oss/python/integrations/document_loaders/pypdfloader/), which is fairly lightweight.
-
+Let's load a PDF into a sequence of `Document` objects. There is a sample PDF in the LangChain repo [here](https://github.com/langchain-ai/langchain/tree/master/docs/docs/example_data) -- a 10-k filing for Nike from 2023. We can consult the LangChain documentation for [available PDF document loaders](/oss/python/integrations/document_loaders/#pdfs).
 
 ```python
 from langchain_community.document_loaders import PyPDFLoader
@@ -149,7 +148,7 @@ We can use [text splitters](/oss/python/langchain/retrieval#text_splitters) for 
 with 200 characters of overlap between chunks. The overlap helps
 mitigate the possibility of separating a statement from important
 context related to it. We use the
-[RecursiveCharacterTextSplitter](/oss/python/integrations/splitters/recursive_text_splitter),
+`RecursiveCharacterTextSplitter`,
 which will recursively split the document using common separators like
 new lines until each chunk is the appropriate size. This is the
 recommended text splitter for generic text use cases.
@@ -411,9 +410,9 @@ For more on embeddings:
 
 For more on vector stores:
 
-- [Overview](/oss/python/angchain-retrieval#vectorstores/)
+- [Overview](/oss/python/langchain/retrieval#vectorstores/)
 - [Available integrations](/oss/python/integrations/vectorstores/)
 
 For more on RAG, see:
 
-- [Build a Retrieval Augmented Generation (RAG) App](/oss/python/tutorials/rag/)
+- [Build a Retrieval Augmented Generation (RAG) App](/oss/python/langchain/rag/)
