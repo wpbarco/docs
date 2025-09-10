@@ -279,7 +279,8 @@ During streaming, you'll receive `AIMessageChunk` objects that can be combined:
 <CodeGroup>
     ```typescript Stream and collect chunks
     const chunks = [];
-    for await (const chunk of model.stream("Write a poem")) {
+    const stream = await model.stream("Write a poem");
+    for await (const chunk of stream) {
         chunks.push(chunk);
         console.log(chunk.text);
     }
@@ -506,86 +507,106 @@ it as output. Below we show short examples of input messages featuring multimoda
 <CodeGroup>
     ```typescript Image input
     // From URL
-    const response = await model.invoke([
-        { type: "text", text: "Describe the content of this image." },
-        { type: "image", url: "https://example.com/path/to/image.jpg" },
-    ])
+    const message = new HumanMessage({
+        content: [
+            { type: "text", text: "Describe the content of this image." },
+            { type: "image", url: "https://example.com/path/to/image.jpg" },
+        ],
+    });
 
     // From base64 data
-    const response = await model.invoke([
-        { type: "text", text: "Describe the content of this image." },
-        {
-            type: "image",
-            data: "AAAAIGZ0eXBtcDQyAAAAAGlzb21tcDQyAAACAGlzb2...",
-            mimeType: "image/jpeg",
-        },
-    ])
+    const message = new HumanMessage({
+        content: [
+            { type: "text", text: "Describe the content of this image." },
+            {
+                type: "image",
+                data: "AAAAIGZ0eXBtcDQyAAAAAGlzb21tcDQyAAACAGlzb2...",
+                mimeType: "image/jpeg",
+            },
+        ],
+    });
 
     // From provider-managed File ID
-    const response = await model.invoke([
-        { type: "text", text: "Describe the content of this image." },
-        { type: "image", fileId: "file-abc123" },
-    ])
+    const message = new HumanMessage({
+        content: [
+            { type: "text", text: "Describe the content of this image." },
+            { type: "image", fileId: "file-abc123" },
+        ],
+    });
     ```
 
     ```typescript PDF document input
     // From URL
-    const response = await model.invoke([
-        { type: "text", text: "Describe the content of this document." },
-        { type: "file", url: "https://example.com/path/to/document.pdf" },
-    ])
+    const message = new HumanMessage({
+        content: [
+            { type: "text", text: "Describe the content of this document." },
+            { type: "file", url: "https://example.com/path/to/document.pdf" },
+        ],
+    });
 
     // From base64 data
-    const response = await model.invoke([
-        { type: "text", text: "Describe the content of this document." },
-        {
-            type: "file",
-            data: "AAAAIGZ0eXBtcDQyAAAAAGlzb21tcDQyAAACAGlzb2...",
-            mimeType: "application/pdf",
-        },
-    ])
+    const message = new HumanMessage({
+        content: [
+            { type: "text", text: "Describe the content of this document." },
+            {
+                type: "file",
+                data: "AAAAIGZ0eXBtcDQyAAAAAGlzb21tcDQyAAACAGlzb2...",
+                mimeType: "application/pdf",
+            },
+        ],
+    });
 
     // From provider-managed File ID
-    const response = await model.invoke([
-        { type: "text", text: "Describe the content of this document." },
-        { type: "file", fileId: "file-abc123" },
-    ])
+    const message = new HumanMessage({
+        content: [
+            { type: "text", text: "Describe the content of this document." },
+            { type: "file", fileId: "file-abc123" },
+        ],
+    });
     ```
 
     ```typescript Audio input
     // From base64 data
-    const response = await model.invoke([
-        { type: "text", text: "Describe the content of this audio." },
-        {
-            type: "audio",
-            data: "AAAAIGZ0eXBtcDQyAAAAAGlzb21tcDQyAAACAGlzb2...",
-            mimeType: "audio/wav",
-        },
-    ])
+    const message = new HumanMessage({
+        content: [
+            { type: "text", text: "Describe the content of this audio." },
+            {
+                type: "audio",
+                data: "AAAAIGZ0eXBtcDQyAAAAAGlzb21tcDQyAAACAGlzb2...",
+                mimeType: "audio/wav",
+            },
+        ],
+    });
 
     // From provider-managed File ID
-    const response = await model.invoke([
-        { type: "text", text: "Describe the content of this audio." },
-        { type: "audio", fileId: "file-abc123" },
-    ])
+    const message = new HumanMessage({
+        content: [
+            { type: "text", text: "Describe the content of this audio." },
+            { type: "audio", fileId: "file-abc123" },
+        ],
+    });
     ```
 
     ```typescript Video input
     // From base64 data
-    const response = await model.invoke([
-        { type: "text", text: "Describe the content of this video." },
-        {
-            type: "video",
-            data: "AAAAIGZ0eXBtcDQyAAAAAGlzb21tcDQyAAACAGlzb2...",
-            mimeType: "video/mp4",
-        },
-    ])
+    const message = new HumanMessage({
+        content: [
+            { type: "text", text: "Describe the content of this video." },
+            {
+                type: "video",
+                data: "AAAAIGZ0eXBtcDQyAAAAAGlzb21tcDQyAAACAGlzb2...",
+                mimeType: "video/mp4",
+            },
+        ],
+    });
 
     // From provider-managed File ID
-    const response = await model.invoke([
-        { type: "text", text: "Describe the content of this video." },
-        { type: "video", fileId: "file-abc123" },
-    ])
+    const message = new HumanMessage({
+        content: [
+            { type: "text", text: "Describe the content of this video." },
+            { type: "video", fileId: "file-abc123" },
+        ],
+    });
     ```
 </CodeGroup>
 
