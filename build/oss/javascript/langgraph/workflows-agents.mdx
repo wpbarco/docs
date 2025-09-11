@@ -1059,7 +1059,7 @@ function shouldContinue(state: typeof MessagesAnnotation.State) {
 
   // If the LLM makes a tool call, then perform an action
   if (lastMessage?.tool_calls?.length) {
-    return "Action";
+    return "toolNode";
   }
   // Otherwise, we stop (reply to the user)
   return "__end__";
@@ -1068,19 +1068,15 @@ function shouldContinue(state: typeof MessagesAnnotation.State) {
 // Build workflow
 const agentBuilder = new StateGraph(MessagesAnnotation)
   .addNode("llmCall", llmCall)
-  .addNode("tools", toolNode)
+  .addNode("toolNode", toolNode)
   // Add edges to connect nodes
   .addEdge("__start__", "llmCall")
   .addConditionalEdges(
     "llmCall",
     shouldContinue,
-    {
-      // Name returned by shouldContinue : Name of next node to visit
-      "Action": "tools",
-      "__end__": "__end__",
-    }
+    ["toolNode", "__end__"]
   )
-  .addEdge("tools", "llmCall")
+  .addEdge("toolNode", "llmCall")
   .compile();
 
 // Invoke

@@ -110,7 +110,7 @@ async function shouldContinue(state: z.infer<typeof MessagesState>) {
 
   // If the LLM makes a tool call, then perform an action
   if (lastMessage.tool_calls?.length) {
-    return "Action";
+    return "toolNode";
   }
 
   // Otherwise, we stop (reply to the user)
@@ -119,14 +119,11 @@ async function shouldContinue(state: z.infer<typeof MessagesState>) {
 
 // Step 5: Build and compile the agent
 const agent = new StateGraph(MessagesState)
-  .addNode("llm_call", llmCall)
-  .addNode("environment", toolNode)
-  .addEdge(START, "llm_call")
-  .addConditionalEdges("llm_call", shouldContinue, {
-    Action: "environment",
-    [END]: END,
-  })
-  .addEdge("environment", END)
+  .addNode("llmCall", llmCall)
+  .addNode("toolNode", toolNode)
+  .addEdge(START, "llmCall")
+  .addConditionalEdges("llmCall", shouldContinue, ["toolNode", END])
+  .addEdge("toolNode", "llmCall")
   .compile();
 
 // Invoke
