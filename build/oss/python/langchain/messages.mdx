@@ -101,8 +101,6 @@ response = model.invoke(messages)
 You can also specify messages directly in OpenAI chat completions format.
 
 ```python
-from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
-
 messages = [
     {"role": "system", "content": "You are a poetry expert"},
     {"role": "user", "content": "Write a haiku about spring"},
