@@ -1,5 +1,6 @@
 ---
 title: Use the graph API
+sidebarTitle: Graph API
 ---
 
 import AlphaCallout from '/snippets/alpha-lg-callout.mdx';
@@ -732,14 +733,13 @@ const builder = new StateGraph(State)
 
 
 <Accordion title="Why split application steps into a sequence with LangGraph?">
-</Accordion>
 
 LangGraph makes it easy to add an underlying persistence layer to your application.
 This allows state to be checkpointed in between the execution of nodes, so your LangGraph nodes govern:
 
 * How state updates are [checkpointed](/oss/javascript/langgraph/persistence)
-* How interruptions are resumed in [human-in-the-loop](/oss/javascript/langgraph/human-in-the-loop) workflows
-* How we can "rewind" and branch-off executions using LangGraph's [time travel](/oss/javascript/langgraph/time-travel) features
+* How interruptions are resumed in [human-in-the-loop](/oss/javascript/langgraph/add-human-in-the-loop) workflows
+* How we can "rewind" and branch-off executions using LangGraph's [time travel](/oss/javascript/langgraph/use-time-travel) features
 
 They also determine how execution steps are [streamed](/oss/javascript/langgraph/streaming), and how your application is visualized
 and debugged using [LangGraph Studio](/langgraph-platform/langgraph-studio).
@@ -874,6 +874,8 @@ Note that:
 * The third node populated a different value.
 
 
+
+</Accordion>
 
 ## Create branches
 
@@ -1451,7 +1453,7 @@ Called C
 
 ### Navigate to a node in a parent graph
 
-If you are using [subgraphs](/oss/javascript/langgraph/subgraphs), you might want to navigate from a node within a subgraph to a different subgraph (i.e. a different node in the parent graph). To do so, you can specify `graph=Command.PARENT` in `Command`:
+If you are using [subgraphs](/oss/javascript/subgraphs), you might want to navigate from a node within a subgraph to a different subgraph (i.e. a different node in the parent graph). To do so, you can specify `graph=Command.PARENT` in `Command`:
 
 
 

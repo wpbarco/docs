@@ -2,6 +2,10 @@
 title: Test
 ---
 
+import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
+
+<AlphaCallout />
+
 Agentic applications let an LLM decide its own next steps to solve a problem. That flexibility is powerful, but the model's black-box nature makes it hard to predict how a tweak in one part of your agent will affect the rest. To build production-ready agents, thorough testing is essential.
 
 There are a few approaches to testing your agents:
@@ -95,7 +99,7 @@ async function testWeatherToolCalledStrict() {
   const result = await agent.invoke({
     messages: [new HumanMessage("What's the weather in San Francisco?")]
   });
-  
+
   const referenceTrajectory = [
     new HumanMessage("What's the weather in San Francisco?"),
     new AIMessage({
@@ -175,7 +179,7 @@ async function testMultipleToolsAnyOrder() {
   const result = await agent.invoke({
     messages: [new HumanMessage("What's happening in SF today?")]
   });
-  
+
   // Reference shows tools called in different order than actual execution
   const referenceTrajectory = [
     new HumanMessage("What's happening in SF today?"),
@@ -196,7 +200,7 @@ async function testMultipleToolsAnyOrder() {
     }),
     new AIMessage("Today in SF: 75 degrees and sunny with a concert at the park tonight."),
   ];
-  
+
   const evaluation = await evaluator({
     outputs: result.messages,
     referenceOutputs: referenceTrajectory,
@@ -260,7 +264,7 @@ async function testAgentCallsRequiredToolsPlusExtra() {
   const result = await agent.invoke({
     messages: [new HumanMessage("What's the weather in Boston?")]
   });
-  
+
   // Reference only requires getWeather, but agent may call additional tools
   const referenceTrajectory = [
     new HumanMessage("What's the weather in Boston?"),
@@ -276,7 +280,7 @@ async function testAgentCallsRequiredToolsPlusExtra() {
     }),
     new AIMessage("The weather in Boston is 75 degrees and sunny."),
   ];
-  
+
   const evaluation = await evaluator({
     outputs: result.messages,
     referenceOutputs: referenceTrajectory,
@@ -339,7 +343,7 @@ async function testTrajectoryQuality() {
   const result = await agent.invoke({
     messages: [new HumanMessage("What's the weather in Seattle?")]
   });
-  
+
   const evaluation = await evaluator({
     outputs: result.messages,
   });
@@ -441,7 +445,7 @@ ls.describe("trajectory accuracy", () => {
     const result = await agent.invoke({
       messages: [new HumanMessage("What is the weather in SF?")]
     });
-    
+
     ls.logOutputs({ messages: result.messages });
 
     await trajectoryEvaluator({

@@ -1,12 +1,13 @@
 ---
 title: Use the functional API
+sidebarTitle: Functional API
 ---
 
 import AlphaCallout from '/snippets/alpha-lg-callout.mdx';
 
 <AlphaCallout />
 
-The [**Functional API**](/oss/python/langgraph/functional-api) allows you to add LangGraph's key features — [persistence](/oss/python/langgraph/persistence), [memory](/oss/python/langgraph/add-memory), [human-in-the-loop](/oss/python/langgraph/human-in-the-loop), and [streaming](/oss/python/langgraph/streaming) — to your applications with minimal changes to your existing code.
+The [**Functional API**](/oss/python/langgraph/functional-api) allows you to add LangGraph's key features — [persistence](/oss/python/langgraph/persistence), [memory](/oss/python/langgraph/add-memory), [human-in-the-loop](/oss/python/langgraph/add-human-in-the-loop), and [streaming](/oss/python/langgraph/streaming) — to your applications with minimal changes to your existing code.
 
 <Tip>
 For conceptual information on the functional API, see [Functional API](/oss/python/langgraph/functional-api).
@@ -505,7 +506,7 @@ main.invoke(None, config=config)
 
 ## Human-in-the-loop
 
-The functional API supports [human-in-the-loop](/oss/python/langgraph/human-in-the-loop) workflows using the `interrupt` function and the `Command` primitive.
+The functional API supports [human-in-the-loop](/oss/python/langgraph/add-human-in-the-loop) workflows using the `interrupt` function and the `Command` primitive.
 
 ### Basic human-in-the-loop workflow
 
@@ -882,7 +883,7 @@ for chunk in workflow.stream([input_message], config, stream_mode="values"):
 
 ## Long-term memory
 
-[long-term memory](/oss/python/langgraph/memory#long-term-memory) allows storing information across different **thread ids**. This could be useful for learning information about a given user in one conversation and using it in another.
+[long-term memory](/oss/python/memory#long-term-memory) allows storing information across different **thread ids**. This could be useful for learning information about a given user in one conversation and using it in another.
 
 ## Workflows
 

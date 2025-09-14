@@ -1,5 +1,6 @@
 ---
 title: Context overview
+sidebarTitle: Context
 ---
 
 import AlphaCallout from '/snippets/alpha-lg-callout.mdx';
@@ -16,7 +17,6 @@ import AlphaCallout from '/snippets/alpha-lg-callout.mdx';
   * **Cross-conversation context**: Data that persists across multiple conversations or sessions
 
 <Tip>
-**Runtime context vs LLM context**
 Runtime context refers to local context: data and dependencies your code needs to run. It does **not** refer to:
 
 * The LLM context, which is the data passed into the LLM's prompt.
@@ -55,7 +55,7 @@ await graph.invoke(
 <a id="state"></a>
 ## Dynamic runtime context
 
-**Dynamic runtime context** represents mutable data that can evolve during a single run and is managed through the LangGraph state object. This includes conversation history, intermediate results, and values derived from tools or LLM outputs. In LangGraph, the state object acts as [short-term memory](/oss/javascript/langgraph/memory) during a run.
+**Dynamic runtime context** represents mutable data that can evolve during a single run and is managed through the LangGraph state object. This includes conversation history, intermediate results, and values derived from tools or LLM outputs. In LangGraph, the state object acts as [short-term memory](/oss/javascript/memory) during a run.
 
 <Tabs>
     <Tab title="In an agent">
@@ -148,6 +148,10 @@ Please see the [memory guide](/oss/javascript/langgraph/add-memory) for more det
 <a id="store"></a>
 ## Dynamic cross-conversation context
 
-**Dynamic cross-conversation context** represents persistent, mutable data that spans across multiple conversations or sessions and is managed through the LangGraph store. This includes user profiles, preferences, and historical interactions. The LangGraph store acts as [long-term memory](/oss/javascript/langgraph/memory#long-term-memory) across multiple runs. This can be used to read or update persistent facts (e.g., user profiles, preferences, prior interactions).
+**Dynamic cross-conversation context** represents persistent, mutable data that spans across multiple conversations or sessions and is managed through the LangGraph store. This includes user profiles, preferences, and historical interactions. The LangGraph store acts as [long-term memory](/oss/javascript/memory#long-term-memory) across multiple runs. This can be used to read or update persistent facts (e.g., user profiles, preferences, prior interactions).
 
-For more information, see the [Memory guide](/oss/javascript/langgraph/add-memory).
+## See also
+
+- [Memory in LangChain](/oss/javascript/langchain/memory)
+- [Memory in LangGraph](/oss/javascript/langgraph/add-memory)
+

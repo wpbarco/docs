@@ -1,6 +1,6 @@
 ---
-title: Graph API concepts
-sidebarTitle: Overview
+title: Graph API overview
+sidebarTitle: Graph API
 ---
 
 import AlphaCallout from '/snippets/alpha-lg-callout.mdx';
@@ -546,7 +546,7 @@ Check out this [how-to guide](/oss/javascript/langgraph/graph-api.md#combine-con
 
 
 
-If you are using [subgraphs](/oss/javascript/langgraph/subgraphs.md), you might want to navigate from a node within a subgraph to a different subgraph (i.e. a different node in the parent graph). To do so, you can specify `graph: Command.PARENT` in `Command`:
+If you are using [subgraphs](/oss/javascript/subgraphs.md), you might want to navigate from a node within a subgraph to a different subgraph (i.e. a different node in the parent graph). To do so, you can specify `graph: Command.PARENT` in `Command`:
 
 ```typescript
 import { Command } from "@langchain/langgraph";
@@ -570,7 +570,7 @@ When you send updates from a subgraph node to a parent graph node for a key that
 
 
 
-If you are using [subgraphs](/oss/javascript/langgraph/subgraphs.md), you might want to navigate from a node within a subgraph to a different subgraph (i.e. a different node in the parent graph). To do so, you can specify `graph: Command.PARENT` in `Command`:
+If you are using [subgraphs](/oss/javascript/subgraphs.md), you might want to navigate from a node within a subgraph to a different subgraph (i.e. a different node in the parent graph). To do so, you can specify `graph: Command.PARENT` in `Command`:
 
 ```typescript
 import { Command } from "@langchain/langgraph";
@@ -608,7 +608,7 @@ Refer to [this guide](/oss/javascript/langgraph/graph-api.md#use-inside-tools) f
 
 
 
-`Command` is an important part of human-in-the-loop workflows: when using `interrupt()` to collect user input, `Command` is then used to supply the input and resume execution via `new Command({ resume: "User input" })`. Check out the [human-in-the-loop conceptual guide](/oss/javascript/langgraph/human-in-the-loop) for more information.
+`Command` is an important part of human-in-the-loop workflows: when using `interrupt()` to collect user input, `Command` is then used to supply the input and resume execution via `new Command({ resume: "User input" })`. Check out the [human-in-the-loop conceptual guide](/oss/javascript/langgraph/add-human-in-the-loop) for more information.
 
 
 ## Graph Migrations
