@@ -75,7 +75,7 @@ console.log(await graph.invoke(new Command({ resume: "Edited text" }), config));
 
 
   ```typescript {highlight={12,43}}
-  import { z } from "zod/v4";
+  import * as z from "zod";
   import { v4 as uuidv4 } from "uuid";
   import { MemorySaver, StateGraph, START, interrupt, Command } from "@langchain/langgraph";
 
@@ -227,7 +227,7 @@ await graph.invoke(new Command({ resume: true }), threadConfig);
 
 
   ```typescript
-  import { z } from "zod/v4";
+  import * as z from "zod";
   import { v4 as uuidv4 } from "uuid";
   import {
     StateGraph,
@@ -363,7 +363,7 @@ await graph.invoke(
 
 
   ```typescript
-  import { z } from "zod/v4";
+  import * as z from "zod";
   import { v4 as uuidv4 } from "uuid";
   import {
     StateGraph,
@@ -460,7 +460,7 @@ import { MemorySaver } from "@langchain/langgraph";
 import { interrupt } from "@langchain/langgraph";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { tool } from "@langchain/core/tools";
-import { z } from "zod/v4";
+import * as z from "zod";
 
 // An example of a sensitive tool that requires human review / approval
 const bookHotel = tool(
@@ -637,7 +637,7 @@ You can use the wrapper to add `interrupt()` to any tool without having to add i
 import { MemorySaver } from "@langchain/langgraph";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { tool } from "@langchain/core/tools";
-import { z } from "zod/v4";
+import * as z from "zod";
 
 const checkpointer = new MemorySaver();
 
@@ -740,7 +740,7 @@ graphBuilder.addNode("humanNode", (state) => {
 
 
   ```typescript
-  import { z } from "zod/v4";
+  import * as z from "zod";
   import { v4 as uuidv4 } from "uuid";
   import {
     StateGraph,
@@ -918,7 +918,7 @@ async function nodeInParentGraph(state: z.infer<typeof StateAnnotation>) {
     Command,
     MemorySaver
   } from "@langchain/langgraph";
-  import { z } from "zod/v4";
+  import * as z from "zod";
 
   const StateAnnotation = z.object({
     stateCounter: z.number(),

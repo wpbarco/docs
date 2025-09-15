@@ -53,7 +53,7 @@ Let's see what checkpoints are saved when a simple graph is invoked as follows:
 ```typescript
 import { StateGraph, START, END, MemoryServer } from "@langchain/langgraph";
 import { registry } from "@langchain/langgraph/zod";
-import { z } from "zod/v4";
+import * as z from "zod";
 
 const State = z.object({
   foo: z.string(),
@@ -87,7 +87,7 @@ await graph.invoke({ foo: "" }, config);
 ```typescript
 import { StateGraph, START, END, MemoryServer } from "@langchain/langgraph";
 import { registry } from "@langchain/langgraph/zod";
-import { z } from "zod/v4";
+import * as z from "zod";
 
 const State = z.object({
   foo: z.string(),
@@ -373,7 +373,7 @@ Let's assume you have defined the state of your graph with the following schema 
 
 ```typescript
 import { registry } from "@langchain/langgraph/zod";
-import { z } from "zod/v4";
+import * as z from "zod";
 
 const State = z.object({
   foo: z.number(),
@@ -607,7 +607,7 @@ We can access the `memoryStore` and the `user_id` in _any node_ by accessing `co
 import { MessagesZodMeta, Runtime } from "@langchain/langgraph";
 import { BaseMessage } from "@langchain/core/messages";
 import { registry } from "@langchain/langgraph/zod";
-import { z } from "zod/v4";
+import * as z from "zod";
 
 const MessagesZodState = z.object({
   messages: z

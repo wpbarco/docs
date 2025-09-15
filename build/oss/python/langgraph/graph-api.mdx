@@ -602,7 +602,7 @@ You can then access and use this context inside a node or conditional edge:
 
 ```typescript
 import { Runtime } from "@langchain/langgraph";
-import { z } from "zod/v4";
+import * as z from "zod";
 
 const nodeA = (
   state: z.infer<typeof State>,

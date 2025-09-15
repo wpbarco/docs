@@ -174,7 +174,7 @@ In this example, no reducer functions are specified for any key. Let's assume th
 
 
 ```typescript
-import { z } from "zod/v4";
+import * as z from "zod";
 import { registry } from "@langchain/langgraph/zod";
 
 const State = z.object({
@@ -232,7 +232,7 @@ Since the state updates are always deserialized into LangChain `Messages` when u
 ```typescript
 import { StateGraph, MessagesZodMeta } from "@langchain/langgraph";
 import { registry } from "@langchain/langgraph/zod";
-import { z } from "zod/v4";
+import * as z from "zod";
 
 const MessagesZodState = z.object({
   messages: z
@@ -273,7 +273,7 @@ You can add nodes to a graph using the `addNode` method.
 ```typescript
 import { StateGraph } from "@langchain/langgraph";
 import { RunnableConfig } from "@langchain/core/runnables";
-import { z } from "zod/v4";
+import * as z from "zod";
 
 const State = z.object({
   input: z.string(),
@@ -348,7 +348,7 @@ LangGraph supports caching of tasks/nodes based on the input to the node. To use
 ```typescript
 import { StateGraph, MessagesZodMeta } from "@langchain/langgraph";
 import { registry } from "@langchain/langgraph/zod";
-import { z } from "zod/v4";
+import * as z from "zod";
 import { InMemoryCache } from "@langchain/langgraph-checkpoint";
 
 const MessagesZodState = z.object({
@@ -628,7 +628,7 @@ When creating a graph, you can also mark that certain parts of the graph are con
 You can optionally specify a config schema when creating a graph.
 
 ```typescript
-import { z } from "zod/v4";
+import * as z from "zod";
 
 const ContextSchema = z.object({
   llm: z.union([z.literal("openai"), z.literal("anthropic")]),
@@ -655,7 +655,7 @@ You can then access and use this context inside a node or conditional edge:
 
 ```typescript
 import { Runtime } from "@langchain/langgraph";
-import { z } from "zod/v4";
+import * as z from "zod";
 
 const nodeA = (
   state: z.infer<typeof State>,

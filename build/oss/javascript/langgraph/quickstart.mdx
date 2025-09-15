@@ -13,7 +13,7 @@ Using the Graph API:
 // Step 0: define tools and model
 import { ChatAnthropic } from "@langchain/anthropic";
 import { tool } from "@langchain/core/tools";
-import { z } from "zod/v4";
+import * as z from "zod";
 
 const llm = new ChatAnthropic({
   model: "claude-3-7-sonnet-latest",
@@ -146,7 +146,7 @@ Using the Functional API:
 // Step 0: define tools and model
 import { ChatAnthropic } from "@langchain/anthropic";
 import { tool } from "@langchain/core/tools";
-import { z } from "zod/v4";
+import * as z from "zod";
 
 const llm = new ChatAnthropic({
   model: "claude-3-7-sonnet-latest",
