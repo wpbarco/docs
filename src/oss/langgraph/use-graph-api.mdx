@@ -266,40 +266,12 @@ class State(TypedDict):
 
 Now our node can be simplified:
 
-```python {highlight={3}}
+```python {highlight={5}}
+from langgraph.graph import START
+
 def node(state: State):
     new_message = AIMessage("Hello!")
     return {"messages": [new_message], "extra_field": 10}
-```
-:::
-
-:::js
-For Zod state schemas, we can define reducers by using the special `.langgraph.reducer()` method on the schema field.
-
-In the earlier example, our node updated the `"messages"` key in the state by appending a message to it. Below, we add a reducer to this key, such that updates are automatically appended:
-
-```typescript {highlight={4}}
-import "@langchain/langgraph/zod";
-
-const State = z.object({
-  messages: z.array(z.custom<BaseMessage>()).langgraph.reducer((x, y) => x.concat(y)),
-  extraField: z.number(),
-});
-```
-
-Now our node can be simplified:
-
-```typescript {highlight={3}}
-const node = (state: z.infer<typeof State>) => {
-  const newMessage = new AIMessage("Hello!");
-  return { messages: [newMessage], extraField: 10 };
-};
-```
-:::
-
-:::python
-```python
-from langgraph.graph import START
 
 graph = StateGraph(State).add_node(node).add_edge(START, "node").compile()
 
@@ -320,6 +292,35 @@ Hello!
 :::
 
 :::js
+For Zod state schemas, we can defined reducers by calling `.register()` on the schema field with the [metadata registry](https://zod.dev/metadata) that LangGraph uses.
+
+In the earlier example, our node updated the `"messages"` key in the state by appending a message to it. Below, we add a reducer to this key, such that updates are automatically appended:
+
+```typescript {highlight={4}}
+import { registry } from "@langchain/langgraph/zod";
+import * as z from "zod";
+
+const State = z.object({
+  messages: z.array(z.custom<BaseMessage>())
+    .register(registry, {
+      reducer: {
+        fn: (x, y) => x.concat(y),
+      },
+      default: () => [] as BaseMessage[],
+    }),
+  extraField: z.number(),
+});
+```
+
+Now our node can be simplified:
+
+```typescript {highlight={3}}
+const node = (state: z.infer<typeof State>) => {
+  const newMessage = new AIMessage("Hello!");
+  return { messages: [newMessage], extraField: 10 };
+};
+```
+
 ```typescript
 import { START } from "@langchain/langgraph";
 
@@ -339,6 +340,24 @@ for (const message of result.messages) {
 human: Hi
 ai: Hello!
 ```
+
+<Info>
+  [Zod v4](https://zod.dev/v4) is the latest version of Zod, and is the recommended version to use with LangGraph. If you're still using Zod v3, defining reducers looks slightly different.
+
+  <Accordion title="Legacy: Defining state with Zod v3">
+    ```typescript
+    // Importing this path adds a `.langgraph` property to zod schemas adds
+    // graph metadata to the schema. This is not compatible with Zod v4 schemas.
+    import "@langchain/langgraph/zod";
+    import * as z from "zod/v3";
+
+    const State = z.object({
+      messages: z.array(z.custom<BaseMessage>())
+        .langgraph.reducer((x, y) => x.concat(y)),
+    });
+    ```
+  </Accordion>
+</Info>
 :::
 
 #### MessagesState
