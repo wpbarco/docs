@@ -115,7 +115,7 @@ const documents = [document1, document2, document3, document4];
 await vectorStore.addDocuments(documents);
 ```
 
-Top-level document ids and deletion are currently not supported.
+Top-level document ids are currently not supported, but you can delete documents by providing their IDs directly to the vector store.
 
 ## Query vector store
 
@@ -184,12 +184,25 @@ For guides on how to use this vector store for retrieval-augmented generation (R
 - [Agentic RAG](/oss/javascript/langgraph/agentic-rag)
 - [Retrieval docs](/oss/javascript/langchain/retrieval)
 
-## Deleting an index
+## Deleting documents
 
-You can delete an entire index with the following command:
+You can delete documents from the vector store in two ways:
+
+### Delete all documents
+
+You can delete an entire index and all its documents with the following command:
 
 ```typescript
 await vectorStore.delete({ deleteAll: true });
+```
+
+### Delete specific documents by ID
+
+You can also delete specific documents by providing their IDs. Note that the configured key prefix will be automatically added to the IDs you provide:
+
+```typescript
+// The key prefix will be automatically added to each ID
+await vectorStore.delete({ ids: ["doc1", "doc2", "doc3"] });
 ```
 
 ## Closing connections
