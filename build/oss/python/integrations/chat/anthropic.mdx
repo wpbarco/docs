@@ -2,7 +2,7 @@
 title: ChatAnthropic
 ---
 
-This guide provides a quick overview for getting started with Anthropic [chat models](/oss/python/concepts/chat_models). For detailed documentation of all ChatAnthropic features and configurations head to the [API reference](https://python.langchain.com/api_reference/anthropic/chat_models/langchain_anthropic.chat_models.ChatAnthropic.html).
+This guide provides a quick overview for getting started with Anthropic [chat models](/oss/python/langchain/models). For detailed documentation of all ChatAnthropic features and configurations head to the [API reference](https://python.langchain.com/api_reference/anthropic/chat_models/langchain_anthropic.chat_models.ChatAnthropic.html).
 
 Anthropic has several chat models. You can find information about their latest models and their costs, context windows, and supported input types in the [Anthropic docs](https://docs.anthropic.com/en/docs/about-claude/models/overview).
 
@@ -23,7 +23,7 @@ Note that certain Anthropic models can also be accessed via AWS Bedrock and Goog
 
 ### Model features
 
-| [Tool calling](/oss/python/how-to/tool_calling) | [Structured output](/oss/python/how-to/structured_output/) | JSON mode | [Image input](/oss/python/how-to/multimodal_inputs/) | Audio input | Video input | [Token-level streaming](/oss/python/how-to/chat_streaming/) | Native async | [Token usage](/oss/python/how-to/chat_token_usage_tracking/) | [Logprobs](/oss/python/how-to/logprobs/) |
+| [Tool calling](/oss/python/langchain/tools) | [Structured output](/oss/python/langchain/structured-output) | JSON mode | [Image input](/oss/python/how-to/multimodal_inputs/) | Audio input | Video input | [Token-level streaming](/oss/python/langchain/streaming/) | Native async | [Token usage](/oss/python/how-to/chat_token_usage_tracking/) | [Logprobs](/oss/python/how-to/logprobs/) |
 | :---: | :---: | :---: | :---: |  :---: | :---: | :---: | :---: | :---: | :---: |
 | ✅ | ✅ | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ |
 
@@ -894,7 +894,7 @@ response.content
 
 ## Built-in tools
 
-Anthropic supports a variety of [built-in tools](https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/text-editor-tool), which can be bound to the model in the [usual way](/oss/python/how-to/tool_calling/). Claude will generate tool calls adhering to its internal schema for the tool:
+Anthropic supports a variety of [built-in tools](https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/text-editor-tool), which can be bound to the model in the [usual way](/oss/python/langchain/tools/). Claude will generate tool calls adhering to its internal schema for the tool:
 
 ### Web search
 
