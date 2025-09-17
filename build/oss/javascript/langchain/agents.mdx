@@ -6,23 +6,15 @@ import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
 
 <AlphaCallout />
 
-## Overview
-
 Agents combine language models with tools to create systems that can reason about tasks, decide which tools to use, and iteratively work towards solutions.
 
 
 `createAgent()` provides a production-ready ReAct (Reasoning + Acting) agent implementation based on the paper [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629).
 
 
-<Columns cols={2}>
-
-<Card>
 ReAct frames an agent's behavior as an interleaving of `thought` -> `action` -> `observation` steps, where the model writes out its reasoning, picks a tool, sees the tool's result, and then repeats. ReAct reduces hallucinations and makes the decision process auditable: the agent can form hypotheses (`thought`), test them with tools (`action`), and update its plan based on feedback (`observation`).
 
-A ReAct loop runs until a stop condition - i.e. when the model emits a final answer or a max-iterations limit is reached.
-</Card>
-
-<Card>
+A ReAct loop runs until a stop condition - i.e., when the model emits a final answer or a max-iterations limit is reached.
 
 ```mermaid
 %%{
@@ -53,13 +45,9 @@ graph TD
   class ANSWER blueHighlight;
 ```
 
-</Card>
-
-</Columns>
-
 <Info>
 
-Under the hood, `create_agent()` builds a **graph**-based agent runtime using [LangGraph](/oss/javascript/langgraph/overview). A graph consists of nodes (steps) and edges (connections) that define how your agent processes information. The agent moves through this graph, executing nodes like the model node (which calls the model), the tools node (which executes tools), or pre/post model hook nodes. Learn more about the [graph API](/oss/javascript/langgraph/graph-api).
+`create_agent()` builds a **graph**-based agent runtime using [LangGraph](/oss/javascript/langgraph/overview). A graph consists of nodes (steps) and edges (connections) that define how your agent processes information. The agent moves through this graph, executing nodes like the model node (which calls the model), the tools node (which executes tools), or pre/post model hook nodes. Learn more about the [graph API](/oss/javascript/langgraph/graph-api).
 
 </Info>
 
@@ -158,7 +146,7 @@ Tools can be provided to the agent as either:
 2. A configured `ToolNode`
 
 
-#### Passing a list of tools
+#### Pass a list of tools
 
 Passing a list of tools to the agent will create a `ToolNode` under the hood. This is the simplest way to set up a tool-calling agent:
 
@@ -214,7 +202,7 @@ console.log(result);
 
 If an empty tool list is provided, the agent will consist of a single LLM node without tool calling.
 
-#### Passing a configured ToolNode
+#### Pass a configured ToolNode
 
 Alternatively, you can create a `ToolNode` directly and pass it to the agent. This allows you to customize the tool node's behavior, such as handling tool errors:
 
@@ -237,13 +225,12 @@ const toolNode = new ToolNode([search, calculate], {
 To learn more about error handling in `ToolNode`, see [ToolNode](/oss/javascript/langchain/tools#toolnode).
 </Tip>
 
-### Tool use in the ReAct loop
+#### Tool use in the ReAct loop
 
 Agents follow the ReAct (*Reasoning* + *Acting*) pattern, alternating between brief reasoning steps with targeted tool calls and feeding the resulting observations into subsequent decisions until they can deliver a final answer.
 
-Follow along as an agent applies ReAct to answer a user's question:
-
-<Card title="Prompt: Identify the current most popular wireless headphones and verify availability.">
+<Accordion title="Example of ReAct loop">
+Prompt: Identify the current most popular wireless headphones and verify availability.
 
 ```
 ================================ Human Message =================================
@@ -296,7 +283,7 @@ Product WH-1000XM5: 10 units in stock
 
 I found wireless headphones (model WH-1000XM5) with 10 units in stock...
 ```
-</Card>
+</Accordion>
 
 <Tip>
 To learn more about tools, see [Tools](/oss/javascript/langchain/tools).
@@ -304,24 +291,19 @@ To learn more about tools, see [Tools](/oss/javascript/langchain/tools).
 
 ### Prompt
 
-You can shape how your agent approaches tasks by providing a prompt. The `prompt` parameter can be provided in several forms.
-
-#### String
+You can shape how your agent approaches tasks by providing a prompt. The `prompt` parameter can be provided as a string, SystemMessage, or a callable:
 
 
-```ts wrap
+
+<CodeGroup>
+```ts String
 const agent = createAgent({
     model,
     tools,
     prompt: "You are a helpful assistant. Be concise and accurate."
 });
 ```
-
-
-#### SystemMessage
-
-
-```ts wrap
+```ts SystemMessage
 import { SystemMessage } from "langchain";
 
 const agent = createAgent({
@@ -330,12 +312,7 @@ const agent = createAgent({
     prompt: new SystemMessage("You are a research assistant. Cite your sources.")
 });
 ```
-
-
-#### Callable
-
-
-```ts wrap
+```ts Callable
 import { createAgent } from "langchain";
 
 const agent = createAgent({
@@ -354,6 +331,8 @@ const agent = createAgent({
     }
 });
 ```
+</CodeGroup>
+
 
 
 When no `prompt` is provided, the agent will infer its task from the messages directly.
@@ -364,7 +343,7 @@ For more details on message types and formatting, see [Messages](/oss/javascript
 
 ## Advanced configuration
 
-### Structured Output
+### Structured output
 
 
 In some situations, you may want the agent to return an output in a specific format. LangChain provides a simple, universal way to do this with the `responseFormat` parameter.
@@ -406,14 +385,14 @@ console.log(result.structuredResponse);
 ```
 
 <Tip>
-To learn about structured output, see [Structured Output](/oss/javascript/langchain/structured-output).
+To learn about structured output, see [Structured output](/oss/javascript/langchain/structured-output).
 </Tip>
 
 ### Memory
 
 Agents maintain conversation history automatically through the message state. You can also configure the agent to use a custom state schema to remember additional information during the conversation.
 
-Information stored in the state can be thought of as the "short-term memory" of the agent:
+Information stored in the state can be thought of as the [short-term memory](/oss/javascript/langchain/short-term-memory) of the agent:
 
 
 ```ts wrap
@@ -435,7 +414,7 @@ const CustomAgentState = createAgent({
 
 
 <Tip>
-To learn more about memory, including how to implement long-term memory that persists across sessions, see [Memory](/oss/javascript/memory).
+To learn more about memory, see [Memory](/oss/javascript/memory). For information on implementing long-term memory that persists across sessions, see [Long-term memory](/oss/javascript/langchain/long-term-memory).
 </Tip>
 
 ### Pre-model hook

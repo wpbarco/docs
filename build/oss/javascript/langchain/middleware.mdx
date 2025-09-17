@@ -2,6 +2,10 @@
 title: Middleware
 ---
 
+import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
+
+<AlphaCallout />
+
 
 Middleware provides a way to more tightly control what happens inside the agent.
 
@@ -125,7 +129,7 @@ LangChain provides several built in middleware to use off-the-shelf
 
 The `summarizationMiddleware` automatically manages conversation history by summarizing older messages when token limits are approached. This middleware monitors the total token count of messages and creates concise summaries to preserve context while staying within model limits.
 
-**Key keatures:**
+**Key features:**
 
 - Automatic token counting and threshold monitoring
 - Intelligent message partitioning that preserves AI/Tool message pairs
@@ -160,12 +164,15 @@ const agent = createAgent({
 
 **Configuration options:**
 
+
+
 - `model`: Language model to use for generating summaries (required)
 - `maxTokensBeforeSummary`: Token threshold that triggers summarization
 - `messagesToKeep`: Number of recent messages to preserve (default: 20)
 - `tokenCounter`: Custom function for counting tokens (defaults to character-based approximation)
 - `summaryPrompt`: Custom prompt template for summary generation
 - `summaryPrefix`: Prefix added to system messages containing summaries (default: "## Previous conversation summary:")
+
 
 The middleware ensures tool call integrity by:
 
@@ -195,6 +202,8 @@ The `humanInTheLoopMiddleware` enables human oversight and intervention for tool
 
 ```typescript
 import { createAgent } from "langchain";
+import { MemorySaver } from "@langchain/langgraph";
+
 import { humanInTheLoopMiddleware } from "langchain/middleware";
 import { Command } from "@langchain/langgraph";
 
@@ -231,6 +240,9 @@ When a tool requires approval, the agent execution pauses and waits for human in
 
 
 ```typescript
+import { HumanMessage } from "@langchain/core/messages";
+import { Command } from "@langchain/langgraph";
+
 // Initial invocation
 const result = await agent.invoke(
     {
@@ -291,7 +303,8 @@ history across invocations.
 
 
 ```typescript
-import { createAgent, HumanMessage, MemorySaver } from "langchain";
+import { createAgent, HumanMessage } from "langchain";
+import { MemorySaver } from "@langchain/langgraph";
 import { anthropicPromptCachingMiddleware } from "langchain/middleware";
 
 const LONG_PROMPT = `
@@ -354,8 +367,8 @@ function beforeModel(state: AgentState): AgentState | AgentJump | undefined {
 
 Runs before the model has run, but after all the `before_model` calls.
 These functions **cannot** modify permanent state or exit early.
-Rather, they are intended to modify calls to the model in a **stateless\* way.
-If you want to modify calls to the model in a **stateful\*\* way, you will need to use `before_model`
+Rather, they are intended to modify calls to the model in a **stateless** way.
+If you want to modify calls to the model in a **stateful** way, you will need to use `before_model`
 
 Modifies the model request. The model request has several key properties:
 - `model` (`BaseChatModel`): the model to use. Note: this needs to the base chat model, not a string.
