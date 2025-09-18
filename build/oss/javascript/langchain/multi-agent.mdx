@@ -7,7 +7,7 @@ import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
 
 <AlphaCallout />
 
-**Multi-agent systems** break a complex application into multiple specialized agents that work together to solve problems.  
+**Multi-agent systems** break a complex application into multiple specialized agents that work together to solve problems.
 Instead of relying on a single agent to handle every step, **multi-agent architectures** allow you to compose smaller, focused agents into a coordinated workflow.
 
 Multi-agent systems are useful when:
@@ -86,7 +86,7 @@ import { z } from "zod";
 const subagent1 = createAgent({...});
 
 const callSubagent1 = tool(
-  async ({query}) => {
+  async ({ query }) => {
     const result = await subagent1.invoke({
       messages: [{ role: "user", content: query }]
     });
@@ -119,7 +119,7 @@ There are several points where you can control how context is passed between the
 
 1. **Subagent name** (`"subagent1_name"`): This is how the main agent refers to the subagent. Since it influences prompting, choose it carefully.
 2. **Subagent description** (`"subagent1_description"`): This is what the main agent “knows” about the subagent. It directly shapes how the main agent decides when to call it.
-3. **Input to the subagent**: You can customize this input to better shape how the subagent interprets tasks. In the example above, we pass the agent-generated `query` directly. 
+3. **Input to the subagent**: You can customize this input to better shape how the subagent interprets tasks. In the example above, we pass the agent-generated `query` directly.
 4. **Output from the subagent**: This is the **response** passed back to the main agent. You can adjust what is returned to control how the main agent interprets results. In the example above, we return the final message text, but you could return additional state or metadata.
 
 ### Control the input to the subagent
@@ -155,6 +155,7 @@ const callSubagent1 = tool(
     description: "subagent1_description",
   }
 );
+```
 
 
 ### Control the output from the subagent
@@ -179,7 +180,7 @@ const callSubagent1 = tool(
     const result = await subagent1.invoke({
       messages: [{ role: "user", content: query }]
     });
-    
+
     // Return a Command to update multiple state keys
     return new Command({
       update: {
@@ -196,7 +197,7 @@ const callSubagent1 = tool(
   },
   {
     name: "subagent1_name",
-    description: "subagent1_description", 
+    description: "subagent1_description",
     schema: z.object({
       query: z.string().describe("The query to send to subagent1")
     })
