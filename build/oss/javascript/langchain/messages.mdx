@@ -257,30 +257,19 @@ for (const toolCall of response.tool_calls) {
 
 #### Streaming and chunks
 
-During streaming, you'll receive `AIMessageChunk` objects that can be combined:
+During streaming, you'll receive `AIMessageChunk` objects that can be combined into a full message:
 
 
 
 <CodeGroup>
-    ```typescript Stream and collect chunks
-    const chunks = [];
-    const stream = await model.stream("Write a poem");
-    for await (const chunk of stream) {
-        chunks.push(chunk);
-        console.log(chunk.text);
-    }
-    ```
+```typescript
+import { AIMessageChunk } from "langchain";
 
-    ```typescript Combine chunks
-    import { AIMessageChunk } from "langchain";
-
-    let finalChunk: AIMessageChunk | undefined;
-    for (const chunk of chunks) {
-        finalChunk = finalChunk ? finalChunk.concat(chunk) : chunk;
-    }
-
-    console.log(`Full response: ${finalChunk?.text}`);
-    ```
+let finalChunk: AIMessageChunk | undefined;
+for (const chunk of chunks) {
+    finalChunk = finalChunk ? finalChunk.concat(chunk) : chunk;
+}
+```
 </CodeGroup>
 
 
