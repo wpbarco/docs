@@ -13,8 +13,6 @@ import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
 [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) is an open protocol that standardizes how applications provide tools and context to LLMs. LangChain agents can use tools defined on MCP servers using the [`langchain-mcp-adapters`](https://github.com/langchain-ai/langchainjs/tree/main/libs/langchain-mcp-adapters/adapters) library.
 :::
 
-![MCP](/oss/images/mcp.png)
-
 ## Install
 
 :::python
@@ -57,20 +55,19 @@ bun add @langchain/mcp-adapters
 
 MCP supports different transport mechanisms for client-server communication:
 
-- stdio: Client launches server as a subprocess and communicates via standard input/output. Best for local tools and simple setups.
-- Streamable HTTP: Server runs as an independent process handling HTTP requests. Supports remote connections and multiple clients.
-- Server-Sent Events (SSE): a variant of streamable HTTP optimized for real-time streaming communication.
+- **Streamable HTTP**: Connect to a remote MCP server over HTTP. Best for production solutions.
+- **stdio**: Client launches server as a subprocess and communicates via standard input/output. Best for local tools and simple setups.
 
 ## Use MCP tools
 
 :::python
 `langchain-mcp-adapters` enables agents to use tools defined across one or more MCP server.
 
-```python Accessing multiple MCP servers {highlight={1,4,19,22}} icon="server"
-from langchain_mcp_adapters.client import MultiServerMCPClient
+```python Accessing multiple MCP servers icon="server"
+from langchain_mcp_adapters.client import MultiServerMCPClient # [!code highlight]
 from langchain.agents import create_agent
 
-client = MultiServerMCPClient(
+client = MultiServerMCPClient( # [!code highlight]
     {
         "math": {
             "transport": "stdio",  # Local subprocess communication
@@ -86,10 +83,10 @@ client = MultiServerMCPClient(
     }
 )
 
-tools = await client.get_tools()
+tools = await client.get_tools() # [!code highlight]
 agent = create_agent(
     "anthropic:claude-3-7-sonnet-latest",
-    tools
+    tools # [!code highlight]
 )
 math_response = await agent.ainvoke(
     {"messages": [{"role": "user", "content": "what's (3 + 5) x 12?"}]}
@@ -98,18 +95,17 @@ weather_response = await agent.ainvoke(
     {"messages": [{"role": "user", "content": "what is the weather in nyc?"}]}
 )
 ```
-
 :::
 
 :::js
 `@langchain/mcp-adapters` enables agents to use tools defined across one or more MCP server.
 
-```ts Accessing multiple MCP servers {highlight={1,5,19,22}} icon="server"
-import { MultiServerMCPClient } from "@langchain/mcp-adapters";
+```ts Accessing multiple MCP servers icon="server"
+import { MultiServerMCPClient } from "@langchain/mcp-adapters"; // [!code highlight]
 import { ChatAnthropic } from "@langchain/anthropic";
 import { createAgent } from "langchain";
 
-const client = new MultiServerMCPClient({
+const client = new MultiServerMCPClient({ // [!code highlight]
     math: {
         transport: "stdio",  // Local subprocess communication
         command: "node",
@@ -123,10 +119,10 @@ const client = new MultiServerMCPClient({
     },
 });
 
-const tools = await client.getTools();
-const agent = createAgent({
-    llm: new ChatAnthropic({ model: "claude-3-7-sonnet-latest" }),
-    tools,
+const tools = await client.getTools(); // [!code highlight]
+const agent = createAgent({ 
+    model: new ChatAnthropic({ model: "claude-3-7-sonnet-latest" }),
+    tools: tools, // [!code highlight]
 });
 
 const mathResponse = await agent.invoke({
@@ -146,15 +142,17 @@ const weatherResponse = await agent.invoke({
 ## Custom MCP servers
 
 :::python
-To create your own MCP servers, you can use the `mcp` library. This library provides a simple way to define [tools](https://modelcontextprotocol.io/docs/learn/server-concepts#tools-ai-actions) and run them as servers.
+
+To create a custom MCP serverm you can use the [FastMCP](https://gofastmcp.com/getting-started/welcome) library.
+
 
 <CodeGroup>
 ```bash pip
-pip install mcp
+pip install fastmcp
 ```
 
 ```bash uv
-uv add mcp
+uv add fastmcp
 ```
 </CodeGroup>
 :::
@@ -183,9 +181,11 @@ bun add @modelcontextprotocol/sdk
 
 Use the following reference implementations to test your agent with MCP tool servers.
 
+
 :::python
+<CodeGroup>
 ```python title="Math server (stdio transport)" icon="floppy-disk"
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 
 mcp = FastMCP("Math")
 
@@ -204,7 +204,7 @@ if __name__ == "__main__":
 ```
 
 ```python title="Weather server (streamable HTTP transport)" icon="wifi"
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 
 mcp = FastMCP("Weather")
 
@@ -216,6 +216,7 @@ async def get_weather(location: str) -> str:
 if __name__ == "__main__":
     mcp.run(transport="streamable-http")
 ```
+</CodeGroup>
 :::
 
 :::js
@@ -234,7 +235,7 @@ const server = new Server(
     },
     {
         capabilities: {
-        tools: {},
+            tools: {},
         },
     }
 );
@@ -246,36 +247,36 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             name: "add",
             description: "Add two numbers",
             inputSchema: {
-            type: "object",
-            properties: {
-                a: {
-                type: "number",
-                description: "First number",
+                type: "object",
+                properties: {
+                    a: {
+                        type: "number",
+                        description: "First number",
+                    },
+                    b: {
+                        type: "number",
+                        description: "Second number",
+                    },
                 },
-                b: {
-                type: "number",
-                description: "Second number",
-                },
-            },
-            required: ["a", "b"],
+                required: ["a", "b"],
             },
         },
         {
             name: "multiply",
             description: "Multiply two numbers",
             inputSchema: {
-            type: "object",
-            properties: {
-                a: {
-                type: "number",
-                description: "First number",
+                type: "object",
+                properties: {
+                    a: {
+                        type: "number",
+                        description: "First number",
+                    },
+                    b: {
+                        type: "number",
+                        description: "Second number",
+                    },
                 },
-                b: {
-                type: "number",
-                description: "Second number",
-                },
-            },
-            required: ["a", "b"],
+                required: ["a", "b"],
             },
         },
         ],
@@ -285,29 +286,29 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
     switch (request.params.name) {
         case "add": {
-        const { a, b } = request.params.arguments as { a: number; b: number };
-        return {
-            content: [
-            {
-                type: "text",
-                text: String(a + b),
-            },
-            ],
-        };
+            const { a, b } = request.params.arguments as { a: number; b: number };
+            return {
+                content: [
+                {
+                    type: "text",
+                    text: String(a + b),
+                },
+                ],
+            };
         }
         case "multiply": {
-        const { a, b } = request.params.arguments as { a: number; b: number };
-        return {
-            content: [
-            {
-                type: "text",
-                text: String(a * b),
-            },
-            ],
-        };
+            const { a, b } = request.params.arguments as { a: number; b: number };
+            return {
+                content: [
+                {
+                    type: "text",
+                    text: String(a * b),
+                },
+                ],
+            };
         }
         default:
-        throw new Error(`Unknown tool: ${request.params.name}`);
+            throw new Error(`Unknown tool: ${request.params.name}`);
     }
 });
 
@@ -339,7 +340,7 @@ const server = new Server(
     },
     {
         capabilities: {
-        tools: {},
+            tools: {},
         },
     }
 );
@@ -368,18 +369,18 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
     switch (request.params.name) {
         case "get_weather": {
-        const { location } = request.params.arguments as { location: string };
-        return {
-            content: [
-            {
-                type: "text",
-                text: `It's always sunny in ${location}`,
-            },
-            ],
-        };
+            const { location } = request.params.arguments as { location: string };
+            return {
+                content: [
+                    {
+                        type: "text",
+                        text: `It's always sunny in ${location}`,
+                    },
+                ],
+            };
         }
         default:
-        throw new Error(`Unknown tool: ${request.params.name}`);
+            throw new Error(`Unknown tool: ${request.params.name}`);
     }
 });
 
@@ -395,60 +396,94 @@ app.listen(PORT, () => {
 ```
 :::
 
+
+## Advanced
+
+### Modify tool request at run time
+
+If you need to change any part of the tool request at runtime (e.g., modify headers):
+
+* Example of how to change headers (e.g., to provide some metadata based on `config`)
+
+### Access MCP logs
+
+The MCP protocol [allows servers to send log messages to client](https://modelcontextprotocol.io/specification/2025-03-26/server/utilities/logging#log-levels ).
+
+### Progress notification
+
+Server side tools can send progress updates to clients using the MCP [progress utility](https://modelcontextprotocol.io/specification/2025-03-26/basic/utilities/progress).
+
 :::python
-## Expose LangChain tools via MCP
-
-You can also expose existing LangChain tools through an MCP server using the `to_fastmcp` function. This allows you to make your LangChain tools available to any MCP client.
-
-```python Make LangChain tools available via MCP icon="tool"
-from langchain_core.tools import tool
-from langchain_mcp_adapters.tools import to_fastmcp
-from mcp.server.fastmcp import FastMCP
-
-
-@tool
-def add(a: int, b: int) -> int:
-    """Add two numbers"""
-    return a + b
-
-@tool
-def get_user_info(user_id: str) -> str:
-    """Get information about a user"""
-    return f"User {user_id} is active"
-
-
-# Convert LangChain tools to FastMCP
-fastmcp_tools = [to_fastmcp(tool) for tool in (add, get_user_info)]
-
-# Create server using converted tools
-mcp = FastMCP("LangChain Tools", tools=fastmcp_tools)
-mcp.run(transport="stdio")
-```
+To subscribe to progress updates, use the `on_progress` callback:
 :::
 
-## Stateful tool usage
+### Implementing auth
 
-For stateful servers that maintain context between tool calls, use `client.session()` to create a persistent `ClientSession`.
+:::python
+The `langchain-mcp-adapters` library uses the official [MCP SDK](https://github.com/modelcontextprotocol/python-sdk) under the hood, which allows you to provide a custom authentication mechanism by implementing the `httpx.Auth` interface.
+
+```python
+from langchain_mcp_adapters.client import MultiServerMCPClient
+
+client = MultiServerMCPClient(
+    {
+        "weather": {
+            "transport": "streamable_http",
+            "url": "http://localhost:8000/mcp",
+            "auth": auth, # [!code highlight]
+        }
+    }
+)
+```
+
+
+* [Example custom auth implementation](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/clients/simple-auth-client/mcp_simple_auth_client/main.py)
+* [Built-in OAuth flow](https://github.com/modelcontextprotocol/python-sdk/blob/main/src/mcp/client/auth.py#L179)
+:::
+
+### Interacting with stateful servers
+
+If you need to control the lifecycle of the MCP session (e.g., you want to interact with a stateful server that maintains context between tool calls), you can create a persistent `ClientSession` using `client.session()`.
+
+This allows you to manage the session [lifecycle explicitly](https://modelcontextprotocol.io/specification/2025-03-26/basic/lifecycle) and will go through the full MCP session lifecycle  (initializing a session, using the session and then closing the session).
 
 :::python
 ```python Using MCP ClientSession for stateful tool usage
 from langchain_mcp_adapters.tools import load_mcp_tools
+from langchain.agents import create_agent
 
 client = MultiServerMCPClient({...})
-async with client.session("math") as session:
-    tools = await load_mcp_tools(session)
+
+# Create a session explicitly
+async with client.session() as session: # [!code highlight]
+    # Pass the session to load tools
+    tools = await load_mcp_tools(session) # [!code highlight]
+    agent = create_agent(
+        "anthropic:claude-3-7-sonnet-latest",
+        tools
+    )
 ```
 :::
 
 :::js
 ```typescript Using MCP ClientSession for stateful tool usage
 import { loadMCPTools } from "@langchain/mcp-adapters/tools.js";
+import { createAgent } from "langchain";
 
 const client = new MultiServerMCPClient({...});
-const session = await client.session("math");
+const session = await client.session("some_server");
 const tools = await loadMCPTools(session);
+const agent = createAgent({
+    model: new ChatAnthropic({ model: "claude-3-7-sonnet-latest" }),
+    tools,
+});
 ```
 :::
+
+<Important>
+    If you open long-lived sessions which maintain state and are trying to use your agent in a conversational capacity
+    or have human in the loop and are serving it via a web server.
+</Important>
 
 ## Additional resources
 
