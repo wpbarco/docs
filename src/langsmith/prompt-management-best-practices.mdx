@@ -18,15 +18,15 @@ Prompt development is an iterative, experimental process. Using the [Playground]
 - **Prototype tools, set structured outputs** and test the interaction within the Playground.
 - **[Run evaluations](/langsmith/run-evaluation-from-prompt-playground)** over your prompt in the Playground. Share experiments with teammates to get feedback and collaboratively optimize performance.
 
-Once ready, you can save a prompt to the Prompt Hub. Saving a prompt creates a new version. Establishing a complete commit history enables you to track changes and revert to previous versions if needed.
+Once ready, you can save a prompt to the Prompt Hub. A new commit is created each time you save a prompt, establishing a complete commit history enables you to track changes and revert to previous versions if needed.
 
 ## Manage prompts across environments
 
-When managing prompts across your dev/staging/production environments, you want to balance speed of iteration across a team with the need for stability. We reccomend using the Prompt Hub along with [commit tags](/langsmith/manage-prompts#commit-tags) to manage prompts across dev/testing/staging environments and a seperate workflow for managing prompts in production.
+When managing prompts across your dev/staging/production environments, you want to balance speed of iteration across a team with the need for stability. We recommend using the Prompt Hub along with [commit tags](/langsmith/manage-prompts#commit-tags) to manage prompts across dev/testing/staging environments and a seperate workflow for managing prompts in production.
 
 ### Update prompts in dev/testing/staging environments
 
-After testing in the Playground, you'll want to see how the prompt interacts within the context of your application. A reccomended workflow is:
+After testing in the Playground, you'll want to see how the prompt interacts within the context of your application. A recommend workflow is:
 
 1. Set up your dev/testing/staging environments to [pull prompts from the Prompt Hub](/langsmith/manage-prompts-programmatically#pull-a-prompt) using defined commit tags (eg. `dev`, `staging`) for each environment. This creates a dynamic reference to the prompt version you want to use in a particular environment.
 2. After saving a new version of your prompt, [move the commit tag](/langsmith/manage-prompts#move-a-tag) for the desired environment to the new version of the prompt. Your application will automatically pull the new version on its next request to the Prompt Hub.
@@ -36,23 +36,23 @@ After testing in the Playground, you'll want to see how the prompt interacts wit
 
 ### Update prompts in production
 
-<Warning> It is not reccomended to put an API call to the Prompt Hub in the hot path of your application on every request. We reccomend either pulling the prompt into your code directly or fetching the prompt once and reusing it. </Warning>
+<Warning> It is not recommended to put an API call to the Prompt Hub in the hot path of your application on every request. We recommend either pulling the prompt into your code directly or fetching the prompt once and reusing it. </Warning>
 
 [Prompt webhooks](/langsmith/manage-prompts#configure-a-webhook) can be used in order to keep prompts in sync with your production environment. For example a notification can be sent when a prompt gets the `prod` tag added to it, which can then be used as a trigger to pull the latest version of the prompt into your production environment.
 
 #### Pull prompts into your code
 
-A common approach is to sync prompts from the Prompt Hub into your source code, which allows them to be version-controlled and deployed alongside your application code.
+A common approach is to [sync prompts from the Prompt Hub with your source code](/langsmith/prompt-commit), so they can be **version-controlled and deployed alongside your application code**.
 
 The workflow would look like:
-1. A LangSmith user moves the `prod` tag to a new prompt version.
-2. The webhook triggers a CI/CD pipeline (eg. GitHub Actions, GitLab CI) that pulls the version with the `prod` tag into your repository.
+1. A LangSmith user moves the `prod` tag to a new prompt commit.
+2. The webhook triggers a CI/CD pipeline (eg. GitHub Actions, GitLab CI) that pulls the commit with the `prod` tag into your repository.
 3. The pipeline commits the prompt change to your repo.
 
 
 #### Store prompts in a database or cache prompts in your application
 
-If you want your prompts versioned independent of your application code, you can sync them to a database or cache them in your application.
+If you want your prompts **versioned independenty of your application code**, you can sync them to a database or cache them in your application. This allows you to update, A/B test prompts without redeploying your application.
 
-- Database: Store prompts in a database, treating them as a form of dynamic configuration. The CI/CD process would be responsible for updating the prompt in the database based on the webhook trigger.
-- Cache: The application fetches the prompt once on startup and stores it in memory. On webhook receipt, invalidate the cache and pull the latest commit.
+- Database: Store prompts in a database, treating them as a form of dynamic configuration. Your CI/CD process updates the prompt record whenever a webhook from LangSmithis triggered.
+- Cache: Fetch the prompt once at application startup and keep it in memory. When the webhook fires, invalidate the cache and pull the latest commit.
