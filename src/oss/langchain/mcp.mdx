@@ -443,9 +443,10 @@ client = MultiServerMCPClient(
 
 ### Interacting with stateful servers
 
-If you need to control the lifecycle of the MCP session (e.g., you want to interact with a stateful server that maintains context between tool calls), you can create a persistent `ClientSession` using `client.session()`.
+If you need to control the lifecycle of an MCP session (for example, when working with a stateful server that maintains context across tool calls), you can create a persistent `ClientSession` using `client.session()`.
 
-This allows you to manage the session [lifecycle explicitly](https://modelcontextprotocol.io/specification/2025-03-26/basic/lifecycle) and will go through the full MCP session lifecycle  (initializing a session, using the session and then closing the session).
+This gives you explicit control over the [session lifecycle](https://modelcontextprotocol.io/specification/2025-03-26/basic/lifecycle) — initializing, using, and then closing the session.
+
 
 :::python
 ```python Using MCP ClientSession for stateful tool usage
@@ -480,9 +481,8 @@ const agent = createAgent({
 ```
 :::
 
-<Important>
-    If you open long-lived sessions which maintain state and are trying to use your agent in a conversational capacity
-    or have human in the loop and are serving it via a web server.
+<Important> 
+    If you are serving your agent through a web server and intend to use it a conversational setting, be careful with how you manage sessions. A naive setup will create a **new session for each request**, which prevents state from being preserved across turns.
 </Important>
 
 ## Additional resources
