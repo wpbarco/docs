@@ -6,7 +6,7 @@ sidebarTitle: Prompt Hub best practices
 Prompts are a fundamental component of your LLM application's logic. A minor change can significantly change an LLM's response or tool selection, making lifecycle management important. LangSmith provides tools to manage prompts across development, testing, and production environments:
 
 - **Prompt Hub**: A central store for managing prompts. This is a especially useful source of truth for your prompts when you are collaborating with a team to iterate on them.
-- **Playground**: Test and experiment with prompts and models.
+- **Playground**: A sandbox for testing and experimenting with prompts and models, helping you refine their behavior before deploying.
 
 This guide shows you how to build a workflow for developing, testing, and deploying prompts with LangSmith.
 
@@ -28,7 +28,7 @@ When managing prompts across your dev/staging/production environments, you want 
 
 After testing in the Playground, you'll want to see how the prompt interacts within the context of your application. A recommend workflow is:
 
-1. Set up your dev/testing/staging environments to [pull prompts from the Prompt Hub](/langsmith/manage-prompts-programmatically#pull-a-prompt) using defined commit tags (eg. `dev`, `staging`) for each environment. This creates a dynamic reference to the prompt version you want to use in a particular environment.
+1. Set up your dev/testing/staging environments to [pull prompts from the Prompt Hub](/langsmith/manage-prompts-programmatically#pull-a-prompt) using defined commit tags (e.g., `dev`, `staging`) for each environment. This creates a dynamic reference to the prompt version you want to use in a particular environment.
 2. After saving a new version of your prompt, [move the commit tag](/langsmith/manage-prompts#move-a-tag) for the desired environment to the new version of the prompt. Your application will automatically pull the new version on its next request to the Prompt Hub.
 3. Test the prompt across environments.
 
