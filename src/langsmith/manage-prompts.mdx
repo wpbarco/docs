@@ -65,15 +65,20 @@ Some common use cases of this include:
 
 Navigate to the **Prompts** section in the left-hand sidebar or from the application homepage. In the top right corner, click on the `+ Webhook` button.
 
-Add a webhook URL and any required headers.
+1. Add a webhook URL
+2. Select the event(s) you want to trigger the webhook for:
+    - On each commit to a prompt
+    - When a new tag is created for a prompt
+    - When a tag is moved for a prompt
+3. Add any required headers.
+4. Test out your webhook by clicking **Send test notification**. This will send a test notification to the webhook URL you provided with a sample payload.
+4. Click **Create Webhook**.
 
 <Note>
-You can only configure one webhook per workspace. If you want to configure multiple per workspace or set up a different webhook for each prompt, let us know in the [LangChain Forum](https://forum.langchain.com/).
+Currently, you can only configure one webhook per workspace. If you want to configure multiple per workspace or set up a different webhook for each prompt, let us know in the [LangChain Forum](https://forum.langchain.com/).
 </Note>
 
-To test out your webhook, click the **Send test notification** button. This will send a test notification to the webhook URL you provided with a sample payload.
-
-The sample payload is a JSON object with the following fields:
+### Webhook Payload
 
 - `prompt_id`: The ID of the prompt that was committed.
 - `prompt_name`: The name of the prompt that was committed.
@@ -82,13 +87,12 @@ The sample payload is a JSON object with the following fields:
 - `created_by`: The author of the commit.
 - `manifest`: The manifest of the prompt.
 
+
 ### Trigger the webhook
+Webhooks are triggered on prompt changes in the UI or via the API.
 
-Commit to a prompt to trigger the webhook you've configured.
-
-#### Use the Playground
-
-If you do this in the Playground, you'll be prompted to deselect the webhooks you'd like to avoid triggering.
+#### In the UI
+If you have a webhook configured, when you create a prompt commit in the Playground, you will see the Trigger Webhook options. You can deselect the webhook if you don't want to trigger it on that specific commit.
 
 ![](/langsmith/images/commit-prompt-playground.png)
 
@@ -111,4 +115,3 @@ Here you'll find all of the publicly listed prompts in the LangChain Hub. You ca
 To view prompts tied to your workspace, visit the **Prompts** tab in the sidebar.
 
 ![](/langsmith/images/prompts-tab.png)
-

@@ -911,6 +911,7 @@
                 "pages": [
                   "langsmith/prompt-engineering",
                   "langsmith/prompt-engineering-concepts",
+                  "langsmith/prompt-management-best-practices",
                   {
                     "group": "Create and update prompts",
                     "pages": [
