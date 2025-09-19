@@ -36,7 +36,7 @@ After testing in the Playground, you'll want to see how the prompt interacts wit
 
 ### Update prompts in production
 
-<Warning> It is not recommended to put an API call to the Prompt Hub in the hot path of your application on every request. We recommend either pulling the prompt into your code directly or fetching the prompt once and reusing it. </Warning>
+<Warning> It is not recommended to put an API call to the Prompt Hub in the hot path of your application on every request. Instead, we recommend either pulling the prompt into your code directly or fetching the prompt once and reusing it. </Warning>
 
 [Prompt webhooks](/langsmith/manage-prompts#configure-a-webhook) can be used in order to keep prompts in sync with your production environment. For example a notification can be sent when a prompt gets the `prod` tag added to it, which can then be used as a trigger to pull the latest version of the prompt into your production environment.
 
@@ -46,7 +46,7 @@ A common approach is to [sync prompts from the Prompt Hub with your source code]
 
 The workflow would look like:
 1. A LangSmith user moves the `prod` tag to a new prompt commit.
-2. The webhook triggers a CI/CD pipeline (eg. GitHub Actions, GitLab CI) that pulls the commit with the `prod` tag into your repository.
+2. The webhook triggers a CI/CD pipeline (e.g., GitHub Actions, GitLab CI) that pulls the commit with the `prod` tag into your repository.
 3. The pipeline commits the prompt change to your repo.
 
 
@@ -54,5 +54,5 @@ The workflow would look like:
 
 If you want your prompts **versioned independenty of your application code**, you can sync them to a database or cache them in your application. This allows you to update, A/B test prompts without redeploying your application.
 
-- Database: Store prompts in a database, treating them as a form of dynamic configuration. Your CI/CD process updates the prompt record whenever a webhook from LangSmithis triggered.
-- Cache: Fetch the prompt once at application startup and keep it in memory. When the webhook fires, invalidate the cache and pull the latest commit.
+- **Database**: Store prompts in a database as a form of dynamic configuration, and update them with a CI/CD process when a webhook is triggered.
+- **Cache**: Cache prompts in the application in memory, and update them by invalidating the cache on webhook receipt.
