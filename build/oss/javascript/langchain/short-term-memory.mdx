@@ -38,7 +38,8 @@ To add short-term memory (thread-level persistence) to an agent, you need to spe
 
 
 ```ts {highlight={2,4, 9,14}}
-import { createAgent, MemorySaver } from "langchain";
+import { createAgent } from "langchain";
+import { MemorySaver } from "@langchain/langgraph";
 
 const checkpointer = new MemorySaver();
 
@@ -80,7 +81,8 @@ This custom state can then be accessed via tools and dynamic prompt / model func
 
 ```typescript highlight={4-7,13}
 import { z } from "zod";
-import { createAgent, MemorySaver } from "langchain";
+import { createAgent } from "langchain";
+import { MemorySaver } from "@langchain/langgraph";
 
 const stateSchema = z.object({
     messages: z.array(z.any()),
@@ -131,9 +133,9 @@ To trim message history in an agent, use `stateModifier` with the [`trimMessages
 import {
     createAgent,
     trimMessages,
-    MemorySaver,
     type AgentState,
 } from "langchain";
+import { MemorySaver } from "@langchain/langgraph";
 
 // This function will be called every time before the node that calls LLM
 const stateModifier = async (state: AgentState) => {
@@ -198,7 +200,8 @@ const deleteMessages = (state) => {
 
 ```typescript
 import { RemoveMessage } from "@langchain/core/messages";
-import { AgentState, createAgent, MemorySaver } from "langchain";
+import { AgentState, createAgent } from "langchain";
+import { MemorySaver } from "@langchain/langgraph";
 
 const deleteMessages = (state: AgentState) => {
     const messages = state.messages;
