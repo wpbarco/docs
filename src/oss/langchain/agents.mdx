@@ -75,7 +75,7 @@ agent = create_agent(
 ```
 :::
 :::js
-```ts wrap
+```ts wrap export
 import { createAgent } from "langchain";
 
 const agent = createAgent({
@@ -106,7 +106,7 @@ Model instances give you complete control over configuration. Use them when you 
 :::js
 Model identifier strings use the format `provider:model` (e.g. `"openai:gpt-5"`). You may want more control over the model configuration, in which case you can initialize a model instance directly using the provider package:
 
-```ts wrap
+```ts wrap export
 import { createAgent } from "langchain";
 import { ChatOpenAI } from "@langchain/openai";
 
@@ -161,7 +161,7 @@ Dynamic models are selected at runtime based on the current state and context. T
 
 To use a dynamic model, you need to provide a function that receives the graph state and runtime and returns an instance of `BaseChatModel` with the tools bound to it using `.bindTools(tools)`, where `tools` is a subset of the `tools` parameter.
 
-```ts wrap
+```ts wrap export
 import { createAgent, AgentState } from "langchain";
 import { ChatOpenAI } from "@langchain/openai";
 
@@ -228,9 +228,9 @@ agent = create_agent(model, tools=[search, calculate])
 ```
 :::
 :::js
-```ts wrap
-import { z } from "zod";
+```ts wrap export
 import { createAgent, tool } from "langchain";
+import { z } from "zod";
 
 const search = tool(
     ({ query }) => {
@@ -240,7 +240,7 @@ const search = tool(
         name: "search",
         description: "Search for information",
         schema: z.object({
-        query: z.string().describe("The query to search for"),
+            query: z.string().describe("The query to search for"),
         }),
     }
 );
@@ -266,9 +266,9 @@ const agent = createAgent({
 const result = await agent.invoke({
     messages: [
         {
-        role: "user",
-        content:
-            "Find wireless headphones, check if they're in stock, and calculate shipping to New York",
+            role: "user",
+            content:
+                "Find wireless headphones, check if they're in stock, and calculate shipping to New York",
         },
     ],
 });
@@ -285,6 +285,8 @@ Alternatively, you can create a `ToolNode` directly and pass it to the agent. Th
 
 :::python
 ```python wrap
+from langchain.agents import ToolNode
+
 tool_node = ToolNode(
     tools=[search, calculate],
     handle_tool_errors="Please check your input and try again."
@@ -306,7 +308,7 @@ If an error occurs within `ToolNode`, the agent will return a `ToolMessage` to t
 ```
 :::
 :::js
-```ts wrap
+```ts wrap export
 import { ToolNode, ToolMessage } from "langchain";
 
 const toolNode = new ToolNode([search, calculate], {
@@ -396,6 +398,9 @@ You can shape how your agent approaches tasks by providing a prompt. The `prompt
 :::python
 <CodeGroup>
 ```python String
+from langchain_core.messages import SystemMessage
+from langchain.agents import create_agent
+
 agent = create_agent(
     model,
     tools,
@@ -403,6 +408,9 @@ agent = create_agent(
 )
 ```
 ```python SystemMessage
+from langchain_core.messages import SystemMessage
+from langchain.agents import create_agent
+
 agent = create_agent(
     model,
     tools,
@@ -410,6 +418,9 @@ agent = create_agent(
 )
 ```
 ```python Callable
+from langchain_core.messages import SystemMessage
+from langchain.agents import create_agent
+
 def dynamic_prompt(state):
     user_type = state.get("user_type", "standard")
     system_msg = SystemMessage(
@@ -424,15 +435,17 @@ agent = create_agent(model, tools, prompt=dynamic_prompt)
 :::
 :::js
 <CodeGroup>
-```ts String
+```ts String export
+import { createAgent } from "langchain";
+
 const agent = createAgent({
     model,
     tools,
     prompt: "You are a helpful assistant. Be concise and accurate."
 });
 ```
-```ts SystemMessage
-import { SystemMessage } from "langchain";
+```ts SystemMessage export
+import { createAgent, SystemMessage } from "langchain";
 
 const agent = createAgent({
     model,
@@ -440,8 +453,8 @@ const agent = createAgent({
     prompt: new SystemMessage("You are a research assistant. Cite your sources.")
 });
 ```
-```ts Callable
-import { createAgent } from "langchain";
+```ts Callable export
+import { createAgent, SystemMessage } from "langchain";
 
 const agent = createAgent({
     model,
@@ -502,7 +515,7 @@ result["structured_response"]
 :::js
 In some situations, you may want the agent to return an output in a specific format. LangChain provides a simple, universal way to do this with the `responseFormat` parameter.
 
-```ts wrap
+```ts wrap export
 import { z } from "zod";
 import { createAgent } from "langchain";
 
@@ -574,7 +587,7 @@ result = agent.invoke({
 ```
 :::
 :::js
-```ts wrap
+```ts wrap export
 import { z } from "zod";
 import { MessagesZodState } from "@langchain/langgraph";
 import { createAgent, type BaseMessage } from "langchain";
@@ -647,7 +660,10 @@ It must be a callable or a runnable that takes in current graph state and return
 ```
 :::
 :::js
-```ts wrap
+```ts wrap export
+import { createAgent, RemoveMessage } from "langchain";
+import { REMOVE_ALL_MESSAGES } from "@langchain/langgraph";
+
 const agent = createAgent({
     model: "openai:gpt-4o",
     preModelHook: (state) => {
@@ -692,7 +708,7 @@ agent = create_agent(
 ```
 :::
 :::js
-```ts wrap
+```ts wrap export
 import { createAgent, type AgentState } from "langchain";
 
 const trimMessages = (state: AgentState) => {
@@ -735,8 +751,8 @@ If you are returning `messages` in the pre-model hook, you should OVERWRITE the 
 ```
 :::
 :::js
-```ts wrap
-import { RemoveMessage } from "@langchain/core/messages";
+```ts wrap export
+import { createAgent, RemoveMessage } from "langchain";
 import { REMOVE_ALL_MESSAGES } from "@langchain/langgraph";
 
 const agent = createAgent({
@@ -744,12 +760,12 @@ const agent = createAgent({
     preModelHook: (state) => {
         // ...
         return {
-        messages: [
-            RemoveMessage({ id: REMOVE_ALL_MESSAGES }),
-            ...state.messages
-        ],
+            messages: [
+                RemoveMessage({ id: REMOVE_ALL_MESSAGES }),
+                ...state.messages
+            ],
         };
-    };
+    },
 });
 ```
 :::
@@ -826,7 +842,7 @@ agent = create_agent(
 ```
 :::
 :::js
-```ts wrap
+```ts wrap export
 import { createAgent, type AgentState, AIMessage, RemoveMessage } from "langchain";
 import { REMOVE_ALL_MESSAGES } from "@langchain/langgraph";
 

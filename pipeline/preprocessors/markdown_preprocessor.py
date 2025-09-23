@@ -10,6 +10,7 @@ import os
 import re
 from pathlib import Path
 
+from pipeline import constants
 from pipeline.preprocessors.handle_auto_links import replace_autolinks
 
 logger = logging.getLogger(__name__)
@@ -42,13 +43,6 @@ def _apply_conditional_rendering(md_text: str, target_language: str) -> str:
         msg = "target_language must be 'python' or 'js'"
         raise ValueError(msg)
 
-    # Pattern for non-escaped conditional blocks
-    pattern = re.compile(
-        r"(?P<indent>[ \t]*)(?<!\\):::(?P<language>\w+)\s*\n"
-        r"(?P<content>((?:.*\n)*?))"  # Capture content inside the block
-        r"(?P=indent)[ \t]*(?<!\\):::"  # Match closing, same indentation, not escaped
-    )
-
     def replace_conditional_blocks(match: re.Match) -> str:
         """Keep active conditionals."""
         language = match.group("language")
@@ -64,11 +58,23 @@ def _apply_conditional_rendering(md_text: str, target_language: str) -> str:
         # If the language does not match, return an empty string
         return ""
 
+    def replace_ignored_code_blocks(match: re.Match) -> str:
+        """Replace ignored code blocks with an empty string."""
+        attributes = match.group("attributes").strip()
+        if "ignore" in attributes:
+            return ""
+        return match.group(0)
+
     # Process conditional blocks first
-    result = pattern.sub(replace_conditional_blocks, md_text)
+    result = constants.CONDITIONAL_BLOCK_PATTERN.sub(
+        replace_conditional_blocks, md_text
+    )
 
     # Then unescape escaped tags by removing the backslash
-    return re.sub(r"\\(:::)", r"\1", result)
+    result = re.sub(r"\\(:::)", r"\1", result)
+
+    # Then replace ignored code blocks
+    return constants.CODE_BLOCK_PATTERN.sub(replace_ignored_code_blocks, result)
 
 
 def preprocess_markdown(

@@ -12,6 +12,7 @@ Documentation changes follow a PR workflow where all tests must pass before merg
 
 ```text
 src/                  # Source documentation files (edit these)
+snippets/             # Code snippets output directory
 build/                # Generated output files (do not edit)
 pipeline/             # Build pipeline source code
 tests/                # Test files for the pipeline
@@ -59,12 +60,17 @@ Makefile              # Build automation
    - `docs build` - Build documentation
    - `docs migrate <path>` - Convert MkDocs markdown files to Mintlify format
    - `docs migrate-docusaurus <path>` - Convert Docusaurus markdown files to Mintlify format
+   - `docs snippets` - Export and lint code snippets from documentation files
+   - `docs snippets clean` - Clean code snippets from documentation files
+   - `docs snippets export` - Export code snippets from documentation files
+   - `docs snippets lint` - Lint code snippets exported from documentation files
 
 ### Important rules
 
 - **Only edit files in `src/`** - The `build/` directory is automatically generated
 - **Use Mintlify syntax** - See [Mintlify documentation](https://mintlify.com/docs) for formatting guidelines
 - **Test your changes** - Use `docs dev` to preview changes locally with hot reload (on save)
+- **Lint all code snippets** - Use `make snippets` to export and lint code snippets
 - **Use safe Mintlify commands** - Use `make mint-broken-links` instead of `mint broken-links` to check final built documentation
 
 ### Available commands
@@ -73,6 +79,7 @@ Makefile              # Build automation
 
 - `make dev` - Start development mode with file watching and live rebuild
 - `make build` - Build documentation to `./build` directory
+- `make snippets` - Export and lint code snippets
 - `make mint-broken-links` - Check for broken links in built documentation (excludes integrations)
 - `make mint-broken-links-all` - Check for broken links in built documentation (includes all directories)
 - `make install` - Install all dependencies
@@ -101,6 +108,21 @@ The `docs` command (installed as `uv run docs`) provides additional functionalit
 
 - **`docs mv <old_path> <new_path>`** - Move files and update cross-references
   - `--dry-run` - Preview changes without moving files
+
+- **`docs snippets`** - Export and lint code snippets from documentation files
+  - `--src-dir <path>` - Specify source directory (default: `src`)
+  - `--output-dir <path>` - Specify output directory (default: `snippets`)
+  - `--export-only` - Only export code snippets
+  - `--lint-only` - Only lint code snippets
+
+- **`docs snippets clean`** - Clean code snippets from documentation files
+  - `--output-dir <path>` - Specify output directory (default: `snippets`)
+
+- **`docs snippets export`** - Export code snippets from documentation files
+  - (an alias for `docs snippets --export-only`)
+
+- **`docs snippets lint`** - Lint code snippets exported from documentation files
+  - (an alias for `docs snippets --lint-only`)
 
 These can be used directly using the `Makefile` or via the `docs` CLI tool:
 
@@ -152,6 +174,9 @@ make lint
 
 # Fix markdown issues
 make lint_md_fix
+
+# Check for linting issues in code snippets
+make snippets
 ```
 
 **Note**: All pull requests are automatically checked by CI/CD. The same linting and formatting standards will be enforced, and PRs cannot be merged if these checks fail.
@@ -206,7 +231,7 @@ Once your branch has been merged into `main`, you need to push the changes to `p
 
 **Problem**: Running `mint broken-links` or other Mintlify commands from the project root causes parsing errors like:
 
-```
+```txt
 Unable to parse .venv/lib/python3.13/site-packages/soupsieve-2.7.dist-info/licenses/LICENSE.md
 - 3:48: Unexpected character '@' (U+0040) in name
 ```

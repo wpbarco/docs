@@ -1,0 +1,6 @@
+*
+!.gitignore
+!Makefile
+!pyproject.toml
+!requirements.txt
+!uv.lock

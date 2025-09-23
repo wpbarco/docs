@@ -78,7 +78,7 @@ graph.invoke( # (1)!
         {"messages": [{"role": "user", "content": "what is the weather in sf"}]},
         context={"user_name": "John Smith"}
     )
-```
+    ```
 
     * See [Agents](/oss/langchain/agents) for details.
     </Tab>
@@ -89,7 +89,7 @@ graph.invoke( # (1)!
     def node(state: State, runtime: Runtime[ContextSchema]):
         user_name = runtime.context.user_name
         ...
-```
+    ```
 
     * See [the Graph API](/oss/langgraph/graph-api#add-runtime-configuration) for details.
     </Tab>
@@ -104,7 +104,7 @@ graph.invoke( # (1)!
         runtime = get_runtime(ContextSchema)
         email = get_user_email_from_db(runtime.context.user_name)
         return email
-```
+    ```
 
     See the [tool calling guide](/oss/langchain/tools#configuration) for details.
     </Tab>
@@ -178,7 +178,7 @@ await graph.invoke(
         "messages": "hi!",
         "user_name": "John Smith"
     })
-```
+    ```
 
     1. Define a custom state schema that extends `AgentState` or `MessagesState`.
     2. Pass the custom state schema to the agent. This allows the agent to access and modify the state during execution.
@@ -218,7 +218,7 @@ await graph.invoke(
       messages: [{ role: "user", content: "hi!" }],
       userName: "John Smith",
     });
-```
+    ```
 
     1. Define a custom state schema that adds additional fields alongside the existing `messages` field.
     2. Pass the custom state schema to the agent. This allows the agent to access and modify the state during execution.
@@ -246,7 +246,7 @@ await graph.invoke(
     builder.add_node(node)
     builder.set_entry_point("node")
     graph = builder.compile()
-```
+    ```
 
     1. Define a custom state
     2. Access the state in any node or tool
@@ -278,7 +278,7 @@ await graph.invoke(
       .addEdge(START, "node");
 
     const graph = builder.compile();
-```
+    ```
 
     1. Define a custom state
     2. Access the state in any node or tool

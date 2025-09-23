@@ -22,6 +22,8 @@ The transformation value depends on the scope in which the link is used.
 import logging
 import re
 
+from pipeline import constants
+
 from .link_map import SCOPE_LINK_MAPS
 
 logger = logging.getLogger(__name__)
@@ -86,36 +88,6 @@ def _transform_link(
     return None
 
 
-CONDITIONAL_FENCE_PATTERN = re.compile(
-    r"""
-    ^                       # Start of line
-    (?P<indent>[ \t]*)      # Optional indentation (spaces or tabs)
-    :::                     # Literal fence marker
-    (?P<language>\w+)?      # Optional language identifier (named group: language)
-    \s*                     # Optional trailing whitespace
-    $                       # End of line
-    """,
-    re.VERBOSE,
-)
-CROSS_REFERENCE_PATTERN = re.compile(
-    r"""
-    (?:                     # Non-capturing group for two possible formats:
-        @\[                 # @ symbol followed by opening bracket for title
-        (?P<title>[^\]]+)   # Custom title - one or more non-bracket characters
-        \]                  # Closing bracket for title
-        \[                  # Opening bracket for link name
-        (?P<link_name_with_title>[^\]]+)  # Link name - non-bracket chars
-        \]                  # Closing bracket for link name
-        |                   # OR
-        @\[                 # @ symbol followed by opening bracket
-        (?P<link_name>[^\]]+)   # Link name - one or more non-bracket characters
-        \]                  # Closing bracket
-    )
-    """,
-    re.VERBOSE,
-)
-
-
 def _replace_cross_references_in_line(
     line: str, scope: str, file_path: str, line_number: int
 ) -> str:
@@ -139,7 +111,7 @@ def _replace_cross_references_in_line(
         )
         return transformed if transformed is not None else match.group(0)
 
-    return CROSS_REFERENCE_PATTERN.sub(replace_cross_reference, line)
+    return constants.CROSS_REFERENCE_PATTERN.sub(replace_cross_reference, line)
 
 
 def replace_autolinks(
@@ -175,7 +147,7 @@ def replace_autolinks(
         line_stripped = line.strip()
 
         # Check if this line defines a new conditional fence scope
-        fence_match = CONDITIONAL_FENCE_PATTERN.match(line_stripped)
+        fence_match = constants.CONDITIONAL_FENCE_PATTERN.match(line_stripped)
         if fence_match:
             language = fence_match.group("language")
             # Set scope to the specified language, or reset to global if no language

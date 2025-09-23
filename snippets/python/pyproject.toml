@@ -1,0 +1,28 @@
+[project]
+name = "docs-snippets"
+version = "0.0.1"
+readme = "README.md"
+requires-python = ">=3.10"
+
+[tool.uv]
+package = true
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [
+    "ALL",
+]
+ignore = [
+    "COM812",
+    "C901",
+    "PLR0915",
+    "PLR0912"
+]
+
+[tool.ruff.lint.extend-per-file-ignores]
+
+[tool.mypy]
+disable_error_code = ["var-annotated"]

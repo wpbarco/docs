@@ -10,6 +10,7 @@ dependencies = [
     "nbformat>=5.0.0",
     "pyyaml>=6.0.2",
     "nbconvert>=7.16.6",
+    "gitmatch>=0.2.1",
 ]
 
 [dependency-groups]
@@ -112,3 +113,8 @@ ignore = [
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
+
+[tool.mypy]
+exclude = [
+    "snippets/python/",
+]

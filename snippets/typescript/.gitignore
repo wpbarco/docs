@@ -1,0 +1,7 @@
+*
+!.gitignore
+!eslint.config.mts
+!Makefile
+!package.json
+!pnpm-lock.yaml
+!tsconfig.json

@@ -2,6 +2,8 @@
 
 import re
 
+from pipeline import constants
+
 
 def highlight_code_blocks(markdown: str) -> str:
     """Find code blocks with highlight comments and add hl_lines attribute.
@@ -13,14 +15,6 @@ def highlight_code_blocks(markdown: str) -> str:
         updated Markdown code with code blocks containing highlight comments
         updated to use the hl_lines attribute.
     """
-    # Pattern to find code blocks with highlight comments and without
-    # existing hl_lines for Python and JavaScript
-    # Pattern to find code blocks with highlight comments, handling optional indentation
-    code_block_pattern = re.compile(
-        r"(?P<indent>[ \t]*)```(?P<language>\w+)[ ]*(?P<attributes>[^\n]*)\n"
-        r"(?P<code>((?:.*\n)*?))"  # Capture the code inside the block using named group
-        r"(?P=indent)```"  # Match closing backticks with the same indentation
-    )
 
     def replace_highlight_comments(match: re.Match) -> str:
         indent = match.group("indent")
@@ -76,4 +70,4 @@ def highlight_code_blocks(markdown: str) -> str:
         )
 
     # Replace all code blocks in the markdown
-    return code_block_pattern.sub(replace_highlight_comments, markdown)
+    return constants.CODE_BLOCK_PATTERN.sub(replace_highlight_comments, markdown)

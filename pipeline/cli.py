@@ -12,6 +12,7 @@ from pathlib import Path
 
 from pipeline.commands.build import build_command
 from pipeline.commands.dev import dev_command
+from pipeline.commands.snippets import clean_snippets_command, snippets_command
 from pipeline.tools.docusaurus_parser import convert_docusaurus_to_mintlify
 from pipeline.tools.links import drop_suffix_from_links, move_file_with_link_updates
 from pipeline.tools.notebook.convert import convert_notebook
@@ -336,6 +337,84 @@ def main() -> None:
     migrate_docusaurus_parser.set_defaults(
         func=migrate_command, migration_type="docusaurus"
     )
+
+    # Snippets command
+    snippets_parser = subparsers.add_parser(
+        "snippets",
+        help="Export and lint code snippets extracted from documentation files",
+    )
+    snippets_parser.add_argument(
+        "--src-dir",
+        type=Path,
+        default="src",
+        help="Path to the source directory containing documentation files",
+    )
+    snippets_parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default="snippets",
+        help="Path to the output directory where files will be exported and linted",
+    )
+    snippets_parser.set_defaults(func=snippets_command)
+
+    # Snippets subcommands
+    snippets_subparsers = snippets_parser.add_subparsers(
+        dest="snippets_subcommand",
+        help="Snippets subcommands",
+        metavar="{export,lint,clean}",
+        required=False,
+    )
+
+    # Export snippets subcommand
+    snippets_export_parser = snippets_subparsers.add_parser(
+        "export",
+        help="Export code snippets from documentation files",
+    )
+    snippets_export_parser.add_argument(
+        "--src-dir",
+        type=Path,
+        default="src",
+        help="Path to the source directory containing documentation files",
+    )
+    snippets_export_parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default="snippets",
+        help="Path to the output directory where files will be exported",
+    )
+    snippets_export_parser.set_defaults(func=snippets_command, export_only=True)
+
+    # Lint snippets subcommand
+    snippets_lint_parser = snippets_subparsers.add_parser(
+        "lint",
+        help="Lint code snippets exported from documentation files",
+    )
+    snippets_lint_parser.add_argument(
+        "--src-dir",
+        type=Path,
+        default="src",
+        help="Path to the source directory containing documentation files",
+    )
+    snippets_lint_parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default="snippets",
+        help="Path to the lint output directory where files will be exported",
+    )
+    snippets_lint_parser.set_defaults(func=snippets_command, lint_only=True)
+
+    # Clean snippets subcommand
+    snippets_clean_parser = snippets_subparsers.add_parser(
+        "clean",
+        help="Clean exported code snippets from the output directory",
+    )
+    snippets_clean_parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default="snippets",
+        help="Path to the output directory to clean",
+    )
+    snippets_clean_parser.set_defaults(func=clean_snippets_command)
 
     args = parser.parse_args()
 

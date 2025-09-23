@@ -8,6 +8,11 @@ build:
 	@echo "Building documentation..."
 	PYTHONPATH=$(CURDIR) uv run pipeline build
 
+snippets:
+	@echo "Exporting and linting code snippets..."
+	PYTHONPATH=$(CURDIR) uv run pipeline snippets export
+	PYTHONPATH=$(CURDIR) uv run pipeline snippets lint
+
 # Define a variable for the test file path.
 TEST_FILE ?= tests/unit_tests
 
@@ -18,6 +23,7 @@ lint:
 	uv run ruff format $(PYTHON_FILES) --diff
 	uv run ruff check $(PYTHON_FILES) --diff
 	uv run mypy $(PYTHON_FILES)
+	uv run pipeline snippets
 
 format:
 	uv run ruff format $(PYTHON_FILES)
@@ -78,10 +84,10 @@ help:
 	@echo "Available commands:"
 	@echo "  make dev             - Start development mode with file watching and mint dev"
 	@echo "  make build           - Build documentation to ./build directory"
+	@echo "  make snippets        - Export and lint code snippets"
 	@echo "  make mint-broken-links - Check for broken links in built documentation (excludes integrations)"
 	@echo "  make mint-broken-links-all - Check for broken links in built documentation (includes all directories)"
 	@echo "  make format          - Format code"
-	@echo "  make lint            - Lint code"
 	@echo "  make lint_md         - Lint markdown files"
 	@echo "  make lint_md_fix     - Lint and fix markdown files"
 	@echo "  make test            - Run tests"
