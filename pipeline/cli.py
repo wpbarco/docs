@@ -12,6 +12,7 @@ from pathlib import Path
 
 from pipeline.commands.build import build_command
 from pipeline.commands.dev import dev_command
+from pipeline.tools.code_linter import lint_markdown_file
 from pipeline.tools.docusaurus_parser import convert_docusaurus_to_mintlify
 from pipeline.tools.links import drop_suffix_from_links, move_file_with_link_updates
 from pipeline.tools.notebook.convert import convert_notebook
@@ -33,6 +34,40 @@ logger = logging.getLogger(__name__)
 def mv_command(args) -> None:  # noqa: ANN001
     """Handle the mv command for moving files with link updates."""
     move_file_with_link_updates(args.old_path, args.new_path, dry_run=args.dry_run)
+
+
+def lint_code_snippets_command(args) -> None:  # noqa: ANN001
+    """Handle the lint-code-snippets command for linting code blocks in markdown."""
+    file_path = args.path
+
+    if not file_path.exists():
+        logger.error("File does not exist: %s", file_path)
+        sys.exit(1)
+
+    if not file_path.is_file():
+        logger.error("Path is not a file: %s", file_path)
+        sys.exit(1)
+
+    if file_path.suffix.lower() not in {'.md', '.mdx', '.markdown'}:
+        logger.warning("File does not appear to be a markdown file: %s", file_path)
+
+    logger.info("Linting code snippets in: %s", file_path)
+
+    updated_content, errors = lint_markdown_file(file_path, dry_run=args.dry_run)
+
+    if errors:
+        for error in errors:
+            logger.error("Linting error: %s", error)
+        sys.exit(1)
+
+    if args.dry_run:
+        if updated_content:
+            print("=== Linted content ===")  # noqa: T201 (OK to use print)
+            print(updated_content)  # noqa: T201 (OK to use print)
+        else:
+            logger.info("No changes would be made")
+    else:
+        logger.info("Code snippet linting completed successfully")
 
 
 def _find_files_to_migrate(
@@ -240,6 +275,7 @@ def main() -> None:
         mv: Move a file and update cross-references to maintain valid links.
         migrate: Convert MkDocs markdown files to mintlify format.
         migrate-docusaurus: Convert Docusaurus markdown files to mintlify format.
+        lint-code-snippets: Lint Python and JavaScript code snippets in markdown files.
 
     Exits:
         With code 1 if no command is specified or if the initial build fails.
@@ -336,6 +372,23 @@ def main() -> None:
     migrate_docusaurus_parser.set_defaults(
         func=migrate_command, migration_type="docusaurus"
     )
+
+    # Lint code snippets command
+    lint_parser = subparsers.add_parser(
+        "lint-code-snippets",
+        help="Lint Python and JavaScript code snippets in markdown files",
+    )
+    lint_parser.add_argument(
+        "path",
+        type=Path,
+        help="Path to the markdown file to lint",
+    )
+    lint_parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Show what would be changed without modifying the file",
+    )
+    lint_parser.set_defaults(func=lint_code_snippets_command)
 
     args = parser.parse_args()
 
