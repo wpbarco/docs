@@ -1,0 +1,132 @@
+---
+title: Dynamic Models
+---
+
+import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
+
+<AlphaCallout />
+
+Choosing the right model per turn can dramatically improve cost, latency, and reliability. In practice you will:
+
+- **Route by task difficulty**: Use cheaper/faster models for easy tasks; switch to stronger reasoning models when needed.
+- **Match capabilities**: Pick models for multimodality, long context, tool-calling quality, or structured output.
+- **Control cost/latency**: Keep routine steps on small models; reserve premium models for complex hops.
+- **Respect constraints**: Route by tenant/region, compliance, or data residency.
+- **Increase reliability**: Fail over across providers or apply safety-gated model upgrades.
+
+With `createAgent`, pass a default model (string or chat instance) and use middleware to adjust the request per turn (including changing the model). For middleware details, see: [Middleware](/oss/langchain/middleware).
+
+## How it works with `createAgent`
+
+Provide a default model and modify it dynamically via middleware. You can pass either:
+
+- A model identifier string, e.g., `model: "openai:gpt-4o"`
+- A chat model instance, e.g., `model: new ChatOpenAI({ model: "gpt-4o" })`
+
+Use `modifyModelRequest` to change `request.model` at runtime.
+
+```ts
+import { createAgent, createMiddleware } from "langchain";
+import { ChatOpenAI } from "@langchain/openai";
+
+const modelRouter = createMiddleware({
+  name: "ModelRouter",
+  contextSchema: z.object({ userRole: z.string() }),
+  modifyModelRequest: (request, state, runtime) => {
+    // Example: force a safer/stronger model for admins
+    const role = runtime.context.userRole;
+    const upgraded = role === "admin" ? "openai:gpt-5" : "openai:gpt-4o";
+    return { model: upgraded };
+  },
+});
+
+const agent = createAgent({
+  model: "openai:gpt-4o", // default; middleware upgrades when needed
+  tools: [/* ... */],
+  middleware: [modelRouter],
+});
+```
+
+For gating, retries, approvals, and request edits, see: [Middleware](/oss/langchain/middleware).
+
+## Example: choose the model by message content and complexity
+
+Route to stronger models when input looks complex (long context, code/math cues, high step count), and stay on a cheaper model otherwise. Implement routing in middleware and keep a safe default model.
+
+```ts
+import { createAgent, createMiddleware, HumanMessage, type AgentState } from "langchain";
+import { ChatOpenAI } from "@langchain/openai";
+
+function estimateComplexity(state: AgentState): number {
+  const text = state.messages.at(-1)?.content;
+  const lengthScore = Math.min(text.length / 2000, 1); // rough length proxy
+  const codeHints = /```|SELECT\s|def\s|class\s/.test(text) ? 0.4 : 0;
+  const turnDepth = Math.min(state.messages.length / 12, 0.6);
+  return Math.min(lengthScore + codeHints + turnDepth, 1);
+}
+
+const dynamicModelRouter = createMiddleware({
+  name: "DynamicModelRouter",
+  modifyModelRequest: (request, state) => {
+    const complexity = estimateComplexity(state);
+    const target = complexity > 0.7 ? "openai:gpt-5" : "openai:gpt-4o";
+    return { ...request, model: target };
+  },
+});
+
+const agent = createAgent({
+  model: "openai:gpt-4o", // default; middleware upgrades when needed
+  tools: [],
+  middleware: [dynamicModelRouter],
+});
+
+await agent.invoke({
+  messages: [
+    new HumanMessage(
+      "Compare these two code snippets for performance and suggest improvements: ..."
+    ),
+  ],
+});
+```
+
+<Note>
+Production tips:
+
+- Start heuristic, then measure and iterate. Log routing decisions and outcomes.
+- Add guardrails and approvals with middleware: [Middleware](/oss/langchain/middleware).
+- Consider rate-limit and failover routing across providers/models.
+- Keep defaults and fallbacks; don’t let routing failures block the request.
+</Note>
+
+## Design guidelines
+
+Use these pragmatic guidelines to keep large tool catalogs efficient, accurate, and safe:
+
+<Steps>
+  <Step title="Keep it simple first" icon="sparkles">
+    Heuristics over-engineering. Add learned routers when you have data.
+  </Step>
+  <Step title="Measure" icon="clock">
+    Track cost, latency, and quality per route to tune thresholds.
+  </Step>
+  <Step title="Gate early" icon="filter">
+    Use context (env/tenant) for coarse routing; use state/content for fine routing.
+  </Step>
+  <Step title="Prefer small-by-default" icon="feather">
+    Upgrade models only when signals justify it.
+  </Step>
+  <Step title="Use middleware for safety/ops" icon="shield-check">
+    Approvals, retries, request shaping, and summaries belong in middleware.
+  </Step>
+</Steps>
+
+#### For more information
+
+<Columns cols={2}>
+  <Card title="Models" icon="feather" href="/oss/langchain/models" arrow="true" cta="View models docs">
+    Learn about model selection, configuration, and usage.
+  </Card>
+  <Card title="Middleware" icon="shield" href="/oss/langchain/middleware" arrow="true" cta="View middleware docs">
+    Gate, filter, and orchestrate behavior with middleware hooks.
+  </Card>
+</Columns>
