@@ -738,6 +738,23 @@ For many chat model integrations, you can configure the base URL for API request
 
 
 
+### Log probabilities
+
+Certain models can be configured to return token-level log probabilities representing the likelihood of a given token by setting the `logprobs` parameter when initializing the model:
+
+
+
+```typescript
+const model = new ChatOpenAI({
+    model: "gpt-4o",
+    logprobs: true,
+});
+
+const responseMessage = await model.invoke("Why do parrots talk?");
+
+responseMessage.response_metadata.logprobs.content.slice(0, 5);
+```
+
 
 ### Token usage
 

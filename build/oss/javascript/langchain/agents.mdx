@@ -97,12 +97,8 @@ Model instances give you complete control over configuration. Use them when you 
 
 #### Dynamic model
 
+Dynamic models are selected at <Tooltip tip="The execution environment of your agent, containing immutable configuration and contextual data that persists throughout the agent's execution (e.g., user IDs, session details, or application-specific configuration).">runtime</Tooltip> based on the current <Tooltip tip="The data that flows through your agent's execution, including messages, custom fields, and any information that needs to be tracked and potentially modified during processing (e.g., user preferences or tool usage stats).">state</Tooltip> and context. This enables sophisticated routing logic and cost optimization.
 
-<Info>
-**`state`**: The data that flows through your agent's execution, including messages, custom fields, and any information that needs to be tracked and potentially modified during processing (e.g. user preferences or tool usage stats).
-</Info>
-
-Dynamic models are selected at runtime based on the current state and context. This enables sophisticated routing logic and cost optimization.
 
 To use a dynamic model, you need to provide a function that receives the graph state and runtime and returns an instance of `BaseChatModel` with the tools bound to it using `.bindTools(tools)`, where `tools` is a subset of the `tools` parameter.
 
@@ -337,8 +333,54 @@ const agent = createAgent({
 
 When no `prompt` is provided, the agent will infer its task from the messages directly.
 
+#### Dynamic prompts with middleware
+
+
+For more advanced use cases where you need to modify the system prompt based on runtime context or agent state, you can use the `modifyModelRequest` decorator to create a simple custom middleware.
+
+
+Dynamic system prompt is especially useful for personalizing prompts based on user roles, conversation context, or other changing factors:
+
+
+
+```typescript wrap
+import { z } from "zod";
+import { createAgent } from "langchain";
+import { dynamicSystemPromptMiddleware } from "langchain/middleware";
+
+const contextSchema = z.object({
+    userRole: z.enum(["expert", "beginner"]),
+});
+
+const agent = createAgent({
+    model: "openai:gpt-4o",
+    tools: [/* ... */],
+    contextSchema,
+    middleware: [
+        dynamicSystemPromptMiddleware<z.infer<typeof contextSchema>>((state, runtime) => {
+            const userRole = runtime.context.userRole || "user";
+            const basePrompt = "You are a helpful assistant.";
+
+            if (userRole === "expert") {
+                return `${basePrompt} Provide detailed technical responses.`;
+            } else if (userRole === "beginner") {
+                return `${basePrompt} Explain concepts simply and avoid jargon.`;
+            }
+            return basePrompt;
+        }),
+    ],
+});
+
+// The system prompt will be set dynamically based on context
+const result = await agent.invoke(
+    { messages: [{ role: "user", content: "Explain machine learning" }] },
+    { context: { userRole: "expert" } }
+);
+```
+
+
 <Tip>
-For more details on message types and formatting, see [Messages](/oss/javascript/langchain/messages).
+For more details on message types and formatting, see [Messages](/oss/javascript/langchain/messages). For comprehensive middleware documentation, see [Middleware](/oss/javascript/langchain/middleware).
 </Tip>
 
 ## Advanced configuration

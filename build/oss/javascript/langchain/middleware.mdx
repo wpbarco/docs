@@ -47,9 +47,9 @@ Middleware provides control over what happens before and after those steps.
 Each middleware can add in three different types of modifiers:
 
 
-- `beforeModel`: Runs before model execution. Can update state or jump to a different node (`model`, `tools`, `__end__`)
+- `beforeModel`: Runs before model execution. Can update state or jump to a different node (`model`, `tools`, `end`)
 - `modifyModelRequest`: Runs before model execution, to prepare the model request object. Can only modify the current model request object (no permanent state updates) and cannot jump to a different node.
-- `afterModel`: Runs after model execution, before tools are executed. Can update state or jump to a different node (`model`, `tools`, `__end__`)
+- `afterModel`: Runs after model execution, before tools are executed. Can update state or jump to a different node (`model`, `tools`, `end`)
 
 
 
@@ -124,6 +124,7 @@ LangChain provides several built in middleware to use off-the-shelf
 - [Summarization](#summarization)
 - [Human-in-the-loop](#human-in-the-loop)
 - [Anthropic prompt caching](#anthropic-prompt-caching)
+- [Dynamic system prompt](#dynamic-system-prompt)
 
 ### Summarization
 
@@ -203,8 +204,7 @@ The `humanInTheLoopMiddleware` middleware enables human oversight and interventi
 <Note>
 This middleware requires a checkpointer to store the agent state. Please ensure to import a checkpointer and pass it to the agent.
 
-For more information, please refer to the [persistence](/oss/javascript/javascript/langgraph/persistence) documentation.
-
+For more information, please refer to the [persistence](/oss/javascript/langgraph/persistence) documentation.
 </Note>
 
 
@@ -457,6 +457,70 @@ const result = await agent.invoke({
 ```
 
 
+### Dynamic system prompt
+
+
+A system prompt can be dynamically set right before each model invocation using the `dynamicSystemPromptMiddleware` middleware. This middleware is particularly useful when the prompt depends on the current agent state or runtime context.
+
+For example, you can adjust the system prompt based on the user's expertise level:
+
+```typescript
+import { z } from "zod";
+import { createAgent } from "langchain";
+import { dynamicSystemPromptMiddleware } from "langchain/middleware";
+
+const contextSchema = z.object({
+    userRole: z.enum(["expert", "beginner"]),
+});
+
+const agent = createAgent({
+    model: "openai:gpt-4o",
+    tools: [...],
+    contextSchema,
+    middleware: [
+        dynamicSystemPromptMiddleware<z.infer<typeof contextSchema>>((state, runtime) => {
+            const userRole = runtime.context.userRole || "user";
+            const basePrompt = "You are a helpful assistant.";
+
+            if (userRole === "expert") {
+                return `${basePrompt} Provide detailed technical responses.`;
+            } else if (userRole === "beginner") {
+                return `${basePrompt} Explain concepts simply and avoid jargon.`;
+            }
+            return basePrompt;
+        }),
+    ],
+});
+
+// The system prompt will be set dynamically based on context
+const result = await agent.invoke(
+    { messages: [{ role: "user", content: "Explain async programming" }] },
+    { context: { userRole: "expert" } }
+);
+```
+
+
+Alternatively, you can adjust the system prompt based on the conversation length:
+
+
+```typescript
+const agent = createAgent({
+    model: "openai:gpt-4o",
+    tools: [searchTool],
+    middleware: [
+        dynamicSystemPromptMiddleware((state) => {
+            const messageCount = state.messages.length;
+
+            if (messageCount > 10) {
+                return "You are in an extended conversation. Be more concise.";
+            }
+            return "You are a helpful assistant.";
+        }),
+    ],
+});
+```
+
+
 ## Custom Middleware
 
 Middleware for agents are subclasses of `AgentMiddleware`, which implement one or more of its hooks.
@@ -473,7 +537,7 @@ In order to **exit early**, you can add a `jump_to` key to the state update with
 
 - `"model"`: Jump to the model node
 - `"tools"`: Jump to the tools node
-- `"__end__"`: Jump to the end node
+- `"end"`: Jump to the end node
 
 If this is specified, all subsequent middleware will not run.
 
@@ -500,17 +564,27 @@ function beforeModel(state: AgentState): AgentState | AgentJump | undefined {
 ### `modifyModelRequest`
 
 
-Runs before the model has run, but after all the `before_model` calls.
+
+Runs before the model has run, but after all the `beforeModel` calls.
+
 These functions **cannot** modify permanent state or exit early.
 Rather, they are intended to modify calls to the model in a **stateless** way.
-If you want to modify calls to the model in a **stateful** way, you will need to use `before_model`
+
+If you want to modify calls to the model in a **stateful** way, you will need to use `beforeModel`
+
 
 Modifies the model request. The model request has several key properties:
 - `model` (`BaseChatModel`): the model to use. Note: this needs to the base chat model, not a string.
-- `system_prompt` (`str`): the system prompt to use. Will get prepended to `messages`
+
+- `systemPrompt` (`string`): the system prompt to use. Will get prepended to `messages`
+
 - `messages` (list of messages): the message list. Should not include system prompt.
 
-- `tool_choice` (Any): the tool choice to use
+- `toolChoice`: Can be one of:
+  - `"auto"`: means the model can pick between generating a message or calling one or more tools.
+  - `"none"`: means the model will not call any tool and instead generates a message.
+  - `"required"`: means the model must call one or more tools.
+  - `{ type: "function", function: { name: string } }`: The model will use the specified function.
 
 - `tools` (list of `BaseTool`): the tools to use for this model call
 
@@ -739,10 +813,9 @@ You can provide multiple middlewares. They are executed in the following logic:
 In order to **exit early**, you can add a `jumpTo` key to the state update with one of the following values:
 
 
-
 - `"model"`: Jump to the model node
 - `"tools"`: Jump to the tools node
-- `"__end__"`: Jump to the end node
+- `"end"`: Jump to the end node
 
 If this is specified, all subsequent middleware will not run.
 
@@ -754,13 +827,16 @@ If you jump to `model` node, all `beforeModel` middleware will run. It's forbidd
 Example usage:
 
 ```typescript
-import type { AgentState, AgentJump } from "langchain";
+import { createMiddleware } from "langchain";
 
-afterModel (state: AgentState): AgentState | AgentJump | undefined {
-    return {
-        messages: ...,
-        jumpTo: "model"
+const middleware = createMiddleware({
+    name: "MyMiddleware",
+    afterModel: (state) => {
+        return {
+            messages: ...,
+            jumpTo: "model"
+        }
     }
-}
+});
 ```
 

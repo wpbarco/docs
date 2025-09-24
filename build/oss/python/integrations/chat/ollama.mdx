@@ -20,7 +20,7 @@ For a complete list of supported models and model variants, see the [Ollama mode
 
 ### Model features
 
-| [Tool calling](/oss/python/langchain/tools/) | [Structured output](/oss/python/langchain/structured-output) | JSON mode | [Image input](/oss/python/how-to/multimodal_inputs/) | Audio input | Video input | [Token-level streaming](/oss/python/langchain/streaming/) | Native async | [Token usage](/oss/python/how-to/chat_token_usage_tracking/) | [Logprobs](/oss/python/how-to/logprobs/) |
+| [Tool calling](/oss/python/langchain/tools/) | [Structured output](/oss/python/langchain/structured-output) | JSON mode | [Image input](/oss/python/langchain/messages#multimodal) | Audio input | Video input | [Token-level streaming](/oss/python/langchain/streaming/) | Native async | [Token usage](/oss/python/langchain/models#token-usage) | [Logprobs](/oss/python/langchain/models#log-probabilities) |
 | :---: |:----------------------------------------------------:| :---: | :---: |  :---: | :---: | :---: | :---: | :---: | :---: |
 | ✅ |                          ✅                           | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ |
 
@@ -150,7 +150,7 @@ We can use [tool calling](/oss/python/langchain/tools/) with an LLM [that has be
 ollama pull gpt-oss:20b
 ```
 
-Details on creating custom tools are available in [this guide](/oss/python/how-to/custom_tools/). Below, we demonstrate how to create a tool using the `@tool` decorator on a normal python function.
+Details on creating custom tools are available in [this guide](/oss/python/langchain/tools#customize-tool-properties). Below, we demonstrate how to create a tool using the `@tool` decorator on a normal python function.
 
 ```python
 from typing import List
