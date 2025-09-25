@@ -2229,5 +2229,8 @@
         ]
       }
     ]
+  },
+  "interaction": {
+    "drilldown": true
   }
 }
