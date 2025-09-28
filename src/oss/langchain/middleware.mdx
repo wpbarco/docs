@@ -118,8 +118,7 @@ agent = create_agent(
 :::
 :::js
 ```typescript
-import { createAgent } from "langchain";
-import { summarizationMiddleware, humanInTheLoopMiddleware } from "langchain/middleware";
+import { createAgent, summarizationMiddleware, humanInTheLoopMiddleware } from "langchain";
 
 const agent = createAgent({
     // ...
@@ -190,8 +189,7 @@ agent = create_agent(
 
 :::js
 ```typescript
-import { createAgent } from "langchain";
-import { summarizationMiddleware } from "langchain/middleware";
+import { createAgent, summarizationMiddleware } from "langchain";
 import { ChatOpenAI } from "@langchain/openai";
 
 const agent = createAgent({
@@ -276,7 +274,7 @@ agent = create_agent(
     tools=[write_file_tool, execute_sql_tool, read_data_tool],
     middleware=[
         HumanInTheLoopMiddleware(
-            tool_configs={
+            interrupt_on={
                 "write_file": {
                     "allow_accept": True,
                     "allow_edit": True,
@@ -299,8 +297,7 @@ agent = create_agent(
 
 :::js
 ```typescript
-import { createAgent } from "langchain";
-import { humanInTheLoopMiddleware } from "langchain/middleware";
+import { createAgent, humanInTheLoopMiddleware } from "langchain";
 import { Command, MemorySaver } from "@langchain/langgraph";
 
 const agent = createAgent({
@@ -367,33 +364,29 @@ if state.next:
 
 :::js
 ```typescript
-import { HumanMessage } from "langchain";
+import { HumanMessage, HumanInTheLoopRequest, Interrupt } from "langchain";
 import { Command } from "@langchain/langgraph";
-import type { Interrupt, HumanInTheLoopRequest } from "langchain/middleware";
 
 // Initial invocation
 const result = await agent.invoke(
-    {
-        messages: [new HumanMessage("Delete old records from the database")],
-    },
-    config
+  {
+    messages: [new HumanMessage("Delete old records from the database")],
+  },
+  config
 );
 
 // Check if agent is paused for approval
 if (result.__interrupt__) {
-    const interruptRequest = result.__interrupt__?.[0] as Interrupt<
-        HumanInTheLoopRequest[]
-    >;
+  const interruptRequest = result.__interrupt__?.[0] as Interrupt<
+    HumanInTheLoopRequest[]
+  >;
 
-    // Show tool call details to user
-    console.log("Tool:", interruptRequest.value[0].actionRequest);
-    console.log("Allowed actions:", interruptRequest.value[0].config);
+  // Show tool call details to user
+  console.log("Tool:", interruptRequest.value[0].actionRequest);
+  console.log("Allowed actions:", interruptRequest.value[0].config);
 
-    // Resume with approval
-    await agent.invoke(
-        new Command({ resume: [{ type: "accept" }] }),
-        config
-    );
+  // Resume with approval
+  await agent.invoke(new Command({ resume: [{ type: "accept" }] }), config);
 }
 ```
 :::
@@ -412,7 +405,7 @@ from langgraph.types import Command
 
 # Create the human-in-the-loop middleware
 hitl_middleware = HumanInTheLoopMiddleware(
-    tool_configs={
+    interrupt_on={
         "write_file": {
             "allow_edit": True,
             "allow_accept": True,
@@ -468,11 +461,18 @@ if state.next:
 
 :::js
 ```typescript
-import type { Interrupt } from "langchain";
-import type { HumanInTheLoopRequest, HumanInTheLoopMiddlewareHumanResponse } from "langchain/middleware";
+import {
+  createAgent,
+  humanInTheLoopMiddleware,
+  type HumanInTheLoopMiddlewareHumanResponse,
+  type HumanInTheLoopRequest,
+  HumanMessage,
+  type Interrupt,
+} from "langchain";
+import { Command, MemorySaver } from "@langchain/langgraph";
 
 const hitlMiddleware = humanInTheLoopMiddleware({
-  toolConfigs: {
+  interruptOn: {
     write_file: {
       allowEdit: true,
       allowAccept: true,
@@ -486,9 +486,9 @@ const checkpointer = new MemorySaver();
 const agent = createAgent({
   model: "openai:gpt-4o",
   checkpointer,
-  prompt:
+  systemPrompt:
     "You are a helpful assistant. Use the tools provided to help the user.",
-  tools: [writeFileTool],
+  tools: [/* ... */],
   middleware: [hitlMiddleware] as const,
 });
 
@@ -501,7 +501,11 @@ const config = {
 // Initial invocation
 const result = await agent.invoke(
   {
-    messages: [new HumanMessage("Write to greeting.txt with the content 'Hello, world!'")],
+    messages: [
+      new HumanMessage(
+        "Write to greeting.txt with the content 'Hello, world!'"
+      ),
+    ],
   },
   config
 );
@@ -509,13 +513,15 @@ const result = await agent.invoke(
 const interruptRequest = result.__interrupt__?.[0] as Interrupt<
   HumanInTheLoopRequest[]
 >;
-const resume: HumanInTheLoopMiddlewareHumanResponse[] = [{
-  type: "edit",
-  args: {
-    action: "write_file",
-    args: { filename: "greeting.txt", content: "Safe content" },
+const resume: HumanInTheLoopMiddlewareHumanResponse[] = [
+  {
+    type: "edit",
+    args: {
+      action: "write_file",
+      args: { filename: "greeting.txt", content: "Safe content" },
+    },
   },
-}];
+];
 
 // Resume with approval
 await agent.invoke(new Command({ resume }), config);
@@ -539,7 +545,7 @@ from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.types import Command
 
 hitl_middleware = HumanInTheLoopMiddleware(
-    tool_configs={
+    interrupt_on={
         "write_file": True,
     }
 )
@@ -587,11 +593,17 @@ if state.next:
 
 :::js
 ```typescript
-import type { Interrupt } from "langchain";
-import type { HumanInTheLoopRequest, HumanInTheLoopMiddlewareHumanResponse } from "langchain/middleware";
+import {
+  Interrupt,
+  HumanMessage,
+  HumanInTheLoopRequest,
+  humanInTheLoopMiddleware,
+} from "langchain";
+import { createAgent } from "langchain";
+import { Command, MemorySaver } from "@langchain/langgraph";
 
 const hitlMiddleware = humanInTheLoopMiddleware({
-  toolConfigs: {
+  interruptOn: {
     write_file: true,
   },
 });
@@ -600,9 +612,11 @@ const checkpointer = new MemorySaver();
 const agent = createAgent({
   model: "openai:gpt-4o",
   checkpointer,
-  prompt:
+  systemPrompt:
     "You are a helpful assistant. Use the tools provided to help the user.",
-  tools: [writeFileTool],
+  tools: [
+    /* ... */
+  ],
   middleware: [hitlMiddleware] as const,
 });
 
@@ -612,21 +626,30 @@ const config = {
   },
 };
 
-const result = await agent.invoke({ messages: [HumanMessage("Write to greeting.txt with the content 'Hello, world!'")] }, config);
+const result = await agent.invoke(
+  {
+    messages: [
+      new HumanMessage(
+        "Write to greeting.txt with the content 'Hello, world!'"
+      ),
+    ],
+  },
+  config
+);
 
 const interruptRequest = result.__interrupt__?.[0] as Interrupt<
   HumanInTheLoopRequest[]
 >;
-const resume = (
+const resume =
   interruptRequest.value[0].actionRequest.action === "write_file" &&
-  interruptRequest.value[0].actionRequest.args.filename ===
-    "important.txt"
-) ? {
-  type: "response",
-  args: "File operation not allowed for this file",
-} : {
-  type: "accept",
-};
+  interruptRequest.value[0].actionRequest.args.filename === "important.txt"
+    ? {
+        type: "response",
+        args: "File operation not allowed for this file",
+      }
+    : {
+        type: "accept",
+      };
 
 await agent.invoke(new Command({ resume: [resume] }), config);
 ```
@@ -641,7 +664,7 @@ await agent.invoke(new Command({ resume: [resume] }), config);
 **Configuration:**
 
 :::python
-- `tool_configs`: Map of tool names to their approval settings, each with the following options:
+- `interrupt_on`: Map of tool names to their approval settings, each with the following options:
     - `allow_accept`: Whether the human can approve the current action without changes
     - `allow_edit`: Whether the human can reject the current action with feedback
     - `allow_respond`: Whether the human can approve the current action with edited content
@@ -649,7 +672,7 @@ await agent.invoke(new Command({ resume: [resume] }), config);
 - `description_prefix`: The prefix to use when constructing action requests.
 :::
 :::js
-- `toolConfigs`: Map of tool names to their approval settings, each with the following options:
+- `interruptOn`: Map of tool names to their approval settings, each with the following options:
     - `allowAccept`: Whether the human can approve the current action without changes
     - `allowEdit`: Whether the human can reject the current action with feedback
     - `allowRespond`: Whether the human can approve the current action with edited content
@@ -700,8 +723,7 @@ agent.invoke({"messages": [HumanMessage("What's my name?")]})
 :::
 :::js
 ```typescript
-import { createAgent, HumanMessage } from "langchain";
-import { anthropicPromptCachingMiddleware } from "langchain/middleware";
+import { anthropicPromptCachingMiddleware, createAgent, HumanMessage } from "langchain";
 
 const LONG_PROMPT = `
 Please be a helpful assistant.
@@ -711,7 +733,7 @@ Please be a helpful assistant.
 
 const agent = createAgent({
   model: "anthropic:claude-sonnet-4-latest",
-  prompt: LONG_PROMPT,
+  systemPrompt: LONG_PROMPT,
   middleware: [anthropicPromptCachingMiddleware({ ttl: "5m" })],
 });
 
@@ -780,36 +802,43 @@ For example, you can adjust the system prompt based on the user's expertise leve
 
 ```typescript
 import { z } from "zod";
-import { createAgent } from "langchain";
-import { dynamicSystemPromptMiddleware } from "langchain/middleware";
+import {
+  createAgent,
+  dynamicSystemPromptMiddleware,
+  HumanMessage,
+} from "langchain";
 
 const contextSchema = z.object({
-    userRole: z.enum(["expert", "beginner"]),
+  userRole: z.enum(["expert", "beginner"]),
 });
 
 const agent = createAgent({
-    model: "openai:gpt-4o",
-    tools: [...],
-    contextSchema,
-    middleware: [
-        dynamicSystemPromptMiddleware<z.infer<typeof contextSchema>>((state, runtime) => {
-            const userRole = runtime.context.userRole || "user";
-            const basePrompt = "You are a helpful assistant.";
+  model: "openai:gpt-4o",
+  tools: [
+    /* ... */
+  ],
+  contextSchema,
+  middleware: [
+    dynamicSystemPromptMiddleware<z.infer<typeof contextSchema>>(
+      (state, runtime) => {
+        const userRole = runtime.context.userRole || "user";
+        const basePrompt = "You are a helpful assistant.";
 
-            if (userRole === "expert") {
-                return `${basePrompt} Provide detailed technical responses.`;
-            } else if (userRole === "beginner") {
-                return `${basePrompt} Explain concepts simply and avoid jargon.`;
-            }
-            return basePrompt;
-        }),
-    ],
+        if (userRole === "expert") {
+          return `${basePrompt} Provide detailed technical responses.`;
+        } else if (userRole === "beginner") {
+          return `${basePrompt} Explain concepts simply and avoid jargon.`;
+        }
+        return basePrompt;
+      }
+    ),
+  ],
 });
 
 // The system prompt will be set dynamically based on context
 const result = await agent.invoke(
-    { messages: [{ role: "user", content: "Explain async programming" }] },
-    { context: { userRole: "expert" } }
+  { messages: [new HumanMessage("Explain async programming")] },
+  { context: { userRole: "expert" } }
 );
 ```
 :::
