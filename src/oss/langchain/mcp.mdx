@@ -106,7 +106,6 @@ weather_response = await agent.ainvoke(
 
 ```ts Accessing multiple MCP servers {highlight={1,5,19,22}} icon="server"
 import { MultiServerMCPClient } from "@langchain/mcp-adapters";
-import { ChatAnthropic } from "@langchain/anthropic";
 import { createAgent } from "langchain";
 
 const client = new MultiServerMCPClient({
@@ -125,7 +124,7 @@ const client = new MultiServerMCPClient({
 
 const tools = await client.getTools();
 const agent = createAgent({
-    llm: new ChatAnthropic({ model: "claude-3-7-sonnet-latest" }),
+    model: "anthropic:claude-3-7-sonnet-latest",
     tools,
 });
 
