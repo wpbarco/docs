@@ -576,6 +576,10 @@ LangGraph can easily handle migrations of graph definitions (nodes, edges, and s
 When creating a graph, you can specify a `context_schema` for runtime context passed to nodes. This is useful for passing
 information to nodes that is not part of the graph state. For example, you might want to pass dependencies such as model name or a database connection.
 
+
+
+
+
 ```python
 @dataclass
 class ContextSchema:
@@ -583,10 +587,6 @@ class ContextSchema:
 
 graph = StateGraph(State, context_schema=ContextSchema)
 ```
-
-
-
-
 
 You can then pass this context into the graph using the `context` parameter of the `invoke` method.
 
@@ -597,21 +597,18 @@ graph.invoke(inputs, context={"llm_provider": "anthropic"})
 
 
 
-
 You can then access and use this context inside a node or conditional edge:
 
-```typescript
-import { Runtime } from "@langchain/langgraph";
-import * as z from "zod";
+```python
+from langgraph.runtime import Runtime
 
-const nodeA = (
-  state: z.infer<typeof State>,
-  runtime: Runtime<z.infer<typeof ContextSchema>>,
-) => {
-  const llm = getLLM(runtime.context?.llm);
-  // ...
-};
+def node_a(state: State, runtime: Runtime[ContextSchema]):
+    llm = get_llm(runtime.context.llm_provider)
+    # ...
 ```
+
+
+
 
 See [this guide](/oss/python/langgraph/use-graph-api#add-runtime-configuration) for a full breakdown on configuration.
 

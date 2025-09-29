@@ -72,13 +72,13 @@ for await (const chunk of await graph.stream(inputs, {
 
   for await (const chunk of await graph.stream(
     { topic: "ice cream" },
-    { streamMode: "updates" } // (1)!
+    // Set streamMode: "updates" to stream only the updates to the graph state after each node
+    // Other stream modes are also available. See supported stream modes for details
+    { streamMode: "updates" }
   )) {
     console.log(chunk);
   }
   ```
-
-  1. Set `streamMode: "updates"` to stream only the updates to the graph state after each node. Other stream modes are also available. See [supported stream modes](#supported-stream-modes) for details.
 
 
   ```output
@@ -181,15 +181,14 @@ The outputs will be streamed as tuples `[namespace, data]`, where `namespace` is
 for await (const chunk of await graph.stream(
   { foo: "foo" },
   {
-    subgraphs: true, // (1)!
+    // Set subgraphs: true to stream outputs from subgraphs
+    subgraphs: true,
     streamMode: "updates",
   }
 )) {
   console.log(chunk);
 }
 ```
-
-1. Set `subgraphs: true` to stream outputs from subgraphs.
 
 
 <Accordion title="Extended example: streaming from subgraphs">
@@ -234,14 +233,13 @@ for await (const chunk of await graph.stream(
     { foo: "foo" },
     {
       streamMode: "updates",
-      subgraphs: true, // (1)!
+      // Set subgraphs: true to stream outputs from subgraphs
+      subgraphs: true,
     }
   )) {
     console.log(chunk);
   }
   ```
-
-  1. Set `subgraphs: true` to stream outputs from subgraphs.
 
 
 
@@ -302,9 +300,10 @@ const llm = new ChatOpenAI({ model: "gpt-4o-mini" });
 
 const callModel = async (state: z.infer<typeof MyState>) => {
   // Call the LLM to generate a joke about a topic
+  // Note that message events are emitted even when the LLM is run using .invoke rather than .stream
   const llmResponse = await llm.invoke([
     { role: "user", content: `Generate a joke about ${state.topic}` },
-  ]); // (1)!
+  ]);
   return { joke: llmResponse.content };
 };
 
@@ -313,8 +312,10 @@ const graph = new StateGraph(MyState)
   .addEdge(START, "callModel")
   .compile();
 
+// The "messages" stream mode returns an iterator of tuples [messageChunk, metadata]
+// where messageChunk is the token streamed by the LLM and metadata is a dictionary
+// with information about the graph node where the LLM was called and other information
 for await (const [messageChunk, metadata] of await graph.stream(
-  // (2)!
   { topic: "ice cream" },
   { streamMode: "messages" }
 )) {
@@ -323,9 +324,6 @@ for await (const [messageChunk, metadata] of await graph.stream(
   }
 }
 ```
-
-1. Note that the message events are emitted even when the LLM is run using `.invoke` rather than `.stream`.
-2. The "messages" stream mode returns an iterator of tuples `[messageChunk, metadata]` where `messageChunk` is the token streamed by the LLM and `metadata` is a dictionary with information about the graph node where the LLM was called and other information.
 
 
 #### Filter by LLM invocation
@@ -337,31 +335,32 @@ You can associate `tags` with LLM invocations to filter the streamed tokens by L
 ```typescript
 import { ChatOpenAI } from "@langchain/openai";
 
+// llm1 is tagged with "joke"
 const llm1 = new ChatOpenAI({
   model: "gpt-4o-mini",
-  tags: ['joke'] // (1)!
+  tags: ['joke']
 });
+// llm2 is tagged with "poem"
 const llm2 = new ChatOpenAI({
   model: "gpt-4o-mini",
-  tags: ['poem'] // (2)!
+  tags: ['poem']
 });
 
 const graph = // ... define a graph that uses these LLMs
 
-for await (const [msg, metadata] of await graph.stream( // (3)!
+// The streamMode is set to "messages" to stream LLM tokens
+// The metadata contains information about the LLM invocation, including the tags
+for await (const [msg, metadata] of await graph.stream(
   { topic: "cats" },
   { streamMode: "messages" }
 )) {
-  if (metadata.tags?.includes("joke")) { // (4)!
+  // Filter the streamed tokens by the tags field in the metadata to only include
+  // the tokens from the LLM invocation with the "joke" tag
+  if (metadata.tags?.includes("joke")) {
     console.log(msg.content + "|");
   }
 }
 ```
-
-1. llm1 is tagged with "joke".
-2. llm2 is tagged with "poem".
-3. The `streamMode` is set to "messages" to stream LLM tokens. The `metadata` contains information about the LLM invocation, including the tags.
-4. Filter the streamed tokens by the `tags` field in the metadata to only include the tokens from the LLM invocation with the "joke" tag.
 
 
 <Accordion title="Extended example: filtering by tags">
@@ -372,13 +371,15 @@ for await (const [msg, metadata] of await graph.stream( // (3)!
   import { StateGraph, START } from "@langchain/langgraph";
   import * as z from "zod";
 
+  // The jokeModel is tagged with "joke"
   const jokeModel = new ChatOpenAI({
     model: "gpt-4o-mini",
-    tags: ["joke"] // (1)!
+    tags: ["joke"]
   });
+  // The poemModel is tagged with "poem"
   const poemModel = new ChatOpenAI({
     model: "gpt-4o-mini",
-    tags: ["poem"] // (2)!
+    tags: ["poem"]
   });
 
   const State = z.object({
@@ -409,20 +410,19 @@ for await (const [msg, metadata] of await graph.stream( // (3)!
     .addEdge(START, "callModel")
     .compile();
 
+  // The streamMode is set to "messages" to stream LLM tokens
+  // The metadata contains information about the LLM invocation, including the tags
   for await (const [msg, metadata] of await graph.stream(
     { topic: "cats" },
-    { streamMode: "messages" } // (3)!
+    { streamMode: "messages" }
   )) {
-    if (metadata.tags?.includes("joke")) { // (4)!
+    // Filter the streamed tokens by the tags field in the metadata to only include
+    // the tokens from the LLM invocation with the "joke" tag
+    if (metadata.tags?.includes("joke")) {
       console.log(msg.content + "|");
     }
   }
   ```
-
-  1. The `jokeModel` is tagged with "joke".
-  2. The `poemModel` is tagged with "poem".
-  3. The `streamMode` is set to "messages" to stream LLM tokens. The `metadata` contains information about the LLM invocation, including the tags.
-  4. Filter the streamed tokens by the `tags` field in the metadata to only include the tokens from the LLM invocation with the "joke" tag.
 
 </Accordion>
 
@@ -433,20 +433,20 @@ To stream tokens only from specific nodes, use `stream_mode="messages"` and filt
 
 
 ```typescript
+// The "messages" stream mode returns a tuple of [messageChunk, metadata]
+// where messageChunk is the token streamed by the LLM and metadata is a dictionary
+// with information about the graph node where the LLM was called and other information
 for await (const [msg, metadata] of await graph.stream(
-  // (1)!
   inputs,
   { streamMode: "messages" }
 )) {
+  // Filter the streamed tokens by the langgraph_node field in the metadata
+  // to only include the tokens from the specified node
   if (msg.content && metadata.langgraph_node === "some_node_name") {
-    // (2)!
     // ...
   }
 }
 ```
-
-1. The "messages" stream mode returns a tuple of `[messageChunk, metadata]` where `messageChunk` is the token streamed by the LLM and `metadata` is a dictionary with information about the graph node where the LLM was called and other information.
-2. Filter the streamed tokens by the `langgraph_node` field in the metadata to only include the tokens from the `writePoem` node.
 
 
 <Accordion title="Extended example: streaming LLM tokens from specific nodes">
@@ -485,18 +485,20 @@ for await (const [msg, metadata] of await graph.stream(
     .addEdge(START, "writePoem")
     .compile();
 
-  for await (const [msg, metadata] of await graph.stream( // (1)!
+  // The "messages" stream mode returns a tuple of [messageChunk, metadata]
+  // where messageChunk is the token streamed by the LLM and metadata is a dictionary
+  // with information about the graph node where the LLM was called and other information
+  for await (const [msg, metadata] of await graph.stream(
     { topic: "cats" },
     { streamMode: "messages" }
   )) {
-    if (msg.content && metadata.langgraph_node === "writePoem") { // (2)!
+    // Filter the streamed tokens by the langgraph_node field in the metadata
+    // to only include the tokens from the writePoem node
+    if (msg.content && metadata.langgraph_node === "writePoem") {
       console.log(msg.content + "|");
     }
   }
   ```
-
-  1. The "messages" stream mode returns a tuple of `[messageChunk, metadata]` where `messageChunk` is the token streamed by the LLM and `metadata` is a dictionary with information about the graph node where the LLM was called and other information.
-  2. Filter the streamed tokens by the `langgraph_node` field in the metadata to only include the tokens from the `writePoem` node.
 
 </Accordion>
 
@@ -522,7 +524,8 @@ To send **custom user-defined data** from inside a LangGraph node or tool, follo
 
     const graph = new StateGraph(State)
       .addNode("node", async (state, config) => {
-        config.writer({ custom_key: "Generating custom data inside node" }); // (1)!
+        // Use the writer to emit a custom key-value pair (e.g., progress update)
+        config.writer({ custom_key: "Generating custom data inside node" });
         return { answer: "some data" };
       })
       .addEdge(START, "node")
@@ -530,14 +533,11 @@ To send **custom user-defined data** from inside a LangGraph node or tool, follo
 
     const inputs = { query: "example" };
 
-    // Usage
-    for await (const chunk of await graph.stream(inputs, { streamMode: "custom" })) { // (2)!
+    // Set streamMode: "custom" to receive the custom data in the stream
+    for await (const chunk of await graph.stream(inputs, { streamMode: "custom" })) {
       console.log(chunk);
     }
     ```
-
-    1. Use the writer to emit a custom key-value pair (e.g., progress update).
-    2. Set `streamMode: "custom"` to receive the custom data in the stream.
     </Tab>
     <Tab title="tool">
     ```typescript
@@ -547,9 +547,11 @@ To send **custom user-defined data** from inside a LangGraph node or tool, follo
 
     const queryDatabase = tool(
       async (input, config: LangGraphRunnableConfig) => {
-        config.writer({ data: "Retrieved 0/100 records", type: "progress" }); // (1)!
+        // Use the writer to emit a custom key-value pair (e.g., progress update)
+        config.writer({ data: "Retrieved 0/100 records", type: "progress" });
         // perform query
-        config.writer({ data: "Retrieved 100/100 records", type: "progress" }); // (2)!
+        // Emit another custom key-value pair
+        config.writer({ data: "Retrieved 100/100 records", type: "progress" });
         return "some-answer";
       },
       {
@@ -563,14 +565,11 @@ To send **custom user-defined data** from inside a LangGraph node or tool, follo
 
     const graph = // ... define a graph that uses this tool
 
-    for await (const chunk of await graph.stream(inputs, { streamMode: "custom" })) { // (3)!
+    // Set streamMode: "custom" to receive the custom data in the stream
+    for await (const chunk of await graph.stream(inputs, { streamMode: "custom" })) {
       console.log(chunk);
     }
     ```
-
-    1. Use the writer to emit a custom key-value pair (e.g., progress update).
-    2. Emit another custom key-value pair.
-    3. Set `streamMode: "custom"` to receive the custom data in the stream.
     </Tab>
 </Tabs>
 
@@ -592,9 +591,10 @@ const callArbitraryModel = async (
 ) => {
   // Example node that calls an arbitrary model and streams the output
   // Assume you have a streaming client that yields chunks
+  // Generate LLM tokens using your custom streaming client
   for await (const chunk of yourCustomStreamingClient(state.topic)) {
-    // (1)!
-    config.writer({ custom_llm_chunk: chunk }); // (2)!
+    // Use the writer to send custom data to the stream
+    config.writer({ custom_llm_chunk: chunk });
   }
   return { result: "completed" };
 };
@@ -604,18 +604,15 @@ const graph = new StateGraph(State)
   // Add other nodes and edges as needed
   .compile();
 
+// Set streamMode: "custom" to receive the custom data in the stream
 for await (const chunk of await graph.stream(
   { topic: "cats" },
-  { streamMode: "custom" } // (3)!
+  { streamMode: "custom" }
 )) {
   // The chunk will contain the custom data streamed from the llm
   console.log(chunk);
 }
 ```
-
-1. Generate LLM tokens using your custom streaming client.
-2. Use the writer to send custom data to the stream.
-3. Set `streamMode: "custom"` to receive the custom data in the stream.
 
 
 <Accordion title="Extended example: streaming arbitrary chat model">
@@ -758,7 +755,8 @@ import { ChatOpenAI } from "@langchain/openai";
 
 const model = new ChatOpenAI({
   model: "o1-preview",
-  streaming: false, // (1)!
+  // Set streaming: false to disable streaming for the chat model
+  streaming: false,
 });
 ```
 

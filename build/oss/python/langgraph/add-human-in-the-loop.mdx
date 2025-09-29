@@ -13,7 +13,7 @@ To review, edit, and approve tool calls in an agent or workflow, use interrupts 
 
 ## Pause using `interrupt`
 
-[Dynamic interrupts](/oss/python/langgraph/add-human-in-the-loop#key-capabilities) (also known as dynamic breakpoints) are triggered based on the current state of the graph. You can set dynamic interrupts by calling [`interrupt` function](https://langchain-ai.github.io/langgraph/reference/types/#langgraph.types.Interrupt) in the appropriate place. The graph will pause, which allows for human intervention, and then resumes the graph with their input. It's useful for tasks like approvals, edits, or gathering additional context.
+[Dynamic interrupts](/oss/python/langgraph/add-human-in-the-loop#key-capabilities) (also known as dynamic breakpoints) are triggered based on the current state of the graph. You can set dynamic interrupts by calling [`interrupt` function](https://langchain-ai.github.io/langgraph/reference/types/#langgraph.types.interrupt) in the appropriate place. The graph will pause, which allows for human intervention, and then resumes the graph with their input. It's useful for tasks like approvals, edits, or gathering additional context.
 
 <Note>
 As of v1.0, `interrupt` is the recommended way to pause a graph. `NodeInterrupt` is deprecated and will be removed in v2.0.
@@ -508,7 +508,7 @@ agent = create_react_agent(
 )
 ```
 
-1. The [`interrupt` function](https://langchain-ai.github.io/langgraph/reference/types/#langgraph.types.Interrupt) pauses the agent graph at a specific node. In this case, we call `interrupt()` at the beginning of the tool function, which pauses the graph at the node that executes the tool. The information inside `interrupt()` (e.g., tool calls) can be presented to a human, and the graph can be resumed with the user input (tool call approval, edit or feedback).
+1. The [`interrupt` function](https://langchain-ai.github.io/langgraph/reference/types/#langgraph.types.interrupt) pauses the agent graph at a specific node. In this case, we call `interrupt()` at the beginning of the tool function, which pauses the graph at the node that executes the tool. The information inside `interrupt()` (e.g., tool calls) can be presented to a human, and the graph can be resumed with the user input (tool call approval, edit or feedback).
 2. The `InMemorySaver` is used to store the agent state at every step in the tool calling loop. This enables [short-term memory](/oss/python/langgraph/add-memory#add-short-term-memory) and [human-in-the-loop](/oss/python/langgraph/add-human-in-the-loop) capabilities. In this example, we use `InMemorySaver` to store the agent state in memory. In a production application, the agent state will be stored in a database.
 3. Initialize the agent with the `checkpointer`.
 
@@ -551,7 +551,7 @@ for chunk in agent.stream(
     print("\n")
 ```
 
-1. The [`interrupt` function](https://langchain-ai.github.io/langgraph/reference/types/#langgraph.types.Interrupt) is used in conjunction with the [`Command`](https://langchain-ai.github.io/langgraph/reference/types/#langgraph.types.Command) object to resume the graph with a value provided by the human.
+1. The [`interrupt` function](https://langchain-ai.github.io/langgraph/reference/types/#langgraph.types.interrupt) is used in conjunction with the [`Command`](https://langchain-ai.github.io/langgraph/reference/types/#langgraph.types.Command) object to resume the graph with a value provided by the human.
 
 
 
