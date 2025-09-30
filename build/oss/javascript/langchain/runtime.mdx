@@ -11,18 +11,18 @@ import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
 
 LangChain's `createAgent` runs on LangGraph's runtime under the hood.
 
-LangGraph exposes a `Runtime` object with the following information:
+LangGraph exposes a [Runtime](https://reference.langchain.com/javascript/interfaces/_langchain_langgraph.index.Runtime.html) object with the following information:
 
-1. Context: static information like user id, db connections, or other dependencies for an agent invocation
-2. Store: a `BaseStore` instance used for long term memory
-3. Stream writer: an object used for streaming information via the `"custom""` stream mode
+1. **Context**: static information like user id, db connections, or other dependencies for an agent invocation
+2. **Store**: a [BaseStore](https://langchain-ai.github.io/langgraphjs/reference/classes/checkpoint.BaseStore.html) instance used for [long-term memory](/oss/javascript/langchain/long-term-memory)
+3. **Stream writer**: an object used for streaming information via the `"custom"` stream mode
 
 You can access the runtime information within [tools](#inside-tools), [prompt](#inside-prompt), and [pre and post model hooks](#inside-pre-and-post-model-hooks).
 
 ## Access
 
 
-When creating an agent with `createAgent`, you can specify a `contextSchema` to define the structure of the `context` stored in the agent runtime.
+When creating an agent with `createAgent`, you can specify a `contextSchema` to define the structure of the `context` stored in the agent [Runtime](https://reference.langchain.com/javascript/interfaces/_langchain_langgraph.index.Runtime.html).
 
 
 When invoking the agent, pass the `context` argument with the relevant configuration for the run:
@@ -56,31 +56,31 @@ const result = await agent.invoke(
 You can access the runtime information inside tools to:
 
 * Access the context
-* Read or write long term memory
+* Read or write long-term memory
 * Write to the [custom stream](/oss/javascript/langchain/streaming#custom-updates) (ex, tool progress / updates)
 
 
-Use the `runtime` parameter to access the `Runtime` object inside a tool.
+Use the `runtime` parameter to access the [Runtime](https://reference.langchain.com/javascript/interfaces/_langchain_langgraph.index.Runtime.html) object inside a tool.
 
 ```ts
 import { z } from "zod";
 import { tool } from "langchain";
-import { type Runtime } from "@langchain/langgraph";
+import { type Runtime } from "@langchain/langgraph"; // [!code highlight]
 
 const contextSchema = z.object({
   userName: z.string(),
 });
 
 const fetchUserEmailPreferences = tool(
-  async (_, runtime: Runtime<z.infer<typeof contextSchema>>) => {
-    const userName = runtime.context?.userName;
+  async (_, runtime: Runtime<z.infer<typeof contextSchema>>) => { // [!code highlight]
+    const userName = runtime.context?.userName; // [!code highlight]
     if (!userName) {
       throw new Error("userName is required");
     }
 
     let preferences = "The user prefers you to write a brief and polite email.";
-    if (runtime.store) {
-      const memory = await runtime.store?.get(["users"], userName);
+    if (runtime.store) { // [!code highlight]
+      const memory = await runtime.store?.get(["users"], userName); // [!code highlight]
       if (memory) {
         preferences = memory.value.preferences;
       }
@@ -99,12 +99,12 @@ const fetchUserEmailPreferences = tool(
 ### Inside prompt
 
 
-Use the `runtime` parameter to access the `Runtime` object inside a prompt function.
+Use the `runtime` parameter to access the [Runtime](https://reference.langchain.com/javascript/interfaces/_langchain_langgraph.index.Runtime.html) object inside a prompt function.
 
 ```ts
 import { z } from "zod";
 import { createAgent, type AgentState, SystemMessage } from "langchain";
-import { type Runtime } from "@langchain/langgraph";
+import { type Runtime } from "@langchain/langgraph"; // [!code highlight]
 
 const contextSchema = z.object({
   userName: z.string(),
@@ -112,14 +112,14 @@ const contextSchema = z.object({
 
 const prompt = (
   state: AgentState,
-  runtime: Runtime<z.infer<typeof contextSchema>>
+  runtime: Runtime<z.infer<typeof contextSchema>> // [!code highlight]
 ) => {
-  const userName = runtime.context?.userName;
+  const userName = runtime.context?.userName; // [!code highlight]
   if (!userName) {
     throw new Error("userName is required");
   }
 
-  const systemMsg = `You are a helpful assistant. Address the user as ${userName}.`;
+  const systemMsg = `You are a helpful assistant. Address the user as ${userName}.`; // [!code highlight]
   return [new SystemMessage(systemMsg), ...state.messages];
 };
 
@@ -143,11 +143,11 @@ const result = await agent.invoke(
 
 
 
-Use the `runtime` parameter to access the `Runtime` object inside a pre or post model hook.
+Use the `runtime` parameter to access the [Runtime](https://reference.langchain.com/javascript/interfaces/_langchain_langgraph.index.Runtime.html) object inside a pre or post model hook.
 
 ```ts
 import { z } from "zod";
-import { type Runtime } from "@langchain/langgraph";
+import { type Runtime } from "@langchain/langgraph"; // [!code highlight]
 import { createAgent, type AgentState } from "langchain";
 
 const contextSchema = z.object({
@@ -156,9 +156,9 @@ const contextSchema = z.object({
 
 const preModelHook = (
   state: AgentState,
-  runtime: Runtime<z.infer<typeof contextSchema>>
+  runtime: Runtime<z.infer<typeof contextSchema>> // [!code highlight]
 ) => {
-  const userName = runtime.context?.userName;
+  const userName = runtime.context?.userName; // [!code highlight]
   if (!userName) {
     throw new Error("userName is required");
   }
@@ -170,9 +170,9 @@ const preModelHook = (
 
 const postModelHook = (
   state: AgentState,
-  runtime: Runtime<z.infer<typeof contextSchema>>
+  runtime: Runtime<z.infer<typeof contextSchema>> // [!code highlight]
 ) => {
-  const userName = runtime.context?.userName;
+  const userName = runtime.context?.userName; // [!code highlight]
   if (!userName) {
     throw new Error("userName is required");
   }
