@@ -3,6 +3,8 @@ title: Models
 ---
 
 import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
+import ChatModelTabsPy from '/snippets/chat-model-tabs.mdx';
+import ChatModelTabsJS from '/snippets/chat-model-tabs-js.mdx';
 
 <AlphaCallout />
 
@@ -20,17 +22,14 @@ For provider-specific integration information and capabilities, see the provider
 ## Basic usage
 
 
+The easiest way to get started with a model in LangChain is to use `initChatModel` to initialize one from a [provider](/oss/javascript/integrations/providers) of your choice (examples below):
 
-The easiest way to get started with a model in LangChain is to use `initChatModel` to initialize one from a [provider](/oss/javascript/integrations/providers) of your choice.
-
-```typescript Initialize a chat model
-import { initChatModel } from "langchain";
-
-const model = await initChatModel("openai:gpt-5-nano");
+<ChatModelTabsJS />
+```typescript
 const response = await model.invoke("Why do parrots talk?");
 ```
-
 See [`initChatModel`](https://v03.api.js.langchain.com/functions/langchain.chat_models_universal.initChatModel.html) for more detail.
+
 
 
 ### Key methods
@@ -65,10 +64,6 @@ A chat model takes parameters that can be used to configure its behavior. The fu
 
 <ParamField body="temperature" type="number">
     Controls the randomness of the model's output. A higher number makes responses more creative; lower ones make them more deterministic.
-</ParamField>
-
-<ParamField body="stop" type="string[]">
-    A sequence of characters that indicates when the model should stop generating its output.
 </ParamField>
 
 <ParamField body="timeout" type="number">
@@ -548,7 +543,7 @@ Models can be requested to provide their response in a format matching a given s
 
 <Accordion title="Example: Message output alongside parsed structure">
 
-It can be useful to return the raw `AIMessage` object alongside the parsed representation to access response metadata such as [token counts](#token-usage):
+It can be useful to return the raw `AIMessage` object alongside the parsed representation to access response metadata such as [token counts](#token-usage). To do this, set `include_raw=True` when calling `with_structured_output`:
 
 
 
@@ -578,6 +573,7 @@ It can be useful to return the raw `AIMessage` object alongside the parsed repre
 
 </Accordion>
 <Accordion title="Example: Nested structures">
+    Schemas can be nested:
 
 
     ```typescript
@@ -609,7 +605,7 @@ LangChain supports all major model providers, including OpenAI, Anthropic, Googl
 
 ---
 
-## Advanced configuration
+## Advanced topics
 
 ### Multimodal
 
@@ -677,35 +673,37 @@ LangChain supports running models locally on your own hardware. This is useful f
 
 [Ollama](/oss/javascript/integrations/chat/ollama) is one of the easiest ways to run models locally. See the full list of local integrations on the [integrations page](/oss/javascript/integrations/providers).
 
-### Caching
+### Prompt caching
 
-Chat model APIs can be slow and expensive to call. To help mitigate this, LangChain provides an optional caching layer for chat model integrations.
+Many providers offer prompt caching features to reduce latency and cost on repeat processing of the same tokens. These features can be **implicit** or **explicit**:
+
+- Implicit prompt caching: providers will automatically pass on cost savings if a request hits a cache. Examples: [OpenAI](/oss/javascript/integrations/chat/openai) and [Gemini](/oss/javascript/integrations/chat/google_generative_ai) (Gemini 2.5 and above).
+- Explicit caching: providers allow you to manually indicate cache points for greater control or to guarantee cost savings. Examples: [OpenAI](https://python.langchain.com/api_reference/openai/chat_models/langchain_openai.chat_models.base.ChatOpenAI.html) (via `prompt_cache_key`), [Anthropic](/oss/javascript/integrations/chat/anthropic#prompt-caching), [AWS Bedrock](/oss/javascript/integrations/chat/bedrock#prompt-caching), [Gemini](https://python.langchain.com/api_reference/google_genai/chat_models/langchain_google_genai.chat_models.ChatGoogleGenerativeAI.html).
+
+Prompt caching is often only engaged above a minimum input token threshold. See [provider pages](/oss/javascript/python/integrations/chat) for details.
+
+Cache usage will be reflected in the [usage metadata](/oss/javascript/langchain/messages#token-usage) of the model response.
+
+### Server-side tool use
+
+Some providers support server-side [tool-calling](#tool-calling) loops: models can interact with web search, code interpreters, and other tools and analyze the results in a single conversational turn.
+
+If a model invokes a tool server-side, the content of the response message will include content representing the invocation and result of the tool. Accessing the [content blocks](/oss/javascript/langchain/messages#standard-content-blocks) of the response will return the server-side tool calls and results in a provider-agnostic format:
 
 
+```typescript
+import { initChatModel } from "langchain";
 
-<Accordion title="Enable caching for your model" icon="database">
-    To enable caching, you can provide a cache object when initializing the model:
+const model = await initChatModel("openai:gpt-4.1-mini");
+const modelWithTools = model.bindTools([{ type: "web_search" }])
 
-    <AccordionGroup>
-        <Accordion title="In Memory Cache" icon="memory">
-            An ephemeral cache that stores model calls in memory. Wiped when your environment restarts. Not shared across processes.
+const message = await modelWithTools.invoke("What was a positive news story from today?");
+console.log(message.contentBlocks);
+```
 
-            ```typescript InMemoryCache
-            import { InMemoryCache } from "@langchain/core";
-            import { ChatOpenAI } from "@langchain/openai";
+This represents a single conversational turn; there are no associated [ToolMessage](/oss/javascript/langchain/messages#tool-message) objects that need to be passed in as in client-side [tool-calling](#tool-calling).
 
-            const model = new ChatOpenAI({
-                model: "gpt-4o",
-                cache: new InMemoryCache(),
-            });
-
-            const response = await model.invoke("Tell me a joke");
-            const response = await model.invoke("Tell me a joke");  // Fast, from cache
-            ```
-        </Accordion>
-    </AccordionGroup>
-</Accordion>
-
+See the [integration page](/oss/javascript/integrations/chat) for your given provider for available tools and usage details.
 
 
 
