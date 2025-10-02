@@ -473,16 +473,17 @@ Dynamic system prompt is especially useful for personalizing prompts based on us
 
 :::python
 ```python wrap
-from langchain.agents import create_agent, AgentState
-from langchain.agents.middleware.types import modify_model_request
-from langgraph.runtime import Runtime
 from typing import TypedDict
+
+from langchain.agents import create_agent
+from langchain.agents.middleware.types import modify_model_request, AgentState, ModelRequest
+from langgraph.runtime import Runtime
 
 class Context(TypedDict):
     user_role: str
 
 @modify_model_request
-def dynamic_system_prompt(state: AgentState, request: ModelRequest, runtime: Runtime[Context]) -> ModelRequest:
+def dynamic_system_prompt(request: ModelRequest, state: AgentState, runtime: Runtime[Context]) -> ModelRequest:
     user_role = runtime.context.get("user_role", "user")
     base_prompt = "You are a helpful assistant."
 
@@ -498,14 +499,15 @@ def dynamic_system_prompt(state: AgentState, request: ModelRequest, runtime: Run
 
 agent = create_agent(
     model="openai:gpt-4o",
-    tools=tools,
+    tools=[web_search],
     middleware=[dynamic_system_prompt],
+    context_schema=Context
 )
 
 # The system prompt will be set dynamically based on context
 result = agent.invoke(
     {"messages": [{"role": "user", "content": "Explain machine learning"}]},
-    {"context": {"user_role": "expert"}}
+    context={"user_role": "expert"}
 )
 ```
 :::
