@@ -512,7 +512,7 @@ If you are returning `messages` in the pre-model hook, you should OVERWRITE the 
 
 ```python wrap
 {
-"messages": [RemoveMessage(id=REMOVE_ALL_MESSAGES), *new_messages]
+    "messages": [RemoveMessage(id=REMOVE_ALL_MESSAGES), *new_messages]
 ...
 }
 ```

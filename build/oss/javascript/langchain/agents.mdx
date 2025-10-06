@@ -505,7 +505,7 @@ const agent = createAgent({
     model: "openai:gpt-4o",
     preModelHook: (state) => {
         return {
-        messages: [RemoveMessage({ id: REMOVE_ALL_MESSAGES }), ...state.messages],
+            messages: [RemoveMessage({ id: REMOVE_ALL_MESSAGES }), ...state.messages],
         };
     },
 });
@@ -516,6 +516,8 @@ Example of a pre-model hook that trims messages to fit the context window:
 
 ```ts wrap
 import { createAgent, type AgentState } from "langchain";
+import { REMOVE_ALL_MESSAGES } from "@langchain/langgraph";
+import { RemoveMessage } from "@langchain/core/messages";
 
 const trimMessages = (state: AgentState) => {
     const messages = state.messages;
@@ -530,7 +532,13 @@ const trimMessages = (state: AgentState) => {
         : messages.slice(-4);
 
     const newMessages = [firstMsg, ...recentMessages];
-    return { messages: newMessages };
+
+    return {
+        messages: [
+            new RemoveMessage({ id: REMOVE_ALL_MESSAGES }),
+            ...newMessages
+        ]
+    };
 };
 
 const agent = createAgent({
@@ -558,10 +566,10 @@ const agent = createAgent({
     preModelHook: (state) => {
         // ...
         return {
-        messages: [
-            RemoveMessage({ id: REMOVE_ALL_MESSAGES }),
-            ...state.messages
-        ],
+            messages: [
+                RemoveMessage({ id: REMOVE_ALL_MESSAGES }),
+                ...state.messages
+            ],
         };
     };
 });
