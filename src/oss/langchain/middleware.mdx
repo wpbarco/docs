@@ -44,11 +44,12 @@ graph TD
 </Card>
 
 Middleware provides control over what happens before and after those steps.
-Each middleware can add in three different types of modifiers:
+Each middleware can add in four different types of modifiers:
 
 :::python
 - `before_model`: Runs before model execution. Can update state or jump to a different node (`model`, `tools`, `end`)
 - `modify_model_request`: Runs before model execution, to prepare the model request object. Can only modify the current model request object (no permanent state updates) and cannot jump to a different node.
+- `retry_model_request`: Runs when model execution fails. Can modify the model request to retry with different parameters or return None to propagate the error.
 - `after_model`: Runs after model execution, before tools are executed. Can update state or jump to a different node (`model`, `tools`, `END`)
 
 In addition to that, each middleware can define the following static properties:
@@ -59,6 +60,7 @@ In addition to that, each middleware can define the following static properties:
 :::js
 - `beforeModel`: Runs before model execution. Can update state or jump to a different node (`model`, `tools`, `end`)
 - `modifyModelRequest`: Runs before model execution, to prepare the model request object. Can only modify the current model request object (no permanent state updates) and cannot jump to a different node.
+- `retryModelRequest`: Runs when model execution fails. Can modify the model request to retry with different parameters or return undefined to propagate the error.
 - `afterModel`: Runs after model execution, before tools are executed. Can update state or jump to a different node (`model`, `tools`, `__end__`)
 
 In addition to that, each middleware can define the following static properties:
@@ -69,10 +71,10 @@ In addition to that, each middleware can define the following static properties:
 :::
 
 :::python
-An agent can contain `before_model`, `modify_model_request`, or `after_model` middleware. All three do not need to be implemented.
+An agent can contain `before_model`, `modify_model_request`, `retry_model_request`, or `after_model` middleware. All four do not need to be implemented.
 :::
 :::js
-An agent can contain multiple middleware. Each middleware does not need to implement all three of `beforeModel`, `modifyModelRequest`, `afterModel`.
+An agent can contain multiple middleware. Each middleware does not need to implement all four of `beforeModel`, `modifyModelRequest`, `retryModelRequest`, `afterModel`.
 :::
 
 <Card>
@@ -166,6 +168,7 @@ LangChain provides several built in middleware to use off-the-shelf
 - [Human-in-the-loop](#human-in-the-loop)
 - [Anthropic prompt caching](#anthropic-prompt-caching)
 - [Dynamic system prompt](#dynamic-system-prompt)
+- [Model fallback](#model-fallback)
 
 ### Summarization
 
@@ -453,20 +456,112 @@ const agent = createAgent({
 ```
 :::
 
+### Model fallback
+
+The `ModelFallbackMiddleware` provides automatic model fallback on errors. This middleware attempts to retry failed model calls with alternative models in sequence. When a model call fails, it tries the next model in the fallback list until either a call succeeds or all models have been exhausted.
+
+**Key features:**
+
+- Automatic retry with fallback models when primary model fails
+- Sequential fallback through multiple models
+- Preserves original request parameters while switching models
+- Configurable with any combination of model strings or instances
+
+**Use Cases:**
+
+- Handling model outages or rate limits
+- Cost optimization by trying cheaper models first
+- Ensuring high availability for critical applications
+
+:::python
+```python
+from langchain.agents import create_agent
+from langchain.agents.middleware import ModelFallbackMiddleware
+
+agent = create_agent(
+    model="openai:gpt-4o",  # Primary model
+    tools=[weather_tool, calculator_tool],
+    middleware=[
+        ModelFallbackMiddleware(
+            "openai:gpt-4o-mini",  # First fallback
+            "anthropic:claude-3-5-sonnet-20241022",  # Second fallback
+        ),
+    ],
+)
+
+# If gpt-4o fails, automatically tries gpt-4o-mini, then claude
+result = agent.invoke({"messages": [HumanMessage("Hello")]})
+```
+:::
+
+:::js
+```typescript
+import { createAgent, modelFallbackMiddleware, HumanMessage } from "langchain";
+
+const agent = createAgent({
+  model: "openai:gpt-4o", // Primary model
+  tools: [weatherTool, calculatorTool],
+  middleware: [
+    modelFallbackMiddleware(
+      "openai:gpt-4o-mini", // First fallback
+      "anthropic:claude-3-5-sonnet-20241022" // Second fallback
+    ),
+  ],
+});
+
+// If gpt-4o fails, automatically tries gpt-4o-mini, then claude
+const result = await agent.invoke({
+  messages: [new HumanMessage("Hello")]
+});
+```
+:::
+
+**Configuration:**
+
+:::python
+The `ModelFallbackMiddleware` constructor accepts fallback models in order of preference:
+
+- `first_model`: The first fallback model (required)
+- `*additional_models`: Additional fallback models in order
+
+Models can be specified as:
+- Model name strings (e.g., `"openai:gpt-4o-mini"`)
+- `BaseChatModel` instances for pre-configured models
+:::
+
+:::js
+The `modelFallbackMiddleware` function accepts fallback models in order of preference:
+
+- `...fallbackModels`: Fallback models in order of preference
+
+Models can be specified as:
+- Model name strings (e.g., `"openai:gpt-4o-mini"`)
+- `LanguageModelLike` instances for pre-configured models
+:::
+
+The middleware works by:
+
+1. When the primary model fails, the first fallback model is tried
+2. If that fails, the next fallback model is attempted
+3. This continues until a model succeeds or all fallbacks are exhausted
+4. If all models fail, the original error from the last attempt is raised
+
 ## Custom Middleware
 
 Middleware for agents are subclasses of `AgentMiddleware`, which implement one or more of its hooks.
 
-`AgentMiddleware` currently provides three different ways to modify the core agent loop:
+`AgentMiddleware` currently provides four different ways to modify the core agent loop:
 
 :::python
 - `before_model`: runs before the model is run. Can update state or exit early with a jump.
 - `modify_model_request`: runs before the model is run. Cannot update state or exit early with a jump.
+- `retry_model_request`: runs when the model call fails. Can modify the request to retry or return None to propagate the error.
 - `after_model`: runs after the model is run. Can update state or exit early with a jump.
 :::
 :::js
 - `beforeModel`: runs before the model is run. Can update state or exit early with a jump.
 - `modifyModelRequest`: runs before the model is run. Cannot update state or exit early with a jump.
+- `retryModelRequest`: runs when the model call fails. Can modify the request to retry or return undefined to propagate the error.
 - `afterModel`: runs after the model is run. Can update state or exit early with a jump.
 :::
 
@@ -602,6 +697,95 @@ const myMiddleware = createMiddleware({
       ...request,
       tools: ["weatherTool", "calculatorTool"], // Array of tool names
     };
+  },
+});
+```
+:::
+
+:::python
+### `retry_model_request`
+:::
+:::js
+### `retryModelRequest`
+:::
+
+Runs when a model call fails with an exception. This hook allows middleware to handle errors and optionally retry the model call with modified parameters.
+
+:::python
+The `retry_model_request` hook is called with the following parameters:
+- `error` (`Exception`): The exception that occurred during model invocation
+- `request` (`ModelRequest`): The original model request that failed
+- `state` (`AgentState`): The current agent state
+- `runtime` (`Runtime`): The runtime context
+- `attempt` (`int`): The current attempt number (1-indexed)
+
+The hook can return:
+- `ModelRequest`: A modified request to retry with
+- `None`: Propagate the error (re-raise the exception)
+:::
+
+:::js
+The `retryModelRequest` hook is called with the following parameters:
+- `error` (`Error`): The exception that occurred during model invocation
+- `request` (`ModelRequest`): The original model request that failed
+- `state` (agent state): The current agent state
+- `runtime` (`Runtime`): The runtime context
+- `attempt` (`number`): The current attempt number (1-indexed)
+
+The hook can return:
+- `ModelRequest`: A modified request to retry with
+- `undefined`: Propagate the error (re-raise the exception)
+:::
+
+**Key behaviors:**
+
+- Multiple middleware with `retryModelRequest` are processed in order
+- The first middleware that returns a modified request will trigger a retry
+- Subsequent middleware in the chain are not called for that attempt
+- If no middleware wants to retry, the original error is propagated
+- There's a hard limit of 100 attempts to prevent infinite loops
+
+Signature:
+:::python
+```python
+from langchain.agents.middleware import AgentState, ModelRequest, AgentMiddleware
+from langgraph.runtime import Runtime
+
+class RetryMiddleware(AgentMiddleware):
+    def retry_model_request(
+        self,
+        error: Exception,
+        request: ModelRequest,
+        state: AgentState,
+        runtime: Runtime,
+        attempt: int
+    ) -> ModelRequest | None:
+        # Example: Switch to a fallback model on the first retry
+        if attempt == 1:
+            # Modify the request to use a different model
+            request.model = "openai:gpt-4o-mini"
+            return request
+        # Don't retry after first attempt
+        return None
+```
+:::
+:::js
+```typescript
+import { createMiddleware } from "langchain";
+
+const retryMiddleware = createMiddleware({
+  name: "RetryMiddleware",
+  retryModelRequest: (error, request, state, runtime, attempt) => {
+    // Example: Switch to a fallback model on the first retry
+    if (attempt === 1) {
+      // Modify the request to use a different model
+      return {
+        ...request,
+        model: "openai:gpt-4o-mini",
+      };
+    }
+    // Don't retry after first attempt
+    return undefined;
   },
 });
 ```
@@ -897,11 +1081,13 @@ You can provide multiple middlewares. They are executed in the following logic:
 :::python
 **`before_model`**: Are run in the order they are passed in. If an earlier middleware exits early, then following middleware are not run
 **`modify_model_request`**: Are run in the order they are passed in.
+**`retry_model_request`**: Are run in the order they are passed in when a model call fails. The first middleware that returns a modified request triggers a retry, and subsequent middleware are not called for that attempt.
 **`after_model`**: Are run in the _reverse_ order that they are passed in. If an earlier middleware exits early, then following middleware are not run
 :::
 :::js
 **`beforeModel`**: Are run in the order they are passed in. If an earlier middleware exits early, then following middleware are not run
 **`modifyModelRequest`**: Are run in the order they are passed in.
+**`retryModelRequest`**: Are run in the order they are passed in when a model call fails. The first middleware that returns a modified request triggers a retry, and subsequent middleware are not called for that attempt.
 **`afterModel`**: Are run in the _reverse_ order that they are passed in. If an earlier middleware exits early, then following middleware are not run
 :::
 
