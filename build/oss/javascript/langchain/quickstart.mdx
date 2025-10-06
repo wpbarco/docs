@@ -169,7 +169,7 @@ Let's walk through each step:
 
     </Step>
     <Step title="Configure your model">
-        Set up your [language model](/oss/javascript/langchain/models) with the right parameters for your use case:
+        Set up your [language model](/oss/javascript/langchain/models) with the right [parameters](/oss/javascript/langchain/models#parameters) for your use case:
 
 
 
@@ -178,7 +178,7 @@ Let's walk through each step:
 
         const model = await initChatModel(
           "anthropic:claude-3-7-sonnet-latest",
-          { temperature: 0 }
+          { temperature: 0.5, timeout: 10, maxTokens: 1000 }
         );
         ```
 
