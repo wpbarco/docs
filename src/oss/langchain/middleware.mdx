@@ -734,7 +734,8 @@ The hook can return:
 Signature:
 :::python
 ```python
-from langchain.agents.middleware import AgentState, ModelRequest, AgentMiddleware
+from langchain.agents import AgentState
+from langchain.agents.middleware import ModelRequest, AgentMiddleware
 from langgraph.runtime import Runtime
 
 class RetryMiddleware(AgentMiddleware):
@@ -1149,7 +1150,7 @@ Use middleware to dynamically select which tools are available at runtime based 
 
 ```python
 from langchain.agents import create_agent
-from langchain.agents.middleware import AgentState, ModelRequest, modify_model_request
+from langchain.agents.middleware.types import AgentState, ModelRequest, modify_model_request
 
 @modify_model_request
 def tool_selector(state: AgentState, request: ModelRequest) -> ModelRequest:
