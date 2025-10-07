@@ -458,14 +458,7 @@ const agent = createAgent({
 
 ### Model fallback
 
-The `ModelFallbackMiddleware` provides automatic model fallback on errors. This middleware attempts to retry failed model calls with alternative models in sequence. When a model call fails, it tries the next model in the fallback list until either a call succeeds or all models have been exhausted.
-
-**Key features:**
-
-- Automatic retry with fallback models when primary model fails
-- Sequential fallback through multiple models
-- Preserves original request parameters while switching models
-- Configurable with any combination of model strings or instances
+The `ModelFallbackMiddleware` provides automatic model fallback on errors. This middleware attempts to retry failed model calls with alternative models in sequence. When a model call fails, it tries the next model in the fallback list until either a call succeeds or all models have been exhausted. If all fallback models fail, the original error from the last attempt is raised.
 
 **Use cases:**
 
@@ -538,13 +531,6 @@ Models can be specified as:
 - Model name strings (e.g., `"openai:gpt-4o-mini"`)
 - `LanguageModelLike` instances for pre-configured models
 :::
-
-The middleware works by:
-
-1. When the primary model fails, the first fallback model is tried
-2. If that fails, the next fallback model is attempted
-3. This continues until a model succeeds or all fallbacks are exhausted
-4. If all models fail, the original error from the last attempt is raised
 
 ## Custom middleware
 
