@@ -6,7 +6,7 @@ import AlphaCallout from '/snippets/alpha-lg-callout.mdx';
 
 <AlphaCallout />
 
-This error is raised in the prebuilt [create_react_agent](https://langchain-ai.github.io/langgraph/reference/prebuilt/#langgraph.prebuilt.chat_agent_executor.create_react_agent) when the `call_model` graph node receives a malformed list of messages. Specifically, it is malformed when there are `AIMessages` with `tool_calls` (LLM requesting to call a tool) that do not have a corresponding `ToolMessage` (result of a tool invocation to return to the LLM).
+This error is raised in the prebuilt @[create_agent][create_agent] when the `call_model` graph node receives a malformed list of messages. Specifically, it is malformed when there are `AIMessages` with `tool_calls` (LLM requesting to call a tool) that do not have a corresponding `ToolMessage` (result of a tool invocation to return to the LLM).
 
 
 
@@ -18,7 +18,7 @@ There could be a few reasons you're seeing this error:
   and you invoked it with an input that is not None or a ToolMessage,
   e.g. `graph.invoke({'messages': [HumanMessage(...)]}, config)`.
   This interrupt could have been triggered in one of the following ways:
-    * You manually set `interrupt_before = ['tools']` in `create_react_agent`
+    * You manually set `interrupt_before = ['tools']` in `create_agent`
   * One of the tools raised an error that wasn't handled by the [ToolNode](https://langchain-ai.github.io/langgraph/reference/agents/#langgraph.prebuilt.tool_node.ToolNode) (`"tools"`)
 
 
