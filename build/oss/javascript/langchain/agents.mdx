@@ -14,7 +14,7 @@ Agents combine language models with tools to create systems that can reason abou
 
 ReAct frames an agent's behavior as an interleaving of `thought` -> `action` -> `observation` steps, where the model writes out its reasoning, picks a tool, sees the tool's result, and then repeats. ReAct reduces hallucinations and makes the decision process auditable: the agent can form hypotheses (`thought`), test them with tools (`action`), and update its plan based on feedback (`observation`).
 
-A ReAct loop runs until a stop condition - i.e., when the model emits a final answer or a max-iterations limit is reached.
+A ReAct loop runs until a stop condition - i.e., when the model emits a final answer or an iteration limit is reached.
 
 ```mermaid
 %%{
@@ -47,7 +47,9 @@ graph TD
 
 <Info>
 
-`create_agent()` builds a **graph**-based agent runtime using [LangGraph](/oss/javascript/langgraph/overview). A graph consists of nodes (steps) and edges (connections) that define how your agent processes information. The agent moves through this graph, executing nodes like the model node (which calls the model), the tools node (which executes tools), or pre/post model hook nodes. Learn more about the [graph API](/oss/javascript/langgraph/graph-api).
+`create_agent()` builds a **graph**-based agent runtime using [LangGraph](/oss/javascript/langgraph/overview). A graph consists of nodes (steps) and edges (connections) that define how your agent processes information. The agent moves through this graph, executing nodes like the model node (which calls the model), the tools node (which executes tools), or pre/post model hook nodes.
+
+Learn more about the [graph API](/oss/javascript/langgraph/graph-api).
 
 </Info>
 
@@ -59,7 +61,7 @@ The [model](/oss/javascript/langchain/models) is the reasoning engine of your ag
 
 #### Static model
 
-Static models are configured once when creating the agent and remain unchanged throughout execution. This is the most common and straightforward approach. To initialize a static model from a model identifier string:
+Static models are configured once when creating the agent and remain unchanged throughout execution. This is the most common and straightforward approach. To initialize a static model from a <Tooltip tip="A string that follows the format `provider:model` (e.g. openai:gpt-5)">model identifier string</Tooltip>:
 
 
 ```ts wrap
@@ -130,21 +132,21 @@ For model configuration details, see [Models](/oss/javascript/langchain/models).
 
 Tools give agents the ability to take actions. Agents go beyond simple model-only tool binding by facilitating:
 
-- Multiple tool calls in sequence triggered by a single prompt
+- Multiple tool calls in sequence (triggered by a single prompt)
 - Parallel tool calls when appropriate
-- Dynamic tool selection based on results
+- Dynamic tool selection based on previous results
 - Tool retry logic and error handling
 - State persistence across tool calls
 
 Tools can be provided to the agent as either:
 
-1. A list of tools (created with `tool` function, or object that represents a builtin provider tool)
-2. A configured `ToolNode`
+1. A list of tools (created with @[`tool`][@tool] function, or object that represents a built-in provider tool)
+2. A configured [`ToolNode`](https://langchain-ai.github.io/langgraphjs/reference/classes/langgraph_prebuilt.ToolNode.html)
 
 
 #### Pass a list of tools
 
-Passing a list of tools to the agent will create a `ToolNode` under the hood. This is the simplest way to set up a tool-calling agent:
+Passing a list of tools to the agent will create a [`ToolNode`](https://langchain-ai.github.io/langgraphjs/reference/classes/langgraph_prebuilt.ToolNode.html) under the hood. This is the simplest way to set up a tool-calling agent:
 
 
 ```ts wrap
@@ -200,7 +202,7 @@ If an empty tool list is provided, the agent will consist of a single LLM node w
 
 #### Pass a configured ToolNode
 
-Alternatively, you can create a `ToolNode` directly and pass it to the agent. This allows you to customize the tool node's behavior, such as handling tool errors:
+Alternatively, you can create a [`ToolNode`](https://langchain-ai.github.io/langgraphjs/reference/classes/langgraph_prebuilt.ToolNode.html) directly and pass it to the agent. This allows you to customize the tool node's behavior, such as handling tool errors:
 
 
 ```ts wrap
@@ -218,7 +220,7 @@ const toolNode = new ToolNode([search, calculate], {
 
 
 <Tip>
-To learn more about error handling in `ToolNode`, see [ToolNode](/oss/javascript/langchain/tools#toolnode).
+To learn more about error handling in [`ToolNode`](https://langchain-ai.github.io/langgraphjs/reference/classes/langgraph_prebuilt.ToolNode.html), see [ToolNode](/oss/javascript/langchain/tools#toolnode).
 </Tip>
 
 #### Tool use in the ReAct loop
@@ -234,9 +236,9 @@ Prompt: Identify the current most popular wireless headphones and verify availab
 Find the most popular wireless headphones right now and check if they're in stock
 ```
 
-*Reasoning*: "Popularity is time-sensitive, I need to use the provided search tool."
+**Reasoning**: "Popularity is time-sensitive, I need to use the provided search tool."
 
-*Acting*: Call `search_products("wireless headphones")`
+**Acting**: Call `search_products("wireless headphones")`
 
 ```
 ================================== Ai Message ==================================
@@ -252,9 +254,9 @@ Tool Calls:
 Found 5 products matching "wireless headphones". Top 5 results: WH-1000XM5, ...
 ```
 
-*Reasoning*: "I need to confirm availability for the top-ranked item before answering."
+**Reasoning**: "I need to confirm availability for the top-ranked item before answering."
 
-*Acting*: Call `check_inventory("WH-1000XM5")`
+**Acting**: Call `check_inventory("WH-1000XM5")`
 
 ```
 ================================== Ai Message ==================================
@@ -270,9 +272,9 @@ Tool Calls:
 Product WH-1000XM5: 10 units in stock
 ```
 
-*Reasoning*: "I have the most popular model and its stock status. I can now answer the user's question."
+**Reasoning**: "I have the most popular model and its stock status. I can now answer the user's question."
 
-*Acting*: Produce final answer
+**Acting**: Produce final answer
 
 ```
 ================================== Ai Message ==================================
@@ -554,7 +556,7 @@ const agent = createAgent({
 </Info>
 
 <Warning>
-If you are returning `messages` in the pre-model hook, you should OVERWRITE the `messages` key by doing the following:
+If you are returning `messages` in the pre-model hook, you should **overwrite the `messages` key** by doing the following:
 
 
 ```ts wrap

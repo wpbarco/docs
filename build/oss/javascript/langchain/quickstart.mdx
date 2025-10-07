@@ -38,7 +38,7 @@ Start by creating a simple agent that can answer questions and call tools.
 
 The agent will have the following components:
 
-- A language model (Claude 3.7 Sonnet)
+- A language model (Claude Sonnet 4.5)
 - A simple tool (weather function)
 - A basic prompt
 - The ability to invoke it with messages
@@ -58,7 +58,7 @@ const getWeather = tool(
 );
 
 const agent = createAgent({
-  model: "anthropic:claude-3-7-sonnet-latest",
+  model: "anthropic:claude-sonnet-4-5-20250929",
   tools: [getWeather],
 });
 
@@ -71,7 +71,7 @@ console.log(
 
 
 <Info>
-    For this example, you will need to set up an [Anthropic](https://www.anthropic.com/) account and get an API key. Then, set the `ANTHROPIC_API_KEY` environment variable in your terminal.
+    For this example, you will need to set up a [Claude (Anthropic)](https://www.anthropic.com/) account and get an API key. Then, set the `ANTHROPIC_API_KEY` environment variable in your terminal.
 </Info>
 
 ## Build a real-world agent
@@ -177,7 +177,7 @@ Let's walk through each step:
         import { initChatModel } from "langchain";
 
         const model = await initChatModel(
-          "anthropic:claude-3-7-sonnet-latest",
+          "anthropic:claude-sonnet-4-5-20250929",
           { temperature: 0.5, timeout: 10, maxTokens: 1000 }
         );
         ```
@@ -212,7 +212,7 @@ Let's walk through each step:
 
         <Info>
             In production, use a persistent checkpointer that saves to a database.
-            See [add and manage memory](/oss/javascript/python/langgraph/add-memory) for more details.
+            See [Add and manage memory](/oss/javascript/langgraph/add-memory#manage-short-term-memory) for more details.
         </Info>
     </Step>
     <Step title="Create and run the agent">
@@ -223,7 +223,7 @@ Let's walk through each step:
         import { createAgent } from "langchain";
 
         const agent = createAgent({
-          model: "anthropic:claude-3-7-sonnet-latest",
+          model: "anthropic:claude-sonnet-4-5-20250929",
           prompt: systemPrompt,
           tools: [getUserLocation, getWeather],
           responseFormat,
@@ -307,7 +307,7 @@ const getUserLocation = tool(
 
 // Configure model
 const model = await initChatModel(
-  "anthropic:claude-3-7-sonnet-latest",
+  "anthropic:claude-sonnet-4-5-20250929",
   { temperature: 0 }
 );
 
@@ -322,7 +322,7 @@ const checkpointer = new MemorySaver();
 
 // Create agent
 const agent = createAgent({
-  model: "anthropic:claude-3-7-sonnet-latest",
+  model: "anthropic:claude-sonnet-4-5-20250929",
   prompt: systemPrompt,
   tools: [getUserLocation, getWeather],
   responseFormat,
