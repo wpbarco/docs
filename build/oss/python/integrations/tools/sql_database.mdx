@@ -151,7 +151,7 @@ We then instantiate the agent:
 ```python
 from langchain.agents import create_agent
 
-agent_executor = create_agent(llm, toolkit.get_tools(), prompt=system_message)
+agent = create_agent(llm, toolkit.get_tools(), system_prompt=system_message)
 ```
 
 And issue it a query:
@@ -159,7 +159,7 @@ And issue it a query:
 ```python
 example_query = "Which country's customers spent the most?"
 
-events = agent_executor.stream(
+events = agent.stream(
     {"messages": [("user", example_query)]},
     stream_mode="values",
 )
@@ -278,7 +278,7 @@ We can also observe the agent recover from an error:
 ```python
 example_query = "Who are the top 3 best selling artists?"
 
-events = agent_executor.stream(
+events = agent.stream(
     {"messages": [("user", example_query)]},
     stream_mode="values",
 )
@@ -411,3 +411,9 @@ Most datawarehouse oriented databases support user-level quota, for limiting res
 ## API reference
 
 For detailed documentation of all SQLDatabaseToolkit features and configurations head to the [API reference](https://python.langchain.com/api_reference/community/agent_toolkits/langchain_community.agent_toolkits.sql.toolkit.SQLDatabaseToolkit.html).
+
+---
+
+<Callout icon="pen-to-square" iconType="regular">
+  [Edit the source of this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/oss/python/integrations/tools/sql_database.mdx)
+</Callout>

@@ -75,3 +75,9 @@ llm = TextGen(model_url=model_url, streaming=True)
 for chunk in llm.stream("Ask 'Hi, how are you?' like a pirate:'", stop=["'", "\n"]):
     print(chunk, end="", flush=True)
 ```
+
+---
+
+<Callout icon="pen-to-square" iconType="regular">
+  [Edit the source of this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/oss/python/integrations/llms/textgen.mdx)
+</Callout>

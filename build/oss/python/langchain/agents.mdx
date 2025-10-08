@@ -297,7 +297,7 @@ def dynamic_prompt(state):
         else "Provide simple, clear explanations."
     )
     return [system_msg] + state["messages"]
-agent = create_agent(model, tools, prompt=dynamic_prompt)
+agent = create_agent(model, tools, system_prompt=dynamic_prompt)
 ```
 </CodeGroup>
 
@@ -623,3 +623,9 @@ for chunk in agent.stream({
 <Tip>
 For more details on streaming, see [Streaming](/oss/python/langchain/streaming).
 </Tip>
+
+---
+
+<Callout icon="pen-to-square" iconType="regular">
+  [Edit the source of this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/oss/langchain/agents.mdx)
+</Callout>

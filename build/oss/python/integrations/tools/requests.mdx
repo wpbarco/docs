@@ -156,13 +156,13 @@ Here is documentation on the API:
 {api_spec}
 """.format(api_spec=api_spec)
 
-agent_executor = create_agent(llm, tools, prompt=system_message)
+agent = create_agent(llm, tools, system_prompt=system_message)
 ```
 
 ```python
 example_query = "Fetch the top two posts. What are their titles?"
 
-events = agent_executor.stream(
+events = agent.stream(
     {"messages": [("user", example_query)]},
     stream_mode="values",
 )
@@ -207,3 +207,9 @@ The titles of the top two posts are:
 ## API reference
 
 For detailed documentation of all API toolkit features and configurations head to the API reference for [RequestsToolkit](https://python.langchain.com/api_reference/community/agent_toolkits/langchain_community.agent_toolkits.openapi.toolkit.RequestsToolkit.html).
+
+---
+
+<Callout icon="pen-to-square" iconType="regular">
+  [Edit the source of this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/oss/python/integrations/tools/requests.mdx)
+</Callout>

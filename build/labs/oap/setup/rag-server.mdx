@@ -33,3 +33,9 @@ Since the RAG server is exposed to the agent as a tool, we recommend setting det
 As mentioned in the Authentication section, we pass the Supabase JWT in the `Authorization` header of the request. Then, inside the LangConnect RAG server, we extract this token and verify it's valid with Supabase.
 
 If it is, we receive back a user ID, which is used to verify each user is *only* able to access their own collections. We do not currently support sharing collections between users.
+
+---
+
+<Callout icon="pen-to-square" iconType="regular">
+  [Edit the source of this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/labs/oap/setup/rag-server.mdx)
+</Callout>

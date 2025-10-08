@@ -172,3 +172,9 @@ Python's contextvars start empty within new threads. Here are two approaches to 
 In this approach, we use `get_current_run_tree()` to obtain the current run tree and pass it to the inner function using the `langsmith_extra` parameter.
 
 Both methods ensure that the inner function calls are correctly aggregated under the initial trace stack, even when executed in separate threads.
+
+---
+
+<Callout icon="pen-to-square" iconType="regular">
+  [Edit the source of this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/langsmith/nest-traces.mdx)
+</Callout>

@@ -58,3 +58,9 @@ modern_treasury_loader = ModernTreasuryLoader("payment_orders")
 index = VectorstoreIndexCreator().from_loaders([modern_treasury_loader])
 modern_treasury_doc_retriever = index.vectorstore.as_retriever()
 ```
+
+---
+
+<Callout icon="pen-to-square" iconType="regular">
+  [Edit the source of this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/oss/python/integrations/document_loaders/modern_treasury.mdx)
+</Callout>

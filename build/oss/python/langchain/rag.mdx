@@ -153,7 +153,7 @@ prompt = (
     "You have access to a tool that retrieves context from a blog post. "
     "Use the tool to help answer user queries."
 )
-agent = create_agent(llm, tools, prompt=prompt)
+agent = create_agent(llm, tools, system_prompt=prompt)
 ```
 
 ```python
@@ -440,7 +440,7 @@ prompt = (
     "You have access to a tool that retrieves context from a blog post. "
     "Use the tool to help answer user queries."
 )
-agent = create_agent(llm, tools, prompt=prompt)
+agent = create_agent(llm, tools, system_prompt=prompt)
 ```
 
 
@@ -559,7 +559,7 @@ def prompt_with_context(state: AgentState) -> list[MessageLikeRepresentation]:
     return [{"role": "system", "content": system_message}, *list(state["messages"])]
 
 
-agent = create_agent(llm, tools=[], prompt=prompt_with_context)
+agent = create_agent(llm, tools=[], system_prompt=prompt_with_context)
 ```
 
 
@@ -656,3 +656,9 @@ incorporate new features and go deeper:
 - Add [long-term memory](/oss/python/langchain/long-term-memory) to support memory across conversational threads
 - Add [structured responses](/oss/python/langchain/structured-output)
 - Deploy your application with [LangGraph platform](/langgraph-platform)
+
+---
+
+<Callout icon="pen-to-square" iconType="regular">
+  [Edit the source of this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/oss/langchain/rag.mdx)
+</Callout>

@@ -114,3 +114,9 @@ chat = ChatOpenAI(temperature=0.9, callbacks=[callback])
 chain = LLMChain(llm=chat, prompt=chat_prompt_template, callbacks=[callback])
 print(chain.run("colorful socks"))
 ```
+
+---
+
+<Callout icon="pen-to-square" iconType="regular">
+  [Edit the source of this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/oss/python/integrations/callbacks/context.mdx)
+</Callout>

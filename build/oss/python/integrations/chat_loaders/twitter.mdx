@@ -28,3 +28,9 @@ messages = [AIMessage(content=t) for t in tweets]
 system_message = {"role": "system", "content": "write a tweet"}
 data = [[system_message, convert_message_to_dict(m)] for m in messages]
 ```
+
+---
+
+<Callout icon="pen-to-square" iconType="regular">
+  [Edit the source of this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/oss/python/integrations/chat_loaders/twitter.mdx)
+</Callout>
