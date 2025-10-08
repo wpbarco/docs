@@ -911,13 +911,13 @@
                 "pages": [
                   "langsmith/prompt-engineering",
                   "langsmith/prompt-engineering-concepts",
-                  "langsmith/prompt-management-best-practices",
                   {
                     "group": "Create and update prompts",
                     "pages": [
                       "langsmith/create-a-prompt",
                       "langsmith/manage-prompts",
                       "langsmith/manage-prompts-programmatically",
+                      "langsmith/prompt-management-best-practices",
                       "langsmith/managing-model-configurations",
                       "langsmith/use-tools",
                       "langsmith/multimodal-content",
