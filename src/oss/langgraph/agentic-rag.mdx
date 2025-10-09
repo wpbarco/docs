@@ -1,9 +1,15 @@
 ---
-title: Build a retrieval agent with LangGraph
-sidebarTitle: Agentic RAG
+title: Build a custom RAG agent
+sidebarTitle: Custom RAG agent
 ---
 
-In this tutorial we will build a retrieval agent. Retrieval agents are useful when you want an LLM to make a decision about whether to retrieve context from a vectorstore or respond to the user directly.
+:::python
+
+## Overview
+
+In this tutorial we will build a [retrieval](/oss/langchain/retrieval) agent using LangGraph.
+
+LangChain offers built-in [agent](/oss/langchain/agents) implementations, implemented using [LangGraph](/oss/langgraph/overview) primitives. If deeper customization is required, agents can be implemented directly in LangGraph. This guide demonstrates an example implementation of a retrieval agent. [Retrieval](/oss/langchain/retrieval) agents are useful when you want an LLM to make a decision about whether to retrieve context from a vectorstore or respond to the user directly.
 
 By the end of the tutorial we will have done the following:
 
@@ -12,6 +18,13 @@ By the end of the tutorial we will have done the following:
 3. Build an agentic RAG system that can decide when to use the retriever tool.
 
 ![Hybrid RAG](/images/langgraph-hybrid-rag-tutorial.png)
+
+### Concepts
+
+We will cover the following concepts:
+
+- [Retrieval](/oss/langchain/retrieval) using [document loaders](/oss/integrations/document_loaders), [text splitters](/oss/integrations/splitters), [embeddings](/oss/integrations/text_embedding), and [vector stores](/oss/integrations/vectorstores)
+- The LangGraph [Graph API](/oss/langgraph/graph-api), including state, nodes, edges, and conditional edges.
 
 ## Setup
 
