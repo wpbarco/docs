@@ -110,12 +110,10 @@ lines of code. See below for the full code snippet:
 
 ```typescript
 import "cheerio";
-import { createAgent } from "langchain";
+import { createAgent, tool } from "langchain";
 import { CheerioWebBaseLoader } from "@langchain/community/document_loaders/web/cheerio";
-import { tool } from "@langchain/core/tools";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { z } from "zod";
-
 
 // Load and chunk contents of blog
 const pTagSelector = "p";
@@ -129,10 +127,10 @@ const cheerioLoader = new CheerioWebBaseLoader(
 const docs = await cheerioLoader.load();
 
 const splitter = new RecursiveCharacterTextSplitter({
-  chunkSize: 1000, chunkOverlap: 200
+  chunkSize: 1000,
+  chunkOverlap: 200
 });
 const allSplits = await splitter.splitDocuments(docs);
-
 
 // Index chunks
 await vectorStore.addDocuments(allSplits)
@@ -158,7 +156,7 @@ const retrieve = tool(
   }
 );
 
-const agent = createAgent({ llm: llm, tools: [retrieve] });
+const agent = createAgent({ model: "openai:gpt-5", tools: [retrieve] });
 ```
 ```typescript
 let inputMessage = `What is Task Decomposition?`;
@@ -210,10 +208,7 @@ Indexing commonly works as follows:
 We need to first load the blog post contents. We can use
 [DocumentLoaders](/oss/javascript/langchain/retrieval#document_loaders)
 for this, which are objects that load in data from a source and return a
-list of
-[Document](https://python.langchain.com/api_reference/core/documents/langchain_core.documents.base.Document.html)
-objects.
-
+list of [Document](https://v03.api.js.langchain.com/classes/_langchain_core.documents.Document.html) objects.
 
 
 ```typescript
@@ -249,7 +244,7 @@ Building agents with LLM (large language model) as its core controller is...
 
 - [Integrations](/oss/javascript/integrations/document_loaders/): 160+
   integrations to choose from.
-- [Interface](https://python.langchain.com/api_reference/core/document_loaders/langchain_core.document_loaders.base.BaseLoader.html):
+- [Interface](https://v03.api.js.langchain.com/classes/_langchain_core.document_loaders_base.BaseDocumentLoader.html):
   API reference for the base interface.
 
 ### Splitting documents
@@ -370,26 +365,32 @@ const retrieve = tool(
   }
 );
 ```
-
-
 <Tip>
 
-Here we use the [tool decorator](https://python.langchain.com/api_reference/core/tools/langchain_core.tools.convert.tool.html)
-to configure the tool to attach raw documents as [artifacts](/oss/javascript/langchain/messages#param-artifact) to
-each [ToolMessage](/oss/javascript/langchain/messages#tool-message). This will let us access document metadata in our application,
+Here we specify the `responseFormat` to `content_and_artifact` to confiugre the tool to attach raw documents as [artifacts](/oss/javascript/langchain/messages#param-artifact)
+to each [ToolMessage](/oss/javascript/langchain/messages#tool-message). This will let us access document metadata in our application,
 separate from the stringified representation that is sent to the model.
 
 </Tip>
 
 
 
+
 Given our tool, we can construct the agent:
 
+
+Given our tool, we can construct the agent:
 
 ```typescript
 import { createAgent } from "langchain";
 
-const agent = createAgent({ llm: llm, tools: [retrieve] });
+const tools = [retrieve];
+const systemPrompt = new SystemMessage(
+    "You have access to a tool that retrieves context from a blog post. " +
+    "Use the tool to help answer user queries."
+)
+
+const agent = createAgent({ model: "openai:gpt-5", tools, systemPrompt });
 ```
 
 
@@ -402,11 +403,12 @@ Once you get the answer, look up common extensions of that method.`;
 
 let agentInputs = { messages: [{ role: "user", content: inputMessage }] };
 
-for await (const step of await agent.stream(agentInputs, {
+const stream = await agent.stream(agentInputs, {
   streamMode: "values",
-})) {
+});
+for await (const step of stream) {
   const lastMessage = step.messages[step.messages.length - 1];
-  prettyPrint(lastMessage);
+  console.log(`[${lastMessage.role}]: ${lastMessage.content}`);
   console.log("-----\n");
 }
 ```
@@ -485,29 +487,31 @@ prompt:
 
 
 ```typescript
-import { createAgent } from "langchain";
+import { createAgent, dynamicSystemPromptMiddleware } from "langchain";
 import { SystemMessage } from "@langchain/core/messages";
 
 const agent = createAgent({
   model,
   tools: [],
-  prompt: async (state) => {
-    const lastQuery = state.messages[state.messages.length - 1].content;
+  middleware: [
+    dynamicSystemPromptMiddleware(async (state) => {
+        const lastQuery = state.messages[state.messages.length - 1].content;
 
-    const retrievedDocs = await vectorStore.similaritySearch(lastQuery, 2);
+        const retrievedDocs = await vectorStore.similaritySearch(lastQuery, 2);
 
-    const docsContent = retrievedDocs
-      .map((doc) => doc.pageContent)
-      .join("\n\n");
+        const docsContent = retrievedDocs
+        .map((doc) => doc.pageContent)
+        .join("\n\n");
 
-    // Build system message
-    const systemMessage = new SystemMessage(
-      `You are a helpful assistant. Use the following context in your response:\n\n${docsContent}`
-    );
+        // Build system message
+        const systemMessage = new SystemMessage(
+        `You are a helpful assistant. Use the following context in your response:\n\n${docsContent}`
+        );
 
-    // Return system + existing messages
-    return [systemMessage, ...state.messages];
-  },
+        // Return system + existing messages
+        return [systemMessage, ...state.messages];
+    })
+  ]
 });
 ```
 
@@ -519,9 +523,10 @@ let inputMessage = `What is Task Decomposition?`;
 
 let chainInputs = { messages: [{ role: "user", content: inputMessage }] };
 
-for await (const step of await agent.stream(chainInputs, {
+const stream = await agent.stream(chainInputs, {
   streamMode: "values",
-})) {
+})
+for await (const step of stream) {
   const lastMessage = step.messages[step.messages.length - 1];
   prettyPrint(lastMessage);
   console.log("-----\n");
@@ -535,7 +540,64 @@ This is a fast and effective method for simple queries in constrained settings, 
 we typically do want to run user queries through semantic search to pull additional
 context.
 
+<Accordion title="Returning source documents">
 
+The above [RAG chain](#rag-chains) incorporates retrieved context into a single system
+message for that run.
+
+As in the [agentic RAG](#rag-agents) formulation, we sometimes want to include raw
+source documents in the application state to have access to document metadata. We can
+do this for the two-step chain case by:
+
+1. Adding a key to the state to store the retrieved documents
+2. Adding a new node via a [pre-model hook](/oss/javascript/langchain/agents#pre-model-hook) to
+populate that key (as well as inject the context).
+
+
+```typescript
+import { createMiddleware, Document, createAgent } from "langchain";
+import { MessagesZodSchema } from "@langchain/langgraph";
+
+const StateSchema = z.object({
+  messages: MessagesZodSchema,
+  context: z.array(z.custom<Document>()),
+})
+
+const retrieveDocumentsMiddleware = createMiddleware({
+  stateSchema: StateSchema,
+  beforeModel: async (state) => {
+    const lastMessage = state.messages[state.messages.length - 1].content;
+    const retrievedDocs = await vectorStore.similaritySearch(lastMessage, 2);
+
+    const docsContent = retrievedDocs
+      .map((doc) => doc.pageContent)
+      .join("\n\n");
+
+    const augmentedMessageContent = [
+        ...lastMessage.content,
+        { type: "text", text: `Use the following context to answer the query:\n\n${docsContent}` }
+    ]
+
+    // Below we augment each input message with context, but we could also
+    // modify just the system message, as before.
+    return {
+      messages: [{
+        ...lastMessage,
+        content: augmentedMessageContent,
+      }]
+      context: retrievedDocs,
+    }
+  },
+});
+
+const agent = createAgent({
+  model,
+  tools: [],
+  middleware: [retrieveDocumentsMiddleware],
+});
+```
+
+</Accordion>
 
 
 ## Next steps

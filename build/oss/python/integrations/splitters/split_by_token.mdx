@@ -16,7 +16,7 @@ We can use `tiktoken` to estimate tokens used. It will probably be more accurate
 1. How the text is split: by character passed in.
 2. How the chunk size is measured: by `tiktoken` tokenizer.
 
-[CharacterTextSplitter](https://python.langchain.com/api_reference/text_splitters/character/langchain_text_splitters.character.CharacterTextSplitter.html), [RecursiveCharacterTextSplitter](https://python.langchain.com/api_reference/text_splitters/character/langchain_text_splitters.character.RecursiveCharacterTextSplitter.html), and [TokenTextSplitter](https://python.langchain.com/api_reference/text_splitters/base/langchain_text_splitters.base.TokenTextSplitter.html) can be used with `tiktoken` directly.
+@[CharacterTextSplitter], @[RecursiveCharacterTextSplitter], and @[TokenTextSplitter] can be used with `tiktoken` directly.
 
 
 ```python
@@ -32,7 +32,7 @@ with open("state_of_the_union.txt") as f:
     state_of_the_union = f.read()
 ```
 
-To split with a [CharacterTextSplitter](https://python.langchain.com/api_reference/text_splitters/character/langchain_text_splitters.character.CharacterTextSplitter.html) and then merge chunks with `tiktoken`, use its `.from_tiktoken_encoder()` method. Note that splits from this method can be larger than the chunk size measured by the `tiktoken` tokenizer.
+To split with a @[CharacterTextSplitter] and then merge chunks with `tiktoken`, use its `.from_tiktoken_encoder()` method. Note that splits from this method can be larger than the chunk size measured by the `tiktoken` tokenizer.
 
 The `.from_tiktoken_encoder()` method takes either `encoding_name` as an argument (e.g. `cl100k_base`), or the `model_name` (e.g. `gpt-4`). All additional arguments like `chunk_size`, `chunk_overlap`, and `separators` are used to instantiate `CharacterTextSplitter`:
 
@@ -85,6 +85,9 @@ print(texts[0])
 Madam Speaker, Madam Vice President, our
 ```
 Some written languages (e.g. Chinese and Japanese) have characters which encode to 2 or more tokens. Using the `TokenTextSplitter` directly can split the tokens for a character between two chunks causing malformed Unicode characters. Use `RecursiveCharacterTextSplitter.from_tiktoken_encoder` or `CharacterTextSplitter.from_tiktoken_encoder` to ensure chunks contain valid Unicode strings.
+
+
+
 
 ## spaCy
 
@@ -402,5 +405,5 @@ With a duty to one another to the American people to the Constitution.
 ---
 
 <Callout icon="pen-to-square" iconType="regular">
-  [Edit the source of this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/oss/python/integrations/splitters/split_by_token.mdx)
+  [Edit the source of this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/oss/integrations/splitters/split_by_token.mdx)
 </Callout>

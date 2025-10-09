@@ -225,10 +225,7 @@ Indexing commonly works as follows:
 We need to first load the blog post contents. We can use
 [DocumentLoaders](/oss/python/langchain/retrieval#document_loaders)
 for this, which are objects that load in data from a source and return a
-list of
-[Document](https://python.langchain.com/api_reference/core/documents/langchain_core.documents.base.Document.html)
-objects.
-
+list of [Document](https://python.langchain.com/api_reference/core/documents/langchain_core.documents.base.Document.html) objects.
 
 In this case we'll use the
 [WebBaseLoader](/oss/python/integrations/document_loaders/web_base),
@@ -406,20 +403,20 @@ def retrieve_context(query: str):
     return serialized, retrieved_docs
 ```
 
-
-
 <Tip>
 
-Here we use the [tool decorator](https://python.langchain.com/api_reference/core/tools/langchain_core.tools.convert.tool.html)
+Here we use the @[tool decorator][tool]
 to configure the tool to attach raw documents as [artifacts](/oss/python/langchain/messages#param-artifact) to
 each [ToolMessage](/oss/python/langchain/messages#tool-message). This will let us access document metadata in our application,
 separate from the stringified representation that is sent to the model.
 
 </Tip>
 
+
+
 <Tip>
 Retrieval tools are not limited to a single string `query` argument, as in the above example. You can
-force the LLM to specify additional search parameters by adding arguments— for example, a category:
+force the LLM to specify additional search parameters by adding arguments— for example, a category:
 
 ```python
 from typing import Literal
@@ -605,45 +602,42 @@ populate that key (as well as inject the context).
 
 ```python
 from langchain_core.documents import Document
-
-
-def retrieve_documents(state: AgentState):
-    """Inject context into state messages."""
-    last_message = state["messages"][-1]
-    retrieved_docs = vector_store.similarity_search(last_message.text)
-
-    docs_content = "\n\n".join(doc.page_content for doc in retrieved_docs)
-
-    # Below we augment each input message with context, but we could also
-    # modify just the system message, as before.
-    augmented_message_content = (
-        f"{last_message.text}\n\n"
-        "Use the following context to answer the query:\n"
-        f"{docs_content}"
-    )
-    return {
-        "messages": [
-            last_message.model_copy(
-                update={"content": augmented_message_content}
-            )
-        ],
-        "context": retrieved_docs,
-    }
+from langchain.agents.middleware import AgentMiddleware, AgentState
+from langchain_core.messages import AIMessage
 
 
 class State(AgentState):
     context: list[Document]
 
 
+class RetrieveDocumentsMiddleware(AgentMiddleware[State]):
+    def before_model(self, state: AgentState) -> dict[str, Any] | None:
+        last_message = state["messages"][-1]
+        retrieved_docs = vector_store.similarity_search(last_message.text)
+
+        docs_content = "\n\n".join(doc.page_content for doc in retrieved_docs)
+
+        augmented_message_content = (
+            f"{last_message.text}\n\n"
+            "Use the following context to answer the query:\n"
+            f"{docs_content}"
+        )
+        return {
+            "messages": [last_message.model_copy(update={"content": augmented_message_content})],
+            "context": retrieved_docs,
+        }
+
+
 agent = create_agent(
     llm,
     tools=[],
-    pre_model_hook=retrieve_documents,
+    middleware=[RetrieveDocumentsMiddleware()],
     state_schema=State,
 )
 ```
-</Accordion>
 
+
+</Accordion>
 
 
 ## Next steps

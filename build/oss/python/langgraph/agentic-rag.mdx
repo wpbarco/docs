@@ -3,7 +3,7 @@ title: Build a retrieval agent with LangGraph
 sidebarTitle: Agentic RAG
 ---
 
-In this tutorial we will build a [retrieval agent](https://python.langchain.com/docs/tutorials/qa_chat_history). Retrieval agents are useful when you want an LLM to make a decision about whether to retrieve context from a vectorstore or respond to the user directly.
+In this tutorial we will build a retrieval agent. Retrieval agents are useful when you want an LLM to make a decision about whether to retrieve context from a vectorstore or respond to the user directly.
 
 By the end of the tutorial we will have done the following:
 
@@ -34,6 +34,9 @@ def _set_env(key: str):
 
 _set_env("OPENAI_API_KEY")
 ```
+
+
+
 
 <Tip>
   Sign up for LangSmith to quickly spot issues and improve the performance of your LangGraph projects. [LangSmith](https://docs.smith.langchain.com) lets you use trace data to debug, test, and monitor your LLM apps built with LangGraph.
@@ -71,6 +74,9 @@ _set_env("OPENAI_API_KEY")
   doc_splits[0].page_content.strip()
   ```
 
+
+
+
 ## 2. Create a retriever tool
 
 Now that we have our split documents, we can index them into a vector store that we'll use for semantic search.
@@ -100,6 +106,9 @@ Now that we have our split documents, we can index them into a vector store that
   retriever_tool.invoke({"query": "types of reward hacking"})
   ```
 
+
+
+
 ## 3. Generate query
 
 Now we will start building components ([nodes](/oss/python/langgraph/graph-api#nodes) and [edges](/oss/python/langgraph/graph-api#edges)) for our agentic RAG graph.
@@ -111,7 +120,7 @@ Note that the components will operate on the [`MessagesState`](/oss/python/langg
   from langgraph.graph import MessagesState
   from langchain.chat_models import init_chat_model
 
-  response_model = init_chat_model("openai:gpt-4.1", temperature=0)
+  response_model = init_chat_model("openai:gpt-4o", temperature=0)
 
 
   def generate_query_or_respond(state: MessagesState):
@@ -157,6 +166,9 @@ Note that the components will operate on the [`MessagesState`](/oss/python/langg
       query: types of reward hacking
   ```
 
+
+
+
 ## 4. Grade documents
 
 1. Add a [conditional edge](/oss/python/langgraph/graph-api#conditional-edges) — `grade_documents` — to determine whether the retrieved documents are relevant to the question. We will use a model with a structured output schema `GradeDocuments` for document grading. The `grade_documents` function will return the name of the node to go to based on the grading decision (`generate_answer` or `rewrite_question`):
@@ -181,7 +193,7 @@ Note that the components will operate on the [`MessagesState`](/oss/python/langg
       )
 
 
-  grader_model = init_chat_model("openai:gpt-4.1", temperature=0)
+  grader_model = init_chat_model("openai:gpt-4o", temperature=0)
 
 
   def grade_documents(
@@ -264,6 +276,9 @@ Note that the components will operate on the [`MessagesState`](/oss/python/langg
   grade_documents(input)
   ```
 
+
+
+
 ## 5. Rewrite question
 
 1. Build the `rewrite_question` node. The retriever tool can return potentially irrelevant documents, which indicates a need to improve the original user question. To do so, we will call the `rewrite_question` node:
@@ -318,6 +333,9 @@ Note that the components will operate on the [`MessagesState`](/oss/python/langg
   ```
   What are the different types of reward hacking described by Lilian Weng, and how does she explain them?
   ```
+
+
+
 
 ## 6. Generate an answer
 
@@ -380,7 +398,12 @@ Note that the components will operate on the [`MessagesState`](/oss/python/langg
   Lilian Weng categorizes reward hacking into two types: environment or goal misspecification, and reward tampering. She considers reward hacking as a broad concept that includes both of these categories. Reward hacking occurs when an agent exploits flaws or ambiguities in the reward function to achieve high rewards without performing the intended behaviors.
   ```
 
+
+
+
 ## 7. Assemble the graph
+
+Now we'll assemble all the nodes and edges into a complete graph:
 
 * Start with a `generate_query_or_respond` and determine if we need to call `retriever_tool`
 * Route to next step using `tools_condition`:
@@ -440,7 +463,12 @@ display(Image(graph.get_graph().draw_mermaid_png()))
 
 ![Graph](/images/agentic-rag-output.png)
 
+
+
+
 ## 8. Run the agentic RAG
+
+Now let's test the complete graph by running it with a question:
 
 ```python
 for chunk in graph.stream(
