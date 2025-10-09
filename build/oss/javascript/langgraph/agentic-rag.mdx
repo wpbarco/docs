@@ -1,23 +1,27 @@
 ---
-title: Build a retrieval agent with LangGraph
-sidebarTitle: Agentic RAG
+title: Build a custom RAG agent
+sidebarTitle: Custom RAG agent
 ---
 
-In this tutorial we will build a retrieval agent. Retrieval agents are useful when you want an LLM to make a decision about whether to retrieve context from a vectorstore or respond to the user directly.
+python
+```python
+%%capture --no-stderr
+%pip install -U --quiet langgraph "langchain[openai]" langchain-community langchain-text-splitters
+```
 
-By the end of the tutorial we will have done the following:
-
-1. Fetch and preprocess documents that will be used for retrieval.
-2. Index those documents for semantic search and create a retriever tool for the agent.
-3. Build an agentic RAG system that can decide when to use the retriever tool.
-
-![Hybrid RAG](/images/langgraph-hybrid-rag-tutorial.png)
-
-## Setup
-
-Let's download the required packages and set our API keys:
+```python
+import getpass
+import os
 
 
+def _set_env(key: str):
+    if key not in os.environ:
+        os.environ[key] = getpass.getpass(f"{key}:")
+
+
+_set_env("OPENAI_API_KEY")
+```
+:::
 
 <CodeGroup>
 ```bash npm
