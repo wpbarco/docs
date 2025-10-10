@@ -129,7 +129,9 @@ class Context:
 
 class ExpertiseBasedToolMiddleware(Middleware):
     def wrap_model_call(
-        self, request: ModelRequest, handler: ModelRequestHandler
+        self,
+        request: ModelRequest,
+        handler: ModelRequestHandler
     ) -> AIMessage:
         user_level = request.runtime.context.user_expertise
 
