@@ -151,7 +151,10 @@ class ExpertiseBasedToolMiddleware(Middleware):
 agent = create_agent(
     model="anthropic:claude-sonnet-4-5-20250929",
     tools=[
-        simple_search, advanced_search, basic_calculator, data_analysis
+        simple_search,
+        advanced_search,
+        basic_calculator,
+        data_analysis
     ],
     middleware=[ExpertiseBasedToolMiddleware()],
     context_schema=Context
