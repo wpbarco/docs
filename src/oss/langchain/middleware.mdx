@@ -11,37 +11,7 @@ Middleware provides a way to more tightly control what happens inside the agent.
 
 The core agent loop involves calling a `model`, letting it choose `tools` to execute, and then finishing when it calls no more tools.
 
-
-<Card>
-```mermaid
-%%{
-  init: {
-    "fontFamily": "monospace",
-    "flowchart": {
-      "curve": "curve"
-    },
-    "themeVariables": {"edgeLabelBackground": "transparent"}
-  }
-}%%
-graph TD
-  %% Outside the agent
-  QUERY([input])
-  LLM{model}
-  TOOL(tools)
-  ANSWER([output])
-
-  %% Main flows (no inline labels)
-  QUERY --> LLM
-  LLM --"action"--> TOOL
-  TOOL --"observation"--> LLM
-  LLM --"finish"--> ANSWER
-
-  classDef blueHighlight fill:#0a1c25,stroke:#0a455f,color:#bae6fd;
-  classDef greenHighlight fill:#0b1e1a,stroke:#0c4c39,color:#9ce4c4;
-  class QUERY blueHighlight;
-  class ANSWER blueHighlight;
-```
-</Card>
+![Core agent loop](/images/core-agent-loop.png)
 
 Middleware provides control over what happens before and after those steps.
 
@@ -86,48 +56,7 @@ An agent can contain any combination of these hooks. Not all hooks need to be im
 An agent can contain multiple middleware. Each middleware does not need to implement all hooks.
 :::
 
-<Card>
-```mermaid
-%%{
-  init: {
-    "fontFamily": "monospace",
-    "flowchart": {
-      "curve": "curve"
-    },
-    "themeVariables": {"edgeLabelBackground": "transparent"}
-  }
-}%%
-graph TD
-  %% Outside the agent
-  QUERY([input])
-  BEFORE_AGENT(Middleware.before_agent)
-  BEFORE_MODEL(Middleware.before_model)
-  WRAP_MODEL(Middleware.wrap_model_call)
-  LLM{model}
-  AFTER_MODEL(Middleware.after_model)
-  WRAP_TOOL(Middleware.wrap_tool_call)
-  TOOL(tools)
-  AFTER_AGENT(Middleware.after_agent)
-  ANSWER([output])
-
-  %% Main flows (no inline labels)
-  QUERY --> BEFORE_AGENT
-  BEFORE_AGENT --> BEFORE_MODEL
-  BEFORE_MODEL --> WRAP_MODEL
-  WRAP_MODEL --> LLM
-  LLM --> AFTER_MODEL
-  AFTER_MODEL --"action"--> WRAP_TOOL
-  WRAP_TOOL --> TOOL
-  TOOL --"observation"--> BEFORE_MODEL
-  LLM --"finish"--> AFTER_AGENT
-  AFTER_AGENT --> ANSWER
-
-  classDef blueHighlight fill:#0a1c25,stroke:#0a455f,color:#bae6fd;
-  classDef greenHighlight fill:#0b1e1a,stroke:#0c4c39,color:#9ce4c4;
-  class QUERY blueHighlight;
-  class ANSWER blueHighlight;
-```
-</Card>
+![Middleware flow diagram](/images/middleware_final.png)
 
 ## Using in an agent
 
