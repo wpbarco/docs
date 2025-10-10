@@ -485,7 +485,7 @@ Some model providers offer built-in tools that can be enabled via model paramete
 
 :::python
 ```python Binding user tools highlight={8}
-from langchain_core.tools import tool
+
 
 @tool
 def get_weather(location: str) -> str:
@@ -1553,6 +1553,7 @@ You can also create a runtime-configurable model by specifying `configurable_fie
 
 ```python
 from langchain.chat_models import init_chat_model
+from langchain.tools import tool
 
 configurable_model = init_chat_model(temperature=0)
 

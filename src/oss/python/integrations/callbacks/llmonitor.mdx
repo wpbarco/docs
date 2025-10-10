@@ -22,6 +22,7 @@ If you'd prefer not to set an environment variable, you can pass the key directl
 
 ```python
 from langchain_community.callbacks.llmonitor_callback import LLMonitorCallbackHandler
+from langchain.messages import HumanMessage, SystemMessage
 
 handler = LLMonitorCallbackHandler(app_id="...")
 ```
@@ -55,7 +56,6 @@ Example:
 ```python
 from langchain_openai import ChatOpenAI
 from langchain_community.callbacks.llmonitor_callback import LLMonitorCallbackHandler
-from langchain_core.messages import SystemMessage, HumanMessage
 from langchain.agents import OpenAIFunctionsAgent, AgentExecutor, tool
 
 llm = ChatOpenAI(temperature=0)

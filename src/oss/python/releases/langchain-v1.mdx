@@ -35,13 +35,13 @@ import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
     </Card>
 </CardGroup>
 
-
 ## `create_agent`
 
 `create_agent` is the standard way to build agents in LangChain 1.0. It provides a simpler interface than `langgraph.prebuilt.create_react_agent` while offering greater customization potential through middleware.
 
 ```python
 from langchain.agents import create_agent
+from langchain.messages import AIMessage
 
 agent = create_agent(
     model="anthropic:claude-sonnet-4-5-20250929",
@@ -108,7 +108,6 @@ Build custom middleware by implementing any of these hooks on a subclass of the 
 | `after_model` | After each LLM response | Validate output, apply guardrails |
 | `after_agent` | After agent completes | Save results, cleanup |
 
-
 ![Middleware flow diagram](/images/middleware_final.png)
 
 Example custom middleware:
@@ -121,7 +120,6 @@ from langchain.agents.middleware import (
     ModelRequest,
     ModelRequestHandler
 )
-from langchain_core.messages import AIMessage
 
 @dataclass
 class Context:
@@ -254,6 +252,45 @@ for block in response.content_blocks:
 - **Backward compatible**: Standard content can be [loaded lazily](/oss/langchain/messages#standard-content-blocks), so there are no associated breaking changes
 
 For more information, see our guide on [content blocks](/oss/langchain/messages#content)
+
+---
+
+## Simplified import paths
+
+LangChain v1 introduces simplified import paths for commonly-used abstractions, making it easier to get started:
+
+### Tools
+
+Tool-related imports are now available from `langchain.tools`:
+
+```python
+from langchain.tools import tool, ToolNode, InjectedState, InjectedStore, InjectedToolCallId
+
+@tool
+def get_weather(city: str) -> str:
+    """Get the weather for a city."""
+    return f"Sunny, 72°F in {city}"
+```
+
+Previously, these were only available from `langchain_core.tools`.
+
+### Messages
+
+All message types are now available from `langchain.messages`:
+
+```python
+from langchain.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
+
+messages = [
+    SystemMessage(content="You are a helpful assistant"),
+    HumanMessage(content="Hello!"),
+    AIMessage(content="Hi there! How can I help you today?")
+]
+```
+
+Previously, these were only available from `langchain_core.messages`.
+
+These new import paths provide convenient access to the most commonly-used LangChain abstractions while maintaining backward compatibility with the original `langchain_core` imports.
 
 ---
 

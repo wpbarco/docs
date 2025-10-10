@@ -18,7 +18,7 @@ import os
 from getpass import getpass
 
 from langchain_community.chat_models import ChatDeepInfra
-from langchain_core.messages import HumanMessage
+from langchain.messages import HumanMessage
 
 DEEPINFRA_API_TOKEN = getpass()
 
@@ -65,14 +65,13 @@ import asyncio
 
 from dotenv import find_dotenv, load_dotenv
 from langchain_community.chat_models import ChatDeepInfra
-from langchain_core.messages import HumanMessage
-from langchain_core.tools import tool
+
 from pydantic import BaseModel
+from langchain.tools import tool
 
 model_name = "meta-llama/Meta-Llama-3-70B-Instruct"
 
 _ = load_dotenv(find_dotenv())
-
 
 # LangChain tool
 @tool
@@ -82,7 +81,6 @@ def foo(something):
     """
     pass
 
-
 # Pydantic class
 class Bar(BaseModel):
     """
@@ -90,7 +88,6 @@ class Bar(BaseModel):
     """
 
     pass
-
 
 llm = ChatDeepInfra(model=model_name)
 tools = [foo, Bar]
@@ -103,11 +100,9 @@ response = llm_with_tools.invoke(messages)
 print(response.tool_calls)
 # [{'name': 'foo', 'args': {'something': None}, 'id': 'call_Mi4N4wAtW89OlbizFE1aDxDj'}, {'name': 'Bar', 'args': {}, 'id': 'call_daiE0mW454j2O1KVbmET4s2r'}]
 
-
 async def call_ainvoke():
     result = await llm_with_tools.ainvoke(messages)
     print(result.tool_calls)
-
 
 # Async call
 asyncio.run(call_ainvoke())

@@ -62,6 +62,7 @@ os.environ["OPENAI_API_KEY"] = "<OPENAI_API_KEY>"
 
 from langchain_vectara import Vectara
 from langchain_vectara.tools import (
+from langchain.messages import HumanMessage
     VectaraAddFiles,
     VectaraIngest,
     VectaraRAG,
@@ -220,13 +221,11 @@ If there are any specific numbers or statistics, be sure to include them.
 """
 prompt = ChatPromptTemplate.from_template(template)
 
-
 # Create a function to get RAG results
 def get_rag_result(query: str) -> str:
     result = vectara_rag_tool.run(query)
     result_dict = json.loads(result)
     return result_dict["summary"]
-
 
 # Create the chain
 chain: RunnableSerializable = (
@@ -248,7 +247,6 @@ The code below demonstrates how to use Vectara tools with LangChain to create an
 ```python
 import json
 
-from langchain_core.messages import HumanMessage
 from langchain_openai.chat_models import ChatOpenAI
 from langchain.agents import create_agent
 
@@ -263,7 +261,6 @@ question = (
     "What is an API key? What is a JWT token? When should I use one or the other?"
 )
 input_data = {"messages": [HumanMessage(content=question)]}
-
 
 agent_executor.invoke(input_data)
 ```

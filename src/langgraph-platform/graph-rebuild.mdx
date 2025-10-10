@@ -32,6 +32,7 @@ In the standard LangGraph API configuration, the server uses the compiled graph 
 
 ```python
 from langchain_openai import ChatOpenAI
+from langchain.messages import BaseMessage
 from langgraph.graph import END, START, MessageGraph
 
 model = ChatOpenAI(temperature=0)
@@ -68,15 +69,11 @@ from langchain_openai import ChatOpenAI
 from langgraph.graph import END, START, MessageGraph
 from langgraph.graph.state import StateGraph
 from langgraph.graph.message import add_messages
-from langchain.tools import ToolNode
-from langchain_core.tools import tool
-from langchain_core.messages import BaseMessage
+from langchain.tools import ToolNode, tool
 from langchain_core.runnables import RunnableConfig
-
 
 class State(TypedDict):
     messages: Annotated[list[BaseMessage], add_messages]
-
 
 model = ChatOpenAI(temperature=0)
 
@@ -92,7 +89,6 @@ def make_default_graph():
 
     agent = graph_workflow.compile()
     return agent
-
 
 def make_alternative_graph():
     """Make a tool-calling agent"""
@@ -123,7 +119,6 @@ def make_alternative_graph():
 
     agent = graph_workflow.compile()
     return agent
-
 
 # this is the graph making function that will decide which graph to
 # build based on the provided config

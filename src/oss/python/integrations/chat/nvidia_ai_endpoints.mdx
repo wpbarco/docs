@@ -80,6 +80,7 @@ Now we can access models in the NVIDIA API Catalog:
 ```python
 ## Core LC Chat Interface
 from langchain_nvidia_ai_endpoints import ChatNVIDIA
+from langchain.messages import HumanMessage
 
 llm = ChatNVIDIA(model="mistralai/mixtral-8x7b-instruct-v0.1")
 ```
@@ -209,7 +210,6 @@ llm = ChatNVIDIA(model="nvidia/neva-22b")
 #### Passing an image as a URL
 
 ```python
-from langchain_core.messages import HumanMessage
 
 llm.invoke(
     [
@@ -239,8 +239,6 @@ IPython.display.Image(image_content)
 
 ```python
 import base64
-
-from langchain_core.messages import HumanMessage
 
 ## Works for simpler images. For larger images, see actual implementation
 b64_string = base64.b64encode(image_content).decode("utf-8")
@@ -284,13 +282,11 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 # store is a dictionary that maps session IDs to their corresponding chat histories.
 store = {}  # memory is maintained outside the chain
 
-
 # A function that returns the chat history for a given session ID.
 def get_session_history(session_id: str) -> InMemoryChatMessageHistory:
     if session_id not in store:
         store[session_id] = InMemoryChatMessageHistory()
     return store[session_id]
-
 
 chat = ChatNVIDIA(
     model="mistralai/mixtral-8x22b-instruct-v0.1",
@@ -345,9 +341,9 @@ tool_models
 With a tool capable model,
 
 ```python
-from langchain_core.tools import tool
-from pydantic import Field
 
+from pydantic import Field
+from langchain.tools import tool
 
 @tool
 def get_current_weather(
@@ -355,7 +351,6 @@ def get_current_weather(
 ):
     """Get the current weather for a location."""
     ...
-
 
 llm = ChatNVIDIA(model=tool_models[0].id).bind_tools(tools=[get_current_weather])
 response = llm.invoke("What is the weather in Boston?")

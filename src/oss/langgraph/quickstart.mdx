@@ -25,14 +25,14 @@ In this example, we'll use the Claude 3.7 Sonnet model and define tools for addi
 :::python
 
 ```python
-from langchain_core.tools import tool
+from langchain.tools import tool
 from langchain.chat_models import init_chat_model
+from langchain.messages import AnyMessage, HumanMessage, SystemMessage, ToolMessage
 
 llm = init_chat_model(
     "anthropic:claude-3-7-sonnet-latest",
     temperature=0
 )
-
 
 # Define tools
 @tool
@@ -45,7 +45,6 @@ def multiply(a: int, b: int) -> int:
     """
     return a * b
 
-
 @tool
 def add(a: int, b: int) -> int:
     """Adds a and b.
@@ -56,7 +55,6 @@ def add(a: int, b: int) -> int:
     """
     return a + b
 
-
 @tool
 def divide(a: int, b: int) -> float:
     """Divide a and b.
@@ -66,7 +64,6 @@ def divide(a: int, b: int) -> float:
         b: second int
     """
     return a / b
-
 
 # Augment the LLM with tools
 tools = [add, multiply, divide]
@@ -133,7 +130,6 @@ The graph's state is used to store the messages and the number of LLM calls.
 :::python
 
 ```python
-from langchain_core.messages import AnyMessage
 from typing_extensions import TypedDict, Annotated
 import operator
 
@@ -168,7 +164,6 @@ The model node is used to call the LLM and decide whether to call a tool or not.
 :::python
 
 ```python
-from langchain_core.messages import SystemMessage
 def llm_call(state: dict):
     """LLM decides whether to call a tool or not"""
 
@@ -213,7 +208,6 @@ The tool node is used to call the tools and return the results.
 :::python
 
 ```python
-from langchain_core.messages import ToolMessage
 
 def tool_node(state: dict):
     """Performs the tool call"""
@@ -322,7 +316,6 @@ from IPython.display import Image, display
 display(Image(agent.get_graph(xray=True).draw_mermaid_png()))
 
 # Invoke
-from langchain_core.messages import HumanMessage
 messages = [HumanMessage(content="Add 3 and 4.")]
 messages = agent.invoke({"messages": messages})
 for m in messages["messages"]:
@@ -361,14 +354,13 @@ Congratulations! You've built your first agent using the LangGraph Graph API.
 ```python
 # Step 1: Define tools and model
 
-from langchain_core.tools import tool
+from langchain.tools import tool
 from langchain.chat_models import init_chat_model
 
 llm = init_chat_model(
     "anthropic:claude-3-7-sonnet-latest",
     temperature=0
 )
-
 
 # Define tools
 @tool
@@ -381,7 +373,6 @@ def multiply(a: int, b: int) -> int:
     """
     return a * b
 
-
 @tool
 def add(a: int, b: int) -> int:
     """Adds a and b.
@@ -391,7 +382,6 @@ def add(a: int, b: int) -> int:
         b: second int
     """
     return a + b
-
 
 @tool
 def divide(a: int, b: int) -> float:
@@ -403,7 +393,6 @@ def divide(a: int, b: int) -> float:
     """
     return a / b
 
-
 # Augment the LLM with tools
 tools = [add, multiply, divide]
 tools_by_name = {tool.name: tool for tool in tools}
@@ -411,7 +400,6 @@ llm_with_tools = llm.bind_tools(tools)
 
 # Step 2: Define state
 
-from langchain_core.messages import AnyMessage
 from typing_extensions import TypedDict, Annotated
 import operator
 
@@ -420,7 +408,6 @@ class MessagesState(TypedDict):
     llm_calls: int
 
 # Step 3: Define model node
-from langchain_core.messages import SystemMessage
 def llm_call(state: dict):
     """LLM decides whether to call a tool or not"""
 
@@ -438,10 +425,7 @@ def llm_call(state: dict):
         "llm_calls": state.get('llm_calls', 0) + 1
     }
 
-
 # Step 4: Define tool node
-
-from langchain_core.messages import ToolMessage
 
 def tool_node(state: dict):
     """Performs the tool call"""
@@ -491,13 +475,11 @@ agent_builder.add_edge("tool_node", "llm_call")
 # Compile the agent
 agent = agent_builder.compile()
 
-
 from IPython.display import Image, display
 # Show the agent
 display(Image(agent.get_graph(xray=True).draw_mermaid_png()))
 
 # Invoke
-from langchain_core.messages import HumanMessage
 messages = [HumanMessage(content="Add 3 and 4.")]
 messages = agent.invoke({"messages": messages})
 for m in messages["messages"]:
@@ -649,14 +631,13 @@ In this example, we'll use the Claude 3.7 Sonnet model and define tools for addi
 :::python
 
 ```python
-from langchain_core.tools import tool
+from langchain.tools import tool
 from langchain.chat_models import init_chat_model
 
 llm = init_chat_model(
     "anthropic:claude-3-7-sonnet-latest",
     temperature=0
 )
-
 
 # Define tools
 @tool
@@ -669,7 +650,6 @@ def multiply(a: int, b: int) -> int:
     """
     return a * b
 
-
 @tool
 def add(a: int, b: int) -> int:
     """Adds a and b.
@@ -679,7 +659,6 @@ def add(a: int, b: int) -> int:
         b: second int
     """
     return a + b
-
 
 @tool
 def divide(a: int, b: int) -> float:
@@ -691,19 +670,13 @@ def divide(a: int, b: int) -> float:
     """
     return a / b
 
-
 # Augment the LLM with tools
 tools = [add, multiply, divide]
 tools_by_name = {tool.name: tool for tool in tools}
 llm_with_tools = llm.bind_tools(tools)
 
 from langgraph.graph import add_messages
-from langchain_core.messages import (
-    SystemMessage,
-    HumanMessage,
-    BaseMessage,
-    ToolCall,
-)
+from langchain.messages import SystemMessage, HumanMessage, BaseMessage, ToolCall
 from langgraph.func import entrypoint, task
 ```
 :::
@@ -900,14 +873,13 @@ Congratulations! You've built your first agent using the LangGraph Functional AP
 ```python
 # Step 1: Define tools and model
 
-from langchain_core.tools import tool
+from langchain.tools import tool
 from langchain.chat_models import init_chat_model
 
 llm = init_chat_model(
     "anthropic:claude-3-7-sonnet-latest",
     temperature=0
 )
-
 
 # Define tools
 @tool
@@ -920,7 +892,6 @@ def multiply(a: int, b: int) -> int:
     """
     return a * b
 
-
 @tool
 def add(a: int, b: int) -> int:
     """Adds a and b.
@@ -930,7 +901,6 @@ def add(a: int, b: int) -> int:
         b: second int
     """
     return a + b
-
 
 @tool
 def divide(a: int, b: int) -> float:
@@ -942,19 +912,13 @@ def divide(a: int, b: int) -> float:
     """
     return a / b
 
-
 # Augment the LLM with tools
 tools = [add, multiply, divide]
 tools_by_name = {tool.name: tool for tool in tools}
 llm_with_tools = llm.bind_tools(tools)
 
 from langgraph.graph import add_messages
-from langchain_core.messages import (
-    SystemMessage,
-    HumanMessage,
-    BaseMessage,
-    ToolCall,
-)
+from langchain.messages import SystemMessage, HumanMessage, BaseMessage, ToolCall
 from langgraph.func import entrypoint, task
 
 # Step 2: define model node
@@ -970,14 +934,12 @@ def call_llm(messages: list[BaseMessage]):
         + messages
     )
 
-
 # Step 3: define tool node
 @task
 def call_tool(tool_call: ToolCall):
     """Performs the tool call"""
     tool = tools_by_name[tool_call["name"]]
     return tool.invoke(tool_call)
-
 
 # Step 4: define agent
 @entrypoint()
@@ -1111,5 +1073,4 @@ for (const message of result) {
 </Accordion>
 </Tab>
 </Tabs>
-
 

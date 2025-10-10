@@ -35,12 +35,12 @@ In this simple example we use `PromptLayerCallbackHandler` with `ChatOpenAI`. We
 ```python
 import promptlayer  # Don't forget this 🍰
 from langchain_community.callbacks.promptlayer_callback import (
+from langchain.messages import HumanMessage
     PromptLayerCallbackHandler,
 )
 ```
 
 ```python
-from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
 
 chat_llm = ChatOpenAI(
@@ -81,7 +81,6 @@ We also define a `pl_id_callback` function which takes in the `promptlayer_reque
 ```python
 from langchain_openai import OpenAI
 
-
 def pl_id_callback(promptlayer_request_id):
     print("prompt layer id ", promptlayer_request_id)
     promptlayer.track.score(
@@ -96,7 +95,6 @@ def pl_id_callback(promptlayer_request_id):
         prompt_input_variables={"product": "toasters"},
         version=1,
     )  # link the request to a prompt template
-
 
 openai_llm = OpenAI(
     model_name="gpt-3.5-turbo-instruct",

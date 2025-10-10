@@ -51,6 +51,7 @@ Now we can instantiate our model object to generate chat completions:
 
 ```python
 from langchain_nebius import ChatNebius
+from langchain.messages import AIMessage, HumanMessage, SystemMessage
 
 # Initialize the chat model
 chat = ChatNebius(
@@ -173,7 +174,6 @@ A future shaped by minds allied.
 You can use different message types to structure your conversations with the model:
 
 ```python
-from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 
 messages = [
     SystemMessage(content="You are a helpful AI assistant with expertise in science."),
@@ -297,7 +297,6 @@ ChatNebius supports async operations:
 ```python
 import asyncio
 
-
 async def generate_async():
     response = await chat.ainvoke("What is the capital of France?")
     print("Async response:", response.content)
@@ -306,7 +305,6 @@ async def generate_async():
     print("\nAsync streaming:")
     async for chunk in chat.astream("What is the capital of Germany?"):
         print(chunk.content, end="", flush=True)
-
 
 await generate_async()
 ```

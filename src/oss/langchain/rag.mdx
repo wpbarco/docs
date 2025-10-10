@@ -55,8 +55,8 @@ lines of code. See below for the full code snippet:
 import bs4
 from langchain.agents import AgentState, create_agent
 from langchain_community.document_loaders import WebBaseLoader
-from langchain_core.messages import MessageLikeRepresentation
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain.messages import AIMessage, MessageLikeRepresentation
 
 # Load and chunk contents of the blog
 loader = WebBaseLoader(
@@ -200,7 +200,6 @@ trace](https://smith.langchain.com/public/a117a1f8-c96c-4c16-a285-00b85646118e/r
 
 ## Setup
 
-
 ### Installation
 
 This tutorial requires these langchain dependencies:
@@ -286,7 +285,6 @@ Select a vector store:
 <VectorstoreTabsJS />
 :::
 
-
 ## 1. Indexing
 
 <Note>
@@ -351,7 +349,6 @@ print(docs[0].page_content[:500])
       LLM Powered Autonomous Agents
 
 Date: June 23, 2023  |  Estimated Reading Time: 31 min  |  Author: Lilian Weng
-
 
 Building agents with LLM (large language model) as its core controller is a cool concept. Several proof-of-concepts demos, such as AutoGPT, GPT-Engineer and BabyAGI, serve as inspiring examples. The potentiality of LLM extends beyond generating well-written copies, stories, essays and programs; it can be framed as a powerful general problem solver.
 Agent System Overview#
@@ -453,7 +450,6 @@ Split blog post into 29 sub-documents.
 ```
 :::
 
-
 ### Storing documents
 
 Now we need to index our 66 text chunks so that we can search over them
@@ -526,7 +522,6 @@ our vector store:
 
 :::python
 ```python
-from langchain_core.tools import tool
 
 @tool(response_format="content_and_artifact")
 def retrieve_context(query: str):
@@ -748,7 +743,6 @@ for more advanced formulations.
 
 </Tip>
 
-
 ### RAG chains
 
 In the above [agentic RAG](#rag-agents) formulation we allow the LLM to use its discretion in
@@ -761,7 +755,6 @@ is a good general-purpose solution, but comes with some trade-offs:
 | **Contextual search queries** – By treating search as a tool with a `query` input, the LLM crafts its own queries that incorporate conversational context. | **Reduced control** – The LLM may skip searches when they are actually needed, or issue extra searches when unnecessary. |
 | **Multiple searches allowed** – The LLM can execute several searches in support of a single user query. |                                                                            |
 
-
 Another common approach is a two-step chain, in which we always run a search (potentially using the raw
 user query) and incorporate the result as context for a single LLM query. This results in a single
 inference call per query, buying reduced latency at the expense of flexibility.
@@ -773,8 +766,6 @@ prompt:
 :::python
 ```python
 from langchain.agents import AgentState
-from langchain_core.messages import MessageLikeRepresentation
-
 
 def prompt_with_context(state: AgentState) -> list[MessageLikeRepresentation]:
     """Inject context into state messages."""
@@ -789,7 +780,6 @@ def prompt_with_context(state: AgentState) -> list[MessageLikeRepresentation]:
     )
 
     return [{"role": "system", "content": system_message}, *list(state["messages"])]
-
 
 agent = create_agent(llm, tools=[], system_prompt=prompt_with_context)
 ```
@@ -884,12 +874,9 @@ populate that key (as well as inject the context).
 ```python
 from langchain_core.documents import Document
 from langchain.agents.middleware import AgentMiddleware, AgentState
-from langchain_core.messages import AIMessage
-
 
 class State(AgentState):
     context: list[Document]
-
 
 class RetrieveDocumentsMiddleware(AgentMiddleware[State]):
     def before_model(self, state: AgentState) -> dict[str, Any] | None:
@@ -908,7 +895,6 @@ class RetrieveDocumentsMiddleware(AgentMiddleware[State]):
             "context": retrieved_docs,
         }
 
-
 agent = create_agent(
     llm,
     tools=[],
@@ -921,6 +907,7 @@ agent = create_agent(
 ```typescript
 import { createMiddleware, Document, createAgent } from "langchain";
 import { MessagesZodSchema } from "@langchain/langgraph";
+from langchain.tools import tool
 
 const StateSchema = z.object({
   messages: MessagesZodSchema,
@@ -962,7 +949,6 @@ const agent = createAgent({
 ```
 :::
 </Accordion>
-
 
 ## Next steps
 

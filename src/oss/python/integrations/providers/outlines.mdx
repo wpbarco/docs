@@ -39,6 +39,7 @@ To use Outlines as an LLM in LangChain, you can use the `Outlines` class:
 
 ```python
 from langchain_community.llms import Outlines
+from langchain.messages import HumanMessage, SystemMessage
 ```
 
 ## Chat Models
@@ -153,7 +154,6 @@ print(result)
 
 ```python
 from langchain_community.chat_models import ChatOutlines
-from langchain_core.messages import HumanMessage, SystemMessage
 
 chat = ChatOutlines(model="meta-llama/Llama-2-7b-chat-hf", max_tokens=100)
 messages = [
@@ -167,7 +167,6 @@ print(result.content)
 
 ```python
 from langchain_community.chat_models import ChatOutlines
-from langchain_core.messages import HumanMessage
 
 chat = ChatOutlines(model="meta-llama/Llama-2-7b-chat-hf", streaming=True)
 for chunk in chat.stream("Tell me a joke about programming."):

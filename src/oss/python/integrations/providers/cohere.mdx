@@ -35,7 +35,7 @@ Get a [Cohere api key](https://dashboard.cohere.ai/) and set it as an environmen
 
 ```python
 from langchain_cohere import ChatCohere
-from langchain_core.messages import HumanMessage
+from langchain.messages import HumanMessage
 chat = ChatCohere()
 messages = [HumanMessage(content="knock knock")]
 print(chat.invoke(messages))
@@ -44,7 +44,6 @@ print(chat.invoke(messages))
 Usage of the Cohere [chat model](/oss/integrations/chat/cohere)
 
 ### LLM
-
 
 ```python
 from langchain_cohere.llms import Cohere
@@ -58,11 +57,8 @@ Usage of the Cohere (legacy) [LLM model](/oss/integrations/llms/cohere)
 ### Tool calling
 ```python
 from langchain_cohere import ChatCohere
-from langchain_core.messages import (
-    HumanMessage,
-    ToolMessage,
-)
-from langchain_core.tools import tool
+from langchain.messages import HumanMessage, ToolMessage
+from langchain.tools import tool
 
 @tool
 def magic_function(number: int) -> int:
@@ -153,6 +149,7 @@ Usage of the Cohere [RAG Retriever](/oss/integrations/retrievers/cohere)
 
 ```python
 from langchain_cohere import CohereEmbeddings
+from langchain.tools import tool
 
 embeddings = CohereEmbeddings(model="embed-english-light-v3.0")
 print(embeddings.embed_documents(["This is a test document."]))

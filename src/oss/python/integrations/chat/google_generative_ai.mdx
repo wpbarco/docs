@@ -57,6 +57,7 @@ Now we can instantiate our model object and generate chat completions:
 
 ```python
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain.messages import AIMessage, HumanMessage, ToolMessage
 
 llm = ChatGoogleGenerativeAI(
     model="gemini-2.5-flash",
@@ -105,7 +106,6 @@ Provide image inputs along with text using a `HumanMessage` with a list content 
 ```python
 import base64
 
-from langchain_core.messages import HumanMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 # Example using a public URL (remains the same)
@@ -149,12 +149,9 @@ Provide audio file inputs along with text.
 ```python
 import base64
 
-from langchain_core.messages import HumanMessage
-
 # Ensure you have an audio file named 'example_audio.mp3' or provide the correct path.
 audio_file_path = "example_audio.mp3"
 audio_mime_type = "audio/mpeg"
-
 
 with open(audio_file_path, "rb") as audio_file:
     encoded_audio = base64.b64encode(audio_file.read()).decode("utf-8")
@@ -180,13 +177,11 @@ Provide video file inputs along with text.
 ```python
 import base64
 
-from langchain_core.messages import HumanMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 # Ensure you have a video file named 'example_video.mp4' or provide the correct path.
 video_file_path = "example_video.mp4"
 video_mime_type = "video/mp4"
-
 
 with open(video_file_path, "rb") as video_file:
     encoded_video = base64.b64encode(video_file.read()).decode("utf-8")
@@ -213,7 +208,6 @@ Certain models (such as `gemini-2.0-flash-preview-image-generation`) can generat
 import base64
 
 from IPython.display import Image, display
-from langchain_core.messages import AIMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 llm = ChatGoogleGenerativeAI(model="models/gemini-2.0-flash-preview-image-generation")
@@ -228,7 +222,6 @@ response = llm.invoke(
     generation_config=dict(response_modalities=["TEXT", "IMAGE"]),
 )
 
-
 def _get_image_base64(response: AIMessage) -> None:
     image_block = next(
         block
@@ -236,7 +229,6 @@ def _get_image_base64(response: AIMessage) -> None:
         if isinstance(block, dict) and block.get("image_url")
     )
     return image_block["image_url"].get("url").split(",")[-1]
-
 
 image_base64 = _get_image_base64(response)
 display(Image(data=base64.b64decode(image_base64), width=300))
@@ -247,15 +239,13 @@ display(Image(data=base64.b64decode(image_base64), width=300))
 You can equip the model with tools to call.
 
 ```python
-from langchain_core.tools import tool
-from langchain_google_genai import ChatGoogleGenerativeAI
 
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 # Define the tool
 @tool(description="Get the current weather in a given location")
 def get_weather(location: str) -> str:
     return "It's sunny."
-
 
 # Initialize the model and bind the tool
 llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash-lite-latest")
@@ -269,7 +259,6 @@ ai_msg = llm_with_tools.invoke(query)
 print(ai_msg.tool_calls)
 
 # Example tool call message would be needed here if you were actually running the tool
-from langchain_core.messages import ToolMessage
 
 tool_message = ToolMessage(
     content=get_weather(*ai_msg.tool_calls[0]["args"]),
@@ -294,14 +283,12 @@ Force the model to respond with a specific structure using Pydantic models.
 from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain_google_genai import ChatGoogleGenerativeAI
 
-
 # Define the desired structure
 class Person(BaseModel):
     """Information about a person."""
 
     name: str = Field(..., description="The person's name")
     height_m: float = Field(..., description="The person's height in meters")
-
 
 # Initialize the model
 llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash-lite-latest", temperature=0)
@@ -421,7 +408,6 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 
 llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
 
-
 async def run_async_calls():
     # Async invoke
         result_ainvoke = await llm.ainvoke("Why is the sky blue?")
@@ -438,7 +424,6 @@ async def run_async_calls():
     # Async batch
         results_abatch = await llm.abatch(["What is 1+1?", "What is 2+2?"])
     print("Async Batch Results:", [res.content for res in results_abatch])
-
 
 await run_async_calls()
 ```
@@ -466,6 +451,7 @@ Gemini models have default safety settings that can be overridden. If you are re
 
 ```python
 from langchain_google_genai import (
+from langchain.tools import tool
     ChatGoogleGenerativeAI,
     HarmBlockThreshold,
     HarmCategory,

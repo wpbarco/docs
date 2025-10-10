@@ -68,6 +68,7 @@ Now we can instantiate our model object and generate chat completions:
 
 ```python
 from langchain_anthropic import ChatAnthropic
+from langchain.messages import HumanMessage
 
 llm = ChatAnthropic(
     model="claude-3-5-haiku-latest",
@@ -115,13 +116,11 @@ from typing_extensions import Annotated
 
 llm = ChatAnthropic(model="claude-3-5-haiku-latest")
 
-
 def get_weather(
     location: Annotated[str, ..., "Location as city and state."]
 ) -> str:
     """Get the weather at a location."""
     return "It's sunny."
-
 
 llm_with_tools = llm.bind_tools([get_weather])
 response = llm_with_tools.invoke("Which city is hotter today: LA or NY?")
@@ -201,7 +200,6 @@ file = client.beta.files.upload(
 )
 image_file_id = file.id
 
-
 # Run inference
 from langchain_anthropic import ChatAnthropic
 
@@ -240,7 +238,6 @@ file = client.beta.files.upload(
     file=("document.pdf", open("/path/to/document.pdf", "rb"), "application/pdf"),
 )
 pdf_file_id = file.id
-
 
 # Run inference
 from langchain_anthropic import ChatAnthropic
@@ -399,7 +396,6 @@ Second:
 
 ```python highlight={17,18}
 from langchain_anthropic import convert_to_anthropic_tool
-from langchain_core.tools import tool
 
 # For demonstration purposes, we artificially expand the
 # tool description.
@@ -407,11 +403,9 @@ description = (
     f"Get the weather at a location. By the way, check out this readme: {readme}"
 )
 
-
 @tool(description=description)
 def get_weather(location: str) -> str:
     return "It's sunny."
-
 
 # Enable caching on the tool
 weather_tool = convert_to_anthropic_tool(get_weather)
@@ -462,7 +456,6 @@ get_response = requests.get(
 )
 readme = get_response.text
 
-
 def messages_reducer(left: list, right: list) -> list:
     # Update last user message
     for i in range(len(right) - 1, -1, -1):
@@ -472,19 +465,15 @@ def messages_reducer(left: list, right: list) -> list:
 
     return add_messages(left, right)
 
-
 class State(TypedDict):
     messages: Annotated[list, messages_reducer]
 
-
 workflow = StateGraph(state_schema=State)
-
 
 # Define the function that calls the model
 def call_model(state: State):
     response = llm.invoke(state["messages"])
     return {"messages": [response]}
-
 
 # Define the (single) node in the graph
 workflow.add_edge(START, "model")
@@ -496,7 +485,6 @@ app = workflow.compile(checkpointer=memory)
 ```
 
 ```python
-from langchain_core.messages import HumanMessage
 
 config = {"configurable": {"thread_id": "abc123"}}
 
@@ -577,19 +565,16 @@ Anthropic supports a (beta) [token-efficient tool use](https://docs.anthropic.co
 
 ```python highlight={6}
 from langchain_anthropic import ChatAnthropic
-from langchain_core.tools import tool
 
 llm = ChatAnthropic(
     model="claude-3-7-sonnet-20250219",
     betas=["token-efficient-tools-2025-02-19"],
 )
 
-
 @tool
 def get_weather(location: str) -> str:
     """Get the weather at a location."""
     return "It's sunny."
-
 
 llm_with_tools = llm.bind_tools([get_weather])
 response = llm_with_tools.invoke("What's the weather in San Francisco?")
@@ -707,7 +692,6 @@ from langchain_core.vectorstores import InMemoryVectorStore
 from langgraph.checkpoint.memory import InMemorySaver
 from langchain.agents import create_agent
 
-
 # Set up vector store
 embeddings = init_embeddings("openai:text-embedding-3-small")
 vector_store = InMemoryVectorStore(embeddings)
@@ -749,7 +733,6 @@ document_3 = Document(
 documents = [document_1, document_2, document_3]
 vector_store.add_documents(documents=documents)
 
-
 # Define tool
 async def retrieval_tool(
     query: str, category: Literal["HR Policy", "Benefits Policy"]
@@ -774,14 +757,11 @@ async def retrieval_tool(
         for doc in results
     ]
 
-
-
 # Create agent
 llm = init_chat_model("anthropic:claude-3-5-haiku-latest")
 
 checkpointer = InMemorySaver()
 agent = create_agent(llm, [retrieval_tool], checkpointer=checkpointer)
-
 
 # Invoke on a query
 config = {"configurable": {"thread_id": "session_1"}}
@@ -809,7 +789,6 @@ import requests
 from langchain_anthropic import ChatAnthropic
 from langchain_text_splitters import MarkdownTextSplitter
 
-
 def format_to_anthropic_documents(documents: list[str]):
     return {
         "type": "document",
@@ -819,7 +798,6 @@ def format_to_anthropic_documents(documents: list[str]):
         },
         "citations": {"enabled": True},
     }
-
 
 # Pull readme
 get_response = requests.get(
@@ -969,7 +947,6 @@ file = client.beta.files.upload(
 )
 file_id = file.id
 
-
 # Run inference
 from langchain_anthropic import ChatAnthropic
 
@@ -1079,6 +1056,7 @@ The text editor tool can be used to view and modify text files. See docs [here](
 
 ```python
 from langchain_anthropic import ChatAnthropic
+from langchain.tools import tool
 
 llm = ChatAnthropic(model="claude-3-7-sonnet-20250219")
 

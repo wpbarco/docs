@@ -6,11 +6,9 @@ import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
 
 <AlphaCallout />
 
-
 Middleware provides a way to more tightly control what happens inside the agent.
 
 The core agent loop involves calling a `model`, letting it choose `tools` to execute, and then finishing when it calls no more tools.
-
 
 <Card>
 ```mermaid
@@ -119,6 +117,7 @@ You can use middleware in an agent by passing it `create_agent`:
 ```python
 from langchain.agents import create_agent
 from langchain.agents.middleware import SummarizationMiddleware, HumanInTheLoopMiddleware
+from langchain.messages import AIMessage, HumanMessage
 
 agent = create_agent(
     ...,
@@ -493,7 +492,6 @@ Signature:
 :::python
 ```python
 from langchain.agents.middleware import AgentMiddleware, AgentState
-from langchain_core.messages import AIMessage
 
 class MyMiddleware(AgentMiddleware):
     def before_model(self, state: AgentState) -> dict[str, Any] | None:
@@ -759,7 +757,6 @@ When using multiple middleware, their state and context schemas are merged. All 
 :::python
 ```python
 from langchain.agents.middleware import AgentMiddleware
-from langchain_core.messages import HumanMessage
 from typing import Any, Dict
 
 class Middleware1State(AgentState):
@@ -994,7 +991,6 @@ agent = create_agent(
     middleware=[tool_selector], # [!code highlight]
 )
 ```
-
 
 <Expandable title="Extended example: Select tools based on runtime context">
 

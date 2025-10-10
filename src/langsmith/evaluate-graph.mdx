@@ -20,10 +20,10 @@ Lets construct a simple ReACT agent to start:
 ```python
 from typing import Annotated, Literal, TypedDict
 from langchain.chat_models import init_chat_model
-from langchain_core.tools import tool
+
 from langgraph.graph import END, START, StateGraph
 from langchain.tools import ToolNode
-from langgraph.graph.message import add_messages
+add_messages
 
 class State(TypedDict):
     # Messages have the type "list". The 'add_messages' function
@@ -255,11 +255,12 @@ node_experiment_results = await aevaluate(
 ```python
 from typing import Annotated, Literal, TypedDict
 from langchain.chat_models import init_chat_model
-from langchain_core.tools import tool
+
 from langgraph.graph import END, START, StateGraph
 from langchain.tools import ToolNode
 from langgraph.graph.message import add_messages
 from langsmith import Client, aevaluate
+from langchain.tools import ToolNode, tool
 
 # Define a graph
 class State(TypedDict):

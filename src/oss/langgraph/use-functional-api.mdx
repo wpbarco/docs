@@ -742,19 +742,16 @@ from langgraph.cache.memory import InMemoryCache
 from langgraph.func import entrypoint, task
 from langgraph.types import CachePolicy
 
-
 @task(cache_policy=CachePolicy(ttl=120))  # (1)!
 def slow_add(x: int) -> int:
     time.sleep(1)
     return x * 2
-
 
 @entrypoint(cache=InMemoryCache())
 def main(inputs: dict) -> dict[str, int]:
     result1 = slow_add(inputs["x"]).result()
     result2 = slow_add(inputs["x"]).result()
     return {"result1": result1, "result2": result2}
-
 
 for chunk in main.stream({"x": 5}, stream_mode="updates"):
     print(chunk)
@@ -984,19 +981,16 @@ We will create three [tasks](/oss/langgraph/functional-api#task):
 from langgraph.func import entrypoint, task
 from langgraph.types import Command, interrupt
 
-
 @task
 def step_1(input_query):
     """Append bar."""
     return f"{input_query} bar"
-
 
 @task
 def human_feedback(input_query):
     """Append user input."""
     feedback = interrupt(f"Please provide feedback: {input_query}")
     return f"{input_query} {feedback}"
-
 
 @task
 def step_3(input_query):
@@ -1034,7 +1028,6 @@ We can now compose these tasks in an [entrypoint](/oss/langgraph/functional-api#
 from langgraph.checkpoint.memory import InMemorySaver
 
 checkpointer = InMemorySaver()
-
 
 @entrypoint(checkpointer=checkpointer)
 def graph(input_query):
@@ -1193,9 +1186,7 @@ from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.graph.message import add_messages
 from langgraph.types import Command, interrupt
 
-
 checkpointer = InMemorySaver()
-
 
 @entrypoint(checkpointer=checkpointer)
 def agent(messages, previous):
@@ -1568,11 +1559,11 @@ The bot is able to remember the previous conversation and continue from where it
 
 :::python
 ```python
-from langchain_core.messages import BaseMessage
 from langgraph.graph import add_messages
 from langgraph.func import entrypoint, task
 from langgraph.checkpoint.memory import InMemorySaver
 from langchain_anthropic import ChatAnthropic
+from langchain.messages import BaseMessage
 
 model = ChatAnthropic(model="claude-3-5-sonnet-latest")
 

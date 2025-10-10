@@ -49,6 +49,7 @@ Now we can instantiate our model object and generate chat completions:
 
 ```python
 from langchain_ai21 import ChatAI21
+from langchain.messages import HumanMessage, SystemMessage, ToolMessage
 
 llm = ChatAI21(model="jamba-instruct", temperature=0)
 ```
@@ -76,13 +77,12 @@ import os
 from getpass import getpass
 
 from langchain_ai21.chat_models import ChatAI21
-from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
-from langchain_core.tools import tool
+
 from langchain_core.utils.function_calling import convert_to_openai_tool
+from langchain.tools import tool
 
 if "AI21_API_KEY" not in os.environ:
     os.environ["AI21_API_KEY"] = getpass()
-
 
 @tool
 def get_weather(location: str, date: str) -> str:
@@ -94,7 +94,6 @@ def get_weather(location: str, date: str) -> str:
     elif location == "London" and date == "2024-12-05":
         return "22 celsius"
     return "32 celsius"
-
 
 llm = ChatAI21(model="jamba-1.5-mini")
 
@@ -115,7 +114,6 @@ human_messages = [
     HumanMessage(content="OK, thank you."),
     HumanMessage(content="What is the expected weather in London on December 5, 2024?"),
 ]
-
 
 for human_message in human_messages:
     print(f"User: {human_message.content}")

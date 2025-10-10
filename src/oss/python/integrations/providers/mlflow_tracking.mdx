@@ -93,8 +93,9 @@ MLflow also supports tracing LangGraph applications:
 
 ```python
 import mlflow
-from langchain_core.tools import tool
+
 from langchain.agents import create_agent
+from langchain.tools import tool
 
 # Enable MLflow tracing
 mlflow.langchain.autolog()

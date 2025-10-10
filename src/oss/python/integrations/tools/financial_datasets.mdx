@@ -96,7 +96,7 @@ help users make informed decisions. Always maintain a professional and objective
 Instantiate the LLM.
 
 ```python
-from langchain_core.tools import tool
+
 from langchain_openai import ChatOpenAI
 
 model = ChatOpenAI(model="gpt-4o")
@@ -113,6 +113,7 @@ Create the agent.
 ```python
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.prompts import ChatPromptTemplate
+from langchain.tools import tool
 
 prompt = ChatPromptTemplate.from_messages(
     [

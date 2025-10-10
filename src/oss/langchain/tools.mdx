@@ -18,7 +18,7 @@ Tools are components that [agents](/oss/langchain/agents) call to perform action
 The simplest way to create a tool is with the `@tool` decorator. By default, the function's docstring becomes the tool's description that helps the model understand when to use it:
 
 ```python wrap
-from langchain_core.tools import tool
+
 
 @tool
 def search_database(query: str, limit: int = 10) -> str:
@@ -186,9 +186,7 @@ ToolNode is a prebuilt LangGraph component that handles tool calls within an age
 :::python
 ```python wrap
 from langchain.tools import ToolNode
-
-tool_node = ToolNode(
-    tools=[...],              # List of tools or callables
+.],              # List of tools or callables
     handle_tool_errors=True,  # Error handling configuration
     ...
 )
@@ -384,7 +382,7 @@ Pass a configured `ToolNode` directly to `createAgent()`:
 ```ts wrap
 import { z } from "zod"
 import { ChatOpenAI } from "@langchain/openai"
-import { ToolNode, createAgent } from "langchain"
+import { ToolNode, createAgent, tool } from "langchain"
 
 const searchDatabase = tool(
     ({ query }) => {
@@ -498,9 +496,9 @@ When you pass a `ToolNode` to `createAgent()`, the agent uses your exact configu
 
         ```python wrap
         from langgraph.types import Command
-        from langchain_core.messages import RemoveMessage
+        from langchain.messages import RemoveMessage
         from langgraph.graph.message import REMOVE_ALL_MESSAGES
-        from langchain_core.tools import tool, InjectedToolCallId
+
         from typing_extensions import Annotated
 
         # Update the conversation history by removing all messages
@@ -538,7 +536,7 @@ When you pass a `ToolNode` to `createAgent()`, the agent uses your exact configu
         from dataclasses import dataclass
         from langchain_openai import ChatOpenAI
         from langchain.agents import create_agent
-        from langchain_core.tools import tool
+        
         from langgraph.runtime import get_runtime
 
         USER_DATABASE = {
@@ -686,7 +684,7 @@ When you pass a `ToolNode` to `createAgent()`, the agent uses your exact configu
         from langgraph.config import get_store
         from langgraph.store.memory import InMemoryStore
         from langchain.agents import create_agent
-        from langchain_core.tools import tool
+        
 
         @tool
         def get_user_info(user_id: str) -> str:

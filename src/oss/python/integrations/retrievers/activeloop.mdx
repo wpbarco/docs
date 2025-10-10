@@ -27,6 +27,7 @@ ORG_ID = "..."
 from langchain.chains import RetrievalQA
 from langchain_community.vectorstores import DeepLake
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain.messages import HumanMessage, SystemMessage
 ```
 
 ```python
@@ -64,7 +65,6 @@ from urllib.parse import urljoin
 import requests
 from bs4 import BeautifulSoup
 
-
 def get_all_links(url):
     response = requests.get(url)
     if response.status_code != 200:
@@ -79,7 +79,6 @@ def get_all_links(url):
     ]
 
     return links
-
 
 base_url = "https://docs.deeplake.ai/en/latest/"
 all_links = get_all_links(base_url)
@@ -151,7 +150,6 @@ from typing import List
 from langchain.chains.openai_functions import (
     create_structured_output_chain,
 )
-from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
@@ -167,12 +165,10 @@ ids = db.vectorstore.dataset.id.data(fetch_chunks=True, aslist=True)["value"]
 # If we pass in a model explicitly, we need to make sure it supports the OpenAI function-calling API.
 llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
 
-
 class Questions(BaseModel):
     """Identifying information about a person."""
 
     question: str = Field(..., description="Questions about text")
-
 
 prompt_msgs = [
     SystemMessage(
@@ -198,7 +194,6 @@ import random
 from langchain_openai import OpenAIEmbeddings
 from tqdm import tqdm
 
-
 def generate_queries(docs: List[str], ids: List[str], n: int = 100):
     questions = []
     relevances = []
@@ -216,7 +211,6 @@ def generate_queries(docs: List[str], ids: List[str], n: int = 100):
         if len(questions) % 10 == 0:
             print(f"q: {len(questions)}")
     return questions[:n], relevances[:n]
-
 
 chain = create_structured_output_chain(Questions, llm, prompt, verbose=False)
 questions, relevances = generate_queries(docs, ids, n=200)

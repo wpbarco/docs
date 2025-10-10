@@ -27,7 +27,7 @@ import json
 import os
 
 import requests
-from langchain_core.tools import tool
+
 
 HF_TOKEN = os.environ.get("HUGGINGFACE_API_KEY")
 
@@ -126,6 +126,7 @@ decoder_schema = {
 
 ```python
 from langchain_experimental.llms import JsonFormer
+from langchain.tools import tool
 
 json_former = JsonFormer(json_schema=decoder_schema, pipeline=hf_model)
 ```

@@ -276,10 +276,10 @@ langchain-core = { path = "../core", editable = true }
 langchain-tests = { path = "../standard-tests", editable = true }
 ```
 
-**For tools, use the `@tool` decorator from `langchain_core.tools`:**
+**For tools, use the `@tool` decorator from `langchain.tools`:**
 
 ```python
-from langchain_core.tools import tool
+from langchain.tools import tool
 
 @tool
 def search_database(query: str) -> str:

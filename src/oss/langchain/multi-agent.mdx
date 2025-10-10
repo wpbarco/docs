@@ -80,7 +80,6 @@ Below is a minimal example where the main agent is given access to a single suba
 
 :::python
 ```python
-from langchain.tools import tool
 from langchain.agents import create_agent
 
 subagent1 = create_agent(..)
@@ -216,7 +215,7 @@ Two common strategies for shaping what the main agent receives back from a subag
 ```python
 from typing import Annotated
 from langchain.agents import AgentState
-from langchain_core.tools import InjectedToolCallId
+
 from langgraph.types import Command
 
 
@@ -250,6 +249,7 @@ def call_subagent1(
 import { tool, ToolMessage } from "langchain";
 import { Command } from "@langchain/langgraph";
 import { z } from "zod";
+from langchain.tools import InjectedToolCallId, tool
 
 const callSubagent1 = tool(
   async ({ query }, config) => {

@@ -29,11 +29,11 @@ import os
 import getpass
 
 from langchain_anthropic import ChatAnthropic
+from langchain.messages import HumanMessage, SystemMessage, ToolMessage
 
 def _set_env(var: str):
     if not os.environ.get(var):
         os.environ[var] = getpass.getpass(f"{var}: ")
-
 
 _set_env("ANTHROPIC_API_KEY")
 
@@ -90,7 +90,6 @@ class SearchQuery(BaseModel):
     justification: str = Field(
         None, description="Why this query is relevant to the user's request."
     )
-
 
 # Augment the LLM with schema for structured output
 structured_llm = llm.with_structured_output(SearchQuery)
@@ -176,7 +175,6 @@ from typing_extensions import TypedDict
 from langgraph.graph import StateGraph, START, END
 from IPython.display import Image, display
 
-
 # Graph state
 class State(TypedDict):
     topic: str
@@ -184,14 +182,12 @@ class State(TypedDict):
     improved_joke: str
     final_joke: str
 
-
 # Nodes
 def generate_joke(state: State):
     """First LLM call to generate initial joke"""
 
     msg = llm.invoke(f"Write a short joke about {state['topic']}")
     return {"joke": msg.content}
-
 
 def check_punchline(state: State):
     """Gate function to check if the joke has a punchline"""
@@ -201,19 +197,16 @@ def check_punchline(state: State):
         return "Pass"
     return "Fail"
 
-
 def improve_joke(state: State):
     """Second LLM call to improve the joke"""
 
     msg = llm.invoke(f"Make this joke funnier by adding wordplay: {state['joke']}")
     return {"improved_joke": msg.content}
 
-
 def polish_joke(state: State):
     """Third LLM call for final polish"""
     msg = llm.invoke(f"Add a surprising twist to this joke: {state['improved_joke']}")
     return {"final_joke": msg.content}
-
 
 # Build workflow
 workflow = StateGraph(State)
@@ -255,14 +248,12 @@ else:
 ```python Functional API
 from langgraph.func import entrypoint, task
 
-
 # Tasks
 @task
 def generate_joke(topic: str):
     """First LLM call to generate initial joke"""
     msg = llm.invoke(f"Write a short joke about {topic}")
     return msg.content
-
 
 def check_punchline(joke: str):
     """Gate function to check if the joke has a punchline"""
@@ -272,20 +263,17 @@ def check_punchline(joke: str):
 
     return "Pass"
 
-
 @task
 def improve_joke(joke: str):
     """Second LLM call to improve the joke"""
     msg = llm.invoke(f"Make this joke funnier by adding wordplay: {joke}")
     return msg.content
 
-
 @task
 def polish_joke(joke: str):
     """Third LLM call for final polish"""
     msg = llm.invoke(f"Add a surprising twist to this joke: {joke}")
     return msg.content
-
 
 @entrypoint()
 def prompt_chaining_workflow(topic: str):
@@ -465,7 +453,6 @@ class State(TypedDict):
     poem: str
     combined_output: str
 
-
 # Nodes
 def call_llm_1(state: State):
     """First LLM call to generate initial joke"""
@@ -473,20 +460,17 @@ def call_llm_1(state: State):
     msg = llm.invoke(f"Write a joke about {state['topic']}")
     return {"joke": msg.content}
 
-
 def call_llm_2(state: State):
     """Second LLM call to generate story"""
 
     msg = llm.invoke(f"Write a story about {state['topic']}")
     return {"story": msg.content}
 
-
 def call_llm_3(state: State):
     """Third LLM call to generate poem"""
 
     msg = llm.invoke(f"Write a poem about {state['topic']}")
     return {"poem": msg.content}
-
 
 def aggregator(state: State):
     """Combine the joke and story into a single output"""
@@ -496,7 +480,6 @@ def aggregator(state: State):
     combined += f"JOKE:\n{state['joke']}\n\n"
     combined += f"POEM:\n{state['poem']}"
     return {"combined_output": combined}
-
 
 # Build workflow
 parallel_builder = StateGraph(State)
@@ -531,20 +514,17 @@ def call_llm_1(topic: str):
     msg = llm.invoke(f"Write a joke about {topic}")
     return msg.content
 
-
 @task
 def call_llm_2(topic: str):
     """Second LLM call to generate story"""
     msg = llm.invoke(f"Write a story about {topic}")
     return msg.content
 
-
 @task
 def call_llm_3(topic):
     """Third LLM call to generate poem"""
     msg = llm.invoke(f"Write a poem about {topic}")
     return msg.content
-
 
 @task
 def aggregator(topic, joke, story, poem):
@@ -555,7 +535,6 @@ def aggregator(topic, joke, story, poem):
     combined += f"JOKE:\n{joke}\n\n"
     combined += f"POEM:\n{poem}"
     return combined
-
 
 # Build workflow
 @entrypoint()
@@ -709,7 +688,6 @@ Routing workflows process inputs and then directs them to context-specific tasks
 <CodeGroup>
 ```python Graph API
 from typing_extensions import Literal
-from langchain_core.messages import HumanMessage, SystemMessage
 
 # Schema for structured output to use as routing logic
 class Route(BaseModel):
@@ -717,17 +695,14 @@ class Route(BaseModel):
         None, description="The next step in the routing process"
     )
 
-
 # Augment the LLM with schema for structured output
 router = llm.with_structured_output(Route)
-
 
 # State
 class State(TypedDict):
     input: str
     decision: str
     output: str
-
 
 # Nodes
 def llm_call_1(state: State):
@@ -736,20 +711,17 @@ def llm_call_1(state: State):
     result = llm.invoke(state["input"])
     return {"output": result.content}
 
-
 def llm_call_2(state: State):
     """Write a joke"""
 
     result = llm.invoke(state["input"])
     return {"output": result.content}
 
-
 def llm_call_3(state: State):
     """Write a poem"""
 
     result = llm.invoke(state["input"])
     return {"output": result.content}
-
 
 def llm_call_router(state: State):
     """Route the input to the appropriate node"""
@@ -766,7 +738,6 @@ def llm_call_router(state: State):
 
     return {"decision": decision.step}
 
-
 # Conditional edge function to route to the appropriate node
 def route_decision(state: State):
     # Return the node name you want to visit next
@@ -776,7 +747,6 @@ def route_decision(state: State):
         return "llm_call_2"
     elif state["decision"] == "poem":
         return "llm_call_3"
-
 
 # Build workflow
 router_builder = StateGraph(State)
@@ -815,8 +785,6 @@ print(state["output"])
 ```python Functional API
 from typing_extensions import Literal
 from pydantic import BaseModel
-from langchain_core.messages import HumanMessage, SystemMessage
-
 
 # Schema for structured output to use as routing logic
 class Route(BaseModel):
@@ -824,10 +792,8 @@ class Route(BaseModel):
         None, description="The next step in the routing process"
     )
 
-
 # Augment the LLM with schema for structured output
 router = llm.with_structured_output(Route)
-
 
 @task
 def llm_call_1(input_: str):
@@ -835,20 +801,17 @@ def llm_call_1(input_: str):
     result = llm.invoke(input_)
     return result.content
 
-
 @task
 def llm_call_2(input_: str):
     """Write a joke"""
     result = llm.invoke(input_)
     return result.content
 
-
 @task
 def llm_call_3(input_: str):
     """Write a poem"""
     result = llm.invoke(input_)
     return result.content
-
 
 def llm_call_router(input_: str):
     """Route the input to the appropriate node"""
@@ -862,7 +825,6 @@ def llm_call_router(input_: str):
         ]
     )
     return decision.step
-
 
 # Create workflow
 @entrypoint()
@@ -1112,7 +1074,6 @@ Orchestrator-worker workflows provide more flexibility and are often used when s
 from typing import Annotated, List
 import operator
 
-
 # Schema for structured output to use in planning
 class Section(BaseModel):
     name: str = Field(
@@ -1122,12 +1083,10 @@ class Section(BaseModel):
         description="Brief overview of the main topics and concepts to be covered in this section.",
     )
 
-
 class Sections(BaseModel):
     sections: List[Section] = Field(
         description="Sections of the report.",
     )
-
 
 # Augment the LLM with schema for structured output
 planner = llm.with_structured_output(Sections)
@@ -1135,7 +1094,6 @@ planner = llm.with_structured_output(Sections)
 ```python Functional API
 from typing import List
 
-
 # Schema for structured output to use in planning
 class Section(BaseModel):
     name: str = Field(
@@ -1145,16 +1103,13 @@ class Section(BaseModel):
         description="Brief overview of the main topics and concepts to be covered in this section.",
     )
 
-
 class Sections(BaseModel):
     sections: List[Section] = Field(
         description="Sections of the report.",
     )
 
-
 # Augment the LLM with schema for structured output
 planner = llm.with_structured_output(Sections)
-
 
 @task
 def orchestrator(topic: str):
@@ -1168,7 +1123,6 @@ def orchestrator(topic: str):
     )
 
     return report_sections.sections
-
 
 @task
 def llm_call(section: Section):
@@ -1187,13 +1141,11 @@ def llm_call(section: Section):
     # Write the updated section to completed sections
     return result.content
 
-
 @task
 def synthesizer(completed_sections: list[str]):
     """Synthesize full report from sections"""
     final_report = "\n\n---\n\n".join(completed_sections)
     return final_report
-
 
 @entrypoint()
 def orchestrator_worker(topic: str):
@@ -1306,11 +1258,9 @@ for await (const step of stream) {
 
 Orchestrator-worker workflows are common and LangGraph has built-in support for them. The `Send` API lets you dynamically create worker nodes and send them specific inputs. Each worker has its own state, and all worker outputs are written to a shared state key that is accessible to the orchestrator graph. This gives the orchestrator access to all worker output and allows it to synthesize them into a final output. The example below iterates over a list of sections and uses the `Send` API to send a section to each worker.
 
-
 :::python
 ```python
 from langgraph.types import Send
-
 
 # Graph state
 class State(TypedDict):
@@ -1321,12 +1271,10 @@ class State(TypedDict):
     ]  # All workers write to this key in parallel
     final_report: str  # Final report
 
-
 # Worker state
 class WorkerState(TypedDict):
     section: Section
     completed_sections: Annotated[list, operator.add]
-
 
 # Nodes
 def orchestrator(state: State):
@@ -1341,7 +1289,6 @@ def orchestrator(state: State):
     )
 
     return {"sections": report_sections.sections}
-
 
 def llm_call(state: WorkerState):
     """Worker writes a section of the report"""
@@ -1361,7 +1308,6 @@ def llm_call(state: WorkerState):
     # Write the updated section to completed sections
     return {"completed_sections": [section.content]}
 
-
 def synthesizer(state: State):
     """Synthesize full report from sections"""
 
@@ -1373,14 +1319,12 @@ def synthesizer(state: State):
 
     return {"final_report": completed_report_sections}
 
-
 # Conditional edge function to create llm_call workers that each write a section of the report
 def assign_workers(state: State):
     """Assign a worker to each section in the plan"""
 
     # Kick off section writing in parallel via Send() API
     return [Send("llm_call", {"section": s}) for s in state["sections"]]
-
 
 # Build workflow
 orchestrator_worker_builder = StateGraph(State)
@@ -1522,7 +1466,6 @@ class State(TypedDict):
     feedback: str
     funny_or_not: str
 
-
 # Schema for structured output to use in evaluation
 class Feedback(BaseModel):
     grade: Literal["funny", "not funny"] = Field(
@@ -1532,10 +1475,8 @@ class Feedback(BaseModel):
         description="If the joke is not funny, provide feedback on how to improve it.",
     )
 
-
 # Augment the LLM with schema for structured output
 evaluator = llm.with_structured_output(Feedback)
-
 
 # Nodes
 def llm_call_generator(state: State):
@@ -1549,13 +1490,11 @@ def llm_call_generator(state: State):
         msg = llm.invoke(f"Write a joke about {state['topic']}")
     return {"joke": msg.content}
 
-
 def llm_call_evaluator(state: State):
     """LLM evaluates the joke"""
 
     grade = evaluator.invoke(f"Grade the joke {state['joke']}")
     return {"funny_or_not": grade.grade, "feedback": grade.feedback}
-
 
 # Conditional edge function to route back to joke generator or end based upon feedback from the evaluator
 def route_joke(state: State):
@@ -1565,7 +1504,6 @@ def route_joke(state: State):
         return "Accepted"
     elif state["funny_or_not"] == "not funny":
         return "Rejected + Feedback"
-
 
 # Build workflow
 optimizer_builder = StateGraph(State)
@@ -1606,10 +1544,8 @@ class Feedback(BaseModel):
         description="If the joke is not funny, provide feedback on how to improve it.",
     )
 
-
 # Augment the LLM with schema for structured output
 evaluator = llm.with_structured_output(Feedback)
-
 
 # Nodes
 @task
@@ -1623,13 +1559,11 @@ def llm_call_generator(topic: str, feedback: Feedback):
         msg = llm.invoke(f"Write a joke about {topic}")
     return msg.content
 
-
 @task
 def llm_call_evaluator(joke: str):
     """LLM evaluates the joke"""
     feedback = evaluator.invoke(f"Grade the joke {joke}")
     return feedback
-
 
 @entrypoint()
 def optimizer_workflow(topic: str):
@@ -1809,8 +1743,7 @@ To get started with agents, see the [quickstart](/oss/langchain/quickstart) or r
 
 :::python
 ```python Using tools
-from langchain_core.tools import tool
-
+from langchain.tools import tool
 
 # Define tools
 @tool
@@ -1823,7 +1756,6 @@ def multiply(a: int, b: int) -> int:
     """
     return a * b
 
-
 @tool
 def add(a: int, b: int) -> int:
     """Adds a and b.
@@ -1833,7 +1765,6 @@ def add(a: int, b: int) -> int:
         b: second int
     """
     return a + b
-
 
 @tool
 def divide(a: int, b: int) -> float:
@@ -1845,7 +1776,6 @@ def divide(a: int, b: int) -> float:
     """
     return a / b
 
-
 # Augment the LLM with tools
 tools = [add, multiply, divide]
 tools_by_name = {tool.name: tool for tool in tools}
@@ -1855,8 +1785,6 @@ llm_with_tools = llm.bind_tools(tools)
 <CodeGroup>
 ```python Graph API
 from langgraph.graph import MessagesState
-from langchain_core.messages import SystemMessage, HumanMessage, ToolMessage
-
 
 # Nodes
 def llm_call(state: MessagesState):
@@ -1875,7 +1803,6 @@ def llm_call(state: MessagesState):
         ]
     }
 
-
 def tool_node(state: dict):
     """Performs the tool call"""
 
@@ -1885,7 +1812,6 @@ def tool_node(state: dict):
         observation = tool.invoke(tool_call["args"])
         result.append(ToolMessage(content=observation, tool_call_id=tool_call["id"]))
     return {"messages": result}
-
 
 # Conditional edge function to route to the tool node or end based upon whether the LLM made a tool call
 def should_continue(state: MessagesState) -> Literal["tool_node", END]:
@@ -1898,7 +1824,6 @@ def should_continue(state: MessagesState) -> Literal["tool_node", END]:
         return "tool_node"
     # Otherwise, we stop (reply to the user)
     return END
-
 
 # Build workflow
 agent_builder = StateGraph(MessagesState)
@@ -1930,13 +1855,11 @@ for m in messages["messages"]:
 ```
 ```python Functional API
 from langgraph.graph import add_messages
-from langchain_core.messages import (
     SystemMessage,
     HumanMessage,
     BaseMessage,
     ToolCall,
 )
-
 
 @task
 def call_llm(messages: list[BaseMessage]):
@@ -1950,13 +1873,11 @@ def call_llm(messages: list[BaseMessage]):
         + messages
     )
 
-
 @task
 def call_tool(tool_call: ToolCall):
     """Performs the tool call"""
     tool = tools_by_name[tool_call["name"]]
     return tool.invoke(tool_call)
-
 
 @entrypoint()
 def agent(messages: list[BaseMessage]):

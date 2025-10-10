@@ -72,6 +72,7 @@ Now we can instantiate our model object and generate responses:
 
 ```python
 from langchain_openai import ChatOpenAI
+from langchain.messages import ToolMessage
 
 llm = ChatOpenAI(
     model="gpt-5-nano",
@@ -151,12 +152,10 @@ and passed in every model invocation.
 ```python
 from pydantic import BaseModel, Field
 
-
 class GetWeather(BaseModel):
     """Get the current weather in a given location"""
 
     location: str = Field(..., description="The city and state, e.g. San Francisco, CA")
-
 
 llm_with_tools = llm.bind_tools([GetWeather])
 ```
@@ -219,18 +218,15 @@ OpenAI's [structured output](https://platform.openai.com/docs/guides/structured-
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel
 
-
 def get_weather(location: str) -> None:
     """Get weather at a location."""
     return "It's sunny."
-
 
 class OutputSchema(BaseModel):
     """Schema for response."""
 
     answer: str
     justification: str
-
 
 llm = ChatOpenAI(model="gpt-4.1")
 
@@ -261,12 +257,10 @@ structured_response = structured_llm.invoke(
 from langchain_openai import ChatOpenAI, custom_tool
 from langchain.agents import create_agent
 
-
 @custom_tool
 def execute_code(code: str) -> str:
     """Execute python code."""
     return "27"
-
 
 llm = ChatOpenAI(model="gpt-5", use_responses_api=True)
 
@@ -324,12 +318,10 @@ MUL: "*"
 
 format_ = {"type": "grammar", "syntax": "lark", "definition": grammar}
 
-
 @custom_tool(format=format_)
 def do_math(input_string: str) -> str:
     """Do a mathematical operation."""
     return "27"
-
 
 llm = ChatOpenAI(model="gpt-5", use_responses_api=True)
 
@@ -564,12 +556,10 @@ First, load two screenshots:
 ```python
 import base64
 
-
 def load_png_as_base64(file_path):
     with open(file_path, "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read())
         return encoded_string.decode("utf-8")
-
 
 screenshot_1_base64 = load_png_as_base64(
     "/path/to/screenshot_1.png"
@@ -647,7 +637,6 @@ We next construct a ToolMessage with these properties:
 3. Its content is either an `image_url` or an `input_image` output block (see [OpenAI docs](https://platform.openai.com/docs/guides/tools-computer-use#5-repeat) for formatting).
 
 ```python
-from langchain_core.messages import ToolMessage
 
 tool_call_id = next(
     item["call_id"] for item in response.content if item["type"] == "computer_call"

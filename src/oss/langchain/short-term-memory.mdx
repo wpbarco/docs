@@ -39,6 +39,7 @@ To add short-term memory (thread-level persistence) to an agent, you need to spe
 :::python
 ```python {highlight={2,7,12}}
 from langchain.agents import create_agent
+from langchain.messages import AnyMessage, BaseMessage, RemoveMessage, ToolMessage
 from langgraph.checkpoint.memory import InMemorySaver
 
 agent = create_agent(
@@ -99,7 +100,6 @@ const DB_URI = "postgresql://postgres:postgres@localhost:5442/postgres?sslmode=d
 const checkpointer = PostgresSaver.fromConnString(DB_URI);
 ```
 :::
-
 
 ## Customizing agent memory
 
@@ -177,7 +177,6 @@ To trim message history in an agent, use @[`pre_model_hook`][create_agent] with 
 
 ```python
 from langchain_core.messages.utils import trim_messages, count_tokens_approximately
-from langchain_core.messages import BaseMessage
 from langgraph.checkpoint.memory import InMemorySaver
 from langchain.agents import create_agent
 from langchain_core.runnables import RunnableConfig
@@ -195,7 +194,6 @@ def pre_model_hook(state) -> dict[str, list[BaseMessage]]:
         end_on=("human", "tool"),
     )
     return {"llm_input_messages": trimmed_messages}
-
 
 checkpointer = InMemorySaver()
 agent = create_agent(
@@ -272,7 +270,6 @@ The default `AgentState` provides this.
 To remove specific messages:
 
 ```python {highlight={1,7}}
-from langchain_core.messages import RemoveMessage
 
 def delete_messages(state):
     messages = state["messages"]
@@ -323,18 +320,15 @@ const deleteMessages = (state) => {
 :::python
 
 ```python
-from langchain_core.messages import RemoveMessage
 from langchain.agents import create_agent
 from langgraph.checkpoint.memory import InMemorySaver
 from langchain_core.runnables import RunnableConfig
-
 
 def delete_messages(state):
     messages = state["messages"]
     if len(messages) > 2:
         # remove the earliest two messages
         return {"messages": [RemoveMessage(id=m.id) for m in messages[:2]]}
-
 
 agent = create_agent(
     "openai:gpt-5-nano",
@@ -442,7 +436,6 @@ Because of this, some applications benefit from a more sophisticated approach of
 
 ![](/oss/images/summary.png)
 
-
 :::python
 To summarize message history in an agent, use @[`pre_model_hook`][create_agent] with a prebuilt [`SummarizationNode`](https://langchain-ai.github.io/langmem/reference/short_term/#langmem.short_term.SummarizationNode) abstraction:
 
@@ -469,7 +462,6 @@ summarization_node = SummarizationNode(
 class State(AgentState):
     # Added for the SummarizationNode to be able to keep track of the running summary information
     context: dict[str, RunningSummary]
-
 
 checkpointer = InMemorySaver()
 
@@ -517,7 +509,6 @@ This annotation hides the state from the tool signature (so the model doesn't se
 ```python
 from typing import Annotated
 from langchain.agents import create_agent, AgentState
-from langchain.tools import InjectedState
 
 class CustomState(AgentState):
     user_id: str
@@ -595,9 +586,8 @@ This is useful for persisting intermediate results or making information accessi
 :::python
 ```python {highlight={10,19,20,31,40,45}}
 from typing import Annotated
-from langchain_core.tools import InjectedToolCallId
+
 from langchain_core.runnables import RunnableConfig
-from langchain_core.messages import ToolMessage
 from langchain.agents import create_agent, AgentState
 from langchain.tools import InjectedState
 from langgraph.runtime import get_runtime
@@ -716,26 +706,21 @@ Access short term memory (state) in a dynamic prompt function by injecting the a
 
 :::python
 ```python
-from langchain_core.messages import AnyMessage
 from langchain.agents import create_agent, AgentState
 from langgraph.runtime import get_runtime
 from typing import TypedDict
 
-
 class CustomContext(TypedDict):
     user_name: str
-
 
 def get_weather(city: str) -> str:
     """Get the weather in a city."""
     return f"The weather in {city} is always sunny!"
 
-
 def prompt(state: AgentState) -> list[AnyMessage]:
     user_name = get_runtime(CustomContext).context["user_name"]
     system_msg = f"You are a helpful assistant. Address the user as {user_name}."
     return [{"role": "system", "content": system_msg}] + state["messages"]
-
 
 agent = create_agent(
     model="openai:gpt-5-nano",
@@ -860,10 +845,8 @@ Access short term memory (state) in a pre model hook by injecting the agent's st
 :::python
 ```python
 from langchain_core.messages.utils import trim_messages, count_tokens_approximately
-from langchain_core.messages import BaseMessage
 from langgraph.checkpoint.memory import InMemorySaver
 from langchain.agents import create_agent, AgentState
-
 
 def pre_model_hook(state: AgentState) -> dict[str, list[BaseMessage]]:
     """
@@ -958,6 +941,7 @@ agent = create_agent(
 ```typescript
 import { RemoveMessage } from "@langchain/core/messages";
 import { createAgent, type AgentState } from "langchain";
+from langchain.tools import InjectedState, InjectedToolCallId
 
 function validateResponse(state: AgentState) {
     const lastMessage = state.messages.at(-1)?.content;

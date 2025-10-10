@@ -1015,6 +1015,7 @@ Enable semantic search in your graph's memory store to let graph agents search f
 :::python
 ```python
 from langchain.embeddings import init_embeddings
+from langchain.messages import RemoveMessage
 from langgraph.store.memory import InMemoryStore
 
 # Create store with semantic search enabled
@@ -1097,7 +1098,6 @@ const items = await store.search(["user_123", "memories"], {
           ]
       )
       return {"messages": [response]}
-
 
   builder = StateGraph(MessagesState)
   builder.add_node(chat)
@@ -1346,7 +1346,6 @@ To delete messages from the graph state, you can use the `RemoveMessage`. For `R
 To remove specific messages:
 
 ```python {highlight={1,7}}
-from langchain_core.messages import RemoveMessage
 
 def delete_messages(state):
     messages = state["messages"]
@@ -1397,8 +1396,7 @@ When deleting messages, **make sure** that the resulting message history is vali
 <Accordion title="Full example: delete messages">
   :::python
   ```python {highlight={1,7}}
-  from langchain_core.messages import RemoveMessage
-
+  
   def delete_messages(state):
       messages = state["messages"]
       if len(messages) > 2:
@@ -1512,7 +1510,6 @@ The problem with trimming or removing messages, as shown above, is that you may 
 
 ![](/oss/images/summary.png)
 
-
 :::python
 Prompting and orchestration logic can be used to summarize the message history. For example, in LangGraph you can extend the [`MessagesState`](/oss/langgraph/graph-api#working-with-messages-in-graph-state) to include a `summary` key:
 
@@ -1615,7 +1612,7 @@ const summarizeConversation = async (state: z.infer<typeof State>) => {
   from typing import Any, TypedDict
 
   from langchain.chat_models import init_chat_model
-  from langchain_core.messages import AnyMessage
+  from langchain.messages import AnyMessage
   from langchain_core.messages.utils import count_tokens_approximately
   from langgraph.graph import StateGraph, START, MessagesState
   from langgraph.checkpoint.memory import InMemorySaver

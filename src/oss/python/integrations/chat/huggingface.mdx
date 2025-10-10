@@ -83,6 +83,7 @@ You can instantiate a `ChatHuggingFace` model in two different ways, either from
 
 ```python
 from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
+from langchain.messages import (
 
 llm = HuggingFaceEndpoint(
     repo_id="deepseek-ai/DeepSeek-R1-0528",
@@ -223,7 +224,6 @@ chat_model = ChatHuggingFace(llm=llm)
 ## Invocation
 
 ```python
-from langchain_core.messages import (
     HumanMessage,
     SystemMessage,
 )

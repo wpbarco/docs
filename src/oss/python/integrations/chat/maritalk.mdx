@@ -33,6 +33,7 @@ Let's define our language model, ChatMaritalk, and configure it with your API ke
 from langchain_community.chat_models import ChatMaritalk
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts.chat import ChatPromptTemplate
+from langchain.messages import HumanMessage
 
 llm = ChatMaritalk(
     model="sabia-2-medium",  # Available models: sabia-2-small and sabia-2-medium
@@ -66,7 +67,6 @@ For tasks involving the generation of long text, such as creating an extensive a
 #### Synchronous
 
 ```python
-from langchain_core.messages import HumanMessage
 
 messages = [HumanMessage(content="Suggest 3 names for my dog")]
 
@@ -77,14 +77,11 @@ for chunk in llm.stream(messages):
 #### Asynchronous
 
 ```python
-from langchain_core.messages import HumanMessage
-
 
 async def async_invoke_chain(animal: str):
     messages = [HumanMessage(content=f"Suggest 3 names for my {animal}")]
     async for chunk in llm._astream(messages):
         print(chunk.message.content, end="", flush=True)
-
 
 await async_invoke_chain("dog")
 ```

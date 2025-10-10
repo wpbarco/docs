@@ -83,6 +83,7 @@ You need to specify the `model_id` that will be used for inferencing. You can fi
 
 ```python
 from langchain_ibm import ChatWatsonx
+from langchain.messages import (
 
 chat = ChatWatsonx(
     model_id="ibm/granite-34b-code-instruct",
@@ -155,7 +156,6 @@ AIMessage(content="J'adore que tu escois de écouter de la rock ! ", additional_
 
 ```python
 # Invocation multiple chat
-from langchain_core.messages import (
     HumanMessage,
     SystemMessage,
 )
@@ -265,12 +265,10 @@ chat = ChatWatsonx(
 ```python
 from pydantic import BaseModel, Field
 
-
 class GetWeather(BaseModel):
     """Get the current weather in a given location"""
 
     location: str = Field(..., description="The city and state, e.g. San Francisco, CA")
-
 
 llm_with_tools = chat.bind_tools([GetWeather])
 ```

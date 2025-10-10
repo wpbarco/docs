@@ -133,7 +133,7 @@ However, it cannot automatically trigger a function/tool, we need to force it by
 `{"type": "function", "function": {"name": <<tool_name>>}}.`
 
 ```python
-from langchain_core.tools import tool
+
 from pydantic import BaseModel, Field
 
 
@@ -208,6 +208,7 @@ ai_msg.tool_calls
 ```python
 from langchain_core.utils.function_calling import convert_to_openai_tool
 from pydantic import BaseModel
+from langchain.tools import tool
 
 
 class Joke(BaseModel):

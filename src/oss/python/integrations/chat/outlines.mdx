@@ -42,6 +42,7 @@ Now we can instantiate our model object and generate chat completions:
 
 ```python
 from langchain_community.chat_models.outlines import ChatOutlines
+from langchain.messages import HumanMessage
 
 # For llamacpp backend
 model = ChatOutlines(model="TheBloke/phi-2-GGUF/phi-2.Q4_K_M.gguf", backend="llamacpp")
@@ -59,7 +60,6 @@ model = ChatOutlines(model="microsoft/phi-2")  # defaults to transformers backen
 ## Invocation
 
 ```python
-from langchain_core.messages import HumanMessage
 
 messages = [HumanMessage(content="What will the capital of mars be called?")]
 response = model.invoke(messages)
@@ -131,10 +131,8 @@ response.content
 ```python
 from pydantic import BaseModel
 
-
 class Person(BaseModel):
     name: str
-
 
 model.json_schema = Person
 response = model.invoke("Who are the main contributors to LangChain?")
@@ -167,11 +165,9 @@ You can also use LangChain's Structured Output with ChatOutlines:
 ```python
 from pydantic import BaseModel
 
-
 class AnswerWithJustification(BaseModel):
     answer: str
     justification: str
-
 
 _model = model.with_structured_output(AnswerWithJustification)
 result = _model.invoke("What weighs more, a pound of bricks or a pound of feathers?")

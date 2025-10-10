@@ -34,6 +34,7 @@ Here we instantiate the `ApifyActorsTool` to be able to call [RAG Web Browser](h
 
 ```python
 from langchain_apify import ApifyActorsTool
+from langchain.messages import ToolMessage
 
 tool = ApifyActorsTool("apify/rag-web-browser")
 ```
@@ -55,7 +56,6 @@ We can provide the created tool to an [agent](https://python.langchain.com/docs/
 ```
 
 ```python
-from langchain_core.messages import ToolMessage
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_agent
 

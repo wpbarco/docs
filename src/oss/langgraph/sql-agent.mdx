@@ -80,6 +80,7 @@ We will use a handy SQL database wrapper available in the `langchain_community` 
 
 ```python
 from langchain_community.utilities import SQLDatabase
+from langchain.messages import AIMessage
 
 db = SQLDatabase.from_uri("sqlite:///Chinook.db")
 
@@ -132,17 +133,14 @@ Putting these steps in dedicated nodes lets us (1) force tool-calls when needed,
 from typing import Literal
 
 from langchain.agents import ToolNode
-from langchain_core.messages import AIMessage
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph import END, START, MessagesState, StateGraph
-
 
 get_schema_tool = next(tool for tool in tools if tool.name == "sql_db_schema")
 get_schema_node = ToolNode([get_schema_tool], name="get_schema")
 
 run_query_tool = next(tool for tool in tools if tool.name == "sql_db_query")
 run_query_node = ToolNode([run_query_tool], name="run_query")
-
 
 # Example: create a predetermined tool call
 def list_tables(state: MessagesState):
@@ -160,7 +158,6 @@ def list_tables(state: MessagesState):
 
     return {"messages": [tool_call_message, tool_message, response]}
 
-
 # Example: force a model to create a tool call
 def call_get_schema(state: MessagesState):
     # Note that LangChain enforces that all models accept `tool_choice="any"`
@@ -169,7 +166,6 @@ def call_get_schema(state: MessagesState):
     response = llm_with_tools.invoke(state["messages"])
 
     return {"messages": [response]}
-
 
 generate_query_system_prompt = """
 You are an agent designed to interact with a SQL database.
@@ -188,7 +184,6 @@ DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the databa
     top_k=5,
 )
 
-
 def generate_query(state: MessagesState):
     system_message = {
         "role": "system",
@@ -200,7 +195,6 @@ def generate_query(state: MessagesState):
     response = llm_with_tools.invoke([system_message] + state["messages"])
 
     return {"messages": [response]}
-
 
 check_query_system_prompt = """
 You are a SQL expert with a strong attention to detail.
@@ -219,7 +213,6 @@ just reproduce the original query.
 
 You will call the appropriate tool to execute the query after running this check.
 """.format(dialect=db.dialect)
-
 
 def check_query(state: MessagesState):
     system_message = {
@@ -249,7 +242,6 @@ def should_continue(state: MessagesState) -> Literal[END, "check_query"]:
         return END
     else:
         return "check_query"
-
 
 builder = StateGraph(MessagesState)
 builder.add_node(list_tables)
@@ -311,7 +303,6 @@ Tool Calls:
 ================================= Tool Message =================================
 Name: sql_db_schema
 
-
 CREATE TABLE "Genre" (
 	"GenreId" INTEGER NOT NULL,
 	"Name" NVARCHAR(120),
@@ -325,7 +316,6 @@ GenreId	Name
 2	Jazz
 3	Metal
 */
-
 
 CREATE TABLE "Track" (
 	"TrackId" INTEGER NOT NULL,
@@ -383,7 +373,7 @@ Here we leverage LangGraph's [human-in-the-loop](/oss/langgraph/add-human-in-the
 Let's wrap the `sql_db_query` tool in a node that receives human input. We can implement this using the [interrupt](/oss/langgraph/add-human-in-the-loop) function. Below, we allow for input to approve the tool call, edit its arguments, or provide user feedback.
 ```python
 from langchain_core.runnables import RunnableConfig
-from langchain_core.tools import tool
+
 from langgraph.types import interrupt
 
 @tool(
@@ -488,7 +478,7 @@ INTERRUPTED:
 We can accept or edit the tool call using [Command](/oss/langgraph/use-graph-api#combine-control-flow-and-state-updates-with-command):
 ```python
 from langgraph.types import Command
-
+from langchain.tools import tool
 
 for step in agent.stream(
     Command(resume={"type": "accept"}),

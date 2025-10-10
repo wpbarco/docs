@@ -48,8 +48,8 @@ The LangChain vLLM integration can be accessed via the `langchain-openai` packag
 Now we can instantiate our model object and generate chat completions:
 
 ```python
-from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.prompts.chat import (
+from langchain.messages import HumanMessage, SystemMessage
     ChatPromptTemplate,
     HumanMessagePromptTemplate,
     SystemMessagePromptTemplate,

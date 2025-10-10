@@ -42,7 +42,7 @@ details in [this guide](/oss/integrations/chat/google_generative_ai).
 
 ```python
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_core.messages import HumanMessage
+from langchain.messages import HumanMessage
 
 llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
 
@@ -65,7 +65,6 @@ print(result.content)
 ```
 
 The `image_url` can be a public URL, a GCS URI (`gs://...`), a local file path, a base64 encoded image string (`data:image/png;base64,...`), or a PIL Image object.
-
 
 ### Embedding Models
 
@@ -262,7 +261,6 @@ See a [usage example](/oss/integrations/text_embedding/google_vertex_ai_palm).
 ```python
 from langchain_google_vertexai import VertexAIEmbeddings
 ```
-
 
 ### Document Loaders
 
@@ -1132,7 +1130,6 @@ from langchain_community.utilities.google_trends import GoogleTrendsAPIWrapper
 Collections of tools for specific Google services.
 
 #### Gmail
-
 
 > [Google Gmail](https://en.wikipedia.org/wiki/Gmail) is a free email service provided by Google.
 This toolkit works with emails through the `Gmail API`.

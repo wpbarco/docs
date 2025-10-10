@@ -30,6 +30,7 @@ os.environ["TRUBRICS_PASSWORD"] = "***"
 
 ```python
 from langchain_community.callbacks.trubrics_callback import TrubricsCallbackHandler
+from langchain.messages import HumanMessage, SystemMessage
 ```
 
 ### Usage
@@ -126,7 +127,6 @@ And to create my own destiny.
 ### 2. With a chat model
 
 ```python
-from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 ```
 

@@ -75,6 +75,7 @@ Now we can instantiate our model object and generate chat completions:
 
 ```python
 from langchain_ollama import ChatOllama
+from langchain.messages import AIMessage, ChatMessage, HumanMessage
 
 llm = ChatOllama(
     model="llama3.1",
@@ -124,10 +125,7 @@ Details on creating custom tools are available in [this guide](/oss/langchain/to
 ```python
 from typing import List
 
-from langchain_core.messages import AIMessage
-from langchain_core.tools import tool
 from langchain_ollama import ChatOllama
-
 
 @tool
 def validate_user(user_id: int, addresses: List[str]) -> bool:
@@ -138,7 +136,6 @@ def validate_user(user_id: int, addresses: List[str]) -> bool:
         addresses (List[str]): Previous addresses as a list of strings.
     """
     return True
-
 
 llm = ChatOllama(
     model="gpt-oss:20b",
@@ -177,7 +174,6 @@ from io import BytesIO
 from IPython.display import HTML, display
 from PIL import Image
 
-
 def convert_to_base64(pil_image):
     """
     Convert PIL images to Base64 encoded strings
@@ -191,7 +187,6 @@ def convert_to_base64(pil_image):
     img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
     return img_str
 
-
 def plt_img_base64(img_base64):
     """
     Disply base64 encoded string as image
@@ -202,7 +197,6 @@ def plt_img_base64(img_base64):
     image_html = f'<img src="data:image/jpeg;base64,{img_base64}" />'
     # Display the image by rendering the HTML
     display(HTML(image_html))
-
 
 file_path = "../../../static/img/ollama_example_img.jpg"
 pil_image = Image.open(file_path)
@@ -216,11 +210,9 @@ plt_img_base64(image_b64)
 ```
 
 ```python
-from langchain_core.messages import HumanMessage
 from langchain_ollama import ChatOllama
 
 llm = ChatOllama(model="bakllava", temperature=0)
-
 
 def prompt_func(data):
     text = data["text"]
@@ -239,7 +231,6 @@ def prompt_func(data):
     content_parts.append(text_part)
 
     return [HumanMessage(content=content_parts)]
-
 
 from langchain_core.output_parsers import StrOutputParser
 
@@ -263,8 +254,8 @@ Some models, such as IBM's [Granite 3.2](https://ollama.com/library/granite3.2),
 To access Granite 3.2's thinking features, pass a message with a `"control"` role with content set to `"thinking"`. Because `"control"` is a non-standard message role, we can use a [ChatMessage](https://python.langchain.com/api_reference/core/messages/langchain_core.messages.chat.ChatMessage.html) object to implement it:
 
 ```python
-from langchain_core.messages import ChatMessage, HumanMessage
 from langchain_ollama import ChatOllama
+from langchain.tools import tool
 
 llm = ChatOllama(model="granite3.2:8b")
 

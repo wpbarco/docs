@@ -29,6 +29,7 @@ The name of the function has changed from `create_react_agent` to `create_agent`
 <CodeGroup>
 ```python V1 (new)
 from langchain.agents import create_agent
+from langchain.messages import AIMessage, SystemMessage
 ```
 ```python V0 (old)
 from langgraph.prebuilt import create_react_agent
@@ -79,7 +80,6 @@ agent = create_agent(
 )
 ```
 ```python V0 (old)
-from langchain_core.messages import SystemMessage
 from langgraph.prebuilt import create_react_agent
 
 agent = create_react_agent(
@@ -173,7 +173,6 @@ agent.invoke(
 )
 ```
 </CodeGroup>
-
 
 ### Pre-model hook
 
@@ -271,7 +270,7 @@ Custom state is now defined in middleware using the `state_schema` attribute:
 <CodeGroup>
 ```python V1 (new)
 from typing import Annotated
-from langchain_core.tools import tool
+
 from langchain.agents import create_agent  # [!code highlight]
 from langchain.agents.middleware import AgentMiddleware, AgentState  # [!code highlight]
 from langgraph.prebuilt import InjectedState
@@ -408,7 +407,6 @@ from langchain.agents import create_agent
 from langchain.agents.middleware import (
     AgentMiddleware, ModelRequest, ModelRequestHandler
 )
-from langchain_core.messages import AIMessage
 from langchain_openai import ChatOpenAI
 
 basic_model = ChatOpenAI(model="gpt-5-nano")
@@ -636,6 +634,64 @@ result = agent.invoke(
 
 ---
 
+## Simplified import paths
+
+LangChain v1 introduces simplified import paths for commonly-used abstractions. While the original `langchain_core` imports still work, we recommend migrating to the new paths for better ergonomics.
+
+### Tools
+
+Tool-related imports are now available from `langchain.tools`:
+
+<CodeGroup>
+```python V1 (new)
+from langchain.tools import tool, ToolNode, InjectedState, InjectedStore, InjectedToolCallId
+
+@tool
+def get_weather(city: str) -> str:
+    """Get the weather for a city."""
+    return f"Sunny, 72°F in {city}"
+```
+```python V0 (old)
+from langchain_core.tools import tool, ToolNode, InjectedState, InjectedStore, InjectedToolCallId
+
+@tool
+def get_weather(city: str) -> str:
+    """Get the weather for a city."""
+    return f"Sunny, 72°F in {city}"
+```
+</CodeGroup>
+
+### Messages
+
+All message types are now available from `langchain.messages`:
+
+<CodeGroup>
+```python V1 (new)
+from langchain.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
+
+messages = [
+    SystemMessage(content="You are a helpful assistant"),
+    HumanMessage(content="Hello!"),
+    AIMessage(content="Hi there! How can I help you today?")
+]
+```
+```python V0 (old)
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
+
+messages = [
+    SystemMessage(content="You are a helpful assistant"),
+    HumanMessage(content="Hello!"),
+    AIMessage(content="Hi there! How can I help you today?")
+]
+```
+</CodeGroup>
+
+<Note>
+The original `langchain_core.tools` and `langchain_core.messages` import paths continue to work for backward compatibility, but the new simplified paths are recommended for new code.
+</Note>
+
+---
+
 ## Breaking changes
 
 ### Dropped Python 3.9 support
@@ -682,6 +738,7 @@ classic_feature = SomeClassicFeature()
 
 ```python V0 (old)
 from langchain import SomeClassicFeature
+from langchain.tools import tool
 
 # Old import path
 classic_feature = SomeClassicFeature()
