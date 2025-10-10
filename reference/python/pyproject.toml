@@ -88,6 +88,7 @@ dependencies = [
     #"langgraph-supervisor",
     #"langgraph-swarm",
     #"langgraph-checkpoint-aws",
+    "langsmith",
 ]
 
 
@@ -179,4 +180,7 @@ langgraph-sdk = { git = "https://github.com/langchain-ai/langgraph", subdirector
 langgraph-supervisor = { git = "https://github.com/langchain-ai/langgraph-supervisor-py" }
 langgraph-swarm = { git = "https://github.com/langchain-ai/langgraph-swarm-py" }
 langgraph-checkpoint-aws = { git = "https://github.com/langchain-ai/langchain-aws.git", subdirectory = "libs/langgraph-checkpoint-aws" }
+
+## LangSmith SDK
+langsmith = { git = "https://github.com/langchain-ai/langsmith-sdk.git", subdirectory = "python" }
 

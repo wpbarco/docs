@@ -1992,6 +1992,7 @@ dependencies = [
     { name = "langgraph-checkpoint-sqlite" },
     { name = "langgraph-prebuilt" },
     { name = "langgraph-sdk" },
+    { name = "langsmith" },
     { name = "markdown-callouts" },
     { name = "markdown-include" },
     { name = "mkdocs" },
@@ -2044,6 +2045,7 @@ requires-dist = [
     { name = "langgraph-checkpoint-sqlite", git = "https://github.com/langchain-ai/langgraph?subdirectory=libs%2Fcheckpoint-sqlite&branch=v1-dev" },
     { name = "langgraph-prebuilt", git = "https://github.com/langchain-ai/langgraph?subdirectory=libs%2Fprebuilt&branch=v1-dev" },
     { name = "langgraph-sdk", git = "https://github.com/langchain-ai/langgraph?subdirectory=libs%2Fsdk-py&branch=v1-dev" },
+    { name = "langsmith", git = "https://github.com/langchain-ai/langsmith-sdk.git?subdirectory=python" },
     { name = "markdown-callouts", specifier = ">=0.3.0,<1.0.0" },
     { name = "markdown-include", specifier = ">=0.8.1,<1.0.0" },
     { name = "mkdocs", specifier = ">=1.6.0,<2.0.0" },
@@ -2192,8 +2194,8 @@ all = [
 
 [[package]]
 name = "langsmith"
-version = "0.4.33"
-source = { registry = "https://pypi.org/simple" }
+version = "0.4.34"
+source = { git = "https://github.com/langchain-ai/langsmith-sdk.git?subdirectory=python#389a701d81a77299700129916b164da111f50183" }
 dependencies = [
     { name = "httpx" },
     { name = "orjson", marker = "platform_python_implementation != 'PyPy'" },
@@ -2202,10 +2204,6 @@ dependencies = [
     { name = "requests" },
     { name = "requests-toolbelt" },
     { name = "zstandard" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/c3/63/8e70c22fad0fd9e7a76c748bcb1ba45db1399d98849559d3e7f162ffeb06/langsmith-0.4.33.tar.gz", hash = "sha256:a8deb12bd332b816ee1896a8003c252882c92f27a3ee9a623ce821f49d1d13f4", size = 964776, upload-time = "2025-10-07T17:05:33.817Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/ee/0b/b3d2e07bf09ce16994ed68a98b72699ded2d40bc9ff4b5eb031faedc8e42/langsmith-0.4.33-py3-none-any.whl", hash = "sha256:41d474f744617c79d61791a855ce2cf57294955ce8376c150484f9520700a7e5", size = 387335, upload-time = "2025-10-07T17:05:32.118Z" },
 ]
 
 [[package]]

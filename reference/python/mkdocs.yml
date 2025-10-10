@@ -199,6 +199,7 @@ plugins:
               # Preload modules before collecting documentation to enable cross-references
               - langchain
               - langchain_core
+              - langsmith
 
             # Generate objects.inv file for this site to enable cross-referencing from other sites
             # (e.g. what the python langchain.com site does above)
@@ -326,6 +327,23 @@ nav:
       - Supervisor: langgraph/supervisor.md
       - Swarm: langgraph/swarm.md
       - MCP Adapters: langgraph/mcp.md
+  - LangSmith:
+    - langsmith/index.md
+    - Core APIs:
+      - Client: langsmith/client.md
+      - AsyncClient: langsmith/async_client.md
+      - Run Helpers: langsmith/run_helpers.md
+      - Run Trees: langsmith/run_trees.md
+      - Evaluation: langsmith/evaluation.md
+    - Additional APIs:
+      - Schemas: langsmith/schemas.md
+      - Utilities: langsmith/utils.md
+      - Wrappers: langsmith/wrappers.md
+      - Anonymizer: langsmith/anonymizer.md
+      - Testing: langsmith/testing.md
+      - Expect API: langsmith/expect.md
+      - Middleware: langsmith/middleware.md
+      - Pytest Plugin: langsmith/pytest_plugin.md
   - Integrations:
     - Overview: integrations/index.md
     - Popular:
