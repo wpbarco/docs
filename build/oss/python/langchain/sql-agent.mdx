@@ -175,7 +175,7 @@ from langchain.agents import create_agent
 agent = create_agent(
     llm,
     tools,
-    prompt=system_prompt,
+    system_prompt=system_prompt,
 )
 ```
 
@@ -379,7 +379,7 @@ Then you should query the schema of the most relevant tables.
 agent = create_agent(
     llm,
     tools,
-    prompt=system_prompt,
+    system_prompt=system_prompt,
 )
 ```
 </Accordion>
@@ -400,7 +400,7 @@ from langgraph.checkpoint.memory import InMemorySaver # [!code highlight]
 agent = create_agent(
     llm,
     tools,
-    prompt=system_prompt,
+    system_prompt=system_prompt,
     middleware=[ # [!code highlight]
         HumanInTheLoopMiddleware( # [!code highlight]
             interrupt_on={"sql_db_query": True}, # [!code highlight]

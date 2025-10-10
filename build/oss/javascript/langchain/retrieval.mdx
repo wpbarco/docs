@@ -166,7 +166,7 @@ const fetchUrl = tool(
 const agent = createAgent({
     model: "claude-sonnet-4-0",
     tools: [fetchUrl],
-    prompt: systemPrompt,
+    systemPrompt,
 });
 ```
 
@@ -233,7 +233,7 @@ const tools = [fetchDocumentation];
 const agent = createAgent({
   model: "claude-sonnet-4-0"
   tools,  // [!code highlight]
-  messageModifier: systemPrompt,  // [!code highlight]
+  systemPrompt,  // [!code highlight]
   name: "Agentic RAG",
 });
 

@@ -149,7 +149,7 @@ Tools can be provided to the agent as either:
 Passing a list of tools to the agent will create a [`ToolNode`](https://langchain-ai.github.io/langgraph/reference/agents/#langgraph.prebuilt.tool_node.ToolNode) under the hood. This is the simplest way to set up a tool-calling agent:
 
 ```python wrap
-from langchain_core.tools import tool
+from langchain.tools import tool
 from langchain.agents import create_agent
 
 @tool
@@ -483,7 +483,7 @@ It must be a callable or a runnable that takes in current graph state and return
 Example of a pre-model hook that trims messages to fit the context window:
 
 ```python wrap
-from langchain_core.messages import RemoveMessage
+from langchain.messages import RemoveMessage
 from langgraph.graph.message import REMOVE_ALL_MESSAGES
 from langchain.agents import create_agent
 
@@ -574,7 +574,7 @@ It must be a callable or a runnable that takes in current graph state and return
 Example of a post-model hook that filters out confidential information:
 
 ```python wrap
-from langchain_core.messages import AIMessage, RemoveMessage
+from langchain.messages import AIMessage, RemoveMessage
 from langgraph.graph.message import REMOVE_ALL_MESSAGES
 
 def validate_response(state):

@@ -56,7 +56,7 @@ graph.invoke( # (1)!
 <Tabs>
     <Tab title="Agent prompt">
     ```python {highlight={6,20}}
-    from langchain_core.messages import AnyMessage
+    from langchain.messages import AnyMessage
     from langgraph.runtime import get_runtime
     from langgraph.prebuilt.chat_agent_executor import AgentState
     from langgraph.prebuilt import create_react_agent
@@ -129,7 +129,7 @@ See the [Runtime][langgraph.runtime.Runtime] documentation for details.
     State can also be accessed by the agent's **tools**, which can read or update the state as needed. See [tool calling guide](/oss/python/langchain/tools#short-term-memory) for details.
 
     ```python {highlight={6,10,19}}
-    from langchain_core.messages import AnyMessage
+    from langchain.messages import AnyMessage
     from langchain_core.runnables import RunnableConfig
     from langgraph.prebuilt import create_react_agent
     from langgraph.prebuilt.chat_agent_executor import AgentState
@@ -166,7 +166,7 @@ See the [Runtime][langgraph.runtime.Runtime] documentation for details.
     <Tab title="In a workflow">
     ```python {highlight={5,9,13}}
     from typing_extensions import TypedDict
-    from langchain_core.messages import AnyMessage
+    from langchain.messages import AnyMessage
     from langgraph.graph import StateGraph
 
     class CustomState(TypedDict): # (1)!
