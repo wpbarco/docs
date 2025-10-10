@@ -502,19 +502,6 @@ Results will be automatically logged to LangSmith.
 To learn more about evaluating your agent, see the [LangSmith docs](/langsmith/vitest-jest).
 </Tip>
 
-
-## Recording & Replaying HTTP Calls
-
-Integration tests that call real LLM APIs can be slow and expensive, especially when run frequently in CI/CD pipelines. We recommend using a library for recording HTTP requests and responses, then replaying them in subsequent runs without making actual network calls.
-
-
-
-You can use [`nock`](https://github.com/nock/nock) to achieve this. Request/responses are recorded in cassettes, which are then used to mock the real network calls in subsequent runs.
-
-<Note>
-When you modify prompts, add new tools, or change expected trajectories, delete the corresponding cassette files and rerun the tests to record fresh interactions.
-</Note>
-
 ---
 
 <Callout icon="pen-to-square" iconType="regular">

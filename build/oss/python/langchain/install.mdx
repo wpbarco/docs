@@ -8,7 +8,7 @@ import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
 
 <AlphaCallout />
 
-To install the core LangChain package:
+To install the LangChain package:
 
 <CodeGroup>
     ```bash pip
@@ -28,17 +28,17 @@ LangChain provides integrations to hundreds of LLMs and thousands of other integ
 <CodeGroup>
     ```bash pip
     # Installing the OpenAI integration
-    pip install -U langchain-openai
+    pip install --pre -U langchain-openai
 
     # Installing the Anthropic integration
-    pip install -U langchain-anthropic
+    pip install --pre -U langchain-anthropic
     ```
     ```bash uv
     # Installing the OpenAI integration
-    uv add langchain-openai
+    uv add --prerelease=allow langchain-openai
 
     # Installing the Anthropic integration
-    uv add langchain-anthropic
+    uv add --prerelease=allow langchain-anthropic
     ```
 </CodeGroup>
 

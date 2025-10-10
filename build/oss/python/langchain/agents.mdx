@@ -49,6 +49,8 @@ graph TD
 
 `create_agent()` builds a **graph**-based agent runtime using [LangGraph](/oss/python/langgraph/overview). A graph consists of nodes (steps) and edges (connections) that define how your agent processes information. The agent moves through this graph, executing nodes like the model node (which calls the model), the tools node (which executes tools), or pre/post model hook nodes.
 
+
+
 Learn more about the [graph API](/oss/python/langgraph/graph-api).
 
 </Info>
@@ -102,7 +104,7 @@ Model instances give you complete control over configuration. Use them when you 
 
 Dynamic models are selected at <Tooltip tip="The execution environment of your agent, containing immutable configuration and contextual data that persists throughout the agent's execution (e.g., user IDs, session details, or application-specific configuration).">runtime</Tooltip> based on the current <Tooltip tip="The data that flows through your agent's execution, including messages, custom fields, and any information that needs to be tracked and potentially modified during processing (e.g., user preferences or tool usage stats).">state</Tooltip> and context. This enables sophisticated routing logic and cost optimization.
 
-To use a dynamic model, you need to provide a function that receives the graph state and runtime and returns an instance of `BaseChatModel` with the tools bound to it using `.bind_tools(tools)`, where `tools` is a subset of the `tools` parameter.
+To use a dynamic model, you need to provide a function that receives the graph state and runtime and returns an instance of a chat model. The returned chat model needs to have the tools bound to it using `.bind_tools(tools)`, where `tools` is a subset of the `tools` parameter.
 
 ```python
 from langchain_openai import ChatOpenAI
@@ -158,11 +160,11 @@ def search(query: str) -> str:
     return f"Results for: {query}"
 
 @tool
-def calculate(expression: str) -> str:
-    """Perform calculations."""
-    return str(eval(expression))
+def get_weather(location: str) -> str:
+    """Get weather information for a location."""
+    return f"Weather in {location}: Sunny, 72°F"
 
-agent = create_agent(model, tools=[search, calculate])
+agent = create_agent(model, tools=[search, get_weather])
 ```
 
 
@@ -197,7 +199,7 @@ If an error occurs within [`ToolNode`](https://langchain-ai.github.io/langgraph/
 
 
 <Tip>
-To learn more about error handling in [`ToolNode`](https://langchain-ai.github.io/langgraph/reference/agents/#langgraph.prebuilt.tool_node.ToolNode), see [ToolNode](/oss/python/langchain/tools#toolnode).
+Learn more about how to use [`ToolNode`](https://langchain-ai.github.io/langgraph/reference/agents/#langgraph.prebuilt.tool_node.ToolNode) in [Tools](/oss/python/langchain/tools).
 </Tip>
 
 #### Tool use in the ReAct loop
@@ -213,9 +215,8 @@ Prompt: Identify the current most popular wireless headphones and verify availab
 Find the most popular wireless headphones right now and check if they're in stock
 ```
 
-**Reasoning**: "Popularity is time-sensitive, I need to use the provided search tool."
-
-**Acting**: Call `search_products("wireless headphones")`
+* **Reasoning**: "Popularity is time-sensitive, I need to use the provided search tool."
+* **Acting**: Call `search_products("wireless headphones")`
 
 ```
 ================================== Ai Message ==================================
@@ -231,9 +232,8 @@ Tool Calls:
 Found 5 products matching "wireless headphones". Top 5 results: WH-1000XM5, ...
 ```
 
-**Reasoning**: "I need to confirm availability for the top-ranked item before answering."
-
-**Acting**: Call `check_inventory("WH-1000XM5")`
+* **Reasoning**: "I need to confirm availability for the top-ranked item before answering."
+* **Acting**: Call `check_inventory("WH-1000XM5")`
 
 ```
 ================================== Ai Message ==================================
@@ -249,9 +249,8 @@ Tool Calls:
 Product WH-1000XM5: 10 units in stock
 ```
 
-**Reasoning**: "I have the most popular model and its stock status. I can now answer the user's question."
-
-**Acting**: Produce final answer
+* **Reasoning**: "I have the most popular model and its stock status. I can now answer the user's question."
+* **Acting**: Produce final answer
 
 ```
 ================================== Ai Message ==================================
@@ -267,7 +266,6 @@ To learn more about tools, see [Tools](/oss/python/langchain/tools).
 ### Prompt
 
 You can shape how your agent approaches tasks by providing a prompt. The `prompt` parameter can be provided as a string, SystemMessage, or a callable:
-
 
 <CodeGroup>
 ```python str
@@ -297,10 +295,10 @@ def dynamic_prompt(state):
         else "Provide simple, clear explanations."
     )
     return [system_msg] + state["messages"]
+
 agent = create_agent(model, tools, system_prompt=dynamic_prompt)
 ```
 </CodeGroup>
-
 
 
 
@@ -523,8 +521,8 @@ If you are returning `messages` in the pre-model hook, you should **overwrite th
 
 ```python wrap
 {
-    "messages": [RemoveMessage(id=REMOVE_ALL_MESSAGES), *new_messages]
-...
+    "messages": [RemoveMessage(id=REMOVE_ALL_MESSAGES), *new_messages],
+    ...
 }
 ```
 

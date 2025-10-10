@@ -17,14 +17,28 @@ In addition to text generation, many models support:
 * <Icon icon="image" size={16} /> [Multimodality](#multimodal) - process and return data other than text, such as images, audio, and video.
 * <Icon icon="brain" size={16} /> [Reasoning](#reasoning) - models perform multi-step reasoning to arrive at a conclusion.
 
+Models are the reasoning engine of [agents](/oss/python/langchain/agents). They drive the agent's decision-making process, determining which tools to call, how to interpret results, and when to provide a final answer.
+
+The quality and capabilities of the model you choose directly impact your agent's reliability and performance. Different models excel at different tasks - some are better at following complex instructions, others at structured reasoning, and some support larger context windows for handling more information.
+
+LangChain's standard model interfaces give you access to many different provider integrations, which makes it easy to experiment with and switch between models to find the best fit for your case.
+
 <Info>
     For provider-specific integration information and capabilities, see the provider's [integration page](/oss/python/integrations/providers).
 </Info>
 
-
 ## Basic usage
 
-The easiest way to get started with a model in LangChain is to use `init_chat_model` to initialize one from a [provider](/oss/python/integrations/providers) of your choice (examples below):
+Models can be utilized in two ways:
+
+1. **With agents** - Models can be dynamically specified when creating an agent. See the [agents](/oss/python/langchain/agents#model) guide for more details on how to do this.
+2. **Standalone** - Models can be called directly (outside of the agent loop) for tasks like text generation, classification, or extraction without the need for an agent framework.
+
+The same model interface works in both contexts, which gives you the flexibility to start simple and scale up to more complex agent-based workflows as needed.
+
+### Initialize a model
+
+The easiest way to get started with a standalone model in LangChain is to use `init_chat_model` to initialize one from a [provider](/oss/python/integrations/providers) of your choice (examples below):
 
 <ChatModelTabsPy />
 ```python
@@ -83,7 +97,7 @@ A chat model takes parameters that can be used to configure its behavior. The fu
 
 
 <Info>
-    To find all the parameters supported by a given chat model, head to the [reference docs](https://python.langchain.com/api_reference/).
+    To find all the parameters supported by a given chat model, head to the [integrations](/oss/python/integrations/providers) page.
 </Info>
 
 ---
@@ -115,8 +129,21 @@ print(response)
 
 A list of messages can be provided to a model to represent conversation history. Each message has a role that models use to indicate who sent the message in the conversation. See the [messages](/oss/python/langchain/messages) guide for more detail on roles, types, and content.
 
-```python Conversation history
+```python Dictionary format
 from langchain.messages import HumanMessage, AIMessage, SystemMessage
+
+conversation = [
+    {"role": "system", "content": "You are a helpful assistant that translates English to French."},
+    {"role": "user", "content": "Translate: I love programming."},
+    {"role": "assistant", "content": "J'adore la programmation."},
+    {"role": "user", "content": "Translate: I love building applications."}
+]
+
+response = model.invoke(conversation)
+print(response)  # AIMessage("J'adore créer des applications.")
+```
+```python Message objects
+from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 
 conversation = [
     SystemMessage("You are a helpful assistant that translates English to French."),
@@ -126,7 +153,7 @@ conversation = [
 ]
 
 response = model.invoke(conversation)
-print(response)  # AIMessage("J'adore créer des applications.")
+print(response)  // AIMessage("J'adore créer des applications.")
 ```
 
 
@@ -341,15 +368,15 @@ for tool_call in response.tool_calls:
 
 
 
-When binding user-defined tools, the model's response includes a **request** to execute a tool. It is up to you to perform the requested action and return the result back to the model for use in subsequent reasoning.
+When binding user-defined tools, the model's response includes a **request** to execute a tool. When using a model separately from an [agent](/oss/python/langchain/agents), it is up to you to perform the requested action and return the result back to the model for use in subsequent reasoning. Note that when using an [agent](/oss/python/langchain/agents), the agent loop will handle the tool execution loop for you.
 
 Below, we show some common ways you can use tool calling.
 
 <AccordionGroup>
     <Accordion title="Tool execution loop" icon="arrow-rotate-right">
-        When a model returns tool calls, you need to execute the tools and pass the results back to the model. This creates a conversation loop where the model can use tool results to generate its final response.
+        When a model returns tool calls, you need to execute the tools and pass the results back to the model. This creates a conversation loop where the model can use tool results to generate its final response. LangChain includes [agent](/oss/python/langchain/agents) abstractions that handle this orchestration for you.
 
-        LangChain includes [agent](/oss/python/langchain/agents) abstractions that handle this orchestration for you. Below, we illustrate a simple example:
+        Here's a simple example of how to do this:
 
         ```python Tool execution loop
         # Bind (potentially multiple) tools to the model
@@ -372,6 +399,9 @@ Below, we show some common ways you can use tool calling.
         # "The current weather in Boston is 72°F and sunny."
         ```
 
+
+
+
         Each `ToolMessage` returned by the tool includes a `tool_call_id` that matches the original tool call, helping the model correlate results with requests.
     </Accordion>
     <Accordion title="Forcing tool calls" icon="asterisk">
@@ -381,11 +411,13 @@ Below, we show some common ways you can use tool calling.
             ```python Force use of any tool
                 model_with_tools = model.bind_tools([tool_1], tool_choice="any")
             ```
-
             ```python Force use of specific tools
                 model_with_tools = model.bind_tools([tool_1], tool_choice="tool_1")
             ```
         </CodeGroup>
+
+
+
     </Accordion>
     <Accordion title="Parallel tool calls" icon="layer-group">
         Many models support calling multiple tools in parallel when appropriate. This allows the model to gather information from different sources simultaneously.
@@ -414,6 +446,9 @@ Below, we show some common ways you can use tool calling.
             ...
             results.append(result)
         ```
+
+
+
 
         The model intelligently determines when parallel execution is appropriate based on the independence of the requested operations.
 
@@ -465,11 +500,11 @@ Below, we show some common ways you can use tool calling.
             gathered = chunk if gathered is None else gathered + chunk
             print(gathered.tool_calls)
         ```
+
+
+
     </Accordion>
 </AccordionGroup>
-
-
-
 
 ---
 
@@ -793,9 +828,9 @@ To help manage rate limits, chat model integrations accept a `rate_limiter` para
     from langchain_core.rate_limiters import InMemoryRateLimiter
 
     rate_limiter = InMemoryRateLimiter(
-            requests_per_second=0.1,  # 1 request every 10s
-            check_every_n_seconds=0.1,  # Check every 100ms whether allowed to make a request
-            max_bucket_size=10,  # Controls the maximum burst size.
+        requests_per_second=0.1,  # 1 request every 10s
+        check_every_n_seconds=0.1,  # Check every 100ms whether allowed to make a request
+        max_bucket_size=10,  # Controls the maximum burst size.
     )
 
     model = init_chat_model(

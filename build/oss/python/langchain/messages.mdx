@@ -147,8 +147,9 @@ A `HumanMessage` represents user input and interactions. They can contain text, 
 
 <CodeGroup>
     ```python Message object
-    human_msg = HumanMessage("What is machine learning?")
-    response = model.invoke([human_msg])
+    response = model.invoke([
+      HumanMessage("What is machine learning?")
+    ])
     ```
 
     ```python String shortcut
@@ -446,10 +447,9 @@ Specifying `content_blocks` when initializing a message will still populate mess
 
 ### Standard content blocks
 
-LangChain maintains a standard set of types for message content that works across
-providers (see the [reference](#content-block-reference) section below).
+LangChain provides a standard representation for message content that works across providers.
 
-Messages also implement a `content_blocks` property that will lazily parse the `content` attribute into this standard, type-safe representation. For example, messages generated from [ChatAnthropic](/oss/python/integrations/chat/anthropic) or [ChatOpenAI](/oss/python/integrations/chat/openai) will include `thinking` or `reasoning` blocks in the format of the respective provider, but these can be lazily parsed into a consistent [`ReasoningContentBlock`](#content-block-reference) representation:
+Message objects implement a `content_blocks` property that will lazily parse the `content` attribute into a standard, type-safe representation. For example, messages generated from [ChatAnthropic](/oss/python/integrations/chat/anthropic) or [ChatOpenAI](/oss/python/integrations/chat/openai) will include `thinking` or `reasoning` blocks in the format of the respective provider, but can be lazily parsed into a consistent [`ReasoningContentBlock`](#content-block-reference) representation:
 
 <Tabs>
 <Tab title="Anthropic">
