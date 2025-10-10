@@ -87,7 +87,7 @@ agent = create_agent(
             max_tokens_before_summary=500
         ),
         HumanInTheLoopMiddleware(
-            interrupt_on={"send_email": {"allowed_decisions": ["accept", "edit", "reject"]}}
+            interrupt_on={"send_email": {"allowed_decisions": ["approve", "edit", "reject"]}}
         ),
     ]
 )
