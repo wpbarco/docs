@@ -29,7 +29,7 @@ from langchain.messages import (
     AIMessage,
     HumanMessage,
     SystemMessage,
-    ToolMessage
+    ToolMessage,
 )
 
 model = init_chat_model("openai:gpt-5-nano")
@@ -84,6 +84,7 @@ Alternatively, you can pass in a list of messages to the model by providing a li
 
 :::python
 ```python
+from langchain.messages import AIMessage, HumanMessage, SystemMessage
 
 messages = [
     SystemMessage("You are a poetry expert"),
@@ -177,6 +178,7 @@ const response = await model.invoke(messages);
 
 :::python
 ```python Detailed persona
+from langchain.messages import HumanMessage, SystemMessage
 
 system_msg = SystemMessage("""
 You are a senior Python developer with expertise in web frameworks.
@@ -295,6 +297,7 @@ Providers weight/contextualize types of messages differently, which means it is 
 
 :::python
 ```python
+from langchain.messages import AIMessage, HumanMessage, SystemMessage
 
 # Create an AI message manually (e.g., for conversation history)
 ai_msg = AIMessage("I'd be happy to help you with that question!")
@@ -590,7 +593,8 @@ const response = await model.invoke(messages);  // Model processes the result
         :::python
 
         ```python
-        
+        from langchain.messages import ToolMessage
+
         # Sent to model
         message_content = "It was the best of times, it was the worst of times."
 
@@ -643,6 +647,7 @@ See below for an example using [multimodal](#multimodal) inputs:
 
 :::python
 ```python
+from langchain.messages import HumanMessage
 
 # String content
 human_message = HumanMessage("Hello, how are you?")
@@ -710,6 +715,7 @@ Messages also implement a `content_blocks` property that will lazily parse the `
 <Tabs>
 <Tab title="Anthropic">
 ```python
+from langchain.messages import AIMessage
 
 message = AIMessage(
     content=[
@@ -730,6 +736,7 @@ message.content_blocks
 
 <Tab title="OpenAI">
 ```python
+from langchain.messages import AIMessage
 
 message = AIMessage(
     content=[
