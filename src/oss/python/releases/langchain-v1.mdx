@@ -42,6 +42,7 @@ import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
 
 ```python
 from langchain.agents import create_agent
+from langchain.messages import AIMessage
 
 agent = create_agent(
     model="anthropic:claude-sonnet-4-5-20250929",
@@ -121,7 +122,6 @@ from langchain.agents.middleware import (
     ModelRequest,
     ModelRequestHandler
 )
-from langchain_core.messages import AIMessage
 
 @dataclass
 class Context:
@@ -254,6 +254,34 @@ for block in response.content_blocks:
 - **Backward compatible**: Standard content can be [loaded lazily](/oss/langchain/messages#standard-content-blocks), so there are no associated breaking changes
 
 For more information, see our guide on [content blocks](/oss/langchain/messages#content)
+
+---
+
+## Simplified import paths
+
+LangChain v1 introduces convenient import paths for commonly used abstractions, making it easier to access tools and messages without importing from `langchain_core`:
+
+### Tools
+
+Import tools and tool-related classes directly from `langchain.tools`:
+
+```python
+from langchain.tools import tool, ToolNode, InjectedState, InjectedStore, InjectedToolCallId
+```
+
+Previously, these were imported from `langchain_core.tools`.
+
+### Messages
+
+Import message types directly from `langchain.messages`:
+
+```python
+from langchain.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
+```
+
+Previously, these were imported from `langchain_core.messages`.
+
+These new import paths provide easier access to common abstractions while maintaining backward compatibility with existing `langchain_core` imports.
 
 ---
 

@@ -3,6 +3,9 @@ title: Reject Concurrent
 sidebarTitle: Reject
 ---
 
+from langchain.messages import convert_to_messages
+
+
 This guide assumes knowledge of what double-texting is, which you can learn about in the [double-texting conceptual guide](/langgraph-platform/double-texting).
 
 The guide covers the `reject` option for double texting, which rejects the new run of the graph by throwing an error and continues with the original run until completion. Below is a quick example of using the `reject` option.
@@ -55,8 +58,7 @@ Now, let's import our required packages and instantiate our client, assistant, a
     <Tab title="Python">
     ```python
     import httpx
-    from langchain_core.messages import convert_to_messages
-    from langgraph_sdk import get_client
+        from langgraph_sdk import get_client
 
     client = get_client(url=<DEPLOYMENT_URL>)
     # Using the graph deployed with the name "agent"

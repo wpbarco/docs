@@ -70,6 +70,7 @@ Now we can instantiate our model object and generate chat completions:
 
 ```python
 from langchain_sambanova import ChatSambaStudio
+from langchain.messages import HumanMessage, ToolMessage
 
 llm = ChatSambaStudio(
     model="Meta-Llama-3-70B-Instruct-4096",  # set if using a Bundle endpoint
@@ -181,8 +182,7 @@ Quantum computers use quantum bits (qubits) to process multiple possibilities si
 ```python
 from datetime import datetime
 
-from langchain_core.messages import HumanMessage, ToolMessage
-from langchain_core.tools import tool
+from langchain.tools import tool
 
 
 @tool

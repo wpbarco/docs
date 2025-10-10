@@ -72,6 +72,7 @@ Now we can instantiate our model object and generate responses:
 
 ```python Initialize chat model icon="robot"
 from langchain_(MODULE_NAME) import Chat(MODULE_NAME)
+from langchain.messages import AIMessage, HumanMessage, SystemMessage
 
 model = Chat(MODULE_NAME)(
     model="model-name",
@@ -97,8 +98,7 @@ model = Chat(MODULE_NAME)(
     print(response)
     ```
     ```python Message objects icon="message"
-    from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
-
+    
     messages = [
         SystemMessage("You are a poetry expert"),
         HumanMessage("Write a haiku about spring"),

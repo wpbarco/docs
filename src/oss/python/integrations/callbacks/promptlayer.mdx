@@ -35,12 +35,12 @@ In this simple example we use `PromptLayerCallbackHandler` with `ChatOpenAI`. We
 ```python
 import promptlayer  # Don't forget this 🍰
 from langchain_community.callbacks.promptlayer_callback import (
+from langchain.messages import HumanMessage
     PromptLayerCallbackHandler,
 )
 ```
 
 ```python
-from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
 
 chat_llm = ChatOpenAI(

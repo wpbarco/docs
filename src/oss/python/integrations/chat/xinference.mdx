@@ -67,6 +67,7 @@ Now we can instantiate our model object and generate chat completions:
 
 ```python
 from langchain_xinference.chat_models import ChatXinference
+from langchain.messages import HumanMessage, SystemMessage
 
 llm = ChatXinference(
     server_url="your_server_url", model_uid="7167b2b0-2a04-11ee-83f0-d29396a3f064"
@@ -81,7 +82,6 @@ llm.invoke(
 ## Invocation
 
 ```python
-from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_xinference.chat_models import ChatXinference
 
 llm = ChatXinference(

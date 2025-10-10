@@ -29,6 +29,7 @@ The name of the function has changed from `create_react_agent` to `create_agent`
 <CodeGroup>
 ```python V1 (new)
 from langchain.agents import create_agent
+from langchain.messages import AIMessage, SystemMessage
 ```
 ```python V0 (old)
 from langgraph.prebuilt import create_react_agent
@@ -79,7 +80,6 @@ agent = create_agent(
 )
 ```
 ```python V0 (old)
-from langchain_core.messages import SystemMessage
 from langgraph.prebuilt import create_react_agent
 
 agent = create_react_agent(
@@ -271,7 +271,7 @@ Custom state is now defined in middleware using the `state_schema` attribute:
 <CodeGroup>
 ```python V1 (new)
 from typing import Annotated
-from langchain_core.tools import tool
+from langchain.tools import tool
 from langchain.agents import create_agent  # [!code highlight]
 from langchain.agents.middleware import AgentMiddleware, AgentState  # [!code highlight]
 from langgraph.prebuilt import InjectedState
@@ -408,7 +408,6 @@ from langchain.agents import create_agent
 from langchain.agents.middleware import (
     AgentMiddleware, ModelRequest, ModelRequestHandler
 )
-from langchain_core.messages import AIMessage
 from langchain_openai import ChatOpenAI
 
 basic_model = ChatOpenAI(model="gpt-5-nano")
@@ -633,6 +632,40 @@ result = agent.invoke(
 <Note>
     The old `config["configurable"]` pattern still works for backward compatibility, but using the new `context` parameter is recommended for new applications or applications migrating to V1.
 </Note>
+
+---
+
+## Simplified import paths
+
+LangChain v1 introduces convenient import paths for commonly used abstractions. While the old `langchain_core` import paths continue to work, we recommend using the new paths for better ergonomics.
+
+### Tools
+
+Import tools and tool-related classes directly from `langchain.tools`:
+
+<CodeGroup>
+```python V1 (new)
+from langchain.tools import tool, ToolNode, InjectedState, InjectedStore, InjectedToolCallId
+```
+```python V0 (old)
+from langchain_core.tools import tool, ToolNode, InjectedState, InjectedStore, InjectedToolCallId
+```
+</CodeGroup>
+
+### Messages
+
+Import message types directly from `langchain.messages`:
+
+<CodeGroup>
+```python V1 (new)
+from langchain.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
+```
+```python V0 (old)
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
+```
+</CodeGroup>
+
+These new import paths provide easier access to common abstractions while maintaining backward compatibility with existing `langchain_core` imports.
 
 ---
 

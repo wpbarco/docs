@@ -3,6 +3,9 @@ title: Rollback Concurrent
 sidebarTitle: Rollback
 ---
 
+from langchain.messages import convert_to_messages
+
+
 This guide assumes knowledge of what double-texting is, which you can learn about in the [double-texting conceptual guide](/langgraph-platform/double-texting).
 
 The guide covers the `rollback` option for double texting, which interrupts the prior run of the graph and starts a new one with the double-text. This option is very similar to the `interrupt` option, but in this case the first run is completely deleted from the database and cannot be restarted. Below is a quick example of using the `rollback` option.
@@ -57,8 +60,7 @@ Now, let's import our required packages and instantiate our client, assistant, a
     import asyncio
 
     import httpx
-    from langchain_core.messages import convert_to_messages
-    from langgraph_sdk import get_client
+        from langgraph_sdk import get_client
 
     client = get_client(url=<DEPLOYMENT_URL>)
     # Using the graph deployed with the name "agent"

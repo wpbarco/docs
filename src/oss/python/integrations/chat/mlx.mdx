@@ -20,6 +20,7 @@ There are three LLM options to choose from.
 
 ```python
 from langchain_community.llms.mlx_pipeline import MLXPipeline
+from langchain.messages import HumanMessage
 
 llm = MLXPipeline.from_model_id(
     "mlx-community/quantized-gemma-2b-it",
@@ -33,7 +34,6 @@ Instantiate the chat model and some messages to pass.
 
 ```python
 from langchain_community.chat_models.mlx import ChatMLX
-from langchain_core.messages import HumanMessage
 
 messages = [
     HumanMessage(

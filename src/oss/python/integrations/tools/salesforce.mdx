@@ -57,6 +57,7 @@ If you need a security token:
 import os
 
 from langchain_salesforce import SalesforceTool
+from langchain.messages import HumanMessage
 
 username = os.getenv("SALESFORCE_USERNAME", "your-username")
 password = os.getenv("SALESFORCE_PASSWORD", "your-password")
@@ -155,7 +156,6 @@ delete_result = execute_salesforce_operation(
 
 ```python
 from langchain_anthropic import ChatAnthropic
-from langchain_core.messages import HumanMessage
 from langchain_salesforce import SalesforceTool
 
 # Initialize the Salesforce tool

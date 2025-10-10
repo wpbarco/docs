@@ -71,6 +71,7 @@ You can collect input LLM prompts and output responses in a LabelStudio project,
 
 ```python
 from langchain_community.callbacks.labelstudio_callback import (
+from langchain.messages import HumanMessage, SystemMessage
     LabelStudioCallbackHandler,
 )
 ```
@@ -114,7 +115,6 @@ You can also track and display full chat dialogues in LabelStudio, with the abil
 ```
 
 ```python
-from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 
 chat_llm = ChatOpenAI(

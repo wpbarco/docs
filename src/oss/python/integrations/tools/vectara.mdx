@@ -62,6 +62,7 @@ os.environ["OPENAI_API_KEY"] = "<OPENAI_API_KEY>"
 
 from langchain_vectara import Vectara
 from langchain_vectara.tools import (
+from langchain.messages import HumanMessage
     VectaraAddFiles,
     VectaraIngest,
     VectaraRAG,
@@ -248,7 +249,6 @@ The code below demonstrates how to use Vectara tools with LangChain to create an
 ```python
 import json
 
-from langchain_core.messages import HumanMessage
 from langchain_openai.chat_models import ChatOpenAI
 from langchain.agents import create_agent
 

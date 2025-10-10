@@ -69,9 +69,9 @@ We started the local action server, above, running on `http://localhost:8080`.
 
 ```python
 from langchain.agents import AgentExecutor, OpenAIFunctionsAgent
-from langchain_core.messages import SystemMessage
 from langchain_openai import ChatOpenAI
 from langchain_robocorp import ActionServerToolkit
+from langchain.messages import SystemMessage
 
 # Initialize LLM chat model
 llm = ChatOpenAI(model="gpt-4", temperature=0)

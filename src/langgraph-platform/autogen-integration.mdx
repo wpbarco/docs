@@ -24,6 +24,7 @@ Set your your environment:
 ```python
 import getpass
 import os
+from langchain.messages import convert_to_openai_messages
 
 
 def _set_env(var: str):
@@ -75,7 +76,6 @@ user_proxy = autogen.UserProxyAgent(
 We will now create a LangGraph chatbot graph that calls AutoGen agent.
 
 ```python
-from langchain_core.messages import convert_to_openai_messages
 from langgraph.graph import StateGraph, MessagesState, START
 from langgraph.checkpoint.memory import MemorySaver
 
@@ -227,8 +227,7 @@ my-autogen-agent/
     ```python
     import os
     import autogen
-    from langchain_core.messages import convert_to_openai_messages
-    from langgraph.graph import StateGraph, MessagesState, START
+        from langgraph.graph import StateGraph, MessagesState, START
     from langgraph.checkpoint.memory import MemorySaver
 
     # AutoGen configuration

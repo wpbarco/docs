@@ -51,6 +51,7 @@ See the [RunPod LLM Integration Guide](/oss/integrations/llms/runpod) for detail
 
 ```python
 from langchain_runpod import RunPod
+from langchain.messages import HumanMessage
 
 # Example initialization (uses environment variables)
 llm = RunPod(model_kwargs={"max_new_tokens": 100})  # Add generation params here
@@ -72,7 +73,6 @@ For interacting with conversational models.
 See the [RunPod Chat Model Integration Guide](/oss/integrations/chat/runpod) for detailed usage and feature support.
 
 ```python
-from langchain_core.messages import HumanMessage
 from langchain_runpod import ChatRunPod
 
 # Example initialization (uses environment variables)

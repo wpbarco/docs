@@ -33,6 +33,7 @@ In the standard LangGraph API configuration, the server uses the compiled graph 
 ```python
 from langchain_openai import ChatOpenAI
 from langgraph.graph import END, START, MessageGraph
+from langchain.messages import BaseMessage
 
 model = ChatOpenAI(temperature=0)
 
@@ -69,8 +70,7 @@ from langgraph.graph import END, START, MessageGraph
 from langgraph.graph.state import StateGraph
 from langgraph.graph.message import add_messages
 from langchain.tools import ToolNode
-from langchain_core.tools import tool
-from langchain_core.messages import BaseMessage
+from langchain.tools import tool
 from langchain_core.runnables import RunnableConfig
 
 

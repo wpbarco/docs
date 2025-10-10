@@ -4,6 +4,7 @@ sidebarTitle: Test prompts
 ---
 
 import WorkspaceSecret from '/snippets/langsmith/set-workspace-secrets.mdx';
+from langchain.messages import convert_to_openai_messages
 
 Prompts guide the behavior of large language models (LLM). [_Prompt engineering_](/langsmith/prompt-engineering-concepts) is the process of crafting, testing, and refining the instructions you give to an LLM so it produces reliable and useful responses.
 
@@ -229,8 +230,7 @@ Then, you'll iterate on the prompt by creating a new version. Members of your wo
     ```python Python
     from langsmith import Client
     from openai import OpenAI
-    from langchain_core.messages import convert_to_openai_messages
-
+    
     client = Client()
     oai_client = OpenAI()
 

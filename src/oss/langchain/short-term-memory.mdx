@@ -40,6 +40,12 @@ To add short-term memory (thread-level persistence) to an agent, you need to spe
 ```python {highlight={2,7,12}}
 from langchain.agents import create_agent
 from langgraph.checkpoint.memory import InMemorySaver
+from langchain.messages import (
+    AnyMessage,
+    BaseMessage,
+    RemoveMessage,
+    ToolMessage
+)
 
 agent = create_agent(
     "openai:gpt-5",
@@ -177,7 +183,6 @@ To trim message history in an agent, use @[`pre_model_hook`][create_agent] with 
 
 ```python
 from langchain_core.messages.utils import trim_messages, count_tokens_approximately
-from langchain_core.messages import BaseMessage
 from langgraph.checkpoint.memory import InMemorySaver
 from langchain.agents import create_agent
 from langchain_core.runnables import RunnableConfig
@@ -272,7 +277,6 @@ The default `AgentState` provides this.
 To remove specific messages:
 
 ```python {highlight={1,7}}
-from langchain_core.messages import RemoveMessage
 
 def delete_messages(state):
     messages = state["messages"]
@@ -323,7 +327,6 @@ const deleteMessages = (state) => {
 :::python
 
 ```python
-from langchain_core.messages import RemoveMessage
 from langchain.agents import create_agent
 from langgraph.checkpoint.memory import InMemorySaver
 from langchain_core.runnables import RunnableConfig
@@ -595,9 +598,8 @@ This is useful for persisting intermediate results or making information accessi
 :::python
 ```python {highlight={10,19,20,31,40,45}}
 from typing import Annotated
-from langchain_core.tools import InjectedToolCallId
+from langchain.tools import InjectedToolCallId
 from langchain_core.runnables import RunnableConfig
-from langchain_core.messages import ToolMessage
 from langchain.agents import create_agent, AgentState
 from langchain.tools import InjectedState
 from langgraph.runtime import get_runtime
@@ -716,7 +718,6 @@ Access short term memory (state) in a dynamic prompt function by injecting the a
 
 :::python
 ```python
-from langchain_core.messages import AnyMessage
 from langchain.agents import create_agent, AgentState
 from langgraph.runtime import get_runtime
 from typing import TypedDict
@@ -860,7 +861,6 @@ Access short term memory (state) in a pre model hook by injecting the agent's st
 :::python
 ```python
 from langchain_core.messages.utils import trim_messages, count_tokens_approximately
-from langchain_core.messages import BaseMessage
 from langgraph.checkpoint.memory import InMemorySaver
 from langchain.agents import create_agent, AgentState
 

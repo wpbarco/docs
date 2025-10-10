@@ -21,6 +21,7 @@ from langfuse import Langfuse, get_client
 from langfuse.langchain import CallbackHandler
 from langchain_openai import ChatOpenAI  # Example LLM
 from langchain_core.prompts import ChatPromptTemplate
+from langchain.messages import HumanMessage
 
 # Initialize Langfuse client with constructor arguments
 Langfuse(
@@ -119,7 +120,6 @@ Start by creating a `StateGraph`. A `StateGraph` object defines our chatbot's st
 from typing import Annotated
 
 from langchain_openai import ChatOpenAI
-from langchain_core.messages import HumanMessage
 from typing_extensions import TypedDict
 
 from langgraph.graph import StateGraph

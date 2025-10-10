@@ -69,6 +69,7 @@ Static models are configured once when creating the agent and remain unchanged t
 :::python
 ```python wrap
 from langchain.agents import create_agent
+from langchain.messages import AIMessage, RemoveMessage, SystemMessage
 
 agent = create_agent(
     "openai:gpt-5",
@@ -213,7 +214,7 @@ Passing a list of tools to the agent will create a @[`ToolNode`][ToolNode] under
 
 :::python
 ```python wrap
-from langchain_core.tools import tool
+from langchain.tools import tool
 from langchain.agents import create_agent
 
 @tool
@@ -405,7 +406,6 @@ agent = create_agent(
 )
 ```
 ```python SystemMessage
-from langchain.messages import SystemMessage
 
 agent = create_agent(
     model,
@@ -414,7 +414,6 @@ agent = create_agent(
 )
 ```
 ```python Callable
-from langchain.messages import SystemMessage
 
 def dynamic_prompt(state):
     user_type = state.get("user_type", "standard")
@@ -757,7 +756,6 @@ Example of a pre-model hook that trims messages to fit the context window:
 
 :::python
 ```python wrap
-from langchain_core.messages import RemoveMessage
 from langgraph.graph.message import REMOVE_ALL_MESSAGES
 from langchain.agents import create_agent
 
@@ -902,7 +900,6 @@ Example of a post-model hook that filters out confidential information:
 
 :::python
 ```python wrap
-from langchain_core.messages import AIMessage, RemoveMessage
 from langgraph.graph.message import REMOVE_ALL_MESSAGES
 
 def validate_response(state):

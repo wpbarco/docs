@@ -49,6 +49,7 @@ Now we can instantiate our model object and generate chat completions:
 
 ```python
 from langchain_ai21 import ChatAI21
+from langchain.messages import HumanMessage, SystemMessage, ToolMessage
 
 llm = ChatAI21(model="jamba-instruct", temperature=0)
 ```
@@ -76,8 +77,7 @@ import os
 from getpass import getpass
 
 from langchain_ai21.chat_models import ChatAI21
-from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
-from langchain_core.tools import tool
+from langchain.tools import tool
 from langchain_core.utils.function_calling import convert_to_openai_tool
 
 if "AI21_API_KEY" not in os.environ:

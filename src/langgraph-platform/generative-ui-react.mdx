@@ -80,8 +80,7 @@ CSS and Tailwind 4.x is also supported out of the box, so you can freely use Tai
     import uuid
     from typing import Annotated, Sequence, TypedDict
 
-    from langchain_core.messages import AIMessage, BaseMessage
-    from langchain_openai import ChatOpenAI
+        from langchain_openai import ChatOpenAI
     from langgraph.graph import StateGraph
     from langgraph.graph.message import add_messages
     from langgraph.graph.ui import AnyUIMessage, ui_message_reducer, push_ui_message
@@ -184,6 +183,7 @@ On the client side, you can use `useStream()` and `LoadExternalComponent` to dis
 
 import { useStream } from "@langchain/langgraph-sdk/react";
 import { LoadExternalComponent } from "@langchain/langgraph-sdk/react-ui";
+from langchain.messages import AIMessage, AIMessageChunk, BaseMessage
 
 export default function Page() {
   const { thread, values } = useStream({
@@ -349,8 +349,7 @@ Then you can push updates to the UI component by calling `ui.push()` / `push_ui_
     from typing import Annotated, Sequence, TypedDict
 
     from langchain_anthropic import ChatAnthropic
-    from langchain_core.messages import AIMessage, AIMessageChunk, BaseMessage
-    from langgraph.graph import StateGraph
+        from langgraph.graph import StateGraph
     from langgraph.graph.message import add_messages
     from langgraph.graph.ui import AnyUIMessage, push_ui_message, ui_message_reducer
 

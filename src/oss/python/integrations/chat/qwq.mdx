@@ -48,6 +48,7 @@ Now we can instantiate our model object and generate chat completions:
 
 ```python
 from langchain_qwq import ChatQwQ
+from langchain.messages import HumanMessage
 
 llm = ChatQwQ(
     model="qwq-plus",
@@ -84,7 +85,7 @@ ChatQwQ supports tool calling API that lets you describe tools and their argumen
 ### Use with `bind_tools`
 
 ```python
-from langchain_core.tools import tool
+from langchain.tools import tool
 from langchain_qwq import ChatQwQ
 
 
@@ -110,7 +111,6 @@ content='' additional_kwargs={'reasoning_content': 'Okay, the user is asking "Wh
 ### Vision Support
 #### Image
 ```python
-from langchain_core.messages import HumanMessage
 
 model = ChatQwQ(model="qvq-max-latest")
 
@@ -135,7 +135,6 @@ content='The image captures a heartwarming moment on a sandy beach at sunset. A 
 
 #### Video
 ```python
-from langchain_core.messages import HumanMessage
 
 model = ChatQwQ(model="qvq-max-latest")
 

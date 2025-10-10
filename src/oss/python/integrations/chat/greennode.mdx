@@ -63,6 +63,7 @@ Now we can instantiate our model object and generate chat completions:
 
 ```python
 from langchain_greennode import ChatGreenNode
+from langchain.messages import AIMessage, HumanMessage, SystemMessage
 
 # Initialize the chat model
 llm = ChatGreenNode(
@@ -137,7 +138,6 @@ It's how we choose to build our will.
 You can use different message types to structure your conversations with the model:
 
 ```python
-from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 
 messages = [
     SystemMessage(content="You are a helpful AI assistant with expertise in science."),

@@ -10,6 +10,7 @@ This notebook goes over how to use a chat model hosted on an `Azure Machine Lear
 
 ```python
 from langchain_community.chat_models.azureml_endpoint import AzureMLChatOnlineEndpoint
+from langchain.messages import HumanMessage
 ```
 
 ## Set up
@@ -41,7 +42,6 @@ from langchain_community.chat_models.azureml_endpoint import (
     AzureMLEndpointApiType,
     CustomOpenAIChatContentFormatter,
 )
-from langchain_core.messages import HumanMessage
 
 chat = AzureMLChatOnlineEndpoint(
     endpoint_url="https://<your-endpoint>.<your_region>.inference.ml.azure.com/score",

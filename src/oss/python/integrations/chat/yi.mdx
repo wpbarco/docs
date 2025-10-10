@@ -59,6 +59,7 @@ Now we can instantiate our model object and generate chat completions:
 
 ```python
 from langchain_community.chat_models.yi import ChatYi
+from langchain.messages import HumanMessage, SystemMessage
 
 llm = ChatYi(
     model="yi-large",
@@ -72,7 +73,6 @@ llm = ChatYi(
 ## Invocation
 
 ```python
-from langchain_core.messages import HumanMessage, SystemMessage
 
 messages = [
     SystemMessage(content="You are an AI assistant specializing in technology trends."),

@@ -21,6 +21,7 @@ partner(X, Y) :- parent(X, Y, _).
 #!pip install langchain-prolog
 
 from langchain_prolog import PrologConfig, PrologRunnable, PrologTool
+from langchain.messages import HumanMessage
 
 TEST_SCRIPT = "family.pl"
 ```
@@ -60,7 +61,6 @@ load_dotenv(find_dotenv(), override=True)
 
 #!pip install langchain-openai
 
-from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
 ```
 

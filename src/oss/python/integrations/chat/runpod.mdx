@@ -51,6 +51,7 @@ Initialize the `ChatRunPod` class. You can pass model-specific parameters via `m
 
 ```python
 from langchain_runpod import ChatRunPod
+from langchain.messages import HumanMessage, SystemMessage
 
 chat = ChatRunPod(
     runpod_endpoint_id=chat_endpoint_id,  # Specify the correct endpoint ID
@@ -71,7 +72,6 @@ chat = ChatRunPod(
 Use the standard LangChain `.invoke()` and `.ainvoke()` methods to call the model. Streaming is also supported via `.stream()` and `.astream()` (simulated by polling the RunPod `/stream` endpoint).
 
 ```python
-from langchain_core.messages import HumanMessage, SystemMessage
 
 messages = [
     SystemMessage(content="You are a helpful AI assistant."),

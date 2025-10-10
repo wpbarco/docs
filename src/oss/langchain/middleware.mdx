@@ -119,6 +119,7 @@ You can use middleware in an agent by passing it `create_agent`:
 ```python
 from langchain.agents import create_agent
 from langchain.agents.middleware import SummarizationMiddleware, HumanInTheLoopMiddleware
+from langchain.messages import AIMessage, HumanMessage
 
 agent = create_agent(
     ...,
@@ -493,7 +494,6 @@ Signature:
 :::python
 ```python
 from langchain.agents.middleware import AgentMiddleware, AgentState
-from langchain_core.messages import AIMessage
 
 class MyMiddleware(AgentMiddleware):
     def before_model(self, state: AgentState) -> dict[str, Any] | None:
@@ -759,7 +759,6 @@ When using multiple middleware, their state and context schemas are merged. All 
 :::python
 ```python
 from langchain.agents.middleware import AgentMiddleware
-from langchain_core.messages import HumanMessage
 from typing import Any, Dict
 
 class Middleware1State(AgentState):

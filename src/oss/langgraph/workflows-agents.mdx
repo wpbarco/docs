@@ -29,6 +29,13 @@ import os
 import getpass
 
 from langchain_anthropic import ChatAnthropic
+from langchain.messages import (
+    BaseMessage,
+    HumanMessage,
+    SystemMessage,
+    ToolCall,
+    ToolMessage
+)
 
 def _set_env(var: str):
     if not os.environ.get(var):
@@ -709,7 +716,6 @@ Routing workflows process inputs and then directs them to context-specific tasks
 <CodeGroup>
 ```python Graph API
 from typing_extensions import Literal
-from langchain_core.messages import HumanMessage, SystemMessage
 
 # Schema for structured output to use as routing logic
 class Route(BaseModel):
@@ -815,7 +821,6 @@ print(state["output"])
 ```python Functional API
 from typing_extensions import Literal
 from pydantic import BaseModel
-from langchain_core.messages import HumanMessage, SystemMessage
 
 
 # Schema for structured output to use as routing logic
@@ -1809,7 +1814,7 @@ To get started with agents, see the [quickstart](/oss/langchain/quickstart) or r
 
 :::python
 ```python Using tools
-from langchain_core.tools import tool
+from langchain.tools import tool
 
 
 # Define tools
@@ -1855,7 +1860,6 @@ llm_with_tools = llm.bind_tools(tools)
 <CodeGroup>
 ```python Graph API
 from langgraph.graph import MessagesState
-from langchain_core.messages import SystemMessage, HumanMessage, ToolMessage
 
 
 # Nodes
@@ -1930,12 +1934,6 @@ for m in messages["messages"]:
 ```
 ```python Functional API
 from langgraph.graph import add_messages
-from langchain_core.messages import (
-    SystemMessage,
-    HumanMessage,
-    BaseMessage,
-    ToolCall,
-)
 
 
 @task
