@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "willow",
+  "theme": "linden",
   "name": "Docs by LangChain",
   "description": "Documentation for LangChain, LangGraph, LangGraph Platform, LangSmith, and more.",
   "colors": {
@@ -129,9 +129,9 @@
     "versions": [
       {
         "version": "Python",
-        "dropdowns": [
+        "products": [
           {
-            "dropdown": "Home",
+            "product": "Home",
             "icon": "house",
             "description": "LangChain docs home",
             "pages": [
@@ -139,7 +139,7 @@
             ]
           },
           {
-            "dropdown": "OSS (v1-alpha)",
+            "product": "OSS (v1-alpha)",
             "icon": "link",
             "description": "LangChain and LangGraph",
             "tabs": [
@@ -465,7 +465,7 @@
             ]
           },
           {
-            "dropdown": "LangGraph Platform",
+            "product": "LangGraph Platform",
             "icon": "rocket-launch",
             "description": "Platform for building and deploying AI agents",
             "tabs": [
@@ -672,7 +672,7 @@
             ]
           },
           {
-            "dropdown": "LangSmith",
+            "product": "LangSmith",
             "icon": "screwdriver-wrench",
             "description": "Platform for LLM observability and evaluation",
             "tabs": [
@@ -1076,7 +1076,7 @@
             ]
           },
           {
-            "dropdown": "Labs",
+            "product": "Labs",
             "icon": "flask",
             "description": "Experimental AI products from LangChain",
             "tabs": [
@@ -1179,9 +1179,9 @@
       },
       {
         "version": "JavaScript",
-        "dropdowns": [
+        "products": [
           {
-            "dropdown": "Home",
+            "product": "Home",
             "icon": "house",
             "description": "LangChain docs home",
             "pages": [
@@ -1189,7 +1189,7 @@
             ]
           },
           {
-            "dropdown": "OSS (v1-alpha)",
+            "product": "OSS (v1-alpha)",
             "icon": "link",
             "description": "LangChain and LangGraph",
             "tabs": [
@@ -1508,7 +1508,7 @@
             ]
           },
           {
-            "dropdown": "LangGraph Platform",
+            "product": "LangGraph Platform",
             "icon": "rocket-launch",
             "description": "Platform for building and deploying AI agents",
             "tabs": [
@@ -1715,7 +1715,7 @@
             ]
           },
           {
-            "dropdown": "LangSmith",
+            "product": "LangSmith",
             "icon": "screwdriver-wrench",
             "description": "Platform for LLM observability and evaluation",
             "tabs": [
@@ -2134,7 +2134,7 @@
             ]
           },
           {
-            "dropdown": "Labs",
+            "product": "Labs",
             "icon": "flask",
             "description": "Experimental AI products from LangChain",
             "tabs": [
