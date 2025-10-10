@@ -3,25 +3,32 @@ title: Build a custom RAG agent
 sidebarTitle: Custom RAG agent
 ---
 
-python
-```python
-%%capture --no-stderr
-%pip install -U --quiet langgraph "langchain[openai]" langchain-community langchain-text-splitters
-```
+## Overview
 
-```python
-import getpass
-import os
+In this tutorial we will build a [retrieval](/oss/javascript/langchain/retrieval) agent using LangGraph.
+
+LangChain offers built-in [agent](/oss/javascript/langchain/agents) implementations, implemented using [LangGraph](/oss/javascript/langgraph/overview) primitives. If deeper customization is required, agents can be implemented directly in LangGraph. This guide demonstrates an example implementation of a retrieval agent. [Retrieval](/oss/javascript/langchain/retrieval) agents are useful when you want an LLM to make a decision about whether to retrieve context from a vectorstore or respond to the user directly.
+
+By the end of the tutorial we will have done the following:
+
+1. Fetch and preprocess documents that will be used for retrieval.
+2. Index those documents for semantic search and create a retriever tool for the agent.
+3. Build an agentic RAG system that can decide when to use the retriever tool.
+
+![Hybrid RAG](/images/langgraph-hybrid-rag-tutorial.png)
+
+### Concepts
+
+We will cover the following concepts:
+
+- [Retrieval](/oss/javascript/langchain/retrieval) using [document loaders](/oss/javascript/integrations/document_loaders), [text splitters](/oss/javascript/integrations/splitters), [embeddings](/oss/javascript/integrations/text_embedding), and [vector stores](/oss/javascript/integrations/vectorstores)
+- The LangGraph [Graph API](/oss/javascript/langgraph/graph-api), including state, nodes, edges, and conditional edges.
+
+## Setup
+
+Let's download the required packages and set our API keys:
 
 
-def _set_env(key: str):
-    if key not in os.environ:
-        os.environ[key] = getpass.getpass(f"{key}:")
-
-
-_set_env("OPENAI_API_KEY")
-```
-:::
 
 <CodeGroup>
 ```bash npm

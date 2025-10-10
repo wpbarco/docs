@@ -28,7 +28,6 @@ We will cover the following concepts:
 
 Let's download the required packages and set our API keys:
 
-python
 ```python
 %%capture --no-stderr
 %pip install -U --quiet langgraph "langchain[openai]" langchain-community langchain-text-splitters
@@ -46,7 +45,7 @@ def _set_env(key: str):
 
 _set_env("OPENAI_API_KEY")
 ```
-:::
+
 
 
 
@@ -473,7 +472,11 @@ from IPython.display import Image, display
 display(Image(graph.get_graph().draw_mermaid_png()))
 ```
 
-![Graph](/images/agentic-rag-output.png)
+<img
+  src="/oss/images/agentic-rag-output.png"
+  alt="SQL agent graph"
+  style={{ height: "800px" }}
+/>
 
 
 
