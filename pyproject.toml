@@ -78,6 +78,9 @@ extend-exclude = [
 select = [
     "ALL",
 ]
+exclude = [
+    "src/plugins/middleware_visualization/generate_middleware_diagrams.py",
+]
 
 ignore = [
     "COM812",

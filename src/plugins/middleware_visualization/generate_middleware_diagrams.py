@@ -110,38 +110,40 @@ def clean_mermaid_diagram(mermaid: str, language: str = "python") -> str:
     # Pattern matches: node_id(ClassName.hook_name) -> node_id(hook_name)
     if language == "javascript":
         replacements = [
-            (r'\(BeforeAgentMiddleware\.before_agent\)', '(beforeAgent)'),
-            (r'\(BeforeModelMiddleware\.before_model\)', '(beforeModel)'),
-            (r'\(AfterModelMiddleware\.after_model\)', '(afterModel)'),
-            (r'\(AfterAgentMiddleware\.after_agent\)', '(afterAgent)'),
+            (r"\(BeforeAgentMiddleware\.before_agent\)", "(beforeAgent)"),
+            (r"\(BeforeModelMiddleware\.before_model\)", "(beforeModel)"),
+            (r"\(AfterModelMiddleware\.after_model\)", "(afterModel)"),
+            (r"\(AfterAgentMiddleware\.after_agent\)", "(afterAgent)"),
             # Also update escaped versions in node IDs
-            (r'BeforeAgentMiddleware\\2ebefore_agent', 'BeforeAgentMiddleware'),
-            (r'BeforeModelMiddleware\\2ebefore_model', 'BeforeModelMiddleware'),
-            (r'AfterModelMiddleware\\2eafter_model', 'AfterModelMiddleware'),
-            (r'AfterAgentMiddleware\\2eafter_agent', 'AfterAgentMiddleware'),
+            (r"BeforeAgentMiddleware\\2ebefore_agent", "BeforeAgentMiddleware"),
+            (r"BeforeModelMiddleware\\2ebefore_model", "BeforeModelMiddleware"),
+            (r"AfterModelMiddleware\\2eafter_model", "AfterModelMiddleware"),
+            (r"AfterAgentMiddleware\\2eafter_agent", "AfterAgentMiddleware"),
         ]
     else:  # python
         replacements = [
-            (r'\(BeforeAgentMiddleware\.before_agent\)', '(before_agent)'),
-            (r'\(BeforeModelMiddleware\.before_model\)', '(before_model)'),
-            (r'\(AfterModelMiddleware\.after_model\)', '(after_model)'),
-            (r'\(AfterAgentMiddleware\.after_agent\)', '(after_agent)'),
+            (r"\(BeforeAgentMiddleware\.before_agent\)", "(before_agent)"),
+            (r"\(BeforeModelMiddleware\.before_model\)", "(before_model)"),
+            (r"\(AfterModelMiddleware\.after_model\)", "(after_model)"),
+            (r"\(AfterAgentMiddleware\.after_agent\)", "(after_agent)"),
         ]
 
     # Common replacements for both languages
-    replacements.extend([
-        # Remove <p> tags from start/end nodes to make them normal size
-        (r'__start__\(\[<p>__start__</p>\]\)', '__start__([__start__])'),
-        (r'__end__\(\[<p>__end__</p>\]\)', '__end__([__end__])'),
-    ])
+    replacements.extend(
+        [
+            # Remove <p> tags from start/end nodes to make them normal size
+            (r"__start__\(\[<p>__start__</p>\]\)", "__start__([__start__])"),
+            (r"__end__\(\[<p>__end__</p>\]\)", "__end__([__end__])"),
+        ]
+    )
 
     for pattern, replacement in replacements:
         mermaid = re.sub(pattern, replacement, mermaid)
 
     # Add more compact layout configuration
     # Replace the config section to make diagrams more compact
-    config_pattern = r'---\nconfig:\n  flowchart:\n    curve: linear\n---\n'
-    compact_config = '''---
+    config_pattern = r"---\nconfig:\n  flowchart:\n    curve: linear\n---\n"
+    compact_config = """---
 config:
   flowchart:
     curve: linear
@@ -149,7 +151,7 @@ config:
     rankSpacing: 40
     padding: 10
 ---
-'''
+"""
     mermaid = re.sub(config_pattern, compact_config, mermaid)
 
     return mermaid
@@ -205,9 +207,11 @@ def generate_all_diagrams(language: str = "python") -> dict[str, str]:
         mermaid = clean_mermaid_diagram(mermaid, language=language)
         diagrams[name] = mermaid
 
-        print(f"Generated: {name} (tools={int(has_tools)}, "
-              f"before_agent={int(before_agent)}, before_model={int(before_model)}, "
-              f"after_model={int(after_model)}, after_agent={int(after_agent)})")
+        print(
+            f"Generated: {name} (tools={int(has_tools)}, "
+            f"before_agent={int(before_agent)}, before_model={int(before_model)}, "
+            f"after_model={int(after_model)}, after_agent={int(after_agent)})"
+        )
 
     return diagrams
 
@@ -223,8 +227,8 @@ def save_diagrams_to_inline_js(diagrams: dict[str, str], output_path: Path) -> N
         output_path: Path where the JS file should be saved.
     """
     # Minified JSON (no whitespace)
-    json_str = json.dumps(diagrams, separators=(',', ':'))
-    js_content = f'const diagrams = {json_str};'
+    json_str = json.dumps(diagrams, separators=(",", ":"))
+    js_content = f"const diagrams = {json_str};"
 
     output_path.write_text(js_content)
     print(f"Saved inline JS version to {output_path}")
