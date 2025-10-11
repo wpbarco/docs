@@ -2,9 +2,24 @@
 
 Minimal interactive visualizer for LangChain middleware hooks and agent graphs.
 
+## Features
+
+- **Language-specific diagrams**: Automatically switches between Python (snake_case) and JavaScript (camelCase) naming based on active tab
+- **Interactive tooltips**: Hover over checkboxes to see what each hook does
+- **Compact layout**: Optimized spacing for better visual hierarchy
+- **Mintlify integration**: Uses Mintlify design tokens for consistent styling
+
 ## Usage
 
-The `index.html` file can be embedded directly into Mintlify documentation.
+The `index.html` file can be embedded directly into Mintlify documentation:
+
+```html
+<iframe
+  src="/plugins/middleware_visualization/index.html"
+  style={{ width: "100%", height: "600px", border: "none" }}
+  title="Interactive Middleware Visualizer"
+/>
+```
 
 **Binary naming scheme (5 bits):**
 ```
@@ -19,22 +34,30 @@ Example: `10110` = tools + before_model + after_model
 
 ## Files
 
-- `index.html` - Minimal embeddable widget (checkboxes + diagram)
-- `diagrams.json` - 32 pre-generated Mermaid diagrams (for reference)
-- `diagrams_inline.js` - Inline JavaScript version of diagrams (for Mintlify serving)
-- `generate_middleware_diagrams.py` - Diagram generator
+- `index.html` - Embeddable widget with interactive controls and diagram rendering
+- `diagrams_python.js` - Python version with snake_case naming (e.g., `before_agent`)
+- `diagrams_js.js` - JavaScript version with camelCase naming (e.g., `beforeAgent`)
+- `generate_middleware_diagrams.py` - Diagram generator script
 
 ## Regenerating Diagrams
 
 To regenerate the diagrams after making changes to middleware hooks:
 
 ```bash
-cd langchain  # Navigate to the langchain repo root
 uv run python src/plugins/middleware_visualization/generate_middleware_diagrams.py
 ```
 
-This will generate:
-- `diagrams.json` - Pretty-printed JSON for reference/debugging
-- `diagrams_inline.js` - Minified JavaScript constant for serving
+This generates three files:
+- `diagrams_python.js` - Python diagrams with snake_case hooks
+- `diagrams_js.js` - JavaScript diagrams with camelCase hooks
 
-**Note**: Mintlify's dev server doesn't serve JSON files, so we convert the data to a JavaScript file that can be loaded via `<script src>`.
+### Diagram Configuration
+
+The generator creates compact diagrams with:
+- `nodeSpacing: 30` - Horizontal spacing between nodes
+- `rankSpacing: 40` - Vertical spacing between ranks
+- `padding: 10` - Diagram padding
+
+Adjust these values in `generate_middleware_diagrams.py` line 144-150 to modify diagram height.
+
+**Note**: Mintlify's dev server doesn't serve JSON files, so we convert the data to JavaScript files that can be loaded via `<script src>`.

@@ -2,10 +2,10 @@
 <style>
 .agent-layout {
     display: flex;
-    gap: 3rem;
+    gap: 2rem;
     align-items: flex-start;
-    height: 550px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    height: 480px;
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif);
 }
 
 .agent-graph-features-container {
@@ -16,7 +16,7 @@
 .agent-graph-features {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.625rem;
 }
 
 .agent-graph-features label {
@@ -24,26 +24,42 @@
     align-items: center;
     gap: 0.5rem;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
+    color: var(--text-primary, #1a202c);
+    transition: opacity 0.15s ease;
+}
+
+.agent-graph-features label:hover {
+    opacity: 0.7;
 }
 
 .agent-graph-features input[type="checkbox"] {
     width: 16px;
     height: 16px;
     cursor: pointer;
+    accent-color: var(--primary, #7c3aed);
 }
 
-.agent-graph-features code {
-    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    font-size: 0.85rem;
+/* Inline code styling to match Mintlify */
+code {
+    font-family: var(--font-mono, ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+    font-size: 0.8125rem;
+    background-color: var(--code-bg, rgba(0, 0, 0, 0.05));
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--text-primary, #374151);
+    font-weight: 500;
 }
 
 .agent-section-title {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    font-size: 1rem;
+    font-family: var(--font-heading, 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif);
+    font-size: 0.875rem;
     font-weight: 600;
-    margin-bottom: 1rem;
-    color: #1a202c;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary, #1a202c);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.75rem;
 }
 
 .agent-graph-container {
@@ -85,25 +101,46 @@
   <div class="agent-graph-features-container">
     <div class="agent-graph-features">
       <h3 class="agent-section-title">Configuration</h3>
-      <label><input type="checkbox" id="tools" checked> <code>tools</code></label>
-      <label><input type="checkbox" id="before_agent"> <code>before_agent</code></label>
-      <label><input type="checkbox" id="before_model"> <code>before_model</code></label>
-      <label><input type="checkbox" id="after_model"> <code>after_model</code></label>
-      <label><input type="checkbox" id="after_agent"> <code>after_agent</code></label>
+      <label title="Enable tools that the agent can call">
+        <input type="checkbox" id="tools" checked>
+        <code data-hook="tools">tools</code>
+      </label>
+      <label title="Runs before agent starts (once per invocation). Perfect for: input validation, logging, setup">
+        <input type="checkbox" id="before_agent">
+        <code data-hook="before_agent">before_agent</code>
+      </label>
+      <label title="Runs before each model call. Perfect for: prompt modification, dynamic tool selection, rate limiting">
+        <input type="checkbox" id="before_model">
+        <code data-hook="before_model">before_model</code>
+      </label>
+      <label title="Runs after each model response. Perfect for: response validation, output transformation, logging">
+        <input type="checkbox" id="after_model">
+        <code data-hook="after_model">after_model</code>
+      </label>
+      <label title="Runs after agent completes (once per invocation). Perfect for: cleanup, final validation, analytics">
+        <input type="checkbox" id="after_agent">
+        <code data-hook="after_agent">after_agent</code>
+      </label>
     </div>
   </div>
 
   <div class="agent-graph-container">
-    <h3 class="agent-section-title">Graph</h3>
+    <h3 class="agent-section-title">Agent Graph</h3>
     <div id="agent-graph">Loading...</div>
   </div>
 </div>
 
-<script src="./diagrams_inline.js"></script>
+<script id="diagrams-python" src="./diagrams_python.js"></script>
+<script id="diagrams-js" src="./diagrams_js.js"></script>
 <script type="module">
 import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
 
-// diagrams is loaded from ./diagrams_inline.js
+// Diagrams are loaded from diagrams_python.js and diagrams_js.js
+// They both export a global `diagrams` variable, so we need to handle which one to use
+
+let currentLanguage = 'python';
+let pythonDiagrams = {};
+let jsDiagrams = {};
 
 // Initialize mermaid - let diagrams use their built-in styling
 mermaid.initialize({
@@ -111,8 +148,102 @@ mermaid.initialize({
   theme: 'default'
 });
 
-// Load diagrams (already loaded inline)
+// Detect active language from URL or page context
+function detectLanguage() {
+  // First, check the URL path
+  const path = window.location.pathname;
+  if (path.includes('/javascript') || path.includes('/js') || path.includes('/typescript')) {
+    return 'javascript';
+  }
+  if (path.includes('/python')) {
+    return 'python';
+  }
+
+  // Check if we're in an iframe and try parent URL
+  if (window.parent && window.parent !== window) {
+    try {
+      const parentPath = window.parent.location.pathname;
+      if (parentPath.includes('/javascript') || parentPath.includes('/js') || parentPath.includes('/typescript')) {
+        return 'javascript';
+      }
+      if (parentPath.includes('/python')) {
+        return 'python';
+      }
+    } catch (e) {
+      // Cross-origin iframe, can't access parent URL
+    }
+  }
+
+  // Look for Mintlify tab indicators
+  const activeTab = document.querySelector('[data-language-tab].active, [data-tab].active');
+  if (activeTab) {
+    const lang = activeTab.getAttribute('data-language') || activeTab.getAttribute('data-tab') || '';
+    if (lang.match(/^(js|javascript|typescript|ts)$/i)) {
+      return 'javascript';
+    }
+  }
+
+  // Check for visible code blocks
+  const visibleCode = document.querySelector('.language-typescript:not([hidden]), .language-javascript:not([hidden]), .language-js:not([hidden])');
+  if (visibleCode) {
+    return 'javascript';
+  }
+
+  // Default to Python
+  return 'python';
+}
+
+// Update hook names based on language
+function updateHookNames(lang) {
+  const hookElements = document.querySelectorAll('code[data-hook]');
+  const isJS = lang === 'javascript';
+
+  hookElements.forEach(el => {
+    const hook = el.getAttribute('data-hook');
+    if (hook === 'tools') return; // tools is same in both
+
+    if (hook === 'before_agent') {
+      el.textContent = isJS ? 'beforeAgent' : 'before_agent';
+    } else if (hook === 'before_model') {
+      el.textContent = isJS ? 'beforeModel' : 'before_model';
+    } else if (hook === 'after_model') {
+      el.textContent = isJS ? 'afterModel' : 'after_model';
+    } else if (hook === 'after_agent') {
+      el.textContent = isJS ? 'afterAgent' : 'after_agent';
+    }
+  });
+}
+
+// Load diagram sets
 async function loadDiagrams() {
+  // Load both diagram sets by fetching the files
+  // This ensures we have both versions without them overwriting each other
+
+  try {
+    // Fetch Python diagrams
+    const pythonResponse = await fetch('./diagrams_python.js');
+    const pythonText = await pythonResponse.text();
+    const pythonMatch = pythonText.match(/const diagrams = (\{.*\});/);
+    if (pythonMatch) {
+      pythonDiagrams = JSON.parse(pythonMatch[1]);
+    }
+
+    // Fetch JS diagrams
+    const jsResponse = await fetch('./diagrams_js.js');
+    const jsText = await jsResponse.text();
+    const jsMatch = jsText.match(/const diagrams = (\{.*\});/);
+    if (jsMatch) {
+      jsDiagrams = JSON.parse(jsMatch[1]);
+    }
+  } catch (e) {
+    console.error('Failed to load diagrams:', e);
+    // Fallback to window.diagrams if fetch fails
+    pythonDiagrams = window.diagrams || {};
+    jsDiagrams = window.diagrams || {};
+  }
+
+  currentLanguage = detectLanguage();
+  updateHookNames(currentLanguage);
   render();
 }
 
@@ -132,8 +263,11 @@ async function render() {
   const key = getKey();
   const graphEl = document.getElementById('agent-graph');
 
+  // Use appropriate diagram set
+  const diagrams = currentLanguage === 'javascript' ? jsDiagrams : pythonDiagrams;
+
   if (!diagrams[key]) {
-    graphEl.innerHTML = `<div style="color: #e53e3e;">Diagram not found for key: ${key}<br>Available keys: ${Object.keys(diagrams).length > 0 ? Object.keys(diagrams).slice(0, 5).join(', ') + '...' : 'none loaded'}</div>`;
+    graphEl.innerHTML = `<div style="color: #e53e3e;">Diagram not found for key: ${key}<br>Language: ${currentLanguage}<br>Available keys: ${Object.keys(diagrams).length > 0 ? Object.keys(diagrams).slice(0, 5).join(', ') + '...' : 'none loaded'}</div>`;
     return;
   }
 
@@ -151,6 +285,20 @@ function initializeWidget() {
   loadDiagrams();
   document.querySelectorAll('.agent-graph-features input').forEach((input) => {
     input.addEventListener('change', render);
+  });
+
+  // Listen for tab changes (Mintlify-specific)
+  document.addEventListener('click', (e) => {
+    if (e.target.matches('[data-language-tab], [data-tab]')) {
+      setTimeout(() => {
+        const newLang = detectLanguage();
+        if (newLang !== currentLanguage) {
+          currentLanguage = newLang;
+          updateHookNames(currentLanguage);
+          render();
+        }
+      }, 50);
+    }
   });
 }
 

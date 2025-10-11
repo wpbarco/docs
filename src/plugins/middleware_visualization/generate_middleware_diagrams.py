@@ -94,11 +94,12 @@ def binary_name(
     return "".join(bits)
 
 
-def clean_mermaid_diagram(mermaid: str) -> str:
+def clean_mermaid_diagram(mermaid: str, language: str = "python") -> str:
     """Clean up Mermaid diagram by simplifying node names and improving styling.
 
     Args:
         mermaid: Raw Mermaid diagram from LangGraph.
+        language: "python" for snake_case or "javascript" for camelCase naming.
 
     Returns:
         Cleaned Mermaid diagram with simplified node names.
@@ -107,24 +108,58 @@ def clean_mermaid_diagram(mermaid: str) -> str:
 
     # Replace middleware class names with simple hook names in node labels
     # Pattern matches: node_id(ClassName.hook_name) -> node_id(hook_name)
-    replacements = [
-        (r'\(BeforeAgentMiddleware\.before_agent\)', '(before_agent)'),
-        (r'\(BeforeModelMiddleware\.before_model\)', '(before_model)'),
-        (r'\(AfterModelMiddleware\.after_model\)', '(after_model)'),
-        (r'\(AfterAgentMiddleware\.after_agent\)', '(after_agent)'),
+    if language == "javascript":
+        replacements = [
+            (r'\(BeforeAgentMiddleware\.before_agent\)', '(beforeAgent)'),
+            (r'\(BeforeModelMiddleware\.before_model\)', '(beforeModel)'),
+            (r'\(AfterModelMiddleware\.after_model\)', '(afterModel)'),
+            (r'\(AfterAgentMiddleware\.after_agent\)', '(afterAgent)'),
+            # Also update escaped versions in node IDs
+            (r'BeforeAgentMiddleware\\2ebefore_agent', 'BeforeAgentMiddleware'),
+            (r'BeforeModelMiddleware\\2ebefore_model', 'BeforeModelMiddleware'),
+            (r'AfterModelMiddleware\\2eafter_model', 'AfterModelMiddleware'),
+            (r'AfterAgentMiddleware\\2eafter_agent', 'AfterAgentMiddleware'),
+        ]
+    else:  # python
+        replacements = [
+            (r'\(BeforeAgentMiddleware\.before_agent\)', '(before_agent)'),
+            (r'\(BeforeModelMiddleware\.before_model\)', '(before_model)'),
+            (r'\(AfterModelMiddleware\.after_model\)', '(after_model)'),
+            (r'\(AfterAgentMiddleware\.after_agent\)', '(after_agent)'),
+        ]
+
+    # Common replacements for both languages
+    replacements.extend([
         # Remove <p> tags from start/end nodes to make them normal size
         (r'__start__\(\[<p>__start__</p>\]\)', '__start__([__start__])'),
         (r'__end__\(\[<p>__end__</p>\]\)', '__end__([__end__])'),
-    ]
+    ])
 
     for pattern, replacement in replacements:
         mermaid = re.sub(pattern, replacement, mermaid)
 
+    # Add more compact layout configuration
+    # Replace the config section to make diagrams more compact
+    config_pattern = r'---\nconfig:\n  flowchart:\n    curve: linear\n---\n'
+    compact_config = '''---
+config:
+  flowchart:
+    curve: linear
+    nodeSpacing: 30
+    rankSpacing: 40
+    padding: 10
+---
+'''
+    mermaid = re.sub(config_pattern, compact_config, mermaid)
+
     return mermaid
 
 
-def generate_all_diagrams() -> dict[str, str]:
+def generate_all_diagrams(language: str = "python") -> dict[str, str]:
     """Generate Mermaid diagrams for all 32 possible hook combinations.
+
+    Args:
+        language: "python" for snake_case or "javascript" for camelCase naming.
 
     Returns:
         Dictionary mapping binary configuration names to Mermaid diagram strings.
@@ -167,7 +202,7 @@ def generate_all_diagrams() -> dict[str, str]:
 
         mermaid = agent.get_graph().draw_mermaid()
         # Clean up node names
-        mermaid = clean_mermaid_diagram(mermaid)
+        mermaid = clean_mermaid_diagram(mermaid, language=language)
         diagrams[name] = mermaid
 
         print(f"Generated: {name} (tools={int(has_tools)}, "
@@ -175,17 +210,6 @@ def generate_all_diagrams() -> dict[str, str]:
               f"after_model={int(after_model)}, after_agent={int(after_agent)})")
 
     return diagrams
-
-
-def save_diagrams_to_json(diagrams: dict[str, str], output_path: Path) -> None:
-    """Save diagrams to a JSON file.
-
-    Args:
-        diagrams: Dictionary mapping binary names to Mermaid diagrams.
-        output_path: Path where the JSON file should be saved.
-    """
-    output_path.write_text(json.dumps(diagrams, indent=2))
-    print(f"\nSaved {len(diagrams)} diagrams to {output_path}")
 
 
 def save_diagrams_to_inline_js(diagrams: dict[str, str], output_path: Path) -> None:
@@ -208,19 +232,29 @@ def save_diagrams_to_inline_js(diagrams: dict[str, str], output_path: Path) -> N
 
 def main() -> None:
     """Generate all diagrams and save to both JSON and inline JS formats."""
-    diagrams = generate_all_diagrams()
+    # Generate Python version (snake_case)
+    print("\nGenerating Python diagrams (snake_case)...")
+    python_diagrams = generate_all_diagrams(language="python")
+
+    # Generate JavaScript version (camelCase)
+    print("\nGenerating JavaScript diagrams (camelCase)...")
+    js_diagrams = generate_all_diagrams(language="javascript")
 
     # Save to same directory as script
     output_dir = Path(__file__).parent
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Save as JSON (for reference/debugging)
-    json_path = output_dir / "diagrams.json"
-    save_diagrams_to_json(diagrams, json_path)
+    # Save as inline JS files (for Mintlify to serve)
+    python_js_path = output_dir / "diagrams_python.js"
+    save_diagrams_to_inline_js(python_diagrams, python_js_path)
 
-    # Save as inline JS (for Mintlify to serve)
-    js_path = output_dir / "diagrams_inline.js"
-    save_diagrams_to_inline_js(diagrams, js_path)
+    js_js_path = output_dir / "diagrams_js.js"
+    save_diagrams_to_inline_js(js_diagrams, js_js_path)
+
+    # Keep the old filename for backward compatibility (defaults to Python)
+    legacy_path = output_dir / "diagrams_inline.js"
+    save_diagrams_to_inline_js(python_diagrams, legacy_path)
+    print(f"\nLegacy file {legacy_path} created (Python version for backward compatibility)")
 
 
 if __name__ == "__main__":
