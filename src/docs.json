@@ -102,10 +102,10 @@
     }
   },
   "scripts": [
-    "/hide-version-picker.js"
+    "/hide-sidebar.js"
   ],
   "styles": [
-    "/hide-version-picker.css"
+    "/hide-sidebar.css"
   ],
   "banner": {
     "content": "Our new LangChain Academy course on Deep Agents is now live! [Enroll for free](https://academy.langchain.com/courses/deep-agents-with-langgraph/?utm_medium=internal&utm_source=docs&utm_campaign=q3-2025_deep-agents-course_co).",
