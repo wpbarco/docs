@@ -128,12 +128,12 @@
   "navigation": {
     "products": [
       {
-      "product": "Home",
-      "icon": "house",
-      "description": "LangChain docs home",
-      "pages": [
-        "index"
-      ]
+        "product": "Home",
+        "icon": "house",
+        "description": "LangChain docs home",
+        "pages": [
+          "index"
+        ]
       },
       {
         "product": "OSS (v1-alpha)",
@@ -142,7 +142,7 @@
         "dropdowns": [
           {
             "dropdown": "Python",
-            "icon": "fa-python",
+            "icon": "python",
             "tabs": [
               {
                 "tab": "LangChain",
