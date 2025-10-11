@@ -67,7 +67,7 @@ for await (const chunk of await agent.stream(
     console.log(`content: ${JSON.stringify(content, null, 2)}`);
 }
 /**
- * step: agent
+ * step: model
  * content: {
  *   "messages": [
  *     {
@@ -100,12 +100,12 @@ for await (const chunk of await agent.stream(
  *     }
  *   ]
  * }
- * step: agent
+ * step: model
  * content: {
  *   "messages": [
  *     {
  *       "kwargs": {
- *         "content": "The latest update says: The weather in San Francisco is always sunny!\n\nIf you’d like real-time details (current temperature, humidity, wind, and today’s forecast), I can pull the latest data for you. Want me to fetch that?",
+ *         "content": "The latest update says: The weather in San Francisco is always sunny!\n\nIf you'd like real-time details (current temperature, humidity, wind, and today's forecast), I can pull the latest data for you. Want me to fetch that?",
  *         // ...
  *       }
  *     }

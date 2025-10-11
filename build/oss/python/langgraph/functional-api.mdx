@@ -7,7 +7,7 @@ import AlphaCallout from '/snippets/alpha-lg-callout.mdx';
 
 <AlphaCallout />
 
-The **Functional API** allows you to add LangGraph's key features — [persistence](/oss/python/langgraph/persistence), [memory](/oss/python/langgraph/add-memory), [human-in-the-loop](/oss/python/langgraph/add-human-in-the-loop), and [streaming](/oss/python/langgraph/streaming) — to your applications with minimal changes to your existing code.
+The **Functional API** allows you to add LangGraph's key features — [persistence](/oss/python/langgraph/persistence), [memory](/oss/python/langgraph/add-memory), [human-in-the-loop](/oss/python/langgraph/interrupts), and [streaming](/oss/python/langgraph/streaming) — to your applications with minimal changes to your existing code.
 
 It is designed to integrate these features into existing code that may use standard language primitives for branching and control flow, such as `if` statements, `for` loops, and function calls. Unlike many data orchestration frameworks that require restructuring code into an explicit pipeline or DAG, the Functional API allows you to incorporate these capabilities without enforcing a rigid execution model.
 
@@ -38,7 +38,7 @@ Here are some key differences:
 
 ## Example
 
-Below we demonstrate a simple application that writes an essay and [interrupts](/oss/python/langgraph/add-human-in-the-loop) to request human review.
+Below we demonstrate a simple application that writes an essay and [interrupts](/oss/python/langgraph/interrupts) to request human review.
 
 ```python
 from langgraph.checkpoint.memory import InMemorySaver
@@ -157,7 +157,7 @@ def workflow(topic: str) -> dict:
 
 ## Entrypoint
 
-The [`@entrypoint`](https://langchain-ai.github.io/langgraph/reference/func/#langgraph.func.entrypoint) decorator can be used to create a workflow from a function. It encapsulates workflow logic and manages execution flow, including handling _long-running tasks_ and [interrupts](/oss/python/langgraph/add-human-in-the-loop).
+The [`@entrypoint`](https://langchain-ai.github.io/langgraph/reference/func/#langgraph.func.entrypoint) decorator can be used to create a workflow from a function. It encapsulates workflow logic and manages execution flow, including handling _long-running tasks_ and [interrupts](/oss/python/langgraph/interrupts).
 
 
 
