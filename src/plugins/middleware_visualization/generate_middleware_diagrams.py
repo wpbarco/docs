@@ -251,11 +251,6 @@ def main() -> None:
     js_js_path = output_dir / "diagrams_js.js"
     save_diagrams_to_inline_js(js_diagrams, js_js_path)
 
-    # Keep the old filename for backward compatibility (defaults to Python)
-    legacy_path = output_dir / "diagrams_inline.js"
-    save_diagrams_to_inline_js(python_diagrams, legacy_path)
-    print(f"\nLegacy file {legacy_path} created (Python version for backward compatibility)")
-
 
 if __name__ == "__main__":
     main()
