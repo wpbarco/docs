@@ -11,6 +11,7 @@ import re
 from pathlib import Path
 
 from pipeline.preprocessors.handle_auto_links import replace_autolinks
+from pipeline.preprocessors.handle_constants import replace_constants
 
 logger = logging.getLogger(__name__)
 
@@ -98,6 +99,9 @@ def preprocess_markdown(
     # Determine default scope for cross-references
     if default_scope is None:
         default_scope = target_language
+
+    # Apply reusable constant substitution
+    content = replace_constants(content, str(file_path))
 
     # Apply cross-reference preprocessing
     content = replace_autolinks(content, str(file_path), default_scope=default_scope)
