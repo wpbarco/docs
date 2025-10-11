@@ -1,0 +1,160 @@
+<!-- Middleware Hooks Visualizer -->
+<style>
+.agent-layout {
+    display: flex;
+    gap: 3rem;
+    align-items: flex-start;
+    min-height: 450px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.agent-graph-features-container {
+    flex-shrink: 0;
+    width: 200px;
+}
+
+.agent-graph-features {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.agent-graph-features label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.agent-graph-features input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.agent-graph-features code {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.85rem;
+}
+
+.agent-section-title {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #1a202c;
+}
+
+.agent-graph-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+#agent-graph {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#agent-graph svg {
+    max-width: 100%;
+    max-height: 400px;
+    height: auto;
+    width: auto;
+}
+
+@media (max-width: 768px) {
+    .agent-layout {
+        flex-direction: column;
+        min-height: auto;
+    }
+
+    .agent-graph-features-container {
+        width: 100%;
+    }
+}
+</style>
+
+<div class="agent-layout">
+  <div class="agent-graph-features-container">
+    <div class="agent-graph-features">
+      <h3 class="agent-section-title">Configuration</h3>
+      <label><input type="checkbox" id="tools" checked> <code>tools</code></label>
+      <label><input type="checkbox" id="before_agent"> <code>before_agent</code></label>
+      <label><input type="checkbox" id="before_model"> <code>before_model</code></label>
+      <label><input type="checkbox" id="after_model"> <code>after_model</code></label>
+      <label><input type="checkbox" id="after_agent"> <code>after_agent</code></label>
+    </div>
+  </div>
+
+  <div class="agent-graph-container">
+    <h3 class="agent-section-title">Graph</h3>
+    <div id="agent-graph">Loading...</div>
+  </div>
+</div>
+
+<script src="./diagrams_inline.js"></script>
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+
+// diagrams is loaded from ./diagrams_inline.js
+
+// Initialize mermaid - let diagrams use their built-in styling
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'default'
+});
+
+// Load diagrams (already loaded inline)
+async function loadDiagrams() {
+  render();
+}
+
+// Get binary configuration key
+function getKey() {
+  return [
+    document.getElementById('tools').checked ? '1' : '0',
+    document.getElementById('before_agent').checked ? '1' : '0',
+    document.getElementById('before_model').checked ? '1' : '0',
+    document.getElementById('after_model').checked ? '1' : '0',
+    document.getElementById('after_agent').checked ? '1' : '0',
+  ].join('');
+}
+
+// Render diagram
+async function render() {
+  const key = getKey();
+  const graphEl = document.getElementById('agent-graph');
+
+  if (!diagrams[key]) {
+    graphEl.innerHTML = `<div style="color: #e53e3e;">Diagram not found for key: ${key}<br>Available keys: ${Object.keys(diagrams).length > 0 ? Object.keys(diagrams).slice(0, 5).join(', ') + '...' : 'none loaded'}</div>`;
+    return;
+  }
+
+  try {
+    const id = `mermaid-${Date.now()}`;
+    const { svg } = await mermaid.render(id, diagrams[key]);
+    graphEl.innerHTML = svg;
+  } catch (error) {
+    graphEl.innerHTML = `<div style="color: #e53e3e;">Render error: ${error.message}</div>`;
+  }
+}
+
+// Initialize
+function initializeWidget() {
+  loadDiagrams();
+  document.querySelectorAll('.agent-graph-features input').forEach((input) => {
+    input.addEventListener('change', render);
+  });
+}
+
+// Init for both full reload and SPA nav (Mintlify/MkDocs)
+window.addEventListener('DOMContentLoaded', initializeWidget);
+if (typeof document$ !== 'undefined') {
+  document$.subscribe(initializeWidget);
+}
+</script>

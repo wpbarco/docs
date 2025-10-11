@@ -877,7 +877,17 @@ Build custom middleware by implementing hooks that run at specific points in the
 
 #### Node-style hooks
 
-Run at specific points in the execution flow:
+Run at specific points in the execution flow.
+
+**Try it:** Toggle different hooks below to see how they affect the agent execution graph:
+
+<iframe
+  src="/plugins/middleware_visualization/index.html"
+  style={{ width: "100%", height: "450px", border: "none" }}
+  title="Interactive Middleware Visualizer"
+/>
+
+**Available hooks:**
 
 :::python
 - `before_agent` - Before agent starts (once per invocation)
