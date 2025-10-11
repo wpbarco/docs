@@ -292,7 +292,7 @@ Agents go beyond simple tool binding by adding reasoning loops, state management
         ```ts wrap
         import { z } from "zod"
         import { ChatOpenAI } from "@langchain/openai"
-        import { ToolNode, createAgent } from "langchain"
+        import { createAgent } from "langchain"
 
         const getUserName = tool(
           (_, config) => {
