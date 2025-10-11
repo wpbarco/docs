@@ -530,7 +530,7 @@ read the [**streaming guide**](/oss/langgraph/streaming) section for more detail
 Example of using the streaming API to stream both updates and custom data.
 
 :::python
-```python 
+```python
 from langgraph.func import entrypoint
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.config import get_stream_writer   # [!code highlight]
@@ -575,7 +575,7 @@ for mode, chunk in main.stream(   # [!code highlight]
 If using Python < 3.11 and writing async code, using `get_stream_writer()` will not work. Instead please
 use the `StreamWriter` class directly. See [Async with Python < 3.11](/oss/langgraph/streaming#async) for more details.
 
-```python 
+```python
 from langgraph.types import StreamWriter
 
 @entrypoint(checkpointer=checkpointer)
@@ -1320,7 +1320,7 @@ You can view and delete the information stored by the checkpointer.
 #### View thread state
 
 :::python
-```python 
+```python
 config = {
     "configurable": {
         "thread_id": "1",  # [!code highlight]
@@ -1353,16 +1353,16 @@ StateSnapshot(
 :::
 
 :::js
-```typescript 
+```typescript
 const config = {
   configurable: {
-    thread_id: "1",  # [!code highlight]
+    thread_id: "1",  // [!code highlight]
     // optionally provide an ID for a specific checkpoint,
     // otherwise the latest checkpoint is shown
-    // checkpoint_id: "1f029ca3-1f5b-6704-8004-820c16b69a5a"  # [!code highlight]
+    // checkpoint_id: "1f029ca3-1f5b-6704-8004-820c16b69a5a" [!code highlight]
   },
 };
-await graph.getState(config);  # [!code highlight]
+await graph.getState(config);  // [!code highlight]
 ```
 
 ```
@@ -1396,7 +1396,7 @@ StateSnapshot {
 #### View the history of the thread
 
 :::python
-```python 
+```python
 config = {
     "configurable": {
         "thread_id": "1"  # [!code highlight]
@@ -1472,7 +1472,7 @@ list(graph.get_state_history(config))  # [!code highlight]
 :::
 
 :::js
-```typescript 
+```typescript
 const config = {
   configurable: {
     thread_id: "1",  # [!code highlight]
