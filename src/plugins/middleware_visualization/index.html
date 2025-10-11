@@ -1,57 +1,57 @@
 <!-- Middleware Hooks Visualizer -->
 <style>
-.agent-layout {
-    display: flex;
-    gap: 2rem;
-    align-items: flex-start;
-    height: 480px;
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
     font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif);
+    color: var(--text-primary, #1a202c);
+    padding: 1.5rem;
+    line-height: 1.6;
+    overflow: hidden;
 }
 
-.agent-graph-features-container {
-    flex-shrink: 0;
-    width: 200px;
-}
-
-.agent-graph-features {
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    height: 100%;
     display: flex;
     flex-direction: column;
-    gap: 0.625rem;
 }
 
-.agent-graph-features label {
+.main-layout {
+    display: grid;
+    grid-template-columns: 60% 1fr;
+    gap: 2rem;
+    align-items: start;
+    height: 100%;
+    flex: 1;
+}
+
+.left-column {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
+    flex-direction: column;
+    gap: 1.5rem;
+    height: 100%;
+}
+
+h4 {
+    font-family: var(--font-heading, 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif);
     font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
     color: var(--text-primary, #1a202c);
-    transition: opacity 0.15s ease;
 }
 
-.agent-graph-features label:hover {
-    opacity: 0.7;
-}
-
-.agent-graph-features input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-    accent-color: var(--primary, #7c3aed);
-}
-
-/* Inline code styling to match Mintlify */
-code {
-    font-family: var(--font-mono, ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
-    font-size: 0.8125rem;
-    background-color: var(--code-bg, rgba(0, 0, 0, 0.05));
-    padding: 2px 6px;
-    border-radius: 4px;
-    color: var(--text-primary, #374151);
-    font-weight: 500;
-}
-
-.agent-section-title {
+.section-title {
     font-family: var(--font-heading, 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif);
     font-size: 0.875rem;
     font-weight: 600;
@@ -62,12 +62,76 @@ code {
     font-size: 0.75rem;
 }
 
-.agent-graph-container {
+.hooks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.hook-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: background-color 0.15s ease;
+}
+
+.hook-item:hover {
+    background-color: var(--hover-bg, rgba(0, 0, 0, 0.02));
+}
+
+.hook-checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--primary, #7c3aed);
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.hook-content {
     flex: 1;
     display: flex;
     flex-direction: column;
-    min-width: 0;
+    gap: 0.25rem;
+}
+
+.hook-item-title {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--text-primary, #1a202c);
+    cursor: pointer;
+}
+
+.hook-item-desc {
+    font-size: 0.8125rem;
+    color: var(--text-secondary, #6b7280);
+    line-height: 1.5;
+}
+
+/* Inline code styling to match Mintlify */
+/* code {
+    font-family: var(--font-mono, ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+    font-size: 0.8125rem;
+    background-color: var(--code-bg, rgba(0, 0, 0, 0.05));
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--text-primary, #374151);
+    font-weight: 500;
+} */
+
+.right-column {
     height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.graph-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 #agent-graph {
@@ -75,6 +139,7 @@ code {
     display: flex;
     align-items: center;
     justify-content: center;
+    min-height: 0;
     overflow: hidden;
 }
 
@@ -85,49 +150,67 @@ code {
     width: auto;
 }
 
-@media (max-width: 768px) {
-    .agent-layout {
-        flex-direction: column;
-        min-height: auto;
-    }
-
-    .agent-graph-features-container {
-        width: 100%;
-    }
-}
+/* Removed mobile stacking - always horizontal layout */
 </style>
 
-<div class="agent-layout">
-  <div class="agent-graph-features-container">
-    <div class="agent-graph-features">
-      <h3 class="agent-section-title">Configuration</h3>
-      <label title="Enable tools that the agent can call">
-        <input type="checkbox" id="tools" checked>
-        <code data-hook="tools">tools</code>
-      </label>
-      <label title="Runs before agent starts (once per invocation). Perfect for: input validation, logging, setup">
-        <input type="checkbox" id="before_agent">
-        <code data-hook="before_agent">before_agent</code>
-      </label>
-      <label title="Runs before each model call. Perfect for: prompt modification, dynamic tool selection, rate limiting">
-        <input type="checkbox" id="before_model">
-        <code data-hook="before_model">before_model</code>
-      </label>
-      <label title="Runs after each model response. Perfect for: response validation, output transformation, logging">
-        <input type="checkbox" id="after_model">
-        <code data-hook="after_model">after_model</code>
-      </label>
-      <label title="Runs after agent completes (once per invocation). Perfect for: cleanup, final validation, analytics">
-        <input type="checkbox" id="after_agent">
-        <code data-hook="after_agent">after_agent</code>
-      </label>
-    </div>
-  </div>
+<div class="container">
+    <div class="main-layout">
+    <!-- Left Column: Hooks with Checkboxes -->
+    <div class="left-column">
+        <section>
+        <h3 class="section-title">Available Hooks</h3>
+        <div class="hooks-list">
+            <div class="hook-item">
+            <input type="checkbox" id="tools" class="hook-checkbox" checked>
+            <div class="hook-content">
+                <label for="tools" class="hook-item-title"><code data-hook="tools">tools</code></label>
+                <div class="hook-item-desc">Tools available to the agent. (Not a hook).</div>
+            </div>
+            </div>
 
-  <div class="agent-graph-container">
-    <h3 class="agent-section-title">Agent Graph</h3>
-    <div id="agent-graph">Loading...</div>
-  </div>
+            <div class="hook-item">
+            <input type="checkbox" id="before_agent" class="hook-checkbox">
+            <div class="hook-content">
+                <label for="before_agent" class="hook-item-title"><code data-hook="before_agent">before_agent</code></label>
+                <div class="hook-item-desc">Before agent starts (once per invocation).</div>
+            </div>
+            </div>
+
+            <div class="hook-item">
+            <input type="checkbox" id="before_model" class="hook-checkbox">
+            <div class="hook-content">
+                <label for="before_model" class="hook-item-title"><code data-hook="before_model">before_model</code></label>
+                <div class="hook-item-desc">Before each model call.</div>
+            </div>
+            </div>
+
+            <div class="hook-item">
+            <input type="checkbox" id="after_model" class="hook-checkbox">
+            <div class="hook-content">
+                <label for="after_model" class="hook-item-title"><code data-hook="after_model">after_model</code></label>
+                <div class="hook-item-desc">After each model response.</div>
+            </div>
+            </div>
+
+            <div class="hook-item">
+            <input type="checkbox" id="after_agent" class="hook-checkbox">
+            <div class="hook-content">
+                <label for="after_agent" class="hook-item-title"><code data-hook="after_agent">after_agent</code></label>
+                <div class="hook-item-desc">After agent completes (up to once per invocation).</div>
+            </div>
+            </div>
+        </div>
+        </section>
+    </div>
+
+    <!-- Right Column: Agent Graph -->
+    <div class="right-column">
+        <div class="graph-wrapper">
+        <h3 class="section-title">Execution Graph</h3>
+        <div id="agent-graph">Loading...</div>
+        </div>
+    </div>
+    </div>
 </div>
 
 <script id="diagrams-python" src="./diagrams_python.js"></script>
@@ -135,176 +218,152 @@ code {
 <script type="module">
 import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
 
-// Diagrams are loaded from diagrams_python.js and diagrams_js.js
-// They both export a global `diagrams` variable, so we need to handle which one to use
-
 let currentLanguage = 'python';
 let pythonDiagrams = {};
 let jsDiagrams = {};
 
-// Initialize mermaid - let diagrams use their built-in styling
 mermaid.initialize({
-  startOnLoad: false,
-  theme: 'default'
+    startOnLoad: false,
+    theme: 'default'
 });
 
-// Detect active language from URL or page context
 function detectLanguage() {
-  // First, check the URL path
-  const path = window.location.pathname;
-  if (path.includes('/javascript') || path.includes('/js') || path.includes('/typescript')) {
+    const path = window.location.pathname;
+    if (path.includes('/javascript') || path.includes('/js') || path.includes('/typescript')) {
     return 'javascript';
-  }
-  if (path.includes('/python')) {
-    return 'python';
-  }
-
-  // Check if we're in an iframe and try parent URL
-  if (window.parent && window.parent !== window) {
-    try {
-      const parentPath = window.parent.location.pathname;
-      if (parentPath.includes('/javascript') || parentPath.includes('/js') || parentPath.includes('/typescript')) {
-        return 'javascript';
-      }
-      if (parentPath.includes('/python')) {
-        return 'python';
-      }
-    } catch (e) {
-      // Cross-origin iframe, can't access parent URL
     }
-  }
+    if (path.includes('/python')) {
+    return 'python';
+    }
 
-  // Look for Mintlify tab indicators
-  const activeTab = document.querySelector('[data-language-tab].active, [data-tab].active');
-  if (activeTab) {
+    if (window.parent && window.parent !== window) {
+    try {
+        const parentPath = window.parent.location.pathname;
+        if (parentPath.includes('/javascript') || parentPath.includes('/js') || parentPath.includes('/typescript')) {
+        return 'javascript';
+        }
+        if (parentPath.includes('/python')) {
+        return 'python';
+        }
+    } catch (e) {
+        // Cross-origin iframe, can't access parent URL
+    }
+    }
+
+    const activeTab = document.querySelector('[data-language-tab].active, [data-tab].active');
+    if (activeTab) {
     const lang = activeTab.getAttribute('data-language') || activeTab.getAttribute('data-tab') || '';
     if (lang.match(/^(js|javascript|typescript|ts)$/i)) {
-      return 'javascript';
+        return 'javascript';
     }
-  }
+    }
 
-  // Check for visible code blocks
-  const visibleCode = document.querySelector('.language-typescript:not([hidden]), .language-javascript:not([hidden]), .language-js:not([hidden])');
-  if (visibleCode) {
+    const visibleCode = document.querySelector('.language-typescript:not([hidden]), .language-javascript:not([hidden]), .language-js:not([hidden])');
+    if (visibleCode) {
     return 'javascript';
-  }
+    }
 
-  // Default to Python
-  return 'python';
+    return 'python';
 }
 
-// Update hook names based on language
 function updateHookNames(lang) {
-  const hookElements = document.querySelectorAll('code[data-hook]');
-  const isJS = lang === 'javascript';
+    const hookElements = document.querySelectorAll('code[data-hook]');
+    const isJS = lang === 'javascript';
 
-  hookElements.forEach(el => {
+    hookElements.forEach(el => {
     const hook = el.getAttribute('data-hook');
-    if (hook === 'tools') return; // tools is same in both
+    if (hook === 'tools') return;
 
     if (hook === 'before_agent') {
-      el.textContent = isJS ? 'beforeAgent' : 'before_agent';
+        el.textContent = isJS ? 'beforeAgent' : 'before_agent';
     } else if (hook === 'before_model') {
-      el.textContent = isJS ? 'beforeModel' : 'before_model';
+        el.textContent = isJS ? 'beforeModel' : 'before_model';
     } else if (hook === 'after_model') {
-      el.textContent = isJS ? 'afterModel' : 'after_model';
+        el.textContent = isJS ? 'afterModel' : 'after_model';
     } else if (hook === 'after_agent') {
-      el.textContent = isJS ? 'afterAgent' : 'after_agent';
+        el.textContent = isJS ? 'afterAgent' : 'after_agent';
     }
-  });
+    });
 }
 
-// Load diagram sets
 async function loadDiagrams() {
-  // Load both diagram sets by fetching the files
-  // This ensures we have both versions without them overwriting each other
-
-  try {
-    // Fetch Python diagrams
+    try {
     const pythonResponse = await fetch('./diagrams_python.js');
     const pythonText = await pythonResponse.text();
     const pythonMatch = pythonText.match(/const diagrams = (\{.*\});/);
     if (pythonMatch) {
-      pythonDiagrams = JSON.parse(pythonMatch[1]);
+        pythonDiagrams = JSON.parse(pythonMatch[1]);
     }
 
-    // Fetch JS diagrams
     const jsResponse = await fetch('./diagrams_js.js');
     const jsText = await jsResponse.text();
     const jsMatch = jsText.match(/const diagrams = (\{.*\});/);
     if (jsMatch) {
-      jsDiagrams = JSON.parse(jsMatch[1]);
+        jsDiagrams = JSON.parse(jsMatch[1]);
     }
-  } catch (e) {
+    } catch (e) {
     console.error('Failed to load diagrams:', e);
-    // Fallback to window.diagrams if fetch fails
     pythonDiagrams = window.diagrams || {};
     jsDiagrams = window.diagrams || {};
-  }
+    }
 
-  currentLanguage = detectLanguage();
-  updateHookNames(currentLanguage);
-  render();
+    currentLanguage = detectLanguage();
+    updateHookNames(currentLanguage);
+    render();
 }
 
-// Get binary configuration key
 function getKey() {
-  return [
+    return [
     document.getElementById('tools').checked ? '1' : '0',
     document.getElementById('before_agent').checked ? '1' : '0',
     document.getElementById('before_model').checked ? '1' : '0',
     document.getElementById('after_model').checked ? '1' : '0',
     document.getElementById('after_agent').checked ? '1' : '0',
-  ].join('');
+    ].join('');
 }
 
-// Render diagram
 async function render() {
-  const key = getKey();
-  const graphEl = document.getElementById('agent-graph');
+    const key = getKey();
+    const graphEl = document.getElementById('agent-graph');
 
-  // Use appropriate diagram set
-  const diagrams = currentLanguage === 'javascript' ? jsDiagrams : pythonDiagrams;
+    const diagrams = currentLanguage === 'javascript' ? jsDiagrams : pythonDiagrams;
 
-  if (!diagrams[key]) {
+    if (!diagrams[key]) {
     graphEl.innerHTML = `<div style="color: #e53e3e;">Diagram not found for key: ${key}<br>Language: ${currentLanguage}<br>Available keys: ${Object.keys(diagrams).length > 0 ? Object.keys(diagrams).slice(0, 5).join(', ') + '...' : 'none loaded'}</div>`;
     return;
-  }
+    }
 
-  try {
+    try {
     const id = `mermaid-${Date.now()}`;
     const { svg } = await mermaid.render(id, diagrams[key]);
     graphEl.innerHTML = svg;
-  } catch (error) {
+    } catch (error) {
     graphEl.innerHTML = `<div style="color: #e53e3e;">Render error: ${error.message}</div>`;
-  }
+    }
 }
 
-// Initialize
 function initializeWidget() {
-  loadDiagrams();
-  document.querySelectorAll('.agent-graph-features input').forEach((input) => {
+    loadDiagrams();
+    document.querySelectorAll('.hook-checkbox').forEach((input) => {
     input.addEventListener('change', render);
-  });
+    });
 
-  // Listen for tab changes (Mintlify-specific)
-  document.addEventListener('click', (e) => {
+    document.addEventListener('click', (e) => {
     if (e.target.matches('[data-language-tab], [data-tab]')) {
-      setTimeout(() => {
+        setTimeout(() => {
         const newLang = detectLanguage();
         if (newLang !== currentLanguage) {
-          currentLanguage = newLang;
-          updateHookNames(currentLanguage);
-          render();
+            currentLanguage = newLang;
+            updateHookNames(currentLanguage);
+            render();
         }
-      }, 50);
+        }, 50);
     }
-  });
+    });
 }
 
-// Init for both full reload and SPA nav (Mintlify/MkDocs)
 window.addEventListener('DOMContentLoaded', initializeWidget);
 if (typeof document$ !== 'undefined') {
-  document$.subscribe(initializeWidget);
+    document$.subscribe(initializeWidget);
 }
 </script>
