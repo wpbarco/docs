@@ -19,11 +19,6 @@
             - response_format
 
 
-::: langchain.tools.ToolNode
-    options:
-        show_root_heading: true
-        show_root_full_path: true
-
 ::: langchain.tools.InjectedState
     options:
       show_root_heading: true
