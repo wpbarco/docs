@@ -3,8 +3,6 @@ title: Build a custom RAG agent
 sidebarTitle: Custom RAG agent
 ---
 
-:::python
-
 ## Overview
 
 In this tutorial we will build a [retrieval](/oss/langchain/retrieval) agent using LangGraph.
@@ -784,8 +782,7 @@ Now we'll assemble all the nodes and edges into a complete graph:
 
 ```python
 from langgraph.graph import StateGraph, START, END
-from langchain.tools import ToolNode
-from langgraph.prebuilt import tools_condition
+from langgraph.prebuilt import ToolNode, tools_condition
 
 workflow = StateGraph(MessagesState)
 
@@ -830,7 +827,11 @@ from IPython.display import Image, display
 display(Image(graph.get_graph().draw_mermaid_png()))
 ```
 
-![Graph](/images/agentic-rag-output.png)
+<img
+  src="/oss/images/agentic-rag-output.png"
+  alt="SQL agent graph"
+  style={{ height: "800px" }}
+/>
 :::
 
 :::js
