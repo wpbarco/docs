@@ -148,6 +148,13 @@
                 "pages": [
                   "oss/python/langchain/overview",
                   {
+                    "group": "LangChain v1.0",
+                    "pages": [
+                      "oss/python/releases/langchain-v1",
+                      "oss/python/migrate/langchain-v1"
+                    ]
+                  },
+                  {
                     "group": "Get started",
                     "pages": [
                       "oss/python/langchain/install",
@@ -169,15 +176,15 @@
                   {
                     "group": "Advanced usage",
                     "pages": [
-                      "oss/python/langchain/long-term-memory",
-                      "oss/python/langchain/context-engineering",
+                      "oss/python/langchain/middleware",
                       "oss/python/langchain/structured-output",
+                      "oss/python/langchain/runtime",
+                      "oss/python/langchain/context-engineering",
                       "oss/python/langchain/mcp",
                       "oss/python/langchain/human-in-the-loop",
                       "oss/python/langchain/multi-agent",
                       "oss/python/langchain/retrieval",
-                      "oss/python/langchain/runtime",
-                      "oss/python/langchain/middleware"
+                      "oss/python/langchain/long-term-memory"
                     ]
                   },
                   {
@@ -211,7 +218,7 @@
                       "oss/python/langgraph/persistence",
                       "oss/python/langgraph/durable-execution",
                       "oss/python/langgraph/streaming",
-                      "oss/python/langgraph/add-human-in-the-loop",
+                      "oss/python/langgraph/interrupts",
                       "oss/python/langgraph/use-time-travel",
                       "oss/python/langgraph/add-memory",
                       "oss/python/langgraph/use-subgraphs"
@@ -255,60 +262,16 @@
                 "pages": [
                   "oss/python/integrations/providers/overview",
                   {
-                    "group": "Providers",
+                    "group": "Popular Providers",
                     "icon": "user-group",
                     "pages": [
-                      {
-                        "group": "OpenAI",
-                        "pages": [
-                          "oss/python/integrations/providers/openai",
-                          "oss/python/integrations/chat/openai",
-                          "oss/python/integrations/text_embedding/openai"
-                        ]
-                      },
-                      {
-                        "group": "Anthropic",
-                        "pages": [
-                          "oss/python/integrations/providers/anthropic",
-                          "oss/python/integrations/chat/anthropic"
-                        ]
-                      },
-                      {
-                        "group": "Google",
-                        "pages": [
-                          "oss/python/integrations/providers/google",
-                          "oss/python/integrations/chat/google_generative_ai",
-                          "oss/python/integrations/chat/google_vertex_ai_palm",
-                          "oss/python/integrations/text_embedding/google_generative_ai",
-                          "oss/python/integrations/text_embedding/google_vertex_ai_palm"
-                        ]
-                      },
-                      {
-                        "group": "AWS",
-                        "pages": [
-                          "oss/python/integrations/providers/aws",
-                          "oss/python/integrations/chat/bedrock",
-                          "oss/python/integrations/text_embedding/bedrock"
-                        ]
-                      },
-                      {
-                        "group": "Hugging Face",
-                        "pages": [
-                          "oss/python/integrations/providers/huggingface",
-                          "oss/python/integrations/chat/huggingface",
-                          "oss/python/integrations/text_embedding/huggingfacehub"
-                        ]
-                      },
-                      {
-                        "group": "Microsoft",
-                        "pages": [
-                          "oss/python/integrations/providers/microsoft",
-                          "oss/python/integrations/chat/azure_chat_openai/",
-                          "oss/python/integrations/text_embedding/azureopenai",
-                          "oss/python/integrations/chat/azure_ai"
-                        ]
-                      },
-                      "oss/python/integrations/providers/all_providers"
+                      "oss/python/integrations/providers/openai",
+                      "oss/python/integrations/providers/anthropic",
+                      "oss/python/integrations/providers/google",
+                      "oss/python/integrations/providers/aws",
+                      "oss/python/integrations/providers/huggingface",
+                      "oss/python/integrations/providers/microsoft",
+                      "oss/python/integrations/providers/ollama"
                     ]
                   },
                   {
@@ -324,7 +287,8 @@
                       "oss/python/integrations/document_loaders/index",
                       "oss/python/integrations/stores/index"
                     ]
-                  }
+                  },
+                  "oss/python/integrations/providers/all_providers"
                 ]
               },
               {
@@ -341,7 +305,8 @@
                         "pages": [
                           "oss/python/langchain/knowledge-base",
                           "oss/python/langchain/rag",
-                          "oss/python/langchain/sql-agent"
+                          "oss/python/langchain/sql-agent",
+                          "oss/python/langchain/supervisor"
                         ]
                       },
                       {
@@ -416,6 +381,12 @@
                         "group": "Releases",
                         "pages": [
                           "oss/python/releases/langchain-v1"
+                        ]
+                      },
+                      {
+                        "group": "Migration guides",
+                        "pages": [
+                          "oss/python/migrate/langchain-v1"
                         ]
                       }
                     ]
@@ -1198,6 +1169,13 @@
                 "pages": [
                   "oss/javascript/langchain/overview",
                   {
+                    "group": "LangChain v1.0",
+                    "pages": [
+                      "oss/javascript/releases/langchain-v1",
+                      "oss/javascript/migrate/langchain-v1"
+                    ]
+                  },
+                  {
                     "group": "Get started",
                     "pages": [
                       "oss/javascript/langchain/install",
@@ -1219,15 +1197,15 @@
                   {
                     "group": "Advanced usage",
                     "pages": [
-                      "oss/javascript/langchain/long-term-memory",
-                      "oss/javascript/langchain/context-engineering",
+                      "oss/javascript/langchain/middleware",
                       "oss/javascript/langchain/structured-output",
+                      "oss/javascript/langchain/runtime",
+                      "oss/javascript/langchain/context-engineering",
                       "oss/javascript/langchain/mcp",
                       "oss/javascript/langchain/human-in-the-loop",
                       "oss/javascript/langchain/multi-agent",
                       "oss/javascript/langchain/retrieval",
-                      "oss/javascript/langchain/runtime",
-                      "oss/javascript/langchain/middleware"
+                      "oss/javascript/langchain/long-term-memory"
                     ]
                   },
                   {
@@ -1261,7 +1239,7 @@
                       "oss/javascript/langgraph/persistence",
                       "oss/javascript/langgraph/durable-execution",
                       "oss/javascript/langgraph/streaming",
-                      "oss/javascript/langgraph/add-human-in-the-loop",
+                      "oss/javascript/langgraph/interrupts",
                       "oss/javascript/langgraph/use-time-travel",
                       "oss/javascript/langgraph/add-memory",
                       "oss/javascript/langgraph/use-subgraphs"
@@ -1304,8 +1282,9 @@
                 "tab": "Integrations",
                 "pages": [
                   "oss/javascript/integrations/providers/overview",
+                  "oss/javascript/integrations/providers/all_providers",
                   {
-                    "group": "Providers",
+                    "group": "Popular Providers",
                     "icon": "user-group",
                     "pages": [
                       {
@@ -1346,8 +1325,7 @@
                           "oss/javascript/integrations/chat/azure",
                           "oss/javascript/integrations/text_embedding/azure_openai"
                         ]
-                      },
-                      "oss/javascript/integrations/providers/all_providers"
+                      }
                     ]
                   },
                   {
@@ -1459,6 +1437,12 @@
                         "group": "Releases",
                         "pages": [
                           "oss/javascript/releases/langchain-v1"
+                        ]
+                      },
+                      {
+                        "group": "Migration guides",
+                        "pages": [
+                          "oss/javascript/migrate/langchain-v1"
                         ]
                       }
                     ]
@@ -2305,11 +2289,11 @@
   },
   {
     "source": "/oss/python/langgraph/human-in-the-loop",
-    "destination": "/oss/python/langgraph/add-human-in-the-loop"
+    "destination": "/oss/python/langgraph/interrupts"
   },
   {
     "source": "/oss/javascript/langgraph/human-in-the-loop",
-    "destination": "/oss/javascript/langgraph/add-human-in-the-loop"
+    "destination": "/oss/javascript/langgraph/interrupts"
   }
 ]
 }
