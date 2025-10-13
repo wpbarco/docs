@@ -161,21 +161,21 @@ For Zod state schemas, we can define reducers by using the special `.langgraph.r
 
 In the earlier example, our node updated the `"messages"` key in the state by appending a message to it. Below, we add a reducer to this key, such that updates are automatically appended:
 
-```typescript {highlight={4}}
+```typescript
 import "@langchain/langgraph/zod";
 
 const State = z.object({
-  messages: z.array(z.custom<BaseMessage>()).langgraph.reducer((x, y) => x.concat(y)),
+  messages: z.array(z.custom<BaseMessage>()).langgraph.reducer((x, y) => x.concat(y)),  // [!code highlight]
   extraField: z.number(),
 });
 ```
 
 Now our node can be simplified:
 
-```typescript {highlight={3}}
+```typescript
 const node = (state: z.infer<typeof State>) => {
   const newMessage = new AIMessage("Hello!");
-  return { messages: [newMessage], extraField: 10 };
+  return { messages: [newMessage], extraField: 10 };  // [!code highlight]
 };
 ```
 
@@ -214,12 +214,12 @@ In practice, there are additional considerations for updating lists of messages:
 
 LangGraph includes a built-in `MessagesZodMeta` that handles these considerations:
 
-```typescript {highlight={4}}
+```typescript
 import { MessagesZodMeta } from "@langchain/langgraph";
 import { registry } from "@langchain/langgraph/zod";
 import * as z from "zod";
 
-const State = z.object({
+const State = z.object({  // [!code highlight]
   messages: z
     .array(z.custom<BaseMessage>())
     .register(registry, MessagesZodMeta),
@@ -235,8 +235,8 @@ const graph = new StateGraph(State)
   .compile();
 ```
 
-```typescript {highlight={1}}
-const inputMessage = { role: "user", content: "Hi" };
+```typescript
+const inputMessage = { role: "user", content: "Hi" };  // [!code highlight]
 
 const result = await graph.invoke({ messages: [inputMessage] });
 
@@ -446,7 +446,7 @@ See below for a simple example:
 
 
 
-```typescript {highlight={16,16,18,29,30}}
+```typescript
 import { StateGraph, END, START } from "@langchain/langgraph";
 import * as z from "zod";
 
@@ -462,9 +462,9 @@ const StateSchema = z.object({
 
 const graph = new StateGraph(StateSchema, ContextSchema)
   .addNode("node", (state, runtime) => {
-    if (runtime?.context?.myRuntimeValue === "a") {
+    if (runtime?.context?.myRuntimeValue === "a") {  // [!code highlight]
       return { myStateValue: 1 };
-    } else if (runtime?.context?.myRuntimeValue === "b") {
+    } else if (runtime?.context?.myRuntimeValue === "b") {  // [!code highlight]
       return { myStateValue: 2 };
     } else {
       throw new Error("Unknown values.");
@@ -475,8 +475,8 @@ const graph = new StateGraph(StateSchema, ContextSchema)
   .compile();
 
 // 3. Pass in configuration at runtime:
-console.log(await graph.invoke({}, { context: { myRuntimeValue: "a" } }));
-console.log(await graph.invoke({}, { context: { myRuntimeValue: "b" } }));
+console.log(await graph.invoke({}, { context: { myRuntimeValue: "a" } }));  // [!code highlight]
+console.log(await graph.invoke({}, { context: { myRuntimeValue: "b" } }));  // [!code highlight]
 ```
 
 ```
@@ -1009,7 +1009,7 @@ const result = await graph.invoke({ value1: "c" }, {configurable: {max_concurren
 
 If your fan-out should vary at runtime based on the state, you can use [addConditionalEdges](https://reference.langchain.com/javascript/classes/_langchain_langgraph.index.StateGraph.html#addconditionaledges) to select one or more paths using the graph state. See example below, where node `a` generates a state update that determines the following node.
 
-```typescript {highlight={14,33}}
+```typescript
 import { StateGraph, START, END } from "@langchain/langgraph";
 import { registry } from "@langchain/langgraph/zod";
 import * as z from "zod";
@@ -1023,7 +1023,7 @@ const State = z.object({
   }),
   // Add a key to the state. We will set this key to determine
   // how we branch.
-  which: z.string().register(registry, {
+  which: z.string().register(registry, {  // [!code highlight]
     reducer: {
       fn: (x, y) => y ?? x,
     },
@@ -1042,7 +1042,7 @@ const nodeB = (state: z.infer<typeof State>) => {
 
 const nodeC = (state: z.infer<typeof State>) => {
   console.log(`Adding "C" to ${state.aggregate}`);
-  return { aggregate: ["C"] };
+  return { aggregate: ["C"] };  // [!code highlight]
 };
 
 const conditionalEdge = (state: z.infer<typeof State>): "b" | "c" => {
@@ -1477,14 +1477,14 @@ When you send updates from a subgraph node to a parent graph node for a key that
 
 
 
-```typescript {highlight={7,20,34,39}}
+```typescript
 import { StateGraph, START, Command } from "@langchain/langgraph";
 import { registry } from "@langchain/langgraph/zod";
 import * as z from "zod";
 
 const State = z.object({
   // NOTE: we define a reducer here
-  foo: z.string().register(registry, {
+  foo: z.string().register(registry, {  // [!code highlight]
     reducer: {
       fn: (x, y) => x + y,
     },
@@ -1497,7 +1497,7 @@ const nodeA = (state: z.infer<typeof State>) => {
 
   // note how Command allows you to BOTH update the graph state AND route to the next node
   return new Command({
-    update: { foo: "a" },
+    update: { foo: "a" },  // [!code highlight]
     goto: value,
     // this tells LangGraph to navigate to nodeB or nodeC in the parent graph
     // NOTE: this will navigate to the closest parent graph relative to the subgraph
@@ -1511,12 +1511,12 @@ const subgraph = new StateGraph(State)
   .compile();
 
 const nodeB = (state: z.infer<typeof State>) => {
-  console.log("Called B");
+  console.log("Called B");  // [!code highlight]
   // NOTE: since we've defined a reducer, we don't need to manually append
   // new characters to existing 'foo' value. instead, reducer will append these
   // automatically
   return { foo: "b" };
-};
+};  // [!code highlight]
 
 const nodeC = (state: z.infer<typeof State>) => {
   console.log("Called C");

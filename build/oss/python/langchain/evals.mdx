@@ -39,9 +39,9 @@ uv add agentevals
 
 A common way to evaluate agent performance is by comparing its trajectory (the order in which it calls its tools) against a reference trajectory:
 
-```python {highlight={2,39}}
+```python
 import json
-from agentevals.trajectory.match import create_trajectory_match_evaluator
+from agentevals.trajectory.match import create_trajectory_match_evaluator  # [!code highlight]
 
 outputs = [
     {
@@ -78,7 +78,7 @@ reference_outputs = [
 
 # Create the evaluator
 evaluator = create_trajectory_match_evaluator(
-    trajectory_match_mode="superset",  # (1)!
+    trajectory_match_mode="superset",    # [!code highlight]
 )
 
 # Run the evaluator
@@ -98,10 +98,10 @@ As a next step, learn more about how to [customize trajectory match evaluator](h
 
 You can use LLM-as-a-judge evaluator that uses an LLM to compare the trajectory against the reference outputs and output a score:
 
-```python {highlight={3}}
+```python
 import json
 from agentevals.trajectory.llm import (
-    create_trajectory_llm_as_judge,
+    create_trajectory_llm_as_judge,  # [!code highlight]
     TRAJECTORY_ACCURACY_PROMPT_WITH_REFERENCE
 )
 

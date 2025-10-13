@@ -347,7 +347,7 @@ Some model providers offer built-in tools that can be enabled via model paramete
     See the [tools guide](/oss/python/langchain/tools) for details and other options for creating tools.
 </Tip>
 
-```python Binding user tools highlight={8}
+```python Binding user tools
 from langchain.tools import tool
 
 @tool
@@ -356,7 +356,7 @@ def get_weather(location: str) -> str:
     return f"It's sunny in {location}."
 
 
-model_with_tools = model.bind_tools([get_weather])
+model_with_tools = model.bind_tools([get_weather])  # [!code highlight]
 
 response = model_with_tools.invoke("What's the weather like in Boston?")
 for tool_call in response.tool_calls:
@@ -611,7 +611,7 @@ Models can be requested to provide their response in a format matching a given s
 
 It can be useful to return the raw `AIMessage` object alongside the parsed representation to access response metadata such as [token counts](#token-usage). To do this, set `include_raw=True` when calling `with_structured_output`:
 
-    ```python highlight={10}
+    ```python
     from pydantic import BaseModel, Field
 
     class Movie(BaseModel):
@@ -621,7 +621,7 @@ It can be useful to return the raw `AIMessage` object alongside the parsed repre
         director: str = Field(..., description="The director of the movie")
         rating: float = Field(..., description="The movie's rating out of 10")
 
-    model_with_structure = model.with_structured_output(Movie, include_raw=True)
+    model_with_structure = model.with_structured_output(Movie, include_raw=True)  # [!code highlight]
     response = model_with_structure.invoke("Provide details about the movie Inception")
     response
     # {
@@ -824,7 +824,7 @@ To help manage rate limits, chat model integrations accept a `rate_limiter` para
 <Accordion title="Initialize and use a rate limiter" icon="gauge-high">
     LangChain in comes with (an optional) built-in in memory rate limiter. This limiter is thread safe and can be shared by multiple threads in the same process.
 
-    ```python Define a rate limiter highlight={12}
+    ```python Define a rate limiter
     from langchain_core.rate_limiters import InMemoryRateLimiter
 
     rate_limiter = InMemoryRateLimiter(
@@ -836,7 +836,7 @@ To help manage rate limits, chat model integrations accept a `rate_limiter` para
     model = init_chat_model(
         model="gpt-5",
         model_provider="openai",
-        rate_limiter=rate_limiter
+        rate_limiter=rate_limiter  # [!code highlight]
     )
     ```
 

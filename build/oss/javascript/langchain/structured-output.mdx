@@ -23,7 +23,7 @@ const agent = createAgent({
 })
 ```
 
-<ParamField path="responseFormat">
+## Response Format
     Controls how the agent returns structured data. You can provide either a Zod object or JSON schema. By default, the agent uses a tool calling strategy, in which the output is created by an additional tool call. Certain models support native structured output, in which case the agent will use that strategy instead.
 
     You can control the behavior by wrapping `ResponseFormat` in a `toolStrategy` or `providerStrategy` function call:
@@ -40,7 +40,6 @@ const agent = createAgent({
     ```
 
     The structured response is returned in the `structuredResponse` key of the agent's final state.
-</ParamField>
 
 
 ## Provider strategy

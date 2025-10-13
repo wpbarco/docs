@@ -286,26 +286,26 @@ read the [**streaming guide**](/oss/python/langgraph/streaming) section for more
 
 Example of using the streaming API to stream both updates and custom data.
 
-```python {highlight={17}}
+```python
 from langgraph.func import entrypoint
 from langgraph.checkpoint.memory import InMemorySaver
-from langgraph.config import get_stream_writer # (1)!
+from langgraph.config import get_stream_writer   # [!code highlight]
 
 checkpointer = InMemorySaver()
 
 @entrypoint(checkpointer=checkpointer)
 def main(inputs: dict) -> int:
-    writer = get_stream_writer() # (2)!
-    writer("Started processing") # (3)!
+    writer = get_stream_writer()   # [!code highlight]
+    writer("Started processing")   # [!code highlight]
     result = inputs["x"] * 2
-    writer(f"Result is {result}") # (4)!
+    writer(f"Result is {result}")   # [!code highlight]
     return result
 
 config = {"configurable": {"thread_id": "abc"}}
 
-for mode, chunk in main.stream( # (5)!
+for mode, chunk in main.stream(   # [!code highlight]
     {"x": 5},
-    stream_mode=["custom", "updates"], # (6)!
+    stream_mode=["custom", "updates"],   # [!code highlight]
     config=config
 ):
     print(f"{mode}: {chunk}")
@@ -331,11 +331,11 @@ for mode, chunk in main.stream( # (5)!
 If using Python < 3.11 and writing async code, using `get_stream_writer()` will not work. Instead please
 use the `StreamWriter` class directly. See [Async with Python < 3.11](/oss/python/langgraph/streaming#async) for more details.
 
-```python {highlight={4}}
+```python
 from langgraph.types import StreamWriter
 
 @entrypoint(checkpointer=checkpointer)
-async def main(inputs: dict, writer: StreamWriter) -> int:
+async def main(inputs: dict, writer: StreamWriter) -> int:  # [!code highlight]
 ...
 ```
 </Warning>
@@ -398,7 +398,7 @@ from langgraph.func import entrypoint, task
 from langgraph.types import CachePolicy
 
 
-@task(cache_policy=CachePolicy(ttl=120))  # (1)!
+@task(cache_policy=CachePolicy(ttl=120))    # [!code highlight]
 def slow_add(x: int) -> int:
     time.sleep(1)
     return x * 2
@@ -694,17 +694,17 @@ You can view and delete the information stored by the checkpointer.
 <a id="checkpoint"></a>
 #### View thread state
 
-```python {highlight={3,6,10}}
+```python
 config = {
     "configurable": {
-        "thread_id": "1",
+        "thread_id": "1",  # [!code highlight]
         # optionally provide an ID for a specific checkpoint,
         # otherwise the latest checkpoint is shown
-        # "checkpoint_id": "1f029ca3-1f5b-6704-8004-820c16b69a5a"
+        # "checkpoint_id": "1f029ca3-1f5b-6704-8004-820c16b69a5a"  # [!code highlight]
 
     }
 }
-graph.get_state(config)
+graph.get_state(config)  # [!code highlight]
 ```
 
 ```
@@ -731,13 +731,13 @@ StateSnapshot(
 <a id="checkpoints"></a>
 #### View the history of the thread
 
-```python {highlight={3,6}}
+```python
 config = {
     "configurable": {
-        "thread_id": "1"
+        "thread_id": "1"  # [!code highlight]
     }
 }
-list(graph.get_state_history(config))
+list(graph.get_state_history(config))  # [!code highlight]
 ```
 
 ```

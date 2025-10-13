@@ -146,9 +146,9 @@ If you want the subgraph to have its own memory, you can compile it with the app
 
 
 
-```typescript {highlight={2}}
+```typescript
 const subgraphBuilder = new StateGraph(...);
-const subgraph = subgraphBuilder.compile({ checkpointer: true });
+const subgraph = subgraphBuilder.compile({ checkpointer: true });  // [!code highlight]
 ```
 
 

@@ -92,7 +92,7 @@ If a [node](/oss/javascript/langgraph/graph-api#nodes) contains multiple operati
 
 <Tabs>
     <Tab title="Original">
-    ```typescript {highlight={13}}
+    ```typescript
     import { StateGraph, START, END } from "@langchain/langgraph";
     import { MemorySaver } from "@langchain/langgraph";
     import { v4 as uuidv4 } from "uuid";
@@ -105,7 +105,7 @@ If a [node](/oss/javascript/langgraph/graph-api#nodes) contains multiple operati
     });
 
     const callApi = async (state: z.infer<typeof State>) => {
-      const response = await fetch(state.url);
+      const response = await fetch(state.url);  // [!code highlight]
       const text = await response.text();
       const result = text.slice(0, 100); // Side-effect
       return {
@@ -134,7 +134,7 @@ If a [node](/oss/javascript/langgraph/graph-api#nodes) contains multiple operati
 ```
     </Tab>
     <Tab title="With task">
-    ```typescript {highlight={14,20}}
+    ```typescript
     import { StateGraph, START, END } from "@langchain/langgraph";
     import { MemorySaver } from "@langchain/langgraph";
     import { task } from "@langchain/langgraph";
@@ -148,13 +148,13 @@ If a [node](/oss/javascript/langgraph/graph-api#nodes) contains multiple operati
     });
 
     const makeRequest = task("makeRequest", async (url: string) => {
-      const response = await fetch(url);
+      const response = await fetch(url);  // [!code highlight]
       const text = await response.text();
       return text.slice(0, 100);
     });
 
     const callApi = async (state: z.infer<typeof State>) => {
-      const requests = state.urls.map((url) => makeRequest(url));
+      const requests = state.urls.map((url) => makeRequest(url));  // [!code highlight]
       const results = await Promise.all(requests);
       return {
         results,

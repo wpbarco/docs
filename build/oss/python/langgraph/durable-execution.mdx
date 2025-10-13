@@ -96,7 +96,7 @@ If a [node](/oss/python/langgraph/graph-api#nodes) contains multiple operations,
 
 <Tabs>
     <Tab title="Original">
-    ```python {highlight={16}}
+    ```python
     from typing import NotRequired
     from typing_extensions import TypedDict
     import uuid
@@ -112,7 +112,7 @@ If a [node](/oss/python/langgraph/graph-api#nodes) contains multiple operations,
 
     def call_api(state: State):
         """Example node that makes an API request."""
-        result = requests.get(state['url']).text[:100]  # Side-effect
+        result = requests.get(state['url']).text[:100]  # Side-effect  # [!code highlight]
         return {
             "result": result
         }
@@ -140,7 +140,7 @@ If a [node](/oss/python/langgraph/graph-api#nodes) contains multiple operations,
 ```
     </Tab>
     <Tab title="With task">
-    ```python {highlight={19,23}}
+    ```python
     from typing import NotRequired
     from typing_extensions import TypedDict
     import uuid
@@ -159,11 +159,11 @@ If a [node](/oss/python/langgraph/graph-api#nodes) contains multiple operations,
     @task
     def _make_request(url: str):
         """Make a request."""
-        return requests.get(url).text[:100]
+        return requests.get(url).text[:100]  # [!code highlight]
 
     def call_api(state: State):
         """Example node that makes an API request."""
-        requests = [_make_request(url) for url in state['urls']]
+        requests = [_make_request(url) for url in state['urls']]  # [!code highlight]
         results = [request.result() for request in requests]
         return {
             "results": results

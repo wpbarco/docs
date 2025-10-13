@@ -330,7 +330,7 @@ Some model providers offer built-in tools that can be enabled via model paramete
 
 
 
-```typescript Binding user tools highlight={17}
+```typescript Binding user tools
 import { tool } from "langchain";
 import { z } from "zod";
 import { ChatOpenAI } from "@langchain/openai";
@@ -347,7 +347,7 @@ const getWeather = tool(
 );
 
 const model = new ChatOpenAI({ model: "gpt-4o" });
-const modelWithTools = model.bindTools([getWeather]);
+const modelWithTools = model.bindTools([getWeather]);  // [!code highlight]
 
 const response = await modelWithTools.invoke("What's the weather like in Boston?");
 const toolCalls = response.tool_calls || [];
@@ -589,7 +589,7 @@ It can be useful to return the raw `AIMessage` object alongside the parsed repre
 
 
 
-    ```typescript highlight={10}
+    ```typescript
     import { z } from "zod";
 
     const Movie = z.object({
@@ -599,7 +599,7 @@ It can be useful to return the raw `AIMessage` object alongside the parsed repre
       rating: z.number().describe("The movie's rating out of 10"),
       title: z.string().describe("The title of the movie"),
       year: z.number().describe("The year the movie was released"),
-      director: z.string().describe("The director of the movie"),
+      director: z.string().describe("The director of the movie"),  // [!code highlight]
       rating: z.number().describe("The movie's rating out of 10"),
     });
 

@@ -370,9 +370,9 @@ const graph = new StateGraph(MessagesZodState)
   .addEdge(START, "expensive_node")
   .compile({ cache: new InMemoryCache() });
 
-await graph.invoke({ x: 5 }, { streamMode: "updates" }); // (1)!
+await graph.invoke({ x: 5 }, { streamMode: "updates" });   // [!code highlight]
 // [{"expensive_node": {"result": 10}}]
-await graph.invoke({ x: 5 }, { streamMode: "updates" }); // (2)!
+await graph.invoke({ x: 5 }, { streamMode: "updates" });   // [!code highlight]
 // [{"expensive_node": {"result": 10}, "__metadata__": {"cached": true}}]
 ```
 

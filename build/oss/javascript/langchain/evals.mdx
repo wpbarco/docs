@@ -81,7 +81,7 @@ const referenceOutputs = [
 // Create the evaluator
 const evaluator = createTrajectoryMatchEvaluator({
   // Specify how the trajectories will be compared. `superset` will accept output trajectory as valid if it's a superset of the reference one. Other options include: strict, unordered and subset
-  trajectoryMatchMode: "superset", // (1)!
+  trajectoryMatchMode: "superset", // [!code highlight]
 });
 
 // Run the evaluator

@@ -14,9 +14,9 @@ or other parallel execution in your graph and you have defined a graph like this
 
 
 
-```typescript {highlight={2}}
+```typescript
 import { StateGraph, Annotation, START } from "@langchain/langgraph";
-import * as z from "zod";
+import * as z from "zod";  // [!code highlight]
 
 const State = z.object({
   someKey: z.string(),
@@ -47,14 +47,14 @@ To get around this, you can define a reducer that combines multiple values:
 
 
 
-```typescript {highlight={4-7}}
+```typescript
 import { registry } from "@langchain/langgraph/zod";
 import * as z from "zod";
 
-const State = z.object({
-  someKey: z.array(z.string()).register(registry, {
-    reducer: {
-      fn: (existing, update) => existing.concat(update),
+const State = z.object({  // [!code highlight]
+  someKey: z.array(z.string()).register(registry, {  // [!code highlight]
+    reducer: {  // [!code highlight]
+      fn: (existing, update) => existing.concat(update),  // [!code highlight]
     },
     default: () => [] as string[],
   }),

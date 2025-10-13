@@ -332,19 +332,19 @@ const main = entrypoint(
     inputs: { x: number },
     config: LangGraphRunnableConfig
   ): Promise<number> => {
-    config.writer?.("Started processing"); // (1)!
+    config.writer?.("Started processing");   // [!code highlight]
     const result = inputs.x * 2;
-    config.writer?.(`Result is ${result}`); // (2)!
+    config.writer?.(`Result is ${result}`);   // [!code highlight]
     return result;
   }
 );
 
 const config = { configurable: { thread_id: "abc" } };
 
-// (3)!
+  // [!code highlight]
 for await (const [mode, chunk] of await main.stream(
   { x: 5 },
-  { streamMode: ["custom", "updates"], ...config } // (4)!
+  { streamMode: ["custom", "updates"], ...config }   // [!code highlight]
 )) {
   console.log(`${mode}: ${JSON.stringify(chunk)}`);
 }
@@ -437,7 +437,7 @@ import {
 const slowAdd = task(
   {
     name: "slowAdd",
-    cache: { ttl: 120 }, // (1)!
+    cache: { ttl: 120 },   // [!code highlight]
   },
   async (x: number) => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -770,16 +770,16 @@ You can view and delete the information stored by the checkpointer.
 
 
 
-```typescript {highlight={3,6,9}}
+```typescript
 const config = {
   configurable: {
-    thread_id: "1",
+    thread_id: "1",  // [!code highlight]
     // optionally provide an ID for a specific checkpoint,
     // otherwise the latest checkpoint is shown
-    // checkpoint_id: "1f029ca3-1f5b-6704-8004-820c16b69a5a"
+    // checkpoint_id: "1f029ca3-1f5b-6704-8004-820c16b69a5a" [!code highlight]
   },
 };
-await graph.getState(config);
+await graph.getState(config);  // [!code highlight]
 ```
 
 ```
@@ -814,13 +814,13 @@ StateSnapshot {
 
 
 
-```typescript {highlight={3,6}}
+```typescript
 const config = {
   configurable: {
-    thread_id: "1",
+    thread_id: "1",  // [!code highlight]
   },
 };
-const history = [];
+const history = [];  // [!code highlight]
 for await (const state of graph.getStateHistory(config)) {
   history.push(state);
 }

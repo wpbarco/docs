@@ -833,10 +833,10 @@ Static interrupts are **not** recommended for human-in-the-loop workflows. Use t
 <Tabs>
     <Tab title="At compile time">
 
-        ```typescript highlight={2,3,14,17}
+        ```typescript
         const graph = builder.compile({
-            interruptBefore: ["node_a"],
-            interruptAfter: ["node_b", "node_c"],
+            interruptBefore: ["node_a"],  // [!code highlight]
+            interruptAfter: ["node_b", "node_c"],  // [!code highlight]
             checkpointer,
         });
 
@@ -848,10 +848,9 @@ Static interrupts are **not** recommended for human-in-the-loop workflows. Use t
         };
 
         // Run the graph until the breakpoint
-        await graph.invoke(inputs, config);
+        await graph.invoke(inputs, config);# [!code highlight]
 
-        // Resume the graph
-        await graph.invoke(null, config);
+        await graph.invoke(null, config);  # [!code highlight]
         ```
 
         1. The breakpoints are set during `compile` time.
@@ -864,18 +863,18 @@ Static interrupts are **not** recommended for human-in-the-loop workflows. Use t
     </Tab>
     <Tab title="At run time">
 
-        ```typescript highlight={3,4,11}
+        ```typescript
         // Run the graph until the breakpoint
         graph.invoke(inputs, {
-            interruptBefore: ["node_a"],
-            interruptAfter: ["node_b", "node_c"],
+            interruptBefore: ["node_a"],  // [!code highlight]
+            interruptAfter: ["node_b", "node_c"],  // [!code highlight]
             configurable: {
                 thread_id: "some_thread"
             }
         });
 
         // Resume the graph
-        await graph.invoke(null, config);
+        await graph.invoke(null, config);  // [!code highlight]
         ```
 
         1. `graph.invoke` is called with the `interruptBefore` and `interruptAfter` parameters. This is a run-time configuration and can be changed for every invocation.

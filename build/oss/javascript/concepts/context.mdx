@@ -43,11 +43,10 @@ Config is for immutable data like user metadata or API keys. Use this when you h
 
 Specify configuration using a key called **"configurable"** which is reserved for this purpose.
 
-```typescript {highlight={4}}
+```typescript
 await graph.invoke(
-  // (1)!
-  { messages: [{ role: "user", content: "hi!" }] }, // (2)!
-  { configurable: { user_id: "user_123" } } // (3)!
+  { messages: [{ role: "user", content: "hi!" }] },
+  { configurable: { user_id: "user_123" } } // [!code highlight]
 );
 ```
 
@@ -65,14 +64,14 @@ await graph.invoke(
 
 
 
-    ```typescript {highlight={6,12,22}}
+    ```typescript
     import type { BaseMessage } from "@langchain/core/messages";
     import { createReactAgent } from "@langchain/langgraph/prebuilt";
     import { MessagesZodMeta } from "@langchain/langgraph";
     import { registry } from "@langchain/langgraph/zod";
     import * as z from "zod";
 
-    const CustomState = z.object({ // (1)!
+    const CustomState = z.object({ // [!code highlight]
       messages: z
         .array(z.custom<BaseMessage>())
         .register(registry, MessagesZodMeta),
@@ -87,10 +86,10 @@ await graph.invoke(
       return [{ role: "system", content: systemMsg }, ...state.messages];
     };
 
-    const agent = createReactAgent({
+    const agent = createReactAgent({  // [!code highlight]
       llm: model,
       tools: [...],
-      stateSchema: CustomState, // (2)!
+      stateSchema: CustomState, // [!code highlight]
       stateModifier: prompt,
     });
 
@@ -100,20 +99,17 @@ await graph.invoke(
     });
 ```
 
-    1. Define a custom state schema that adds additional fields alongside the existing `messages` field.
-    2. Pass the custom state schema to the agent. This allows the agent to access and modify the state during execution.
-
     </Tab>
     <Tab title="In a workflow">
 
 
-    ```typescript {highlight={6,6,14}}
+    ```typescript
     import type { BaseMessage } from "@langchain/core/messages";
     import { StateGraph, MessagesZodMeta, START } from "@langchain/langgraph";
     import { registry } from "@langchain/langgraph/zod";
     import * as z from "zod";
 
-    const CustomState = z.object({ // (1)!
+    const CustomState = z.object({  // [!code highlight]
       messages: z
         .array(z.custom<BaseMessage>())
         .register(registry, MessagesZodMeta),
@@ -121,10 +117,10 @@ await graph.invoke(
     });
 
     const builder = new StateGraph(CustomState)
-      .addNode("node", async (state) => { // (2)!
+      .addNode("node", async (state) => {  // [!code highlight]
         const messages = state.messages;
         // ...
-        return { // (3)!
+        return {  // [!code highlight]
           extraField: state.extraField + 1,
         };
       })
@@ -132,10 +128,6 @@ await graph.invoke(
 
     const graph = builder.compile();
 ```
-
-    1. Define a custom state
-    2. Access the state in any node or tool
-    3. The Graph API is designed to work as easily as possible with state. The return value of a node represents a requested update to the state.
 
     </Tab>
 </Tabs>

@@ -66,7 +66,7 @@ The `strict` mode ensures trajectories contain identical messages in the same or
 
 
 
-```ts highlight={25-27}
+```ts
 import { createAgent } from "langchain"
 import { tool } from "@langchain/core/tools";
 import { HumanMessage, AIMessage, ToolMessage } from "@langchain/core/messages";
@@ -91,9 +91,9 @@ const agent = createAgent({
   tools: [getWeather]
 });
 
-const evaluator = createTrajectoryMatchEvaluator({
-  trajectoryMatchMode: "strict",
-});
+const evaluator = createTrajectoryMatchEvaluator({  // [!code highlight]
+  trajectoryMatchMode: "strict",  // [!code highlight]
+});  // [!code highlight]
 
 async function testWeatherToolCalledStrict() {
   const result = await agent.invoke({
@@ -137,7 +137,7 @@ The `unordered` mode allows the same tool calls in any order, which is helpful w
 
 
 
-```ts highlight={34-36}
+```ts
 import { createAgent } from "langchain"
 import { tool } from "@langchain/core/tools";
 import { HumanMessage, AIMessage, ToolMessage } from "@langchain/core/messages";
@@ -171,9 +171,9 @@ const agent = createAgent({
   tools: [getWeather, getEvents]
 });
 
-const evaluator = createTrajectoryMatchEvaluator({
-  trajectoryMatchMode: "unordered",
-});
+const evaluator = createTrajectoryMatchEvaluator({  // [!code highlight]
+  trajectoryMatchMode: "unordered",  // [!code highlight]
+});  // [!code highlight]
 
 async function testMultipleToolsAnyOrder() {
   const result = await agent.invoke({
@@ -222,7 +222,7 @@ The `superset` and `subset` modes match partial trajectories. The `superset` mod
 
 
 
-```ts highlight={34-36}
+```ts
 import { createAgent } from "langchain"
 import { tool } from "@langchain/core/tools";
 import { HumanMessage, AIMessage, ToolMessage } from "@langchain/core/messages";
@@ -256,9 +256,9 @@ const agent = createAgent({
   tools: [getWeather, getDetailedForecast]
 });
 
-const evaluator = createTrajectoryMatchEvaluator({
-  trajectoryMatchMode: "superset",
-});
+const evaluator = createTrajectoryMatchEvaluator({  // [!code highlight]
+  trajectoryMatchMode: "superset",  // [!code highlight]
+});  // [!code highlight]
 
 async function testAgentCallsRequiredToolsPlusExtra() {
   const result = await agent.invoke({
@@ -311,7 +311,7 @@ You can also use an LLM to evaluate the agent's execution path with the `createT
 
 <Accordion title="Without reference trajectory">
 
-```ts highlight={23-26}
+```ts
 import { createAgent } from "langchain"
 import { tool } from "@langchain/core/tools";
 import { HumanMessage, AIMessage, ToolMessage } from "@langchain/core/messages";
@@ -334,10 +334,10 @@ const agent = createAgent({
   tools: [getWeather]
 });
 
-const evaluator = createTrajectoryLLMAsJudge({
-  model: "openai:o3-mini",
-  prompt: TRAJECTORY_ACCURACY_PROMPT,
-});
+const evaluator = createTrajectoryLLMAsJudge({  // [!code highlight]
+  model: "openai:o3-mini",  // [!code highlight]
+  prompt: TRAJECTORY_ACCURACY_PROMPT,  // [!code highlight]
+});  // [!code highlight]
 
 async function testTrajectoryQuality() {
   const result = await agent.invoke({

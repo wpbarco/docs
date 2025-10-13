@@ -110,7 +110,7 @@ AgentEvals offers the `create_trajectory_match_evaluator` function to match your
 
 The `strict` mode ensures trajectories contain identical messages in the same order with the same tool calls, though it allows for differences in message content. This is useful when you need to enforce a specific sequence of operations, such as requiring a policy lookup before authorizing an action.
 
-```python highlight={13-15}
+```python
 from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain.messages import HumanMessage, AIMessage, ToolMessage
@@ -123,9 +123,9 @@ def get_weather(city: str):
 
 agent = create_agent("openai:gpt-4o", tools=[get_weather])
 
-evaluator = create_trajectory_match_evaluator(
-    trajectory_match_mode="strict",
-)
+evaluator = create_trajectory_match_evaluator(  # [!code highlight]
+    trajectory_match_mode="strict",  # [!code highlight]
+)  # [!code highlight]
 
 def test_weather_tool_called_strict():
     result = agent.invoke({
@@ -162,7 +162,7 @@ def test_weather_tool_called_strict():
 
 The `unordered` mode allows the same tool calls in any order, which is helpful when you want to verify that specific information was retrieved but don't care about the sequence. For example, an agent might need to check both weather and events for a city, but the order doesn't matter.
 
-```python highlight={18-20}
+```python
 from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain.messages import HumanMessage, AIMessage, ToolMessage
@@ -180,9 +180,9 @@ def get_events(city: str):
 
 agent = create_agent("openai:gpt-4o", tools=[get_weather, get_events])
 
-evaluator = create_trajectory_match_evaluator(
-    trajectory_match_mode="unordered",
-)
+evaluator = create_trajectory_match_evaluator(  # [!code highlight]
+    trajectory_match_mode="unordered",  # [!code highlight]
+)  # [!code highlight]
 
 def test_multiple_tools_any_order():
     result = agent.invoke({
@@ -221,7 +221,7 @@ def test_multiple_tools_any_order():
 
 The `superset` and `subset` modes match partial trajectories. The `superset` mode verifies that the agent called at least the tools in the reference trajectory, allowing additional tool calls. The `subset` mode ensures the agent did not call any tools beyond those in the reference.
 
-```python highlight={18-20}
+```python
 from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain.messages import HumanMessage, AIMessage, ToolMessage
@@ -239,9 +239,9 @@ def get_detailed_forecast(city: str):
 
 agent = create_agent("openai:gpt-4o", tools=[get_weather, get_detailed_forecast])
 
-evaluator = create_trajectory_match_evaluator(
-    trajectory_match_mode="superset",
-)
+evaluator = create_trajectory_match_evaluator(  # [!code highlight]
+    trajectory_match_mode="superset",  # [!code highlight]
+)  # [!code highlight]
 
 def test_agent_calls_required_tools_plus_extra():
     result = agent.invoke({
@@ -288,7 +288,7 @@ You can also use an LLM to evaluate the agent's execution path with the `create_
 
 
 <Accordion title="Without reference trajectory">
-```python highlight={13-16}
+```python
 from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain.messages import HumanMessage, AIMessage, ToolMessage
@@ -301,10 +301,10 @@ def get_weather(city: str):
 
 agent = create_agent("openai:gpt-4o", tools=[get_weather])
 
-evaluator = create_trajectory_llm_as_judge(
-    model="openai:o3-mini",
-    prompt=TRAJECTORY_ACCURACY_PROMPT,
-)
+evaluator = create_trajectory_llm_as_judge(  # [!code highlight]
+    model="openai:o3-mini",  # [!code highlight]
+    prompt=TRAJECTORY_ACCURACY_PROMPT,  # [!code highlight]
+)  # [!code highlight]
 
 def test_trajectory_quality():
     result = agent.invoke({
