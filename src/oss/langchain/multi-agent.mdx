@@ -20,8 +20,22 @@ Multi-agent systems are useful when:
 
 | Pattern                           | How it works                                                                                                                                                     | Control flow                                               | Example use case                                 |
 |-----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------|--------------------------------------------------|
-| [**Tool Calling**](#tool-calling) | A central agent calls other agents as *tools*. The “tool” agents don’t talk to the user directly — they just run their task and return results.                  | Centralized: all routing passes through the calling agent. | Task orchestration, structured workflows.        |
+| [**Tool Calling**](#tool-calling) | A **supervisor** agent calls other agents as *tools*. The “tool” agents don’t talk to the user directly — they just run their task and return results.                  | Centralized: all routing passes through the calling agent. | Task orchestration, structured workflows.        |
 | [**Handoffs**](#handoffs)         | The current agent decides to **transfer control** to another agent. The active agent changes, and the user may continue interacting directly with the new agent. | Decentralized: agents can change who is active.            | Multi-domain conversations, specialist takeover. |
+
+<Card
+    title="Tutorial: Build a supervisor agent"
+    icon="sitemap"
+    href="/oss/langchain/supervisor"
+    arrow cta="Learn more"
+>
+    Learn how to build a personal assistant using the supervisor pattern, where a central supervisor agent coordinates specialized worker agents.
+    This tutorial demonstrates:
+    * Creating specialized sub-agents for different domains (calendar and email)
+    * Wrapping sub-agents as tools for centralized orchestration
+    * Adding human-in-the-loop review for sensitive actions
+</Card>
+
 
 ## Choosing a pattern
 
@@ -93,7 +107,7 @@ def call_subagent1(query: str):
     result = subagent1.invoke({
         "messages": [{"role": "user", "content": query}]
     })
-    return result["messages"].text
+    return result["messages"][-1].content
 
 agent = create_agent(..., tools=[call_subagent1])
 ```
@@ -153,23 +167,26 @@ There are two main levers to control the input that the main agent passes to a s
 ```python
 from typing import Annotated
 from langchain.agents import AgentState
-from langchain.agents.tool_node import InjectedState
+from langchain.tools import InjectedState
+
+class CustomState(AgentState):
+    example_state_key: str
 
 @tool(
     name="subagent1_name",
     description="subagent1_description"
 )
-def call_subagent1(query: str, state: Annotated[CustomState, InjectedState]):
+def call_subagent1(query: str, state: Annotated[AgentState, InjectedState]):
     # Apply any logic needed to transform the messages into a suitable input
-    subagent_input = some_logic(query, state.messages)
+    subagent_input = some_logic(query, state["messages"])
     result = subagent1.invoke({
         "messages": subagent_input,
         # You could also pass other state keys here as needed.
         # Make sure to define these in both the main and subagent's
         # state schemas.
-        "example_state_key": state.example_state_key
+        "example_state_key": state["example_state_key"]
     })
-    return result["messages"][-1].text
+    return result["messages"][-1].content
 ```
 :::
 :::js
@@ -216,7 +233,7 @@ Two common strategies for shaping what the main agent receives back from a subag
 ```python
 from typing import Annotated
 from langchain.agents import AgentState
-from langchain_core.tools import InjectedToolCallId
+from langchain.tools import InjectedToolCallId
 from langgraph.types import Command
 
 
@@ -238,8 +255,9 @@ def call_subagent1(
         "example_state_key": result["example_state_key"],
         "messages": [
             ToolMessage(
+                content=result["messages"][-1].content,
                 # We need to include the tool call id so it matches up with the right tool call
-                result["messages"][-1].text, tool_call_id=tool_call_id
+                tool_call_id=tool_call_id
             )
         ]
     })
