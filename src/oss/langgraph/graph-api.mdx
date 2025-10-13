@@ -331,7 +331,7 @@ In addition to keeping track of message IDs, the `add_messages` function will al
 Since the state updates are always deserialized into LangChain `Messages` when using `add_messages`, you should use dot notation to access message attributes, like `state["messages"][-1].content`. Below is an example of a graph that uses `add_messages` as its reducer function.
 
 ```python
-from langchain_core.messages import AnyMessage
+from langchain.messages import AnyMessage
 from langgraph.graph.message import add_messages
 from typing import Annotated
 from typing_extensions import TypedDict
@@ -594,9 +594,9 @@ builder.set_finish_point("expensive_node")
 
 graph = builder.compile(cache=InMemoryCache())
 
-print(graph.invoke({"x": 5}, stream_mode='updates'))  # (1)!
+print(graph.invoke({"x": 5}, stream_mode='updates'))    # [!code highlight]
 [{'expensive_node': {'result': 10}}]
-print(graph.invoke({"x": 5}, stream_mode='updates'))  # (2)!
+print(graph.invoke({"x": 5}, stream_mode='updates'))    # [!code highlight]
 [{'expensive_node': {'result': 10}, '__metadata__': {'cached': True}}]
 ```
 
@@ -637,9 +637,9 @@ const graph = new StateGraph(MessagesZodState)
   .addEdge(START, "expensive_node")
   .compile({ cache: new InMemoryCache() });
 
-await graph.invoke({ x: 5 }, { streamMode: "updates" }); // (1)!
+await graph.invoke({ x: 5 }, { streamMode: "updates" });   // [!code highlight]
 // [{"expensive_node": {"result": 10}}]
-await graph.invoke({ x: 5 }, { streamMode: "updates" }); // (2)!
+await graph.invoke({ x: 5 }, { streamMode: "updates" });   // [!code highlight]
 // [{"expensive_node": {"result": 10}, "__metadata__": {"cached": true}}]
 ```
 
@@ -899,7 +899,7 @@ Check out this [how-to guide](/oss/langgraph/graph-api.md#combine-control-flow-a
 ### Navigating to a node in a parent graph
 
 :::python
-If you are using [subgraphs](/oss/concepts/subgraphs), you might want to navigate from a node within a subgraph to a different subgraph (i.e. a different node in the parent graph). To do so, you can specify `graph=Command.PARENT` in `Command`:
+If you are using [subgraphs](/oss/langgraph/use-subgraphs), you might want to navigate from a node within a subgraph to a different subgraph (i.e. a different node in the parent graph). To do so, you can specify `graph=Command.PARENT` in `Command`:
 
 ```python
 def my_node(state: State) -> Command[Literal["other_subgraph"]]:
@@ -922,7 +922,7 @@ When you send updates from a subgraph node to a parent graph node for a key that
 :::
 
 :::js
-If you are using [subgraphs](/oss/concepts/subgraphs.md), you might want to navigate from a node within a subgraph to a different subgraph (i.e. a different node in the parent graph). To do so, you can specify `graph: Command.PARENT` in `Command`:
+If you are using [subgraphs](/oss/langgraph/use-subgraphs), you might want to navigate from a node within a subgraph to a different subgraph (i.e. a different node in the parent graph). To do so, you can specify `graph: Command.PARENT` in `Command`:
 
 ```typescript
 import { Command } from "@langchain/langgraph";
@@ -947,7 +947,7 @@ When you send updates from a subgraph node to a parent graph node for a key that
 :::
 
 :::js
-If you are using [subgraphs](/oss/concepts/subgraphs.md), you might want to navigate from a node within a subgraph to a different subgraph (i.e. a different node in the parent graph). To do so, you can specify `graph: Command.PARENT` in `Command`:
+If you are using [subgraphs](/oss/langgraph/use-subgraphs), you might want to navigate from a node within a subgraph to a different subgraph (i.e. a different node in the parent graph). To do so, you can specify `graph: Command.PARENT` in `Command`:
 
 ```typescript
 import { Command } from "@langchain/langgraph";
@@ -984,11 +984,11 @@ Refer to [this guide](/oss/langgraph/graph-api.md#use-inside-tools) for detail.
 ### Human-in-the-loop
 
 :::python
-`Command` is an important part of human-in-the-loop workflows: when using `interrupt()` to collect user input, `Command` is then used to supply the input and resume execution via `Command(resume="User input")`. Check out [this conceptual guide](/oss/langgraph/add-human-in-the-loop) for more information.
+`Command` is an important part of human-in-the-loop workflows: when using `interrupt()` to collect user input, `Command` is then used to supply the input and resume execution via `Command(resume="User input")`. Check out [this conceptual guide](/oss/langgraph/interrupts) for more information.
 :::
 
 :::js
-`Command` is an important part of human-in-the-loop workflows: when using `interrupt()` to collect user input, `Command` is then used to supply the input and resume execution via `new Command({ resume: "User input" })`. Check out the [human-in-the-loop conceptual guide](/oss/langgraph/add-human-in-the-loop) for more information.
+`Command` is an important part of human-in-the-loop workflows: when using `interrupt()` to collect user input, `Command` is then used to supply the input and resume execution via `new Command({ resume: "User input" })`. Check out the [human-in-the-loop conceptual guide](/oss/langgraph/interrupts) for more information.
 :::
 
 ## Graph Migrations

@@ -2,38 +2,54 @@
 title: ChatOpenAI
 ---
 
-This guide provides a quick overview for getting started with OpenAI [chat models](/oss/langchain/models). For detailed documentation of all ChatOpenAI features and configurations head to the [API reference](https://python.langchain.com/api_reference/openai/chat_models/langchain_openai.chat_models.base.ChatOpenAI.html).
+This guide provides a quick overview for getting started with OpenAI [chat models](/oss/langchain/models).
 
-OpenAI has several chat models. You can find information about their latest models and their costs, context windows, and supported input types in the [OpenAI docs](https://platform.openai.com/docs/models).
+You can find information about OpenAI's latest models, their costs, context windows, and supported input types in the [OpenAI Platform](https://platform.openai.com) docs.
+
+<Tip>
+    **API Reference**
+
+    For detailed documentation of all features and configuration options, head to the @[`ChatOpenAI`][ChatOpenAI] API reference.
+</Tip>
 
 <Info>
-**Azure OpenAI**
+    **OpenAI models hosted on Azure**
 
-Note that certain OpenAI models can also be accessed via the [Microsoft Azure platform](https://azure.microsoft.com/en-us/products/ai-services/openai-service). To use the Azure OpenAI service use the [AzureChatOpenAI integration](/oss/integrations/chat/azure_chat_openai/).
-
+    Note that certain OpenAI models can also be accessed via the [Microsoft Azure platform](https://azure.microsoft.com/en-us/products/ai-foundry/models/openai/). To use the Azure OpenAI service use the [`AzureChatOpenAI`](/oss/integrations/chat/azure_chat_openai/) integration.
 </Info>
 
 ## Overview
 
 ### Integration details
 
-| Class | Package | Local | Serializable | [JS support](https://js.langchain.com/docs/integrations/chat/openai) | Downloads | Version |
+| Class | Package | <Tooltip tip="Can run on local hardware" cta="Learn more" href="/oss/langchain/models#local-models">Local</Tooltip> | Serializable | JS/TS Support | Downloads | Latest Version |
 | :--- | :--- | :---: | :---: |  :---: | :---: | :---: |
-| [ChatOpenAI](https://python.langchain.com/api_reference/openai/chat_models/langchain_openai.chat_models.base.ChatOpenAI.html) | [langchain-openai](https://python.langchain.com/api_reference/openai/index.html) | ❌ | beta | ✅ | ![PyPI - Downloads](https://img.shields.io/pypi/dm/langchain-openai?style=flat-square&label=%20) | ![PyPI - Version](https://img.shields.io/pypi/v/langchain-openai?style=flat-square&label=%20) |
+| @[`ChatOpenAI`][ChatOpenAI] | @[`langchain-openai`][langchain-openai] | ❌ | beta | ✅ [(npm)](https://js.langchain.com/docs/integrations/chat/openai) | <a href="https://pypi.org/project/langchain-openai/" target="_blank"><img src="https://static.pepy.tech/badge/langchain-openai/month" alt="Downloads per month" noZoom height="100" class="rounded" /></a> | <a href="https://pypi.org/project/langchain-openai/" target="_blank"><img src="https://img.shields.io/pypi/v/langchain-openai?style=flat-square&label=%20&color=orange" alt="PyPI - Latest version" noZoom height="100" class="rounded" /></a> |
 
 ### Model features
 
-| [Tool calling](/oss/langchain/tools) | [Structured output](/oss/langchain/structured-output) | JSON mode | Image input | Audio input | Video input | [Token-level streaming](/oss/langchain/streaming/) | Native async | [Token usage](/oss/langchain/models#token-usage) | [Logprobs](/oss/langchain/models#log-probabilities) |
-| :---: | :---: | :---: | :---: |  :---: | :---: | :---: | :---: | :---: | :---: |
-| ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ |
+| [Tool calling](/oss/langchain/tools) | [Structured output](/oss/langchain/structured-output) | Image input | Audio input | Video input | [Token-level streaming](/oss/langchain/streaming/) | Native async | [Token usage](/oss/langchain/models#token-usage) | [Logprobs](/oss/langchain/models#log-probabilities) |
+| :---: | :---: | :---: |  :---: | :---: | :---: | :---: | :---: | :---: |
+| ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ |
 
 ## Setup
 
-To access OpenAI models you'll need to create an OpenAI account, get an API key, and install the `langchain-openai` integration package.
+To access OpenAI models you'll need to install the `langchain-openai` integration package and acquire an [OpenAI Platform](https://platform.openai.com) API key.
+
+### Installation
+
+<CodeGroup>
+    ```bash pip
+    pip install -U langchain-openai
+    ```
+    ```bash uv
+    uv add langchain-openai
+    ```
+</CodeGroup>
 
 ### Credentials
 
-Head to [platform.openai.com](https://platform.openai.com) to sign up to OpenAI and generate an API key. Once you've done this set the OPENAI_API_KEY environment variable:
+Head to [`platform.openai.com`](https://platform.openai.com/docs/api-reference/authentication) to sign up and generate an API key. Once you've done this set the `OPENAI_API_KEY` environment variable in your environment:
 
 ```python
 import getpass
@@ -43,24 +59,16 @@ if not os.environ.get("OPENAI_API_KEY"):
     os.environ["OPENAI_API_KEY"] = getpass.getpass("Enter your OpenAI API key: ")
 ```
 
-If you want to get automated tracing of your model calls you can also set your [LangSmith](https://docs.smith.langchain.com/) API key by uncommenting below:
+If you want to get automated tracing of your model calls you can also set your [LangSmith](/langsmith/home) API key:
 
 ```python
-# os.environ["LANGSMITH_API_KEY"] = getpass.getpass("Enter your LangSmith API key: ")
-# os.environ["LANGSMITH_TRACING"] = "true"
-```
-
-### Installation
-
-The LangChain OpenAI integration lives in the `langchain-openai` package:
-
-```python
-%pip install -qU langchain-openai
+os.environ["LANGSMITH_API_KEY"] = getpass.getpass("Enter your LangSmith API key: ")
+os.environ["LANGSMITH_TRACING"] = "true"
 ```
 
 ## Instantiation
 
-Now we can instantiate our model object and generate chat completions:
+Now we can instantiate our model object and generate responses:
 
 ```python
 from langchain_openai import ChatOpenAI
@@ -80,8 +88,7 @@ llm = ChatOpenAI(
 )
 ```
 
-See [API Reference](https://python.langchain.com/api_reference/openai/chat_models/langchain_openai.chat_models.base.ChatOpenAI.html)
-for the full set of available parameters.
+See the @[`ChatOpenAI`][ChatOpenAI] API Reference for the full set of available model parameters.
 
 ## Invocation
 
@@ -117,10 +124,10 @@ OpenAI's Chat Completions API does not stream token usage statistics by default
 To recover token counts when streaming with `ChatOpenAI` or `AzureChatOpenAI`, set
 `stream_usage=True` as an initialization parameter or on invocation:
 
-```python highlight={3}
+```python
 from langchain_openai import ChatOpenAI
 
-llm = ChatOpenAI(model="gpt-4.1-mini", stream_usage=True)
+llm = ChatOpenAI(model="gpt-4.1-mini", stream_usage=True)  # [!code highlight]
 ```
 
 ## Tool calling
@@ -298,7 +305,7 @@ Name: execute_code
 
 OpenAI supports the specification of a [context-free grammar](https://platform.openai.com/docs/guides/function-calling#context-free-grammars) for custom tool inputs in `lark` or `regex` format. See [OpenAI docs](https://platform.openai.com/docs/guides/function-calling#context-free-grammars) for details. The `format` parameter can be passed into `@custom_tool` as shown below:
 
-```python highlight={20}
+```python
 from langchain_openai import ChatOpenAI, custom_tool
 from langchain.agents import create_agent
 
@@ -318,7 +325,7 @@ MUL: "*"
 format_ = {"type": "grammar", "syntax": "lark", "definition": grammar}
 
 
-@custom_tool(format=format_)
+@custom_tool(format=format_)  # [!code highlight]
 def do_math(input_string: str) -> str:
     """Do a mathematical operation."""
     return "27"
@@ -640,7 +647,7 @@ We next construct a ToolMessage with these properties:
 3. Its content is either an `image_url` or an `input_image` output block (see [OpenAI docs](https://platform.openai.com/docs/guides/tools-computer-use#5-repeat) for formatting).
 
 ```python
-from langchain_core.messages import ToolMessage
+from langchain.messages import ToolMessage
 
 tool_call_id = next(
     item["call_id"] for item in response.content if item["type"] == "computer_call"
@@ -736,19 +743,19 @@ response = llm_with_tools.invoke(
 
 Note that the above command created a new container. We can also specify an existing container ID:
 
-```python highlight={5,12}
+```python
 code_interpreter_calls = [
     item for item in response.content if item["type"] == "code_interpreter_call"
 ]
 assert len(code_interpreter_calls) == 1
-container_id = code_interpreter_calls[0]["extras"]["container_id"]
+container_id = code_interpreter_calls[0]["extras"]["container_id"]  # [!code highlight]
 
 llm_with_tools = llm.bind_tools(
     [
         {
             "type": "code_interpreter",
             # Use an existing container
-            "container": container_id,
+            "container": container_id,  # [!code highlight]
         }
     ]
 )
@@ -885,10 +892,10 @@ You mentioned that your name is Bob. How can I assist you further, Bob?
 
 When using the Responses API, LangChain messages will include an `"id"` field in its metadata. Passing this ID to subsequent invocations will continue the conversation. Note that this is [equivalent](https://platform.openai.com/docs/guides/conversation-state?api-mode=responses#openai-apis-for-conversation-state) to manually passing in messages from a billing perspective.
 
-```python highlight={3}
+```python
 second_response = llm.invoke(
     "What is my name?",
-    previous_response_id=response.id,
+    previous_response_id=response.id,  # [!code highlight]
 )
 print(second_response.text)
 ```
@@ -899,12 +906,12 @@ Your name is Bob. How can I help you today, Bob?
 
 ChatOpenAI can also automatically specify `previous_response_id` using the last response in a message sequence:
 
-```python highlight={6}
+```python
 from langchain_openai import ChatOpenAI
 
 llm = ChatOpenAI(
     model="gpt-4.1-mini",
-    use_previous_response_id=True,
+    use_previous_response_id=True,  # [!code highlight]
 )
 ```
 
@@ -994,7 +1001,7 @@ For all modalities, LangChain supports both its cross-provider standard as well 
 
 To pass multimodal data into `ChatOpenAI`, create a [content block](/oss/langchain/messages/) containing the data and incorporate it into a message, e.g., as below:
 
-```python highlight={9}
+```python
 message = {
     "role": "user",
     "content": [
@@ -1003,7 +1010,7 @@ message = {
             # Update prompt as desired
             "text": "Describe the (image / PDF / audio...)",
         },
-        content_block,
+        content_block,  # [!code highlight]
     ],
 }
 ```
@@ -1061,13 +1068,13 @@ Refer to examples in the how-to guide [here](/oss/langchain/messages#multimodal#
 
 In-line base64 data:
 
-```python highlight={7}
+```python
 # LangChain format
 content_block = {
     "type": "file",
     "base64": base64_string,
     "mime_type": "application/pdf",
-    "filename": "my-file.pdf",
+    "filename": "my-file.pdf",  # [!code highlight]
 }
 
 # OpenAI Chat Completions format

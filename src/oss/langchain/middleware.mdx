@@ -1,132 +1,68 @@
 ---
 title: Middleware
+description: Control and customize agent execution at every step
 ---
 
 import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
 
 <AlphaCallout />
 
-
 Middleware provides a way to more tightly control what happens inside the agent.
 
-The core agent loop involves calling a `model`, letting it choose `tools` to execute, and then finishing when it calls no more tools.
+The core agent loop involves calling a model, letting it choose tools to execute, and then finishing when it calls no more tools:
 
+<div style={{ display: "flex", justifyContent: "center" }}>
+  <img
+    src="/oss/images/core_agent_loop.png"
+    alt="Core agent loop diagram"
+    height="300"
+    className="rounded-lg"
+  />
+</div>
 
-<Card>
-```mermaid
-%%{
-  init: {
-    "fontFamily": "monospace",
-    "flowchart": {
-      "curve": "curve"
-    },
-    "themeVariables": {"edgeLabelBackground": "transparent"}
-  }
-}%%
-graph TD
-  %% Outside the agent
-  QUERY([input])
-  LLM{model}
-  TOOL(tools)
-  ANSWER([output])
+Middleware exposes hooks before and after each of those steps:
 
-  %% Main flows (no inline labels)
-  QUERY --> LLM
-  LLM --"action"--> TOOL
-  TOOL --"observation"--> LLM
-  LLM --"finish"--> ANSWER
+<div style={{ display: "flex", justifyContent: "center" }}>
+  <img
+    src="/oss/images/middleware_final.png"
+    alt="Middleware flow diagram"
+    height="300"
+    className="rounded-lg"
+  />
+</div>
 
-  classDef blueHighlight fill:#0a1c25,stroke:#0a455f,color:#bae6fd;
-  classDef greenHighlight fill:#0b1e1a,stroke:#0c4c39,color:#9ce4c4;
-  class QUERY blueHighlight;
-  class ANSWER blueHighlight;
-```
-</Card>
+## What can middleware do?
 
-Middleware provides control over what happens before and after those steps.
-Each middleware can add in three different types of modifiers:
+<CardGroup cols={2}>
+  <Card title="Monitor" icon="chart-line">
+    Track agent behavior with logging, analytics, and debugging
+  </Card>
+  <Card title="Modify" icon="pencil">
+    Transform prompts, tool selection, and output formatting
+  </Card>
+  <Card title="Control" icon="sliders">
+    Add retries, fallbacks, and early termination logic
+  </Card>
+  <Card title="Enforce" icon="shield">
+    Apply rate limits, guardrails, and PII detection
+  </Card>
+</CardGroup>
 
-:::python
-- `before_model`: Runs before model execution. Can update state or jump to a different node (`model`, `tools`, `end`)
-- `modify_model_request`: Runs before model execution, to prepare the model request object. Can only modify the current model request object (no permanent state updates) and cannot jump to a different node.
-- `after_model`: Runs after model execution, before tools are executed. Can update state or jump to a different node (`model`, `tools`, `END`)
-
-In addition to that, each middleware can define the following static properties:
-- `name`: The name of the middleware (required)
-- `tools`: The tools that the middleware makes available to the agent (optional)
-- `state_schema`: The schema of the state that the middleware requires (optional)
-:::
-:::js
-- `beforeModel`: Runs before model execution. Can update state or jump to a different node (`model`, `tools`, `end`)
-- `modifyModelRequest`: Runs before model execution, to prepare the model request object. Can only modify the current model request object (no permanent state updates) and cannot jump to a different node.
-- `afterModel`: Runs after model execution, before tools are executed. Can update state or jump to a different node (`model`, `tools`, `__end__`)
-
-In addition to that, each middleware can define the following static properties:
-- `name`: The name of the middleware (required)
-- `tools`: The tools that the middleware makes available to the agent (optional)
-- `stateSchema`: The schema of the state that the middleware requires (optional)
-- `contextSchema`: The schema of the context that the middleware requires (optional)
-:::
+Add middleware by passing it to `create_agent`:
 
 :::python
-An agent can contain `before_model`, `modify_model_request`, or `after_model` middleware. All three do not need to be implemented.
-:::
-:::js
-An agent can contain multiple middleware. Each middleware does not need to implement all three of `beforeModel`, `modifyModelRequest`, `afterModel`.
-:::
-
-<Card>
-```mermaid
-%%{
-  init: {
-    "fontFamily": "monospace",
-    "flowchart": {
-      "curve": "curve"
-    },
-    "themeVariables": {"edgeLabelBackground": "transparent"}
-  }
-}%%
-graph TD
-  %% Outside the agent
-  QUERY([input])
-  BEFORE_MODEL(Middleware.before_model)
-  MODIFY_MODEL_REQUEST(Middleware.modify_model_request)
-  LLM{model}
-  AFTER_MODEL(Middleware.after_model)
-  TOOL(tools)
-  ANSWER([output])
-
-  %% Main flows (no inline labels)
-  QUERY --> BEFORE_MODEL
-  BEFORE_MODEL --> MODIFY_MODEL_REQUEST
-  MODIFY_MODEL_REQUEST --> LLM
-  LLM --> AFTER_MODEL
-  AFTER_MODEL --"action"--> TOOL
-  TOOL --"observation"--> LLM
-  LLM --"finish"--> ANSWER
-
-  classDef blueHighlight fill:#0a1c25,stroke:#0a455f,color:#bae6fd;
-  classDef greenHighlight fill:#0b1e1a,stroke:#0c4c39,color:#9ce4c4;
-  class QUERY blueHighlight;
-  class ANSWER blueHighlight;
-```
-</Card>
-
-## Using in an agent
-
-:::python
-You can use middleware in an agent by passing it `create_agent`:
 ```python
 from langchain.agents import create_agent
 from langchain.agents.middleware import SummarizationMiddleware, HumanInTheLoopMiddleware
 
 agent = create_agent(
-    ...,
+    model="openai:gpt-4o",
+    tools=[...],
     middleware=[SummarizationMiddleware(), HumanInTheLoopMiddleware()],
-    ...
 )
 ```
 :::
+
 :::js
 ```typescript
 import {
@@ -136,51 +72,27 @@ import {
 } from "langchain";
 
 const agent = createAgent({
-  // ...
+  model: "openai:gpt-4o",
+  tools: [...],
   middleware: [summarizationMiddleware, humanInTheLoopMiddleware],
-  // ...
 });
 ```
 :::
 
-Middleware is highly flexible and replaces some other functionality in the agent.
-As such, when middleware are used, there are some restrictions on the arguments used to create the agent:
-:::python
-- `model` must be either a string or a `BaseChatModel`. Will error if a function is passed. If you want to dynamically control the model, use `AgentMiddleware.modify_model_request`
-- `prompt` must be either a string or None. Will error if a function is passed. If you want to dynamically control the prompt, use `AgentMiddleware.modify_model_request`
-- `pre_model_hook` must not be provided. Use `AgentMiddleware.before_model` instead.
-- `post_model_hook` must not be provided. Use `AgentMiddleware.after_model` instead.
-:::
-:::js
-- `model` must be either a string or a BaseChatModel. Will error if a function is passed. If you want to dynamically control the model, use `AgentMiddleware.modifyModelRequest`
-- `prompt` must be either a string or None. Will error if a function is passed. If you want to dynamically control the prompt, use `AgentMiddleware.modifyModelRequest`
-- `preModelHook` must not be provided. Use `AgentMiddleware.beforeModel` instead.
-- `postModelHook` must not be provided. Use `AgentMiddleware.afterModel` instead.
-:::
-
 ## Built-in middleware
 
-LangChain provides several built in middleware to use off-the-shelf
-
-- [Summarization](#summarization)
-- [Human-in-the-loop](#human-in-the-loop)
-- [Anthropic prompt caching](#anthropic-prompt-caching)
-- [Dynamic system prompt](#dynamic-system-prompt)
+LangChain provides prebuilt middleware for common use cases:
 
 ### Summarization
 
-The `summarizationMiddleware` automatically manages conversation history by summarizing older messages when token limits are approached. This middleware monitors the total token count of messages and creates concise summaries to preserve context while staying within model limits.
+Automatically summarize conversation history when approaching token limits.
 
-**Key features:**
-
-- Automatic token counting and threshold monitoring
-- Intelligent message partitioning that preserves AI/Tool message pairs
-- Customizable summary prompts and token limits
-
-**Use Cases:**
-
-- Long-running conversations that exceed token limits
-- Multi-turn dialogues with extensive context
+<Tip>
+**Perfect for:**
+- Long-running conversations that exceed context windows
+- Multi-turn dialogues with extensive history
+- Applications where preserving full conversation context matters
+</Tip>
 
 :::python
 ```python
@@ -221,53 +133,138 @@ const agent = createAgent({
 ```
 :::
 
-**Configuration options:**
+<Accordion title="Configuration options">
 
 :::python
-- `model`: Language model to use for generating summaries (required)
-- `max_tokens_before_summary`: Token threshold that triggers summarization
-- `messages_to_keep`: Number of recent messages to preserve (default: 20)
-- `token_counter`: Custom function for counting tokens (defaults to character-based approximation)
-- `summary_prompt`: Custom prompt template for summary generation
-- `summary_prefix`: Prefix added to system messages containing summaries (default: "## Previous conversation summary:")
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `model` | Model for generating summaries | Required |
+| `max_tokens_before_summary` | Token threshold for triggering summarization | - |
+| `messages_to_keep` | Recent messages to preserve | `20` |
+| `token_counter` | Custom token counting function | Character-based |
+| `summary_prompt` | Custom prompt template | Built-in |
+| `summary_prefix` | Prefix for summary messages | `"## Previous conversation summary:"` |
 :::
 
 :::js
-
-- `model`: Language model to use for generating summaries (required)
-- `maxTokensBeforeSummary`: Token threshold that triggers summarization
-- `messagesToKeep`: Number of recent messages to preserve (default: 20)
-- `tokenCounter`: Custom function for counting tokens (defaults to character-based approximation)
-- `summaryPrompt`: Custom prompt template for summary generation
-- `summaryPrefix`: Prefix added to system messages containing summaries (default: "## Previous conversation summary:")
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `model` | Model for generating summaries | Required |
+| `maxTokensBeforeSummary` | Token threshold for triggering summarization | - |
+| `messagesToKeep` | Recent messages to preserve | `20` |
+| `tokenCounter` | Custom token counting function | Character-based |
+| `summaryPrompt` | Custom prompt template | Built-in |
+| `summaryPrefix` | Prefix for summary messages | `"## Previous conversation summary:"` |
 :::
 
-The middleware ensures tool call integrity by:
-
-1. Never splitting AI messages from their corresponding tool responses
-2. Preserving the most recent messages for continuity
-3. Including previous summaries in new summarization cycles
+</Accordion>
 
 ### Human-in-the-loop
 
-The `HumanInTheLoopMiddleware` enables human oversight and intervention for tool calls made by the agents. Please
-see [human-in-the-loop documentation](/oss/langchain/human-in-the-loop) for more details.
+Pause agent execution for human approval, editing, or rejection of tool calls before they execute.
 
-This middleware intercepts tool executions and allows human operators to approve, modify, reject, or manually respond to tool calls before they execute.
+<Tip>
+**Perfect for:**
+- High-stakes operations requiring human approval (database writes, financial transactions)
+- Compliance workflows where human oversight is mandatory
+- Long running conversations where human feedback is used to guide the agent
+</Tip>
+
+:::python
+```python
+from langchain.agents import create_agent
+from langchain.agents.middleware import HumanInTheLoopMiddleware
+
+agent = create_agent(
+    model="openai:gpt-4o",
+    tools=[read_email_tool, send_email_tool],
+    middleware=[
+        HumanInTheLoopMiddleware(
+            interrupt_on={
+                # Require approval, editing, or rejection for sending emails
+                "send_email": {
+                    "allowed_decisions": ["approve", "edit", "reject"],
+                },
+                # Auto-approve reading emails
+                "read_email": False,
+            }
+        ),
+    ],
+)
+```
+:::
+
+:::js
+```typescript
+import { createAgent, humanInTheLoopMiddleware } from "langchain";
+
+const agent = createAgent({
+  model: "openai:gpt-4o",
+  tools: [readEmailTool, sendEmailTool],
+  middleware: [
+    humanInTheLoopMiddleware({
+      interruptOn: {
+        // Require approval, editing, or rejection for sending emails
+        send_email: {
+          allowAccept: true,
+          allowEdit: true,
+          allowRespond: true,
+        },
+        // Auto-approve reading emails
+        read_email: false,
+      }
+    })
+  ]
+});
+```
+:::
+
+<Accordion title="Configuration options">
+
+:::python
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `interrupt_on` | Mapping of tool names to approval configs (`True`, `False`, or `InterruptOnConfig`) | Required |
+| `description_prefix` | Prefix for action request descriptions | `"Tool execution requires approval"` |
+
+**`InterruptOnConfig` options:**
+- `allowed_decisions`: List of allowed decisions (`"approve"`, `"edit"`, `"reject"`)
+- `description`: Static string or callable for custom description
+:::
+
+:::js
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `interruptOn` | Mapping of tool names to approval configs | Required |
+
+**Tool approval config options:**
+- `allowAccept`: Whether approval is allowed | `false`
+- `allowEdit`: Whether editing is allowed | `false`
+- `allowRespond`: Whether responding/rejection is allowed | `false`
+:::
+
+</Accordion>
+
+<Note>
+**Important:** Human-in-the-loop middleware requires a [checkpointer](/oss/python/langgraph/checkpointing) to maintain state across interruptions.
+
+See the [human-in-the-loop documentation](/oss/python/langchain/human-in-the-loop) for complete examples and integration patterns.
+</Note>
 
 ### Anthropic prompt caching
 
-`AnthropicPromptCachingMiddleware` is a middleware that enables you to enable Anthropic's native prompt caching.
+Reduce costs by caching repetitive prompt prefixes with Anthropic models.
 
-Prompt caching enables optimal API usage by allowing resuming from specific prefixes in your prompts.
-This is particularly useful for tasks with repetitive prompts or prompts with redundant information.
+<Tip>
+**Perfect for:**
+- Applications with long, repeated system prompts
+- Agents that reuse the same context across invocations
+- Reducing API costs for high-volume deployments
+</Tip>
 
 <Info>
-Learn more about Anthropic Prompt Caching (strategies, limitations, etc.) [here](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching#cache-limitations).
+Learn more about [Anthropic Prompt Caching](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching#cache-limitations) strategies and limitations.
 </Info>
-
-When using prompt caching, you'll likely want to use a checkpointer to store conversation
-history across invocations.
 
 :::python
 ```python
@@ -283,7 +280,7 @@ Please be a helpful assistant.
 
 agent = create_agent(
     model=ChatAnthropic(model="claude-sonnet-4-latest"),
-    prompt=LONG_PROMPT,
+    system_prompt=LONG_PROMPT,
     middleware=[AnthropicPromptCachingMiddleware(ttl="5m")],
 )
 
@@ -294,6 +291,7 @@ agent.invoke({"messages": [HumanMessage("Hi, my name is Bob")]})
 agent.invoke({"messages": [HumanMessage("What's my name?")]})
 ```
 :::
+
 :::js
 ```typescript
 import { createAgent, HumanMessage, anthropicPromptCachingMiddleware } from "langchain";
@@ -312,407 +310,936 @@ const agent = createAgent({
 
 // cache store
 await agent.invoke({
-  messages: [HumanMessage("Hi, my name is Bob")]
+  messages: [new HumanMessage("Hi, my name is Bob")]
 });
 
 // cache hit, system prompt is cached
 const result = await agent.invoke({
-  messages: [HumanMessage("What's my name?")]
+  messages: [new HumanMessage("What's my name?")]
 });
 ```
 :::
 
-### Dynamic system prompt
+<Accordion title="Configuration options">
 
 :::python
-A system prompt can be dynamically set right before each model invocation using the `@modify_model_request` decorator. This middleware is particularly useful when the prompt depends on the current agent state or runtime context.
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `type` | Cache type (only `"ephemeral"` supported) | `"ephemeral"` |
+| `ttl` | Time to live (`"5m"` or `"1h"`) | `"5m"` |
+| `min_messages_to_cache` | Minimum messages before caching starts | `0` |
+| `unsupported_model_behavior` | Behavior for non-Anthropic models (`"ignore"`, `"warn"`, `"raise"`) | `"warn"` |
+:::
 
-For example, you can adjust the system prompt based on the user's expertise level:
+:::js
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `ttl` | Time to live (`"5m"` or `"1h"`) | `"5m"` |
+:::
 
+</Accordion>
+
+### Model call limit
+
+Limit the number of model calls to prevent infinite loops or excessive costs.
+
+<Tip>
+**Perfect for:**
+- Preventing runaway agents from making too many API calls
+- Enforcing cost controls on production deployments
+- Testing agent behavior within specific call budgets
+</Tip>
+
+:::python
 ```python
-from typing import TypedDict
-
 from langchain.agents import create_agent
-from langchain.agents.middleware.types import modify_model_request, AgentState, ModelRequest
-from langgraph.runtime import Runtime
-
-class Context(TypedDict):
-    user_role: str
-
-@modify_model_request
-def dynamic_system_prompt(request: ModelRequest, state: AgentState, runtime: Runtime[Context]) -> ModelRequest:
-    user_role = runtime.context.get("user_role", "user")
-    base_prompt = "You are a helpful assistant."
-
-    if user_role == "expert":
-        prompt = f"{base_prompt} Provide detailed technical responses."
-    elif user_role == "beginner":
-        prompt = f"{base_prompt} Explain concepts simply and avoid jargon."
-    else:
-        prompt = base_prompt
-
-    request.system_prompt = prompt
-    return request
+from langchain.agents.middleware import ModelCallLimitMiddleware
 
 agent = create_agent(
     model="openai:gpt-4o",
-    tools=[web_search],
-    middleware=[dynamic_system_prompt],
-    context_schema=Context
-)
-
-# Use with context
-result = agent.invoke(
-    {"messages": [{"role": "user", "content": "Explain async programming"}]},
-    context={"user_role": "expert"}
-)
-```
-:::
-:::js
-
-A system prompt can be dynamically set right before each model invocation using the `dynamicSystemPromptMiddleware` middleware. This middleware is particularly useful when the prompt depends on the current agent state or runtime context.
-
-For example, you can adjust the system prompt based on the user's expertise level:
-
-```typescript
-import { z } from "zod";
-import { createAgent, dynamicSystemPromptMiddleware } from "langchain";
-
-const contextSchema = z.object({
-    userRole: z.enum(["expert", "beginner"]),
-});
-
-const agent = createAgent({
-    model: "openai:gpt-4o",
-    tools: [...],
-    contextSchema,
-    middleware: [
-        dynamicSystemPromptMiddleware<z.infer<typeof contextSchema>>((state, runtime) => {
-            const userRole = runtime.context.userRole || "user";
-            const basePrompt = "You are a helpful assistant.";
-
-            if (userRole === "expert") {
-                return `${basePrompt} Provide detailed technical responses.`;
-            } else if (userRole === "beginner") {
-                return `${basePrompt} Explain concepts simply and avoid jargon.`;
-            }
-            return basePrompt;
-        }),
+    tools=[...],
+    middleware=[
+        ModelCallLimitMiddleware(
+            thread_limit=10,  # Max 10 calls per thread (across runs)
+            run_limit=5,  # Max 5 calls per run (single invocation)
+            exit_behavior="end",  # Or "error" to raise exception
+        ),
     ],
-});
-
-// The system prompt will be set dynamically based on context
-const result = await agent.invoke(
-    { messages: [{ role: "user", content: "Explain async programming" }] },
-    { context: { userRole: "expert" } }
-);
-```
-:::
-
-Alternatively, you can adjust the system prompt based on the conversation length:
-
-:::python
-```python
-from langchain.agents.middleware.types import modify_model_request
-
-@modify_model_request
-def simple_prompt(state: AgentState, request: ModelRequest) -> ModelRequest:
-    message_count = len(state["messages"])
-
-    if message_count > 10:
-        prompt = "You are in an extended conversation. Be more concise."
-    else:
-        prompt = "You are a helpful assistant."
-
-    request.system_prompt = prompt
-    return request
-
-agent = create_agent(
-    model="openai:gpt-4o",
-    tools=[search_tool],
-    middleware=[simple_prompt],
 )
 ```
 :::
+
 :::js
 ```typescript
+import { createAgent, modelCallLimitMiddleware } from "langchain";
+
 const agent = createAgent({
   model: "openai:gpt-4o",
-  tools: [searchTool],
+  tools: [...],
   middleware: [
-    dynamicSystemPromptMiddleware((state) => {
-      const messageCount = state.messages.length;
-
-      if (messageCount > 10) {
-        return "You are in an extended conversation. Be more concise.";
-      }
-      return "You are a helpful assistant.";
+    modelCallLimitMiddleware({
+      threadLimit: 10, // Max 10 calls per thread (across runs)
+      runLimit: 5, // Max 5 calls per run (single invocation)
+      exitBehavior: "end", // Or "error" to throw exception
     }),
   ],
 });
 ```
 :::
 
-## Custom Middleware
-
-Middleware for agents are subclasses of `AgentMiddleware`, which implement one or more of its hooks.
-
-`AgentMiddleware` currently provides three different ways to modify the core agent loop:
+<Accordion title="Configuration options">
 
 :::python
-- `before_model`: runs before the model is run. Can update state or exit early with a jump.
-- `modify_model_request`: runs before the model is run. Cannot update state or exit early with a jump.
-- `after_model`: runs after the model is run. Can update state or exit early with a jump.
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `thread_limit` | Max calls across all runs in thread | `None` (no limit) |
+| `run_limit` | Max calls per single invocation | `None` (no limit) |
+| `exit_behavior` | `"end"` (graceful) or `"error"` (exception) | `"end"` |
 :::
+
 :::js
-- `beforeModel`: runs before the model is run. Can update state or exit early with a jump.
-- `modifyModelRequest`: runs before the model is run. Cannot update state or exit early with a jump.
-- `afterModel`: runs after the model is run. Can update state or exit early with a jump.
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `threadLimit` | Max calls across all runs in thread | `undefined` (no limit) |
+| `runLimit` | Max calls per single invocation | `undefined` (no limit) |
+| `exitBehavior` | `"end"` (graceful) or `"error"` (exception) | `"end"` |
 :::
 
-In order to **exit early**, you can add a `jump_to` key to the state update with one of the following values:
+</Accordion>
 
-- `"model"`: Jump to the model node
-- `"tools"`: Jump to the tools node
-- `"end"`: Jump to the end node
+### Tool call limit
 
-If this is specified, all subsequent middleware will not run.
+Limit the number of tool calls to specific tools or all tools.
 
-Learn more about exiting early in the [agent jumps](#agent-jumps) section.
+<Tip>
+**Perfect for:**
+- Preventing excessive calls to expensive external APIs
+- Limiting web searches or database queries
+- Enforcing rate limits on specific tool usage
+</Tip>
 
 :::python
-### `before_model`
+```python
+from langchain.agents import create_agent
+from langchain.agents.middleware import ToolCallLimitMiddleware
+
+# Limit all tool calls
+global_limiter = ToolCallLimitMiddleware(thread_limit=20, run_limit=10)
+
+# Limit specific tool
+search_limiter = ToolCallLimitMiddleware(
+    tool_name="search",
+    thread_limit=5,
+    run_limit=3,
+)
+
+agent = create_agent(
+    model="openai:gpt-4o",
+    tools=[...],
+    middleware=[global_limiter, search_limiter],
+)
+```
 :::
+
 :::js
-### `beforeModel`
+```typescript
+import { createAgent, toolCallLimitMiddleware } from "langchain";
+
+// Limit all tool calls
+const globalLimiter = toolCallLimitMiddleware({ threadLimit: 20, runLimit: 10 });
+
+// Limit specific tool
+const searchLimiter = toolCallLimitMiddleware({
+  toolName: "search",
+  threadLimit: 5,
+  runLimit: 3,
+});
+
+const agent = createAgent({
+  model: "openai:gpt-4o",
+  tools: [...],
+  middleware: [globalLimiter, searchLimiter],
+});
+```
 :::
 
-Runs before the model is run. Can modify state by returning a new state object or state update.
+<Accordion title="Configuration options">
 
-Signature:
+:::python
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `tool_name` | Specific tool to limit (`None` = all tools) | `None` |
+| `thread_limit` | Max calls across all runs in thread | `None` (no limit) |
+| `run_limit` | Max calls per single invocation | `None` (no limit) |
+| `exit_behavior` | `"end"` (graceful) or `"error"` (exception) | `"end"` |
+:::
+
+:::js
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `toolName` | Specific tool to limit (`undefined` = all tools) | `undefined` |
+| `threadLimit` | Max calls across all runs in thread | `undefined` (no limit) |
+| `runLimit` | Max calls per single invocation | `undefined` (no limit) |
+| `exitBehavior` | `"end"` (graceful) or `"error"` (exception) | `"end"` |
+:::
+
+</Accordion>
+
+### Model fallback
+
+Automatically fallback to alternative models when the primary model fails.
+
+<Tip>
+**Perfect for:**
+- Building resilient agents that handle model outages
+- Cost optimization by falling back to cheaper models
+- Provider redundancy across OpenAI, Anthropic, etc.
+</Tip>
+
+:::python
+```python
+from langchain.agents import create_agent
+from langchain.agents.middleware import ModelFallbackMiddleware
+
+agent = create_agent(
+    model="openai:gpt-4o",  # Primary model
+    tools=[...],
+    middleware=[
+        ModelFallbackMiddleware(
+            "openai:gpt-4o-mini",  # Try first on error
+            "anthropic:claude-3-5-sonnet-20241022",  # Then this
+        ),
+    ],
+)
+```
+:::
+
+:::js
+```typescript
+import { createAgent, modelFallbackMiddleware } from "langchain";
+
+const agent = createAgent({
+  model: "openai:gpt-4o", // Primary model
+  tools: [...],
+  middleware: [
+    modelFallbackMiddleware(
+      "openai:gpt-4o-mini", // Try first on error
+      "anthropic:claude-3-5-sonnet-20241022" // Then this
+    ),
+  ],
+});
+```
+:::
+
+<Accordion title="Configuration options">
+
+:::python
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `first_model` | First fallback model (string or `BaseChatModel` instance) | Required |
+| `*additional_models` | Additional fallback models in order | - |
+:::
+
+:::js
+The middleware accepts a variable number of string arguments representing fallback models in order:
+```typescript
+modelFallbackMiddleware(
+  "first-fallback-model",
+  "second-fallback-model",
+  // ... more models
+)
+```
+:::
+
+</Accordion>
+
+### PII detection
+
+Detect and handle Personally Identifiable Information in conversations.
+
+<Tip>
+**Perfect for:**
+- Healthcare and financial applications with compliance requirements
+- Customer service agents that need to sanitize logs
+- Any application handling sensitive user data
+</Tip>
+
+:::python
+```python
+from langchain.agents import create_agent
+from langchain.agents.middleware import PIIMiddleware
+
+agent = create_agent(
+    model="openai:gpt-4o",
+    tools=[...],
+    middleware=[
+        # Redact emails in user input
+        PIIMiddleware("email", strategy="redact", apply_to_input=True),
+        # Mask credit cards (show last 4 digits)
+        PIIMiddleware("credit_card", strategy="mask", apply_to_input=True),
+        # Custom PII type with regex
+        PIIMiddleware(
+            "api_key",
+            detector=r"sk-[a-zA-Z0-9]{32}",
+            strategy="block",  # Raise error if detected
+        ),
+    ],
+)
+```
+:::
+
+:::js
+```typescript
+import { createAgent, piiRedactionMiddleware } from "langchain";
+
+const agent = createAgent({
+  model: "openai:gpt-4o",
+  tools: [...],
+  middleware: [
+    // Redact emails in user input
+    piiRedactionMiddleware({
+      piiType: "email",
+      strategy: "redact",
+      applyToInput: true,
+    }),
+    // Mask credit cards (show last 4 digits)
+    piiRedactionMiddleware({
+      piiType: "credit_card",
+      strategy: "mask",
+      applyToInput: true,
+    }),
+    // Custom PII type with regex
+    piiRedactionMiddleware({
+      piiType: "api_key",
+      detector: /sk-[a-zA-Z0-9]{32}/,
+      strategy: "block", // Throw error if detected
+    }),
+  ],
+});
+```
+:::
+
+<Accordion title="Configuration options">
+
+:::python
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `pii_type` | Type of PII to detect (built-in or custom) | Required |
+| `strategy` | How to handle detected PII (`"block"`, `"redact"`, `"mask"`, `"hash"`) | `"redact"` |
+| `detector` | Custom detector function or regex pattern | `None` (uses built-in) |
+| `apply_to_input` | Check user messages before model call | `True` |
+| `apply_to_output` | Check AI messages after model call | `False` |
+| `apply_to_tool_results` | Check tool result messages after execution | `False` |
+:::
+
+:::js
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `piiType` | Type of PII to detect (built-in or custom) | Required |
+| `strategy` | How to handle detected PII (`"block"`, `"redact"`, `"mask"`, `"hash"`) | `"redact"` |
+| `detector` | Custom detector regex pattern | `undefined` (uses built-in) |
+| `applyToInput` | Check user messages before model call | `true` |
+| `applyToOutput` | Check AI messages after model call | `false` |
+| `applyToToolResults` | Check tool result messages after execution | `false` |
+:::
+
+**Built-in PII types:**
+- `email` - Email addresses
+- `credit_card` - Credit card numbers (Luhn validated)
+- `ip` - IP addresses
+- `mac_address` - MAC addresses
+- `url` - URLs
+
+**Strategies:**
+- `block` - Raise exception when detected
+- `redact` - Replace with `[REDACTED_TYPE]`
+- `mask` - Partially mask (e.g., `****-****-****-1234`)
+- `hash` - Replace with deterministic hash
+
+</Accordion>
+
+### Planning
+
+Add todo list management capabilities for complex multi-step tasks.
+
+<Note>
+This middleware automatically provides agents with a `write_todos` tool and system prompts to guide effective task planning.
+</Note>
+
+:::python
+```python
+from langchain.agents import create_agent
+from langchain.agents.middleware import PlanningMiddleware
+
+agent = create_agent(
+    model="openai:gpt-4o",
+    tools=[...],
+    middleware=[PlanningMiddleware()],
+)
+
+result = agent.invoke({"messages": [HumanMessage("Help me refactor my codebase")]})
+print(result["todos"])  # Array of todo items with status tracking
+```
+:::
+
+:::js
+```typescript
+import { createAgent, HumanMessage } from "langchain";
+import { planningMiddleware } from "langchain/agents/middleware";
+
+const agent = createAgent({
+  model: "openai:gpt-4o",
+  tools: [...],
+  middleware: [planningMiddleware()],
+});
+
+const result = await agent.invoke({
+  messages: [new HumanMessage("Help me refactor my codebase")],
+});
+console.log(result.todos); // Array of todo items with status tracking
+```
+:::
+
+<Accordion title="Configuration options">
+
+:::python
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `system_prompt` | Custom system prompt for guiding todo usage | Built-in prompt |
+| `tool_description` | Custom description for the `write_todos` tool | Built-in description |
+:::
+
+:::js
+No configuration options available (uses defaults).
+:::
+
+</Accordion>
+
+### LLM tool selector
+
+Use an LLM to intelligently select relevant tools before calling the main model.
+
+<Tip>
+**Perfect for:**
+- Agents with many tools (10+) where most aren't relevant per query
+- Reducing token usage by filtering irrelevant tools
+- Improving model focus and accuracy
+</Tip>
+
+:::python
+```python
+from langchain.agents import create_agent
+from langchain.agents.middleware import LLMToolSelectorMiddleware
+
+agent = create_agent(
+    model="openai:gpt-4o",
+    tools=[tool1, tool2, tool3, tool4, tool5, ...],  # Many tools
+    middleware=[
+        LLMToolSelectorMiddleware(
+            model="openai:gpt-4o-mini",  # Use cheaper model for selection
+            max_tools=3,  # Limit to 3 most relevant tools
+            always_include=["search"],  # Always include certain tools
+        ),
+    ],
+)
+```
+:::
+
+:::js
+```typescript
+import { createAgent, llmToolSelectorMiddleware } from "langchain";
+
+const agent = createAgent({
+  model: "openai:gpt-4o",
+  tools: [tool1, tool2, tool3, tool4, tool5, ...], // Many tools
+  middleware: [
+    llmToolSelectorMiddleware({
+      model: "openai:gpt-4o-mini", // Use cheaper model for selection
+      maxTools: 3, // Limit to 3 most relevant tools
+      alwaysInclude: ["search"], // Always include certain tools
+    }),
+  ],
+});
+```
+:::
+
+<Accordion title="Configuration options">
+
+:::python
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `model` | Model for tool selection (string or `BaseChatModel` instance) | Uses agent's main model |
+| `system_prompt` | Instructions for the selection model | Built-in prompt |
+| `max_tools` | Maximum number of tools to select | `None` (no limit) |
+| `always_include` | Tool names to always include | `None` |
+:::
+
+:::js
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `model` | Model for tool selection (string) | Uses agent's main model |
+| `maxTools` | Maximum number of tools to select | `undefined` (no limit) |
+| `alwaysInclude` | Tool names to always include | `undefined` |
+:::
+
+</Accordion>
+
+### Context editing
+
+Manage conversation context by trimming, summarizing, or clearing tool uses.
+
+<Tip>
+**Perfect for:**
+- Long conversations that need periodic context cleanup
+- Removing failed tool attempts from context
+- Custom context management strategies
+</Tip>
+
+:::python
+```python
+from langchain.agents import create_agent
+from langchain.agents.middleware import ContextEditingMiddleware, ClearToolUsesEdit
+
+agent = create_agent(
+    model="openai:gpt-4o",
+    tools=[...],
+    middleware=[
+        ContextEditingMiddleware(
+            edits=[
+                ClearToolUsesEdit(max_tokens=1000),  # Clear old tool uses
+            ],
+        ),
+    ],
+)
+```
+:::
+
+:::js
+```typescript
+import { createAgent, contextEditingMiddleware, ClearToolUsesEdit } from "langchain";
+
+const agent = createAgent({
+  model: "openai:gpt-4o",
+  tools: [...],
+  middleware: [
+    contextEditingMiddleware({
+      edits: [
+        new ClearToolUsesEdit({ maxTokens: 1000 }), // Clear old tool uses
+      ],
+    }),
+  ],
+});
+```
+:::
+
+<Accordion title="Configuration options">
+
+:::python
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `edits` | List of `ContextEdit` strategies to apply | `[ClearToolUsesEdit()]` |
+| `token_count_method` | Token counting method (`"approximate"` or `"model"`) | `"approximate"` |
+
+**`ClearToolUsesEdit` options:**
+- `trigger`: Token count that triggers the edit (default: `100000`)
+- `clear_at_least`: Minimum tokens to reclaim (default: `0`)
+- `keep`: Number of recent tool results to preserve (default: `3`)
+- `clear_tool_inputs`: Whether to clear tool call parameters (default: `False`)
+- `exclude_tools`: List of tool names to exclude from clearing (default: `()`)
+- `placeholder`: Placeholder text for cleared outputs (default: `"[cleared]"`)
+:::
+
+:::js
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `edits` | Array of `ContextEdit` strategies to apply | `[new ClearToolUsesEdit()]` |
+
+**`ClearToolUsesEdit` options:**
+- `maxTokens`: Token count that triggers the edit (default: `1000`)
+:::
+
+</Accordion>
+
+## Custom middleware
+
+Build custom middleware by implementing hooks that run at specific points in the agent execution flow.
+
+### Two hook styles
+
+<CardGroup cols={2}>
+  <Card title="Node-style hooks" icon="diagram-project">
+    Run sequentially at specific execution points. Use for logging, validation, and state updates.
+  </Card>
+  <Card title="Wrap-style hooks" icon="arrows-rotate">
+    Intercept execution with full control over handler calls. Use for retries, caching, and transformation.
+  </Card>
+</CardGroup>
+
+#### Node-style hooks
+
+Run at specific points in the execution flow:
+
+:::python
+- `before_agent` - Before agent starts (once per invocation)
+- `before_model` - Before each model call
+- `after_model` - After each model response
+- `after_agent` - After agent completes (up to once per invocation)
+:::
+
+:::js
+- `beforeAgent` - Before agent starts (once per invocation)
+- `beforeModel` - Before each model call
+- `afterModel` - After each model response
+- `afterAgent` - After agent completes (up to once per invocation)
+:::
+
+**Example: Logging middleware**
+
 :::python
 ```python
 from langchain.agents.middleware import AgentMiddleware, AgentState
-from langchain_core.messages import AIMessage
+from langgraph.runtime import Runtime
+from typing import Any
 
-class MyMiddleware(AgentMiddleware):
-    def before_model(self, state: AgentState) -> dict[str, Any] | None:
-        # terminate early if the conversation is too long
-        if len(state["messages"]) > 50:
-            return {
-                "messages": [AIMessage("I'm sorry, the conversation has been terminated.")],
-                "jump_to": "end"
-            }
-        return state
-```
-:::
-:::js
-```typescript
-import { createMiddleware, AIMessage } from "langchain";
+class LoggingMiddleware(AgentMiddleware):
+    def before_model(self, state: AgentState, runtime: Runtime) -> dict[str, Any] | None:
+        print(f"About to call model with {len(state['messages'])} messages")
+        return None
 
-const myMiddleware = createMiddleware({
-  name: "MyMiddleware",
-  beforeModel: (state) => {
-    if (state.messages.length > 50) {
-      return {
-        messages: [
-          new AIMessage("I'm sorry, the conversation has been terminated."),
-        ],
-        jumpTo: "end",
-      };
-    }
-    return state;
-  },
-});
+    def after_model(self, state: AgentState, runtime: Runtime) -> dict[str, Any] | None:
+        print(f"Model returned: {state['messages'][-1].content}")
+        return None
 ```
 :::
 
-:::python
-### `modify_model_request`
-:::
-:::js
-### `modifyModelRequest`
-:::
-
-:::python
-Runs before the model has run, but after all the `before_model` calls.
-:::
-:::js
-Runs before the model has run, but after all the `beforeModel` calls.
-:::
-These functions **cannot** modify permanent state or exit early.
-Rather, they are intended to modify calls to the model in a **stateless** way.
-:::python
-If you want to modify calls to the model in a **stateful** way, you will need to use `before_model`
-:::
-:::js
-If you want to modify calls to the model in a **stateful** way, you will need to use `beforeModel`
-:::
-
-Modifies the model request. The model request has several key properties:
-- `model` (`BaseChatModel`): the model to use. Note: this needs to the base chat model, not a string.
-:::python
-- `system_prompt` (`str`): the system prompt to use. Will get prepended to `messages`
-:::
-:::js
-- `systemPrompt` (`string`): the system prompt to use. Will get prepended to `messages`
-:::
-- `messages` (list of messages): the message list. Should not include system prompt.
-:::python
-- `tool_choice` (Any): the tool choice to use
-:::
-:::js
-- `toolChoice`: Can be one of:
-  - `"auto"`: means the model can pick between generating a message or calling one or more tools.
-  - `"none"`: means the model will not call any tool and instead generates a message.
-  - `"required"`: means the model must call one or more tools.
-  - `{ type: "function", function: { name: string } }`: The model will use the specified function.
-:::
-- `tools` (list of strings): the tool names to use for this model call
-:::python
-- `response_format` (`ResponseFormat`): the response format to use for structured output
-:::
-:::js
-- `responseFormat` (`ResponseFormat`): the response format to use for structured output
-:::
-
-Signature:
-:::python
-```python
-from langchain.agents.middleware import AgentState, ModelRequest, AgentMiddleware
-
-class MyMiddleware(AgentMiddleware):
-    def modify_model_request(self, request: ModelRequest, state: AgentState) -> ModelRequest:
-        if len(state["messages"]) > 10:
-            request.model = "gpt-5"
-        else:
-            request.model = "gpt-5-nano"
-        return request
-```
-:::
-:::js
-```typescript
-import { createMiddleware, AIMessage } from "langchain";
-
-const myMiddleware = createMiddleware({
-  name: "MyMiddleware",
-  modifyModelRequest: (request) => {
-    // Select specific tools by name for this model call
-    return {
-      ...request,
-      tools: ["weatherTool", "calculatorTool"], // Array of tool names
-    };
-  },
-});
-```
-:::
-
-:::python
-### `after_model`
-:::
-:::js
-### `afterModel`
-:::
-
-Runs after the model is run. Can modify state by returning a new state object or state update.
-
-Signature:
-:::python
-```python
-from langchain.agents.middleware import AgentState, AgentUpdate, AgentMiddleware
-
-class MyMiddleware(AgentMiddleware):
-    def after_model(self, state: AgentState) -> dict[str, Any] | None:
-        ...
-```
-:::
 :::js
 ```typescript
 import { createMiddleware } from "langchain";
 
-const myMiddleware = createMiddleware({
-  name: "MyMiddleware",
+const loggingMiddleware = createMiddleware({
+  name: "LoggingMiddleware",
+  beforeModel: (state) => {
+    console.log(`About to call model with ${state.messages.length} messages`);
+    return;
+  },
   afterModel: (state) => {
-    // ...
+    const lastMessage = state.messages[state.messages.length - 1];
+    console.log(`Model returned: ${lastMessage.content}`);
+    return;
   },
 });
 ```
 :::
 
-## New state keys
-
-Middleware can extend the agent's state with custom properties, enabling rich data flow between middleware components and ensuring type safety throughout the agent execution.
-
-### State extension
-
-Middleware can define additional state properties that persist throughout the agent's execution. These properties become part of the agent's state and are available to all hooks for said middleware.
+**Example: Conversation length limit**
 
 :::python
 ```python
-from langchain.agents.middleware import AgentState, AgentMiddleware
+from langchain.agents.middleware import AgentMiddleware, AgentState
+from langchain.messages import AIMessage
+from langgraph.runtime import Runtime
+from typing import Any
 
-class MyState(AgentState):
-    model_call_count: int
+class MessageLimitMiddleware(AgentMiddleware):
+    def __init__(self, max_messages: int = 50):
+        super().__init__()
+        self.max_messages = max_messages
 
-class MyMiddleware(AgentMiddleware[MyState]):
-    state_schema: MyState
-
-    def before_model(self, state: AgentState) -> dict[str, Any] | None:
-        # terminate early if the model has been called too many times
-        if state["model_call_count"] > 10:
-            return {"jump_to": "end"}
-        return state
-
-    def after_model(self, state: AgentState) -> dict[str, Any] | None:
-        return {"model_call_count": state["model_call_count"] + 1}
+    def before_model(self, state: AgentState, runtime: Runtime) -> dict[str, Any] | None:
+        if len(state["messages"]) == self.max_messages:
+            return {
+                "messages": [AIMessage("Conversation limit reached.")],
+                "jump_to": "end"
+            }
+        return None
 ```
 :::
 
 :::js
-When a middleware defines required state properties through its `stateSchema`, these properties must be provided when invoking the agent:
+```typescript
+import { createMiddleware, AIMessage } from "langchain";
 
+const createMessageLimitMiddleware = (maxMessages: number = 50) => {
+  return createMiddleware({
+    name: "MessageLimitMiddleware",
+    beforeModel: (state) => {
+      if (state.messages.length === maxMessages) {
+        return {
+          messages: [new AIMessage("Conversation limit reached.")],
+          jumpTo: "end",
+        };
+      }
+      return;
+    },
+  });
+};
+```
+:::
+
+#### Wrap-style hooks
+
+Intercept execution and control when the handler is called:
+
+:::python
+- `wrap_model_call` - Around each model call
+- `wrap_tool_call` - Around each tool call
+:::
+
+:::js
+- `wrapModelCall` - Around each model call
+- `wrapToolCall` - Around each tool call
+:::
+
+You decide if the handler is called zero times (short-circuit), once (normal flow), or multiple times (retry logic).
+
+**Example: Model retry middleware**
+
+:::python
+```python
+from langchain.agents.middleware import AgentMiddleware, ModelRequest, ModelResponse
+from typing import Callable
+
+class RetryMiddleware(AgentMiddleware):
+    def __init__(self, max_retries: int = 3):
+        super().__init__()
+        self.max_retries = max_retries
+
+    def wrap_model_call(
+        self,
+        request: ModelRequest,
+        handler: Callable[[ModelRequest], ModelResponse],
+    ) -> ModelResponse:
+        for attempt in range(self.max_retries):
+            try:
+                return handler(request)
+            except Exception as e:
+                if attempt == self.max_retries - 1:
+                    raise
+                print(f"Retry {attempt + 1}/{self.max_retries} after error: {e}")
+```
+:::
+
+:::js
+```typescript
+import { createMiddleware } from "langchain";
+
+const createRetryMiddleware = (maxRetries: number = 3) => {
+  return createMiddleware({
+    name: "RetryMiddleware",
+    wrapModelCall: (request, handler) => {
+      for (let attempt = 0; attempt < maxRetries; attempt++) {
+        try {
+          return handler(request);
+        } catch (e) {
+          if (attempt === maxRetries - 1) {
+            throw e;
+          }
+          console.log(`Retry ${attempt + 1}/${maxRetries} after error: ${e}`);
+        }
+      }
+      throw new Error("Unreachable");
+    },
+  });
+};
+```
+:::
+
+**Example: Dynamic model selection**
+
+:::python
+```python
+from langchain.agents.middleware import AgentMiddleware, ModelRequest, ModelResponse
+from langchain.chat_models import init_chat_model
+from typing import Callable
+
+class DynamicModelMiddleware(AgentMiddleware):
+    def wrap_model_call(
+        self,
+        request: ModelRequest,
+        handler: Callable[[ModelRequest], ModelResponse],
+    ) -> ModelResponse:
+        # Use different model based on conversation length
+        if len(request.messages) > 10:
+            request.model = init_chat_model("openai:gpt-4o")
+        else:
+            request.model = init_chat_model("openai:gpt-4o-mini")
+
+        return handler(request)
+```
+:::
+
+:::js
+```typescript
+import { createMiddleware, initChatModel } from "langchain";
+
+const dynamicModelMiddleware = createMiddleware({
+  name: "DynamicModelMiddleware",
+  wrapModelCall: (request, handler) => {
+    // Use different model based on conversation length
+    const modifiedRequest = { ...request };
+    if (request.messages.length > 10) {
+      modifiedRequest.model = initChatModel("openai:gpt-4o");
+    } else {
+      modifiedRequest.model = initChatModel("openai:gpt-4o-mini");
+    }
+    return handler(modifiedRequest);
+  },
+});
+```
+:::
+
+**Example: Tool call monitoring**
+
+:::python
+```python
+from langchain.tools.tool_node import ToolCallRequest
+from langchain.agents.middleware import AgentMiddleware
+from langchain_core.messages import ToolMessage
+from langgraph.types import Command
+from typing import Callable
+
+class ToolMonitoringMiddleware(AgentMiddleware):
+    def wrap_tool_call(
+        self,
+        request: ToolCallRequest,
+        handler: Callable[[ToolCallRequest], ToolMessage | Command],
+    ) -> ToolMessage | Command:
+        print(f"Executing tool: {request.tool_call['name']}")
+        print(f"Arguments: {request.tool_call['args']}")
+
+        try:
+            result = handler(request)
+            print(f"Tool completed successfully")
+            return result
+        except Exception as e:
+            print(f"Tool failed: {e}")
+            raise
+```
+:::
+
+:::js
+```typescript
+import { createMiddleware } from "langchain";
+
+const toolMonitoringMiddleware = createMiddleware({
+  name: "ToolMonitoringMiddleware",
+  wrapToolCall: (request, handler) => {
+    console.log(`Executing tool: ${request.toolCall.name}`);
+    console.log(`Arguments: ${JSON.stringify(request.toolCall.args)}`);
+
+    try {
+      const result = handler(request);
+      console.log("Tool completed successfully");
+      return result;
+    } catch (e) {
+      console.log(`Tool failed: ${e}`);
+      throw e;
+    }
+  },
+});
+```
+:::
+
+### Custom state schema
+
+Middleware can extend the agent's state with custom properties. Define a custom state type and set it as the `state_schema`:
+
+:::python
+```python
+from langchain.agents.middleware import AgentState, AgentMiddleware
+from typing_extensions import NotRequired
+from typing import Any
+
+class CustomState(AgentState):
+    model_call_count: NotRequired[int]
+    user_id: NotRequired[str]
+
+class CallCounterMiddleware(AgentMiddleware[CustomState]):
+    state_schema = CustomState
+
+    def before_model(self, state: CustomState, runtime) -> dict[str, Any] | None:
+        # Access custom state properties
+        count = state.get("model_call_count", 0)
+
+        if count > 10:
+            return {"jump_to": "end"}
+
+        return None
+
+    def after_model(self, state: CustomState, runtime) -> dict[str, Any] | None:
+        # Update custom state
+        return {"model_call_count": state.get("model_call_count", 0) + 1}
+```
+:::
+
+:::js
 ```typescript
 import { createMiddleware, createAgent, HumanMessage } from "langchain";
 import { z } from "zod";
 
 // Middleware with custom state requirements
-const authMiddleware = createMiddleware({
-  name: "AuthMiddleware",
+const callCounterMiddleware = createMiddleware({
+  name: "CallCounterMiddleware",
   stateSchema: z.object({
-    userId: z.string(), // Required
-    userRole: z.string().default("user"), // Optional with default
+    modelCallCount: z.number().default(0),
+    userId: z.string().optional(),
   }),
   beforeModel: (state) => {
     // Access custom state properties
-    console.log(`User ${state.userId} with role ${state.userRole}`);
+    if (state.modelCallCount > 10) {
+      return { jumpTo: "end" };
+    }
     return;
   },
+  afterModel: (state) => {
+    // Update custom state
+    return { modelCallCount: state.modelCallCount + 1 };
+  },
 });
+```
+:::
 
+:::python
+```python
+agent = create_agent(
+    model="openai:gpt-4o",
+    middleware=[CallCounterMiddleware()],
+    tools=[...],
+)
+
+# Invoke with custom state
+result = agent.invoke({
+    "messages": [HumanMessage("Hello")],
+    "model_call_count": 0,
+    "user_id": "user-123",
+})
+```
+:::
+
+:::js
+```typescript
 const agent = createAgent({
   model: "openai:gpt-4o",
-  tools: [],
-  middleware: [authMiddleware] as const,
+  tools: [...],
+  middleware: [callCounterMiddleware] as const,
 });
 
 // TypeScript enforces required state properties
 const result = await agent.invoke({
   messages: [new HumanMessage("Hello")],
-  userId: "user-123", // Required by middleware
-  // userRole is optional due to default value
+  modelCallCount: 0, // Optional due to default value
+  userId: "user-123", // Optional
 });
 ```
 :::
 
-### Context extension
 
-<Note>
-This is currently only available in JavaScript.
-</Note>
+:::js
+### Context extension
 
 Context properties are configuration values passed through the runnable config. Unlike state, context is read-only and typically used for configuration that doesn't change during execution.
 
-:::js
+
 Middleware can define context requirements that must be satisfied through the agent's configuration:
 
 ```typescript
@@ -752,263 +1279,281 @@ await agent.invoke(
 ```
 :::
 
-### Combining multiple middleware
 
-When using multiple middleware, their state and context schemas are merged. All required properties from all middleware must be satisfied:
+:::python
+
+### Decorator-based middleware
+
+For simple middleware that only needs a single hook, use decorator shortcuts:
+
+```python
+from langchain.agents.middleware import before_model, after_model, wrap_model_call
+from langchain.agents.middleware import AgentState, ModelRequest, ModelResponse
+from langgraph.runtime import Runtime
+from typing import Any, Callable
+
+# Node-style decorator
+@before_model
+def log_before_model(state: AgentState, runtime: Runtime) -> dict[str, Any] | None:
+    print(f"About to call model with {len(state['messages'])} messages")
+    return None
+
+# Wrap-style decorator
+@wrap_model_call
+def retry_model(
+    request: ModelRequest,
+    handler: Callable[[ModelRequest], ModelResponse],
+) -> ModelResponse:
+    for attempt in range(3):
+        try:
+            return handler(request)
+        except Exception:
+            if attempt == 2:
+                raise
+    return handler(request)  # This line is unreachable but satisfies type checker
+
+# Use decorators in agent
+agent = create_agent(
+    model="openai:gpt-4o",
+    middleware=[log_before_model, retry_model],
+    tools=[...],
+)
+```
+
+Available decorators:
+- `@before_agent`
+- `@before_model`
+- `@after_model`
+- `@after_agent`
+- `@wrap_model_call`
+- `@wrap_tool_call`
+- `@dynamic_prompt` - Convenience for dynamic system prompts
+:::
+
+### Execution order
+
+When using multiple middleware, understanding execution order is important:
 
 :::python
 ```python
-from langchain.agents.middleware import AgentMiddleware
-from langchain_core.messages import HumanMessage
-from typing import Any, Dict
-
-class Middleware1State(AgentState):
-    prop_1: str
-    shared_prop: int
-
-class Middleware2State(AgentState):
-    prop_2: bool
-    shared_prop: int
-
-class Middleware1(AgentMiddleware):
-    def before_model(self, state: Dict[str, Any]) -> Dict[str, Any] | None:
-        # Access prop1 and sharedProp from state
-        print(f"Middleware1: prop1={state.get('prop_1')}, sharedProp={state.get('shared_prop')}")
-        return None
-
-class Middleware2(AgentMiddleware):
-    def before_model(self, state: Dict[str, Any]) -> Dict[str, Any] | None:
-        # Access prop2 and sharedProp from state
-        print(f"Middleware2: prop2={state.get('prop_2')}, sharedProp={state.get('shared_prop')}")
-        return None
-
 agent = create_agent(
     model="openai:gpt-4o",
-    tools=[],
-    middleware=[Middleware1(), Middleware2()],
+    middleware=[middleware1, middleware2, middleware3],
+    tools=[...],
 )
 ```
 :::
 
 :::js
 ```typescript
-import { createMiddleware, createAgent, HumanMessage } from "langchain";
-import { z } from "zod";
-
-const middleware1 = createMiddleware({
-  name: "Middleware1",
-  stateSchema: z.object({
-    prop1: z.string(),
-    sharedProp: z.number(),
-  }),
-});
-
-const middleware2 = createMiddleware({
-  name: "Middleware2",
-  stateSchema: z.object({
-    prop2: z.boolean(),
-    sharedProp: z.number(), // Same property name must have compatible types
-  }),
-});
-
 const agent = createAgent({
   model: "openai:gpt-4o",
-  tools: [],
-  middleware: [middleware1, middleware2] as const,
-});
-
-// Must provide all required properties
-const result = await agent.invoke({
-  messages: [new HumanMessage("Hello")],
-  prop1: "value1", // Required by middleware1
-  prop2: true, // Required by middleware2
-  sharedProp: 42, // Required by both
+  middleware: [middleware1, middleware2, middleware3],
+  tools: [...],
 });
 ```
 :::
 
-### Agent-level context schema
+<Accordion title="Execution flow (click to expand)">
 
-Agents can also define their own context requirements that combine with middleware requirements:
+**Before hooks run in order:**
+
+1. `middleware1.before_agent()`
+2. `middleware2.before_agent()`
+3. `middleware3.before_agent()`
+
+__Agent loop starts__
+
+5. `middleware1.before_model()`
+6. `middleware2.before_model()`
+7. `middleware3.before_model()`
+
+**Wrap hooks nest like function calls:**
+
+8. `middleware1.wrap_model_call()` → `middleware2.wrap_model_call()` → `middleware3.wrap_model_call()` → model
+
+**After hooks run in reverse order:**
+
+9. `middleware3.after_model()`
+10. `middleware2.after_model()`
+11. `middleware1.after_model()`
+
+__Agent loop ends__
+
+13. `middleware3.after_agent()`
+14. `middleware2.after_agent()`
+15. `middleware1.after_agent()`
+
+</Accordion>
+
+**Key rules:**
+- `before_*` hooks: First to last
+- `after_*` hooks: Last to first (reverse)
+- `wrap_*` hooks: Nested (first middleware wraps all others)
+
+### Agent jumps
+
+To exit early from middleware, return a dictionary with `jump_to`:
 
 :::python
 ```python
-# ...
+class EarlyExitMiddleware(AgentMiddleware):
+    def before_model(self, state: AgentState, runtime) -> dict[str, Any] | None:
+        # Check some condition
+        if should_exit(state):
+            return {
+                "messages": [AIMessage("Exiting early due to condition.")],
+                "jump_to": "end"
+            }
+        return None
 ```
 :::
+
 :::js
 ```typescript
-import { createAgent, HumanMessage } from "langchain";
-import { z } from "zod";
+import { createMiddleware, AIMessage } from "langchain";
 
-const agent = createAgent({
-  model: "openai:gpt-4o",
-  tools: [],
-  contextSchema: z.object({
-    environment: z.enum(["development", "production"]),
-  }),
-  middleware: [rateLimitMiddleware] as const,
-});
-
-// Must satisfy both agent and middleware context requirements
-await agent.invoke(
-  { messages: [new HumanMessage("Deploy application")] },
-  {
-    context: {
-      environment: "production", // Required by agent
-      maxRequestsPerMinute: 60, // Required by middleware
-      apiKey: "api-key-123", // Required by middleware
-    },
-  }
-);
-```
-:::
-
-### Best practices
-
-1. **Use State for Dynamic Data**: Properties that change during execution (user session, accumulated data)
-2. **Use Context for Configuration**: Static configuration values (API keys, feature flags, limits)
-3. **Provide Defaults When Possible**: Use `.default()` in Zod schemas to make properties optional
-4. **Document Requirements**: Clearly document what state and context properties your middleware requires
-:::js
-5. **Type Safety**: Leverage TypeScript's type checking to catch missing properties at compile time
-
-The type system ensures all required properties are provided, preventing runtime errors:
-
-```typescript
-// TypeScript error: Property 'userId' is missing
-await agent.invoke({
-  messages: [new HumanMessage("Hello")],
-  // userId is required but not provided
-});
-
-// TypeScript error: Type 'number' is not assignable to type 'string'
-await agent.invoke({
-  messages: [new HumanMessage("Hello")],
-  userId: 123, // Wrong type
-});
-```
-:::
-
-## Middleware execution order
-
-You can provide multiple middlewares. They are executed in the following logic:
-
-:::python
-**`before_model`**: Are run in the order they are passed in. If an earlier middleware exits early, then following middleware are not run
-**`modify_model_request`**: Are run in the order they are passed in.
-**`after_model`**: Are run in the _reverse_ order that they are passed in. If an earlier middleware exits early, then following middleware are not run
-:::
-:::js
-**`beforeModel`**: Are run in the order they are passed in. If an earlier middleware exits early, then following middleware are not run
-**`modifyModelRequest`**: Are run in the order they are passed in.
-**`afterModel`**: Are run in the _reverse_ order that they are passed in. If an earlier middleware exits early, then following middleware are not run
-:::
-
-## Agent jumps
-
-:::python
-In order to **exit early**, you can add a `jump_to` key to the state update with one of the following values:
-:::
-:::js
-In order to **exit early**, you can add a `jumpTo` key to the state update with one of the following values:
-:::
-
-- `"model"`: Jump to the model node
-- `"tools"`: Jump to the tools node
-- `"end"`: Jump to the end node
-
-If this is specified, all subsequent middleware will not run.
-
-:::python
-If you jump to `model` node, all `before_model` middleware will run. It's forbidden to jump to `model` from an existing `before_model` middleware.
-:::
-
-:::js
-If you jump to `model` node, all `beforeModel` middleware will run. It's forbidden to jump to `model` from an existing `beforeModel` middleware.
-:::
-
-Example usage:
-:::python
-```python
-from langchain.agents.types import AgentState, AgentUpdate, AgentJump
-from langchain.agents.middleware import AgentMiddleware
-
-class MyMiddleware(AgentMiddleware):
-    def after_model(self, state: AgentState) -> dict[str, Any]:
-        return {
-        "messages": ...,
-        "jump_to": "model"
+const earlyExitMiddleware = createMiddleware({
+  name: "EarlyExitMiddleware",
+  beforeModel: (state) => {
+    // Check some condition
+    if (shouldExit(state)) {
+      return {
+        messages: [new AIMessage("Exiting early due to condition.")],
+        jumpTo: "end",
+      };
     }
-```
-:::
-:::js
-```typescript
-import { createMiddleware } from "langchain";
-
-const middleware = createMiddleware({
-  name: "MyMiddleware",
-  afterModel: (state) => {
-    // ...
-    return {
-      messages: [
-        /* ... */
-      ],
-      jumpTo: "model",
-    };
+    return;
   },
 });
 ```
 :::
 
+Available jump targets:
+
+- `"end"`: Jump to the end of the agent execution
+- `"tools"`: Jump to the tools node
+- `"model"`: Jump to the model node (or the first `before_model` hook)
+
+**Important:** When jumping from `before_model` or `after_model`, jumping to `"model"` will cause all `before_model` middleware to run again.
+
+To enable jumping, decorate your hook with `@hook_config(can_jump_to=[...])`:
+
+:::python
+```python
+from langchain.agents.middleware import AgentMiddleware, hook_config
+from typing import Any
+
+class ConditionalMiddleware(AgentMiddleware):
+    @hook_config(can_jump_to=["end", "tools"])
+    def after_model(self, state: AgentState, runtime) -> dict[str, Any] | None:
+        if some_condition(state):
+            return {"jump_to": "end"}
+        return None
+```
+:::
+
+:::js
+```typescript
+import { createMiddleware } from "langchain";
+
+const conditionalMiddleware = createMiddleware({
+  name: "ConditionalMiddleware",
+  afterModel: (state) => {
+    if (someCondition(state)) {
+      return { jumpTo: "end" };
+    }
+    return;
+  },
+});
+```
+:::
+
+### Best practices
+
+1. **Keep middleware focused** - Each middleware should do one thing well
+2. **Handle errors gracefully** - Don't let middleware errors crash the agent
+3. **Use appropriate hook types**:
+   - Node-style for sequential logic (logging, validation)
+   - Wrap-style for control flow (retry, fallback, caching)
+4. **Document state requirements** - Clearly document any custom state properties
+5. **Test middleware independently** - Unit test middleware before integrating
+6. **Consider execution order** - Place critical middleware first in the list
+7. **Use built-in middleware when possible** - Don't reinvent the wheel
+
 ## Examples
 
 ### Dynamically selecting tools
 
-In many applications, you may have a large set of tools, but only a small subset is relevant for a specific request. To optimize performance and accuracy, it’s best to **expose only the tools that are needed for each request**.
+Select relevant tools at runtime to improve performance and accuracy.
 
-Doing so provides several benefits:
-
-* **Shorter prompts** – reducing unnecessary complexity.
-* **Improved accuracy** – the model chooses from fewer options.
-* **Permission control** – can select tools based on user permissions.
-
-Use middleware to dynamically select which tools are available at runtime based on context.
-
-```python
-from langchain.agents import create_agent
-from langchain.agents.middleware import AgentState, ModelRequest, modify_model_request
-
-@modify_model_request
-def tool_selector(state: AgentState, request: ModelRequest) -> ModelRequest:
-    """Middleware to select relevant tools based on state/context."""
-    # Select a small, relevant subset of tools based on state/context
-    request.tools = ["relevant_tool_1", "relevant_tool_2"] # [!code highlight]
-    return request
-
-agent = create_agent(
-    ...,
-    tools=all_tools,  # All available tools need to be registered upfront
-    # Middleware can be used to select a smaller subset that's relevant for the given
-    # run.
-    middleware=[tool_selector], # [!code highlight]
-)
-```
-
-
-<Expandable title="Extended example: Select tools based on runtime context">
-
-This example shows how to select between GitHub and GitLab tools based on the user's provider.
+<Tip>
+**Benefits:**
+- **Shorter prompts** - Reduce complexity by exposing only relevant tools
+- **Better accuracy** - Models choose correctly from fewer options
+- **Permission control** - Dynamically filter tools based on user access
+</Tip>
 
 :::python
-```python Expandable
+```python
+from langchain.agents import create_agent
+from langchain.agents.middleware import AgentMiddleware, ModelRequest
+from typing import Callable
+
+class ToolSelectorMiddleware(AgentMiddleware):
+    def wrap_model_call(
+        self,
+        request: ModelRequest,
+        handler: Callable[[ModelRequest], ModelResponse],
+    ) -> ModelResponse:
+        """Middleware to select relevant tools based on state/context."""
+        # Select a small, relevant subset of tools based on state/context
+        relevant_tools = select_relevant_tools(request.state, request.runtime)
+        request.tools = relevant_tools
+        return handler(request)
+
+agent = create_agent(
+    model="openai:gpt-4o",
+    tools=all_tools,  # All available tools need to be registered upfront
+    # Middleware can be used to select a smaller subset that's relevant for the given run.
+    middleware=[ToolSelectorMiddleware()],
+)
+```
+:::
+
+:::js
+```typescript
+import { createAgent, createMiddleware } from "langchain";
+
+const toolSelectorMiddleware = createMiddleware({
+  name: "ToolSelector",
+  wrapModelCall: (request, handler) => {
+    // Select a small, relevant subset of tools based on state/context
+    const relevantTools = selectRelevantTools(request.state, request.runtime);
+    const modifiedRequest = { ...request, tools: relevantTools };
+    return handler(modifiedRequest);
+  },
+});
+
+const agent = createAgent({
+  model: "openai:gpt-4o",
+  tools: allTools, // All available tools need to be registered upfront
+  // Middleware can be used to select a smaller subset that's relevant for the given run.
+  middleware: [toolSelectorMiddleware],
+});
+```
+:::
+
+<Expandable title="Extended example: GitHub vs GitLab tool selection">
+
+:::python
+```python
 from dataclasses import dataclass
-from typing import Literal
+from typing import Literal, Callable
 
 from langchain.agents import create_agent
-from langchain.agents.middleware import AgentState, ModelRequest, modify_model_request
-from langchain.tools import tool
-from langgraph.runtime import get_runtime
+from langchain.agents.middleware import AgentMiddleware, ModelRequest, ModelResponse
+from langchain_core.tools import tool
 
 @tool
 def github_create_issue(repo: str, title: str) -> dict:
@@ -1026,29 +1571,34 @@ all_tools = [github_create_issue, gitlab_create_issue]
 class Context:
     provider: Literal["github", "gitlab"]
 
-@modify_model_request
-def select_tools(request: ModelRequest, state: AgentState) -> ModelRequest:
-    """Select tools based on the VCS provider."""
-    runtime = get_runtime(Context)
-    provider = runtime.context.provider
-    selected_tools = ["gitlab_create_issue"] if provider == "gitlab" else ["github_create_issue"]
-    request.tools = selected_tools
-    return request
+class ToolSelectorMiddleware(AgentMiddleware):
+    def wrap_model_call(
+        self,
+        request: ModelRequest,
+        handler: Callable[[ModelRequest], ModelResponse],
+    ) -> ModelResponse:
+        """Select tools based on the VCS provider."""
+        provider = request.runtime.context.provider
+
+        if provider == "gitlab":
+            selected_tools = [t for t in request.tools if t.name == "gitlab_create_issue"]
+        else:
+            selected_tools = [t for t in request.tools if t.name == "github_create_issue"]
+
+        request.tools = selected_tools
+        return handler(request)
 
 agent = create_agent(
     model="openai:gpt-4o",
     tools=all_tools,
-    middleware=[select_tools],
+    middleware=[ToolSelectorMiddleware()],
     context_schema=Context,
 )
 
 # Invoke with GitHub context
 agent.invoke(
     {
-        "messages": [{
-            "role": "user",
-            "content": "Open an issue titled 'Bug: where are the cats' in the repository `its-a-cats-game`"
-        }]
+        "messages": [{"role": "user", "content": "Open an issue titled 'Bug: where are the cats' in the repository `its-a-cats-game`"}]
     },
     context=Context(provider="github"),
 )
@@ -1056,7 +1606,7 @@ agent.invoke(
 :::
 
 :::js
-```typescript Expandable
+```typescript
 import { z } from "zod";
 import { createAgent, createMiddleware, tool, HumanMessage } from "langchain";
 
@@ -1089,10 +1639,12 @@ const allTools = [githubCreateIssue, gitlabCreateIssue];
 const toolSelector = createMiddleware({
   name: "toolSelector",
   contextSchema: z.object({ provider: z.enum(["github", "gitlab"]) }),
-  modifyModelRequest: (request, _state, runtime) => {
-    const provider = runtime.context.provider;
+  wrapModelCall: (request, handler) => {
+    const provider = request.runtime.context.provider;
     const toolName = provider === "gitlab" ? "gitlab_create_issue" : "github_create_issue";
-    return { ...request, tools: [toolName] };
+    const selectedTools = request.tools.filter((t) => t.name === toolName);
+    const modifiedRequest = { ...request, tools: selectedTools };
+    return handler(modifiedRequest);
   },
 });
 
@@ -1116,12 +1668,18 @@ await agent.invoke(
 ```
 :::
 
+:::python
 **Key points:**
+- Register all tools upfront
+- Middleware selects the relevant subset per request
+- Use `context_schema` for configuration requirements
+:::
 
-- Register all tools with the agent upfront
-- Use middleware to select the relevant subset per request
-- Define required context properties using `contextSchema`
-- Use context for configuration that doesn't change during execution
-- Use state for values that change during the agent run
+:::js
+**Key points:**
+- Register all tools upfront
+- Middleware selects the relevant subset per request
+- Use `contextSchema` for configuration requirements
+:::
 
 </Expandable>

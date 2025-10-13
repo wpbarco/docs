@@ -1,7 +1,7 @@
 ---
-title: Anthropic - LangChain Integrations
+title: Anthropic - LangChain Integration Reference
 ---
 
-# :simple-anthropic:{ .lg .middle } `langchain-anthropic`
+# :simple-claude:{ .lg .middle } `langchain-anthropic`
 
 ::: langchain_anthropic

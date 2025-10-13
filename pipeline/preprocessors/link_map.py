@@ -92,7 +92,6 @@ LINK_MAPS: list[LinkMap] = [
             "add_node": "reference/classes/langgraph.StateGraph.html#addNode",
             "add_messages": "reference/modules/langgraph.html#addMessages",
             "astream_events": "https://v03.api.js.langchain.com/types/_langchain_core.tracers_log_stream.StreamEvent.html",
-            "ToolNode": "reference/classes/langgraph_prebuilt.ToolNode.html",
             "BaseCheckpointSaver": "reference/classes/checkpoint.BaseCheckpointSaver.html",
             "BaseLoader": "https://v03.api.js.langchain.com/classes/_langchain_core.document_loaders_base.BaseDocumentLoader.html",
             "BaseStore": "reference/classes/checkpoint.BaseStore.html",
@@ -147,7 +146,7 @@ LINK_MAPS: list[LinkMap] = [
             "Document": "core/documents/langchain_core.documents.base.Document.html",
             "init_chat_model": "langchain/chat_models/langchain.chat_models.base.init_chat_model.html",
             "RunnableConfig": "core/runnables/langchain_core.runnables.config.RunnableConfig.html",
-            "@tool": "core/tools/langchain_core.tools.base.tool.html#langchain_core.tools.convert.tool.html",
+            "@tool": "core/tools/langchain_core.tools.convert.tool.html",
             "Embeddings": "core/embeddings/langchain_core.embeddings.embeddings.Embeddings.html",
         },
     },
@@ -170,10 +169,22 @@ LINK_MAPS: list[LinkMap] = [
         },
     },
     {
+        "host": "https://reference.langchain.com/python/",
+        "scope": "python",
+        "links": {
+            "langchain-openai": "integrations/langchain_openai",
+            "ChatOpenAI": "integrations/langchain_openai/#langchain_openai.ChatOpenAI",
+            "AzureChatOpenAI": "integrations/langchain_openai/#langchain_openai.AzureChatOpenAI",
+        },
+    },
+    {
         "host": "https://reference.langchain.com/javascript/",
         "scope": "js",
         "links": {
             "Runtime": "interfaces/_langchain_langgraph.index.Runtime.html",
+            "tool": "functions/_langchain_core.tools.tool.html",
+            "ToolNode": "classes/langchain.index.ToolNode.html",
+            "UsageMetadata": "types/_langchain_core.messages.UsageMetadata.html",
         },
     },
 ]

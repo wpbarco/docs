@@ -1,18 +1,19 @@
 ---
 title: LangGraph Overview
+sidebarTitle: Overview
 ---
 
 import AlphaCallout from '/snippets/alpha-lg-callout.mdx';
 
 <AlphaCallout />
 
-Trusted by companies shaping the future of agents - including Klarna, Replit, Elastic, and more - LangGraph is a low-level orchestration framework for building, managing, and deploying long-running, stateful agents.
+Trusted by companies shaping the future of agents-- including Klarna, Replit, Elastic, and more-- LangGraph is a low-level orchestration framework and runtime for building, managing, and deploying long-running, stateful agents.
 
-LangGraph is very low-level, and focused entirely on agent **orchestration**. Before using LangGraph, it is recommended you familiarize yourself with some of the components used to build agents, starting with [models](/oss/langchain/models) and [tools](/oss/langchain/tools). We will commonly use [LangChain](/oss/langchain/overview) components throughout the documentation, but you don't need to use LangChain to use LangGraph.
+LangGraph is very low-level, and focused entirely on agent **orchestration**. Before using LangGraph, we recommend you familiarize yourself with some of the components used to build agents, starting with [models](/oss/langchain/models) and [tools](/oss/langchain/tools).
 
-If you are just getting started with agents, or want a higher level abstraction, it is recommended that you use LangChain's [agents](/oss/langchain/agents).
+We will commonly use [LangChain](/oss/langchain/overview) components throughout the documentation to integrate models and tools, but you don't need to use LangChain to use LangGraph. If you are just getting start with agents or want a higher level abstraction, we recommend you use LangChain's [agents](/oss/langchain/agents) that provide pre-built architectures for common LLM and tool calling loops.
 
-LangGraph is focused on the underlying capabilties important for agent orchestration: durable execution, streaming, human-in-the-loop, etc. We expose two different APIs for consuming these capabilities: a Graph API and a functional API. We largely use the Graph API throughout the documentation, but feel free to use the functional API if you'd prefer.
+LangGraph is focused on the underlying capabilities important for agent orchestration: durable execution, streaming, human-in-the-loop, and more.
 
 ## <Icon icon="download" size={20} /> Install
 
@@ -90,7 +91,7 @@ await graph.invoke({ messages: [{ role: "user", content: "hi!" }] });
 LangGraph provides low-level supporting infrastructure for *any* long-running, stateful workflow or agent. LangGraph does not abstract prompts or architecture, and provides the following central benefits:
 
 * [Durable execution](/oss/langgraph/durable-execution): Build agents that persist through failures and can run for extended periods, resuming from where they left off.
-* [Human-in-the-loop](/oss/langgraph/add-human-in-the-loop): Incorporate human oversight by inspecting and modifying agent state at any point.
+* [Human-in-the-loop](/oss/langgraph/interrupts): Incorporate human oversight by inspecting and modifying agent state at any point.
 * [Comprehensive memory](/oss/concepts/memory): Create stateful agents with both short-term working memory for ongoing reasoning and long-term memory across sessions.
 * [Debugging with LangSmith](/langsmith/home): Gain deep visibility into complex agent behavior with visualization tools that trace execution paths, capture state transitions, and provide detailed runtime metrics.
 * [Production-ready deployment](/langgraph-platform/deployment-options): Deploy sophisticated agent systems confidently with scalable infrastructure designed to handle the unique challenges of stateful, long-running workflows.
