@@ -124,13 +124,43 @@ RAG can be implemented in multiple ways, depending on your system's needs. We ou
 
 | Architecture            | Description                                                                | Control   | Flexibility | Latency        | Example Use Case                                   |
 |-------------------------|----------------------------------------------------------------------------|-----------|-------------|----------------|----------------------------------------------------|
-| **Agentic RAG**         | An LLM-powered agent decides *when* and *how* to retrieve during reasoning | ❌ Low     | ✅ High      | ⏳ Variable     | Research assistants with access to multiple tools  |
 | **2-Step RAG**          | Retrieval always happens before generation. Simple and predictable         | ✅ High    | ❌ Low       | ⚡ Fast         | FAQs, documentation bots                           |
+| **Agentic RAG**         | An LLM-powered agent decides *when* and *how* to retrieve during reasoning | ❌ Low     | ✅ High      | ⏳ Variable     | Research assistants with access to multiple tools  |
 | **Hybrid**              | Combines characteristics of both approaches with validation steps          | ⚖️ Medium | ⚖️ Medium   | ⏳ Variable     | Domain-specific Q&A with quality validation        |
 
 <Info>
 **Latency**: Latency is generally more **predictable** in **2-Step RAG**, as the maximum number of LLM calls is known and capped. This predictability assumes that LLM inference time is the dominant factor. However, real-world latency may also be affected by the performance of retrieval steps—such as API response times, network delays, or database queries—which can vary based on the tools and infrastructure in use.
 </Info>
+
+### 2-step RAG
+
+In **2-Step RAG**, the retrieval step is always executed before the generation step. This architecture is straightforward and predictable, making it suitable for many applications where the retrieval of relevant documents is a clear prerequisite for generating an answer.
+
+```mermaid
+graph LR
+    A[User Question] --> B["Retrieve Relevant Documents"]
+    B --> C["Generate Answer"]
+    C --> D[Return Answer to User]
+
+    %% Styling
+    classDef startend fill:#2e7d32,stroke:#1b5e20,stroke-width:2px,color:#fff
+    classDef process fill:#1976d2,stroke:#0d47a1,stroke-width:1.5px,color:#fff
+
+    class A,D startend
+    class B,C process
+```
+
+<Card
+    title="Tutorial: Retrieval-Augmented Generation (RAG)"
+    icon="robot"
+    href="/oss/langchain/rag#rag-chains"
+    arrow cta="Learn more"
+>
+    See how to build a Q&A chatbot that can answer questions grounded in your data using Retrieval-Augmented Generation.
+    This tutorial walks through two approaches:
+    * A **RAG agent** that runs searches with a flexible tool—great for general-purpose use.
+    * A **2-step RAG** chain that requires just one LLM call per query—fast and efficient for simpler tasks.
+</Card>
 
 ### Agentic RAG
 
@@ -164,7 +194,7 @@ graph LR
 :::python
 ```python
 import requests
-from langchain_core.tools import tool
+from langchain.tools import tool
 from langchain.chat_models import init_chat_model
 from langchain.agents import create_agent
 
@@ -182,7 +212,7 @@ Use fetch_url when you need to fetch information from a web-page; quote relevant
 agent = create_agent(
     model="claude-sonnet-4-0",
     tools=[fetch_url], # A tool for retrieval [!code highlight]
-    prompt=system_prompt,
+    system_prompt=system_prompt,
 )
 ```
 :::
@@ -201,7 +231,7 @@ const fetchUrl = tool(
 const agent = createAgent({
     model: "claude-sonnet-4-0",
     tools: [fetchUrl],
-    prompt: systemPrompt,
+    systemPrompt,
 });
 ```
 :::
@@ -214,8 +244,8 @@ This example implements an **Agentic RAG system** to assist users in querying La
 ```python
 import requests
 from langchain.agents import create_agent
-from langchain_core.messages import HumanMessage
-from langchain_core.tools import tool
+from langchain.messages import HumanMessage
+from langchain.tools import tool
 from markdownify import markdownify
 
 ALLOWED_DOMAINS = ["https://langchain-ai.github.io/"]
@@ -269,7 +299,7 @@ model = init_chat_model("claude-sonnet-4-0", max_tokens=32_000)
 agent = create_agent(
     model=model,
     tools=tools,  # [!code highlight]
-    prompt=system_prompt,  # [!code highlight]
+    system_prompt=system_prompt,  # [!code highlight]
     name="Agentic RAG",
 )
 
@@ -344,7 +374,7 @@ const tools = [fetchDocumentation];
 const agent = createAgent({
   model: "claude-sonnet-4-0"
   tools,  // [!code highlight]
-  messageModifier: systemPrompt,  // [!code highlight]
+  systemPrompt,  // [!code highlight]
   name: "Agentic RAG",
 });
 
@@ -367,36 +397,6 @@ console.log(response.messages.at(-1)?.content);
     title="Tutorial: Retrieval-Augmented Generation (RAG)"
     icon="robot"
     href="/oss/langchain/rag"
-    arrow cta="Learn more"
->
-    See how to build a Q&A chatbot that can answer questions grounded in your data using Retrieval-Augmented Generation.
-    This tutorial walks through two approaches:
-    * A **RAG agent** that runs searches with a flexible tool—great for general-purpose use.
-    * A **2-step RAG** chain that requires just one LLM call per query—fast and efficient for simpler tasks.
-</Card>
-
-### 2-step RAG
-
-In **2-Step RAG**, the retrieval step is always executed before the generation step. This architecture is straightforward and predictable, making it suitable for many applications where the retrieval of relevant documents is a clear prerequisite for generating an answer.
-
-```mermaid
-graph LR
-    A[User Question] --> B["Retrieve Relevant Documents"]
-    B --> C["Generate Answer"]
-    C --> D[Return Answer to User]
-
-    %% Styling
-    classDef startend fill:#2e7d32,stroke:#1b5e20,stroke-width:2px,color:#fff
-    classDef process fill:#1976d2,stroke:#0d47a1,stroke-width:1.5px,color:#fff
-
-    class A,D startend
-    class B,C process
-```
-
-<Card
-    title="Tutorial: Retrieval-Augmented Generation (RAG)"
-    icon="robot"
-    href="/oss/langchain/rag#rag-chains"
     arrow cta="Learn more"
 >
     See how to build a Q&A chatbot that can answer questions grounded in your data using Retrieval-Augmented Generation.
