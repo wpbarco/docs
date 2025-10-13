@@ -70,8 +70,7 @@ asyncio_default_fixture_loop_scope = "function"
 line-length = 88
 extend-exclude = [
     "scripts/update_mdx.py",
-    "pipeline/tools/notebook/convert.py",
-    "src/plugins/middleware_visualization/generate_middleware_diagrams.py"
+    "pipeline/tools/notebook/convert.py"
 ]
 
 
@@ -134,9 +133,3 @@ ignore = [
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
-
-
-[tool.mypy]
-exclude = [
-    "src/plugins/middleware_visualization/generate_middleware_diagrams.py",
-]

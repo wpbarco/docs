@@ -51,7 +51,6 @@ class DocumentationBuilder:
             ".yaml",
             ".css",
             ".js",
-            ".html",
         }
 
         # Mapping of language codes to full names for URLs
@@ -157,8 +156,8 @@ class DocumentationBuilder:
             url = match.group(2)  # The URL
             post = match.group(3)  # Everything after the URL
 
-            # Only rewrite absolute /oss/ paths that don't contain 'images' or 'plugins'
-            if url.startswith("/oss/") and "images" not in url and "plugins" not in url:
+            # Only rewrite absolute /oss/ paths that don't contain 'images'
+            if url.startswith("/oss/") and "images" not in url:
                 parts = url.split("/")
                 # Insert full language name after "oss"
                 parts.insert(2, self.language_url_names[target_language])
@@ -744,11 +743,8 @@ class DocumentationBuilder:
         if "snippets" in relative_path.parts:
             return True
 
-        if "plugins" in relative_path.parts:
-            return True
-
         # JavaScript and CSS files should be shared (used for custom scripts/styles)
-        return file_path.suffix.lower() in {".js", ".css", ".html", ".json"}
+        return file_path.suffix.lower() in {".js", ".css"}
 
     def _copy_shared_files(self) -> None:
         """Copy files that should be shared between versions."""
