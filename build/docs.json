@@ -108,7 +108,7 @@
     "/hide-version-picker.css"
   ],
   "banner": {
-    "content": "LangGraph Platform is now part of LangSmith. Check out the [LangSmith docs](/langsmith/home) for more information.",
+    "content": "LangGraph Platform is now part of [LangSmith](/langsmith/home). Check out the [Changelog](https://changelog.langchain.com/announcements/product-naming-changes-langsmith-deployment-and-langsmith-studio) for more information.",
     "dismissible": true
   },
   "navbar": {
