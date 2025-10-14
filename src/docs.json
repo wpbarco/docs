@@ -209,6 +209,7 @@
                       "oss/python/langgraph/install",
                       "oss/python/langgraph/quickstart",
                       "oss/python/langgraph/local-server",
+                      "oss/python/langgraph/thinking-in-langgraph",
                       "oss/python/langgraph/workflows-agents"
                     ]
                   },
@@ -1093,6 +1094,7 @@
                       "oss/javascript/langgraph/install",
                       "oss/javascript/langgraph/quickstart",
                       "oss/javascript/langgraph/local-server",
+                      "oss/javascript/langgraph/thinking-in-langgraph",
                       "oss/javascript/langgraph/workflows-agents"
                     ]
                   },
