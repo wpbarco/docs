@@ -536,7 +536,11 @@ it as output. Below we show short examples of input messages featuring multimoda
     const message = new HumanMessage({
       content: [
         { type: "text", text: "Describe the content of this image." },
-        { type: "image", url: "https://example.com/path/to/image.jpg" },
+        {
+          type: "image",
+          source_type: "url",
+          url: "https://example.com/path/to/image.jpg"
+        },
       ],
     });
 
@@ -546,8 +550,8 @@ it as output. Below we show short examples of input messages featuring multimoda
         { type: "text", text: "Describe the content of this image." },
         {
           type: "image",
+          source_type: "base64",
           data: "AAAAIGZ0eXBtcDQyAAAAAGlzb21tcDQyAAACAGlzb2...",
-          mimeType: "image/jpeg",
         },
       ],
     });
@@ -556,7 +560,7 @@ it as output. Below we show short examples of input messages featuring multimoda
     const message = new HumanMessage({
       content: [
         { type: "text", text: "Describe the content of this image." },
-        { type: "image", fileId: "file-abc123" },
+        { type: "image", source_type: "id", id: "file-abc123" },
       ],
     });
     ```
@@ -566,7 +570,7 @@ it as output. Below we show short examples of input messages featuring multimoda
     const message = new HumanMessage({
       content: [
         { type: "text", text: "Describe the content of this document." },
-        { type: "file", url: "https://example.com/path/to/document.pdf" },
+        { type: "file", source_type: "url", url: "https://example.com/path/to/document.pdf" },
       ],
     });
 
@@ -576,8 +580,8 @@ it as output. Below we show short examples of input messages featuring multimoda
         { type: "text", text: "Describe the content of this document." },
         {
           type: "file",
+          source_type: "base64",
           data: "AAAAIGZ0eXBtcDQyAAAAAGlzb21tcDQyAAACAGlzb2...",
-          mimeType: "application/pdf",
         },
       ],
     });
@@ -586,7 +590,7 @@ it as output. Below we show short examples of input messages featuring multimoda
     const message = new HumanMessage({
       content: [
         { type: "text", text: "Describe the content of this document." },
-        { type: "file", fileId: "file-abc123" },
+        { type: "file", source_type: "id", id: "file-abc123" },
       ],
     });
     ```
@@ -598,8 +602,8 @@ it as output. Below we show short examples of input messages featuring multimoda
         { type: "text", text: "Describe the content of this audio." },
         {
           type: "audio",
+          source_type: "base64",
           data: "AAAAIGZ0eXBtcDQyAAAAAGlzb21tcDQyAAACAGlzb2...",
-          mimeType: "audio/wav",
         },
       ],
     });
@@ -608,7 +612,7 @@ it as output. Below we show short examples of input messages featuring multimoda
     const message = new HumanMessage({
       content: [
         { type: "text", text: "Describe the content of this audio." },
-        { type: "audio", fileId: "file-abc123" },
+        { type: "audio", source_type: "id", id: "file-abc123" },
       ],
     });
     ```
@@ -620,8 +624,8 @@ it as output. Below we show short examples of input messages featuring multimoda
         { type: "text", text: "Describe the content of this video." },
         {
           type: "video",
+          source_type: "base64",
           data: "AAAAIGZ0eXBtcDQyAAAAAGlzb21tcDQyAAACAGlzb2...",
-          mimeType: "video/mp4",
         },
       ],
     });
@@ -630,7 +634,7 @@ it as output. Below we show short examples of input messages featuring multimoda
     const message = new HumanMessage({
       content: [
         { type: "text", text: "Describe the content of this video." },
-        { type: "video", fileId: "file-abc123" },
+        { type: "video", source_type: "id", id: "file-abc123" },
       ],
     });
     ```
