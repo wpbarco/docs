@@ -5,51 +5,6 @@ sidebarTitle: Migrate to v1
 
 This guide outlines the major changes between LangChain v1 and previous versions.
 
-## Simplified package
-
-The `langchain` package namespace has been significantly reduced in v1 to focus on essential building blocks for agents. The streamlined package makes it easier to discover and use the core functionality.
-
-### Namespace
-
-| Module | What's available | Notes |
-|--------|------------------|-------|
-| `langchain.agents` | `create_agent`, `AgentState` | Core agent creation functionality |
-| `langchain.messages` | Message types, content blocks, `trim_messages` | Re-exported from `langchain-core` |
-| `langchain.tools` | `tool`, `BaseTool`, injection helpers | Re-exported from `langchain-core` |
-| `langchain.chat_models` | `init_chat_model`, `BaseChatModel` | Unified model initialization |
-| `langchain.embeddings` | `Embeddings`, `init_embeddings`, | Embedding models |
-
-### `langchain-classic`
-
-If you were using any of the following from the `langchain` package, you'll need to install `langchain-classic` and update your imports:
-
-- Legacy chains (`LLMChain`, `ConversationChain`, etc.)
-- The indexing API
-- `langchain-community` re-exports
-- Other deprecated functionality
-
-<CodeGroup>
-```python v1 (new)
-# For legacy chains
-from langchain_classic.chains import LLMChain
-
-# For indexing
-from langchain_classic.indexes import ...
-```
-
-```python v0 (old)
-from langchain.chains import LLMChain
-from langchain.indexes import ...
-```
-</CodeGroup>
-
-**Installation**:
-```bash
-uv pip install langchain-classic
-```
-
----
-
 ## Migrate to `create_agent`
 
 Pre v1, we recommended you use `langgraph.prebuilt.create_react_agent` to build agents.
@@ -69,7 +24,7 @@ The table below outlines what functionality has changed from `create_react_agent
 | [Structured output](#structured-output) | prompted output removed, use `ToolStrategy`/`ProviderStrategy` |
 | [Streaming node name](#streaming-node-name-rename) | Node name changed from `"agent"` to `"model"` |
 | [Runtime context](#runtime-context) | Dependency injection via `context` argument instead of `config["configurable"]` |
-| [Namespace](#simplified-namespace) | Streamlined to focus on agent building blocks, legacy code moved to `langchain-classic` |
+| [Namespace](#simplified-package) | Streamlined to focus on agent building blocks, legacy code moved to `langchain-classic` |
 
 ### Import path
 
@@ -665,6 +620,51 @@ result = agent.invoke(
 
 ---
 
+## Simplified package
+
+The `langchain` package namespace has been significantly reduced in v1 to focus on essential building blocks for agents. The streamlined package makes it easier to discover and use the core functionality.
+
+### Namespace
+
+| Module | What's available | Notes |
+|--------|------------------|-------|
+| `langchain.agents` | `create_agent`, `AgentState` | Core agent creation functionality |
+| `langchain.messages` | Message types, content blocks, `trim_messages` | Re-exported from `langchain-core` |
+| `langchain.tools` | `tool`, `BaseTool`, injection helpers | Re-exported from `langchain-core` |
+| `langchain.chat_models` | `init_chat_model`, `BaseChatModel` | Unified model initialization |
+| `langchain.embeddings` | `Embeddings`, `init_embeddings`, | Embedding models |
+
+### `langchain-classic`
+
+If you were using any of the following from the `langchain` package, you'll need to install `langchain-classic` and update your imports:
+
+- Legacy chains (`LLMChain`, `ConversationChain`, etc.)
+- The indexing API
+- `langchain-community` re-exports
+- Other deprecated functionality
+
+<CodeGroup>
+```python v1 (new)
+# For legacy chains
+from langchain_classic.chains import LLMChain
+
+# For indexing
+from langchain_classic.indexes import ...
+```
+
+```python v0 (old)
+from langchain.chains import LLMChain
+from langchain.indexes import ...
+```
+</CodeGroup>
+
+**Installation**:
+```bash
+uv pip install langchain-classic
+```
+
+---
+
 ## Breaking changes
 
 ### Dropped Python 3.9 support
@@ -699,7 +699,7 @@ The `max_tokens` parameter now defaults to higher values based on the model chos
 
 ### Legacy code moved to `langchain-classic`
 
-Existing functionality outside the focus of standard interfaces and agents has been moved to the [`langchain-classic`](https://pypi.org/project/langchain-classic) package. See the [Simplified namespace](#simplified-namespace) section for details on what's available in the core `langchain` package and what moved to `langchain-classic`.
+Existing functionality outside the focus of standard interfaces and agents has been moved to the [`langchain-classic`](https://pypi.org/project/langchain-classic) package. See the [Simplified package](#simplified-package) section for details on what's available in the core `langchain` package and what moved to `langchain-classic`.
 
 ### Removal of deprecated APIs
 
