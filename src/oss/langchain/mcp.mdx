@@ -123,7 +123,7 @@ const client = new MultiServerMCPClient({  // [!code highlight]
 
 const tools = await client.getTools();  // [!code highlight]
 const agent = createAgent({
-    llm: new ChatAnthropic({ model: "claude-3-7-sonnet-latest" }),
+    model: "anthropic:claude-sonnet-4-5-20250929",
     tools,  // [!code highlight]
 });
 

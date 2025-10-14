@@ -747,7 +747,7 @@ const greet = tool(
 );
 
 const agent = createAgent({
-    llm: model,
+    model,
     tools: [updateUserInfo, greet],
     stateSchema: CustomState,
 });
