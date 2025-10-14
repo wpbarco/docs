@@ -1432,6 +1432,22 @@
     "destination": "/langsmith/studio"
   },
   {
+    "source": "/langgraph-platform/langgraph-cli",
+    "destination": "/langsmith/cli"
+  },
+  {
+    "source": "/langsmith/api-ref",
+    "destination": "/langsmith/smith-api-ref"
+  },
+  {
+    "source": "/langsmith/js-ts-sdk",
+    "destination": "/langsmith/smith-js-ts-sdk"
+  },
+  {
+    "source": "/langsmith/python-sdk",
+    "destination": "/langsmith/smith-python-sdk"
+  },
+  {
     "source": "/langgraph-platform/:path*",
     "destination": "/langsmith/:path*"
   }
