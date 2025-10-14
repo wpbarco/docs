@@ -2007,6 +2007,22 @@
     "destination": "/oss/javascript/langgraph/interrupts"
   },
   {
+    "source": "/langgraph-platform/index",
+    "destination": "/langsmith/home"
+  },
+  {
+    "source": "/langsmith/langgraph-platform-logs",
+    "destination": "/langsmith/platform-logs"
+  },
+  {
+    "source": "/langgraph-platform/deployment-options",
+    "destination": "/langsmith/hosting"
+  },
+  {
+    "source": "/langgraph-platform/langgraph-studio",
+    "destination": "/langsmith/studio"
+  },
+  {
     "source": "/langgraph-platform/:path*",
     "destination": "/langsmith/:path*"
   }
