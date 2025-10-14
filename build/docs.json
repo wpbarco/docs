@@ -133,9 +133,9 @@
           {
             "dropdown": "Home",
             "icon": "house",
-            "description": "LangChain docs home",
             "pages": [
-              "index"
+              "index",
+              "/oss/python/langchain/academy2"
             ]
           },
           {
@@ -333,7 +333,7 @@
                     "group": "Additional resources",
                     "icon": "list",
                     "pages": [
-                      "langchain-academy",
+                      "oss/python/langchain/academy",
                       "oss/python/langgraph/case-studies"
                     ]
                   }
@@ -1154,9 +1154,9 @@
           {
             "dropdown": "Home",
             "icon": "house",
-            "description": "LangChain docs home",
             "pages": [
-              "index"
+              "index",
+              "oss/javascript/langchain/academy3"
             ]
           },
           {
@@ -1383,7 +1383,7 @@
                     "group": "LangChain Academy",
                     "icon": "graduation-cap",
                     "pages": [
-                      "langchain-academy"
+                      "oss/javascript/langchain/academy"
                     ]
                   },
                   {
