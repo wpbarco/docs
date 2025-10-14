@@ -427,3 +427,7 @@ h6 span img {
   display: inline-block !important; /* Ensure images behave as inline-block */
 }
 
+/* Hide pagination */
+#pagination {
+    display: none;
+  }
