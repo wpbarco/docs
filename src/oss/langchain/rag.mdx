@@ -892,6 +892,8 @@ class State(AgentState):
 
 
 class RetrieveDocumentsMiddleware(AgentMiddleware[State]):
+    state_schema = State
+
     def before_model(self, state: AgentState) -> dict[str, Any] | None:
         last_message = state["messages"][-1]
         retrieved_docs = vector_store.similarity_search(last_message.text)
@@ -913,7 +915,6 @@ agent = create_agent(
     llm,
     tools=[],
     middleware=[RetrieveDocumentsMiddleware()],
-    state_schema=State,
 )
 ```
 :::
