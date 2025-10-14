@@ -322,7 +322,7 @@ Models can request to call tools that perform tasks such as fetching data from a
 To make tools that you have defined available for use by a model, you must bind them using [`bindTools()`](https://v03.api.js.langchain.com/classes/langchain.chat_models_universal.ConfigurableModel.html#bindTools). In subsequent invocations, the model can choose to call any of the bound tools as needed.
 
 
-Some model providers offer built-in tools that can be enabled via model parameters. Check the respective [provider reference](/oss/javascript/integrations/providers) for details.
+Some model providers offer built-in tools that can be enabled via model or invocation parameters. Check the respective [provider reference](/oss/javascript/integrations/providers) for details.
 
 <Tip>
     See the [tools guide](/oss/javascript/langchain/tools) for details and other options for creating tools.
@@ -402,10 +402,10 @@ Below, we show some common ways you can use tool calling.
 
         <CodeGroup>
             ```typescript Force use of any tool
-                const modelWithTools = model.bindTools([tool_1], { toolChoice: "any" })
+            const modelWithTools = model.bindTools([tool_1], { toolChoice: "any" })
             ```
             ```typescript Force use of specific tools
-                const modelWithTools = model.bindTools([tool_1], { toolChoice: "tool_1" })
+            const modelWithTools = model.bindTools([tool_1], { toolChoice: "tool_1" })
             ```
         </CodeGroup>
 

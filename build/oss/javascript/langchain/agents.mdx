@@ -126,7 +126,7 @@ const agent = createAgent({
 
 
 <Tip>
-For model configuration details, see [Models](/oss/javascript/langchain/models).
+For model configuration details, see [Models](/oss/javascript/langchain/models). For dynamic model selection patterns, see [Dynamic model in middleware](/oss/javascript/langchain/middleware#dynamic-model).
 </Tip>
 
 ### Tools
@@ -331,7 +331,7 @@ const result = await agent.invoke(
 For more details on message types and formatting, see [Messages](/oss/javascript/langchain/messages). For comprehensive middleware documentation, see [Middleware](/oss/javascript/langchain/middleware).
 </Tip>
 
-## Advanced configuration
+## Advanced concepts
 
 ### Structured output
 
@@ -403,136 +403,6 @@ const CustomAgentState = createAgent({
 To learn more about memory, see [Memory](/oss/javascript/concepts/memory). For information on implementing long-term memory that persists across sessions, see [Long-term memory](/oss/javascript/langchain/long-term-memory).
 </Tip>
 
-### Before model hook
-
-Pre-model hook is middleware that processes state before the model is called. Use cases include message trimming, summarization, and context injection.
-
-```mermaid
-%%{
-    init: {
-        "fontFamily": "monospace",
-        "flowchart": {
-        "curve": "basis"
-        },
-        "themeVariables": {"edgeLabelBackground": "transparent"}
-    }
-}%%
-graph TD
-    S(["\_\_start\_\_"])
-    PRE(before_model)
-    MODEL(model)
-    TOOLS(tools)
-    END(["\_\_end\_\_"])
-
-    S --> PRE
-    PRE --> MODEL
-    MODEL -.-> TOOLS
-    MODEL -.-> END
-    TOOLS --> PRE
-
-    classDef blueHighlight fill:#0a1c25,stroke:#0a455f,color:#bae6fd;
-    class S blueHighlight;
-    class END blueHighlight;
-```
-
-
-```ts wrap
-import { createAgent, type AgentState } from "langchain";
-import { REMOVE_ALL_MESSAGES } from "@langchain/langgraph";
-import { RemoveMessage } from "@langchain/core/messages";
-
-const trimMessages = (state: AgentState) => {
-  const messages = state.messages;
-
-  if (messages.length <= 3) {
-    return { messages };
-  }
-
-  const firstMsg = messages[0];
-  const recentMessages = messages.length % 2 === 0
-    ? messages.slice(-3)
-    : messages.slice(-4);
-
-  const newMessages = [firstMsg, ...recentMessages];
-
-  return {
-    messages: [
-      new RemoveMessage({ id: REMOVE_ALL_MESSAGES }),
-      ...newMessages
-    ]
-  };
-};
-
-const agent = createAgent({
-  model: "openai:gpt-4o",
-  tools,
-  preModelHook: trimMessages,
-});
-```
-
-
-### After model hook
-
-After model hook is middleware that processes the model's response before tool execution. Use cases include validation, guardrails, or other post-processing.
-
-```mermaid
-%%{
-    init: {
-        "fontFamily": "monospace",
-        "flowchart": {
-        "curve": "basis"
-        },
-        "themeVariables": {"edgeLabelBackground": "transparent"}
-    }
-}%%
-graph TD
-    S(["\_\_start\_\_"])
-    MODEL(model)
-    POST(after_model)
-    TOOLS(tools)
-    END(["\_\_end\_\_"])
-
-    S --> MODEL
-    MODEL --> POST
-    POST -.-> END
-    POST -.-> TOOLS
-    TOOLS --> MODEL
-
-    classDef blueHighlight fill:#0a1c25,stroke:#0a455f,color:#bae6fd;
-    class S blueHighlight;
-    class END blueHighlight;
-    class POST greenHighlight;
-```
-
-
-```ts wrap
-import { createAgent, type AgentState, AIMessage, RemoveMessage } from "langchain";
-import { REMOVE_ALL_MESSAGES } from "@langchain/langgraph";
-
-const validateResponse = (state: AgentState) => {
-  const messages = state.messages;
-  const lastMessage = messages.at(-1)?.text;
-
-  if (lastMessage?.toLowerCase().includes("confidential")) {
-    return {
-      messages: [
-        new RemoveMessage({ id: REMOVE_ALL_MESSAGES }),
-        ...state.messages.slice(0, -1),
-        new AIMessage("I cannot share confidential information."),
-      ],
-    };
-  }
-  return {};
-};
-
-const agent = createAgent({
-  model: "openai:gpt-4o",
-  tools,
-  postModelHook: validateResponse,
-});
-```
-
-
 ### Streaming
 
 We've seen how the agent can be called with `.invoke` to get a final response. If the agent executes multiple steps, this may take a while. To show intermediate progress, we can stream back messages as they occur.
@@ -564,6 +434,24 @@ for await (const chunk of stream) {
 
 <Tip>
 For more details on streaming, see [Streaming](/oss/javascript/langchain/streaming).
+</Tip>
+
+### Middleware
+
+[Middleware](/oss/javascript/langchain/middleware) provides powerful extensibility for customizing agent behavior at different stages of execution. You can use middleware to:
+
+- Process state before the model is called (e.g., message trimming, context injection)
+- Modify or validate the model's response (e.g., guardrails, content filtering)
+- Handle tool execution errors with custom logic
+- Implement dynamic model selection based on state or context
+- Add custom logging, monitoring, or analytics
+
+Middleware integrates seamlessly into the agent's execution graph, allowing you to intercept and modify data flow at key points without changing the core agent logic.
+
+
+
+<Tip>
+For comprehensive middleware documentation including hooks like `beforeModel`, `afterModel`, and `wrapToolCall`, see [Middleware](/oss/javascript/langchain/middleware).
 </Tip>
 
 ---

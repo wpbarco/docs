@@ -15,7 +15,7 @@ The core agent loop involves calling a model, letting it choose tools to execute
   <img
     src="/oss/images/core_agent_loop.png"
     alt="Core agent loop diagram"
-    height="300"
+    height="450"
     className="rounded-lg"
   />
 </div>
@@ -567,6 +567,10 @@ const agent = createAgent({
 
 Build custom middleware by implementing hooks that run at specific points in the agent execution flow.
 
+
+
+## Class-based middleware
+
 ### Two hook styles
 
 <CardGroup cols={2}>
@@ -818,9 +822,6 @@ await agent.invoke(
   }
 );
 ```
-
-
-
 
 
 ### Execution order

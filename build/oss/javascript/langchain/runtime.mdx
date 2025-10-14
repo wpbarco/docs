@@ -17,7 +17,7 @@ LangGraph exposes a [Runtime](https://reference.langchain.com/javascript/interfa
 2. **Store**: a [BaseStore](https://langchain-ai.github.io/langgraphjs/reference/classes/checkpoint.BaseStore.html) instance used for [long-term memory](/oss/javascript/langchain/long-term-memory)
 3. **Stream writer**: an object used for streaming information via the `"custom"` stream mode
 
-You can access the runtime information within [tools](#inside-tools), [prompt](#inside-prompt), and [pre and post model hooks](#inside-pre-and-post-model-hooks).
+You can access the runtime information within [tools](#inside-tools) and [middleware](#inside-middleware).
 
 ## Access
 
@@ -96,39 +96,57 @@ const fetchUserEmailPreferences = tool(
 ```
 
 
-### Inside prompt
+### Inside middleware
+
+You can access runtime information in middleware to create dynamic prompts, modify messages, or control agent behavior based on user context.
 
 
-Use the `runtime` parameter to access the [Runtime](https://reference.langchain.com/javascript/interfaces/_langchain_langgraph.index.Runtime.html) object inside a prompt function.
+Use the `runtime` parameter to access the [Runtime](https://reference.langchain.com/javascript/interfaces/_langchain_langgraph.index.Runtime.html) object inside middleware.
 
 ```ts
 import { z } from "zod";
-import { createAgent, type AgentState, SystemMessage } from "langchain";
+import { createAgent, createMiddleware, type AgentState, SystemMessage } from "langchain";
 import { type Runtime } from "@langchain/langgraph"; // [!code highlight]
 
 const contextSchema = z.object({
   userName: z.string(),
 });
 
-const prompt = (
-  state: AgentState,
-  runtime: Runtime<z.infer<typeof contextSchema>> // [!code highlight]
-) => {
-  const userName = runtime.context?.userName; // [!code highlight]
-  if (!userName) {
-    throw new Error("userName is required");
-  }
+// Dynamic prompt middleware
+const dynamicPromptMiddleware = createMiddleware({
+  name: "DynamicPrompt",
+  beforeModel: (state: AgentState, runtime: Runtime<z.infer<typeof contextSchema>>) => {  // [!code highlight]
+    const userName = runtime.context?.userName;  // [!code highlight]
+    if (!userName) {
+      throw new Error("userName is required");
+    }
 
-  const systemMsg = `You are a helpful assistant. Address the user as ${userName}.`; // [!code highlight]
-  return [new SystemMessage(systemMsg), ...state.messages];
-};
+    const systemMsg = `You are a helpful assistant. Address the user as ${userName}.`;
+    return {
+      messages: [new SystemMessage(systemMsg), ...state.messages]
+    };
+  }
+});
+
+// Logging middleware
+const loggingMiddleware = createMiddleware({
+  name: "Logging",
+  beforeModel: (state: AgentState, runtime: Runtime<z.infer<typeof contextSchema>>) => {  // [!code highlight]
+    console.log(`Processing request for user: ${runtime.context?.userName}`);  // [!code highlight]
+    return;
+  },
+  afterModel: (state: AgentState, runtime: Runtime<z.infer<typeof contextSchema>>) => {  // [!code highlight]
+    console.log(`Completed request for user: ${runtime.context?.userName}`);  // [!code highlight]
+    return;
+  }
+});
 
 const agent = createAgent({
   model: "openai:gpt-4o",
   tools: [
     /* ... */
   ],
-  prompt,
+  middleware: [dynamicPromptMiddleware, loggingMiddleware],  // [!code highlight]
   contextSchema,
 });
 
@@ -136,61 +154,6 @@ const result = await agent.invoke(
   { messages: [{ role: "user", content: "What's my name?" }] },
   { context: { userName: "John Smith" } }
 );
-```
-
-
-### Inside pre and post model hooks
-
-
-
-Use the `runtime` parameter to access the [Runtime](https://reference.langchain.com/javascript/interfaces/_langchain_langgraph.index.Runtime.html) object inside a pre or post model hook.
-
-```ts
-import { z } from "zod";
-import { type Runtime } from "@langchain/langgraph"; // [!code highlight]
-import { createAgent, type AgentState } from "langchain";
-
-const contextSchema = z.object({
-  userName: z.string(),
-});
-
-const preModelHook = (
-  state: AgentState,
-  runtime: Runtime<z.infer<typeof contextSchema>> // [!code highlight]
-) => {
-  const userName = runtime.context?.userName; // [!code highlight]
-  if (!userName) {
-    throw new Error("userName is required");
-  }
-
-  return {
-    // ...
-  };
-};
-
-const postModelHook = (
-  state: AgentState,
-  runtime: Runtime<z.infer<typeof contextSchema>> // [!code highlight]
-) => {
-  const userName = runtime.context?.userName; // [!code highlight]
-  if (!userName) {
-    throw new Error("userName is required");
-  }
-
-  return {
-    // ...
-  };
-};
-
-const agent = createAgent({
-  model: "openai:gpt-4o-mini",
-  tools: [
-    /* ... */
-  ],
-  contextSchema,
-  preModelHook,
-  postModelHook,
-});
 ```
 
 ---
