@@ -27,12 +27,12 @@ dependencies = [
     # Format / Lint
     "ruff>=0.13.0,<14.0.0",
     # Libraries
-    "langchain-cli",
+    #"langchain-cli",
     "langchain-core",
     "langchain",
     "langchain-classic",
-    "langchain-tests",
-    "langchain-text-splitters",
+    #"langchain-tests",
+    #"langchain-text-splitters",
     "langchain-anthropic",
     "langchain-chroma",
     "langchain-deepseek",
