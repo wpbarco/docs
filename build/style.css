@@ -64,11 +64,9 @@ button.version-picker-button span {
 }
 
 
-/* Hide arrow in buttons with bg-primary-dark */
-button:has(.bg-primary-dark) svg path[d="M0 0L3 3L0 6"],
-.group:has(.bg-primary-dark) svg path[d="M0 0L3 3L0 6"],
-button:has(.bg-primary-dark) svg,
-.group:has(.bg-primary-dark) svg {
+/* Hide arrow in topbar CTA button */
+#topbar-cta-button svg,
+#topbar-cta-button svg path {
   display: none !important;
 }
 
