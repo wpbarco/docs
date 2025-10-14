@@ -3,7 +3,7 @@ title: LangChain v1 migration guide
 sidebarTitle: Migration guide
 ---
 
-This guide outlines the major changes between LangChain v1 and previous versions.
+This guide outlines the major changes between [LangChain v1](/oss/releases/langchain-v1) and previous versions.
 
 ## Simplified package
 
@@ -11,21 +11,21 @@ The `langchain` package namespace has been significantly reduced in v1 to focus 
 
 ### Namespace
 
-| Module | What's available | Notes |
-|--------|------------------|-------|
-| `langchain.agents` | `create_agent`, `AgentState` | Core agent creation functionality |
-| `langchain.messages` | Message types, content blocks, `trim_messages` | Re-exported from `langchain-core` |
-| `langchain.tools` | `tool`, `BaseTool`, injection helpers | Re-exported from `langchain-core` |
-| `langchain.chat_models` | `init_chat_model`, `BaseChatModel` | Unified model initialization |
-| `langchain.embeddings` | `Embeddings`, `init_embeddings`, | Embedding models |
+| Module                  | What's available                               | Notes                             |
+|-------------------------|------------------------------------------------|-----------------------------------|
+| `langchain.agents`      | `create_agent`, `AgentState`                   | Core agent creation functionality |
+| `langchain.messages`    | Message types, content blocks, `trim_messages` | Re-exported from `langchain-core` |
+| `langchain.tools`       | `tool`, `BaseTool`, injection helpers          | Re-exported from `langchain-core` |
+| `langchain.chat_models` | `init_chat_model`, `BaseChatModel`             | Unified model initialization      |
+| `langchain.embeddings`  | `init_embeddings`, `Embeddings`                | Embedding models                  |
 
 ### `langchain-classic`
 
-If you were using any of the following from the `langchain` package, you'll need to install `langchain-classic` and update your imports:
+If you were using any of the following from the `langchain` package, you'll need to install [`langchain-classic`](https://pypi.org/project/langchain-classic/) and update your imports:
 
 - Legacy chains (`LLMChain`, `ConversationChain`, etc.)
 - The indexing API
-- `langchain-community` re-exports
+- [`langchain-community`](https://pypi.org/project/langchain-community) re-exports
 - Other deprecated functionality
 
 <CodeGroup>
@@ -38,26 +38,37 @@ from langchain_classic.indexes import ...
 ```
 
 ```python v0 (old)
+# Chains
 from langchain.chains import LLMChain
+
+# Indexing
 from langchain.indexes import ...
 ```
 </CodeGroup>
 
-**Installation**:
-```bash
-uv pip install langchain-classic
+
+Install with:
+
+<CodeGroup>
+```bash pip
+pip install langchain-classic
 ```
+
+```bash uv
+uv add langchain-classic
+```
+</CodeGroup>
 
 ---
 
 ## Migrate to `create_agent`
 
-Pre v1, we recommended you use `langgraph.prebuilt.create_react_agent` to build agents.
-In v1, we recommend you use `langchain.agents.create_agent` to build agents.
+Prior to v1.0, we recommended using `langgraph.prebuilt.create_react_agent` to build agents.
+Now, we recommend you use `langchain.agents.create_agent` to build agents.
 
 The table below outlines what functionality has changed from `create_react_agent` to `create_agent`:
 
-| Section | What changed |
+| Section | TL;DR - What's changed |
 |---------|--------------|
 | [Import path](#import-path) | Package moved from `langgraph.prebuilt` to `langchain.agents` |
 | [Prompts](#prompts) | Parameter renamed to `system_prompt`, dynamic prompts use middleware |
@@ -232,7 +243,7 @@ Common use cases include:
 * Trimming messages
 * Input guardrails, like PII redaction
 
-v1 now has summarization middleware built in:
+v1 now has summarization middleware as a built in option:
 
 <CodeGroup>
 ```python v1 (new)
@@ -272,7 +283,7 @@ This new pattern is more extensible-- you can define multiple middlewares to run
 reusing common patterns across different agents.
 
 Common use cases include:
-* Human in the loop
+* [Human in the loop](/oss/langchain/human-in-the-loop)
 * Output guardrails
 
 v1 has a built in middleware for human in the loop approval for tool calls:
@@ -503,7 +514,7 @@ The `tools` argument to `create_agent` accepts a list of:
 * Callable objects (functions) with proper type hints and a docstring
 * `dict` that represents a built-in provider tools
 
-It no longer accepts `ToolNode` instances.
+The argument will no longer accept `ToolNode` instances.
 
 <CodeGroup>
 ```python v1 (new)
