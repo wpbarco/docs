@@ -6,7 +6,7 @@
   "colors": {
     "primary": "#2F6868",
     "light": "#84C4C0",
-    "dark": "#84C4C0"
+    "dark": "#2F6868"
   },
   "logo": {
     "light": "/images/brand/langchain-docs-teal.svg",

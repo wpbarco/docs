@@ -63,33 +63,18 @@ button.version-picker-button span {
   margin-right: 0 !important; /* Remove any extra margin */
 }
 
-/* Force the dropdown arrow to always show */
-button.version-picker-button svg {
-  display: block !important; /* Force display */
-  visibility: visible !important; /* Force visibility */
-  opacity: 1 !important; /* Make sure it's opaque */
-  flex-shrink: 0 !important; /* Don't shrink */
-  width: 12px !important; /* Set fixed width */
-  height: 12px !important; /* Set fixed height */
-  margin-left: 0 !important; /* Remove any extra margin */
+
+/* Hide arrow in buttons with bg-primary-dark */
+button:has(.bg-primary-dark) svg path[d="M0 0L3 3L0 6"],
+.group:has(.bg-primary-dark) svg path[d="M0 0L3 3L0 6"],
+button:has(.bg-primary-dark) svg,
+.group:has(.bg-primary-dark) svg {
+  display: none !important;
 }
 
 #banner {
   max-width: 100% !important;
   color: var(--brand-600) !important; /* Use the dark green brand color */
-}
-
-#banner * {
-  color: var(
-    --brand-600
-  ) !important; /* Force all banner text to use brand color */
-}
-
-#banner a {
-  text-decoration: underline !important;
-  color: var(
-    --brand-600
-  ) !important; /* Ensure links also use the brand color */
 }
 
 /* Ensure callout links and lists match callout text formatting */
