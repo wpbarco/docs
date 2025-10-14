@@ -2,7 +2,7 @@
 title: Streaming API
 sidebarTitle: Streaming API
 ---
-[LangGraph SDK](/langsmith/python-sdk) allows you to [stream outputs](/oss/langgraph/streaming/) from the LangGraph API server.
+[LangGraph SDK](/langsmith/langgraph-python-sdk) allows you to [stream outputs](/oss/langgraph/streaming/) from the LangGraph API server.
 
 <Note>
 LangGraph SDK and LangGraph Server are a part of [LangSmith](/langsmith/home).
@@ -118,7 +118,7 @@ Basic usage example:
   ```
 
   Once you have a running LangGraph API server, you can interact with it using
-  [LangGraph SDK](/langsmith/python-sdk)
+  [LangGraph SDK](/langsmith/langgraph-python-sdk)
 
     <Tabs>
         <Tab title="Python">
@@ -494,7 +494,7 @@ for chunk in client.runs.stream(
   ```
 
   Once you have a running LangGraph API server, you can interact with it using
-  [LangGraph SDK](/langsmith/python-sdk)
+  [LangGraph SDK](/langsmith/langgraph-python-sdk)
 
     <Tabs>
         <Tab title="Python">
@@ -878,7 +878,7 @@ If you don't want to **persist the outputs** of a streaming run in the [checkpoi
 
 ## Join and stream
 
-LangSmith allows you to join an active [background run](/langsmith/background-run) and stream outputs from it. To do so, you can use [LangGraph SDK's](/langsmith/python-sdk) `client.runs.join_stream` method:
+LangSmith allows you to join an active [background run](/langsmith/background-run) and stream outputs from it. To do so, you can use [LangGraph SDK's](/langsmith/langgraph-python-sdk) `client.runs.join_stream` method:
 
 <Tabs>
     <Tab title="Python">
