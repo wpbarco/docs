@@ -129,9 +129,9 @@
         ]
       },
       {
-        "product": "OSS",
+        "product": "LangChain + LangGraph",
         "icon": "link",
-        "description": "LangChain and LangGraph",
+        "description": "Open source frameworks",
         "dropdowns": [
           {
             "dropdown": "Python",
