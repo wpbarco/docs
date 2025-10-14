@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "willow",
+  "theme": "aspen",
   "name": "Docs by LangChain",
   "description": "Documentation for LangChain, LangGraph, LangSmith, and more.",
   "colors": {
@@ -129,9 +129,9 @@
     "versions": [
       {
         "version": "Python",
-        "dropdowns": [
+        "products": [
           {
-            "dropdown": "Home",
+            "product": "Home",
             "icon": "house",
             "pages": [
               "index",
@@ -139,7 +139,7 @@
             ]
           },
           {
-            "dropdown": "OSS (v1-alpha)",
+            "product": "OSS",
             "icon": "link",
             "description": "LangChain and LangGraph",
             "tabs": [
@@ -436,7 +436,7 @@
             ]
           },
           {
-            "dropdown": "LangSmith",
+            "product": "LangSmith",
             "icon": "rocket",
             "description": "LLM observability, evaluation, and deployment",
             "tabs": [
@@ -1013,9 +1013,9 @@
       },
       {
         "version": "JavaScript",
-        "dropdowns": [
+        "products": [
           {
-            "dropdown": "Home",
+            "product": "Home",
             "icon": "house",
             "pages": [
               "index",
@@ -1023,7 +1023,7 @@
             ]
           },
           {
-            "dropdown": "OSS (v1-alpha)",
+            "product": "OSS",
             "icon": "link",
             "description": "LangChain and LangGraph",
             "tabs": [
@@ -1355,7 +1355,7 @@
             ]
           },
           {
-            "dropdown": "LangSmith",
+            "product": "LangSmith",
             "icon": "rocket",
             "description": "LLM observability, evaluation, and deployment",
             "tabs": [
