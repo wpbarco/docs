@@ -2005,6 +2005,10 @@
   {
     "source": "/oss/javascript/langgraph/human-in-the-loop",
     "destination": "/oss/javascript/langgraph/interrupts"
+  },
+  {
+    "source": "/langgraph-platform/:path*",
+    "destination": "/langsmith/:path*"
   }
 ]
 }
