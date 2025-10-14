@@ -971,15 +971,27 @@ agent = create_agent(
 
 #### Node-style hooks
 
-Run at specific points in the execution flow.
+Run at specific points in the execution flow. Each hook receives the current state and runtime, and can optionally return state updates or jump commands.
 
-**Try it:** The interactive widget below shows all available hooks and lets you toggle different combinations to see how they affect the agent execution graph:
+**Available hooks:**
 
-<iframe
-  src="/plugins/middleware_visualization/index.html"
-  style={{ width: "100%", height: "600px", border: "none" }}
-  title="Interactive Middleware Visualizer"
-/>
+:::python
+- `before_agent` - Runs once when the agent starts, before any processing begins. Use for initialization, logging, or validating inputs.
+- `before_model` - Runs before each model call. Use for context injection, message trimming, or pre-processing prompts.
+- `after_model` - Runs after each model response. Use for validation, content filtering, or logging model outputs.
+- `after_agent` - Runs once when the agent completes, after all processing is done. Use for cleanup, final validation, or result transformation.
+:::
+
+:::js
+- `beforeAgent` - Runs once when the agent starts, before any processing begins. Use for initialization, logging, or validating inputs.
+- `beforeModel` - Runs before each model call. Use for context injection, message trimming, or pre-processing prompts.
+- `afterModel` - Runs after each model response. Use for validation, content filtering, or logging model outputs.
+- `afterAgent` - Runs once when the agent completes, after all processing is done. Use for cleanup, final validation, or result transformation.
+:::
+
+<Tip>
+Want to see how these hooks fit into the agent execution flow? Check out the [interactive visualization in the agents documentation](/oss/langchain/agents#visualizing-agents).
+</Tip>
 
 **Example: Logging middleware**
 
@@ -1066,16 +1078,18 @@ const createMessageLimitMiddleware = (maxMessages: number = 50) => {
 
 #### Wrap-style hooks
 
-Intercept execution and control when the handler is called:
+Intercept execution and control when the handler is called. These hooks wrap around the actual execution and give you complete control over whether and how the handler runs.
+
+**Available hooks:**
 
 :::python
-- `wrap_model_call` - Around each model call
-- `wrap_tool_call` - Around each tool call
+- `wrap_model_call` - Wraps around each model call. Receives a `ModelRequest` and handler function. Use for retry logic, caching, dynamic model selection, or request/response transformation.
+- `wrap_tool_call` - Wraps around each tool call. Receives a `ToolCallRequest` and handler function. Use for tool error handling, logging tool execution, or modifying tool inputs/outputs.
 :::
 
 :::js
-- `wrapModelCall` - Around each model call
-- `wrapToolCall` - Around each tool call
+- `wrapModelCall` - Wraps around each model call. Receives a request object and handler function. Use for retry logic, caching, dynamic model selection, or request/response transformation.
+- `wrapToolCall` - Wraps around each tool call. Receives a request object and handler function. Use for tool error handling, logging tool execution, or modifying tool inputs/outputs.
 :::
 
 You decide if the handler is called zero times (short-circuit), once (normal flow), or multiple times (retry logic).

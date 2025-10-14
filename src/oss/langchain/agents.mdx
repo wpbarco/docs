@@ -746,3 +746,22 @@ For comprehensive middleware documentation including decorators like `@before_mo
 For comprehensive middleware documentation including hooks like `beforeModel`, `afterModel`, and `wrapToolCall`, see [Middleware](/oss/langchain/middleware).
 </Tip>
 :::
+
+### Visualizing agents
+
+The interactive widget below shows how middleware hooks integrate into the agent execution flow. Toggle different hook combinations to see how they affect the agent's graph structure:
+
+<iframe
+  src="/plugins/middleware_visualization/index.html"
+  style={{ width: "100%", height: "600px", border: "none" }}
+  title="Interactive Middleware Visualizer"
+/>
+
+This visualization helps you understand:
+- Where each middleware hook executes in the agent lifecycle
+- How multiple middleware components interact
+- The execution order of before/after hooks vs wrap-style hooks
+
+<Tip>
+For detailed documentation on each hook type and how to implement custom middleware, see [Middleware](/oss/langchain/middleware).
+</Tip>
