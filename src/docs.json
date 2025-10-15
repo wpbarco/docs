@@ -171,6 +171,7 @@
                     "group": "Advanced usage",
                     "pages": [
                       "oss/python/langchain/middleware",
+                      "oss/python/langchain/guardrails",
                       "oss/python/langchain/structured-output",
                       "oss/python/langchain/runtime",
                       "oss/python/langchain/context-engineering",
@@ -467,6 +468,7 @@
                     "group": "Advanced usage",
                     "pages": [
                       "oss/javascript/langchain/middleware",
+                      "oss/javascript/langchain/guardrails",
                       "oss/javascript/langchain/structured-output",
                       "oss/javascript/langchain/runtime",
                       "oss/javascript/langchain/context-engineering",
