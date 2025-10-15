@@ -786,10 +786,7 @@
                   "langsmith/langgraph-js-ts-sdk",
                   "langsmith/smith-api-ref",
                   "langsmith/server-api-ref",
-                  "langsmith/api-ref-control-plane",
-                  "langsmith/remote-graph",
-                  "langsmith/cli",
-                  "langsmith/env-var"
+                  "langsmith/api-ref-control-plane"
                 ]
               },
               {
@@ -1212,6 +1209,14 @@
                     "langsmith/custom-lifespan",
                     "langsmith/custom-middleware",
                     "langsmith/custom-routes"
+                ]
+              },
+              {
+                "group": "Reference",
+                "pages": [
+                  "langsmith/remote-graph",
+                  "langsmith/cli",
+                  "langsmith/env-var"
                 ]
               }
             ]
