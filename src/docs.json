@@ -397,8 +397,7 @@
                     "icon": "heart-circle-plus",
                     "pages": [
                       "oss/python/contributing/documentation",
-                      "oss/python/contributing/code",
-                      "oss/python/contributing/review"
+                      "oss/python/contributing/code"
                     ]
                   },
                   {
@@ -729,8 +728,7 @@
                     "icon": "heart-circle-plus",
                     "pages": [
                       "oss/javascript/contributing/documentation",
-                      "oss/javascript/contributing/code",
-                      "oss/javascript/contributing/review"
+                      "oss/javascript/contributing/code"
                     ]
                   },
                   {
