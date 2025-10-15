@@ -1121,6 +1121,15 @@
                       "langsmith/monorepo-support"
                       ]
                     },
+                    {
+                      "group": "Deployment components",
+                      "pages": [
+                        "langsmith/components",
+                        "langsmith/langgraph-server",
+                        "langsmith/data-plane",
+                        "langsmith/control-plane"
+                      ]
+                    },
                     "langsmith/graph-rebuild",
                     "langsmith/use-remote-graph",
                     "langsmith/semantic-search",
@@ -1292,15 +1301,6 @@
                       "langsmith/self-host-external-clickhouse",
                       "langsmith/self-host-external-postgres",
                       "langsmith/self-host-external-redis"
-                    ]
-                  },
-                  {
-                    "group": "Deployment components",
-                    "pages": [
-                      "langsmith/components",
-                      "langsmith/langgraph-server",
-                      "langsmith/data-plane",
-                      "langsmith/control-plane"
                     ]
                   },
                   {
