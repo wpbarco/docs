@@ -38,7 +38,7 @@ After testing in the Playground, you'll want to see how the prompt interacts wit
 
 [Prompt webhooks](/langsmith/manage-prompts#configure-a-webhook) can be used in order to keep prompts in sync with your production environment. For example a notification can be sent when a prompt gets the `prod` tag added to it, which can then be used as a trigger to pull the latest version of the prompt into your production environment.
 
-<Tip> Integrate prompt evaluations into CI/CD. [Prompt webhooks](/langsmith/manage-prompts#configure-a-webhook) can be used in order to trigger CI when a prompt has new commit, or when a commit tag is moved. Use [pytest](/langsmith/pytest) or [jest/vitest](/langsmith/vitest-jest) to run LangSmith evaluations as part of your test suite, blocking promotion if quality thresholds fail. </Tip>
+<Tip> Integrate prompt evaluations into CI/CD. [Prompt webhooks](/langsmith/manage-prompts#configure-a-webhook) can be used in order to trigger CI when a prompt has new commit, or when a commit tag is moved. Use [pytest](/langsmith/pytest) or [jest/vitest](/langsmith/vitest-jest) to run LangSmith [evaluations](/langsmith/evaluation) as part of your test suite, blocking promotion if quality thresholds fail. </Tip>
 
 #### Sync prompts with your code
 
