@@ -46,7 +46,7 @@ The import path for the react agent prebuilt has changed from `@langchain/langgr
 
 ```typescript
 import { createReactAgent } from "@langchain/langgraph/prebuilts"; // [!code --]
-import { createAgent } from "langchain/agents"; // [!code ++]
+import { createAgent } from "langchain"; // [!code ++]
 ```
 
 ### Prompts
@@ -57,7 +57,7 @@ The `prompt` parameter has been renamed to `systemPrompt`:
 
 <CodeGroup>
 ```typescript v1 (new)
-import { createAgent } from "langchain/agents";
+import { createAgent } from "langchain";
 
 agent = createAgent({
   model,
