@@ -70,9 +70,8 @@ agent = create_agent(
 
 :::js
 ```ts
-import { createAgent } from "langchain";
+import { createAgent, humanInTheLoopMiddleware } from "langchain"; // [!code highlight]
 import { MemorySaver } from "@langchain/langgraph"; // [!code highlight]
-import { humanInTheLoopMiddleware } from "langchain/middleware"; // [!code highlight]
 
 const agent = createAgent({
     model: "openai:gpt-4o",

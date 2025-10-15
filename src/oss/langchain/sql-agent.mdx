@@ -175,7 +175,7 @@ sql_db_query_checker: Use this tool to double check if your query is correct bef
 
 Use the `SqlDatabase` wrapper available in the `langchain/sql_db` to interact with the database. The wrapper provides a simple interface to execute SQL queries and fetch results:
 ```typescript
-import { SqlDatabase } from "langchain/sql_db";
+import { SqlDatabase } from "@langchain/classic/sql_db";
 import { DataSource } from "typeorm";
 
 let db: SqlDatabase | undefined;
@@ -702,7 +702,7 @@ In directory you will run in, you will need a `langgraph.json` file with the fol
 ```typescript
 import fs from "node:fs/promises";
 import path from "node:path";
-import { SqlDatabase } from "langchain/sql_db";
+import { SqlDatabase } from "@langchain/classic/sql_db";
 import { DataSource } from "typeorm";
 import { SystemMessage, createAgent, tool } from "langchain"
 import * as z from "zod";

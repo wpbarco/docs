@@ -491,8 +491,7 @@ result = agent.invoke(
 :::js
 ```typescript wrap
 import * as z from "zod";
-import { createAgent } from "langchain";
-import { dynamicSystemPromptMiddleware } from "langchain/middleware";
+import { createAgent, dynamicSystemPromptMiddleware } from "langchain";
 
 const contextSchema = z.object({
   userRole: z.enum(["expert", "beginner"]),
