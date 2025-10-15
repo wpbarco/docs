@@ -26,7 +26,7 @@ When managing prompts across your dev/staging/production environments, you want 
 
 ### Update prompts in dev/testing/staging environments
 
-After testing in the Playground, you'll want to see how the prompt interacts within the context of your application. A recommend workflow is:
+After testing in the Playground, you'll want to see how the prompt interacts within the context of your application. A recommended workflow is:
 
 1. Set up your dev/testing/staging environments to [pull prompts from the Prompt Hub](/langsmith/manage-prompts-programmatically#pull-a-prompt) using defined commit tags (e.g., `dev`, `staging`) for each environment. This creates a dynamic reference to the prompt version you want to use in a particular environment.
 2. After saving a new version of your prompt, [move the commit tag](/langsmith/manage-prompts#move-a-tag) for the desired environment to the new version of the prompt. Your application will automatically pull the new version on its next request to the Prompt Hub.
