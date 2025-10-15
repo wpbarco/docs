@@ -83,13 +83,20 @@ await agent.invoke(
 
 In production, use a checkpointer backed by a database:
 
+
 :::python
+```shell
+pip install langgraph-checkpoint-postgres
+```
+
 ```python
 from langchain.agents import create_agent
+
 from langgraph.checkpoint.postgres import PostgresSaver  # [!code highlight]
 
 DB_URI = "postgresql://postgres:postgres@localhost:5442/postgres?sslmode=disable"
 with PostgresSaver.from_conn_string(DB_URI) as checkpointer:
+    checkpointer.setup() # auto create tables in PostgresSql
     agent = create_agent(
         "openai:gpt-5",
         [get_user_info],
