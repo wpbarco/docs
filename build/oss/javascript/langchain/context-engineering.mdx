@@ -117,7 +117,7 @@ For instructions that depend on context (user profile, preferences, session data
 
 
 ```typescript
-import { z } from "zod";
+import * as z from "zod";
 import { createAgent, dynamicSystemPromptMiddleware } from "langchain";
 
 const contextSchema = z.object({

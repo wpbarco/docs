@@ -56,7 +56,7 @@ import "cheerio";
 import { createAgent, tool } from "langchain";
 import { CheerioWebBaseLoader } from "@langchain/community/document_loaders/web/cheerio";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
-import { z } from "zod";
+import * as z from "zod";
 
 // Load and chunk contents of blog
 const pTagSelector = "p";
@@ -339,7 +339,7 @@ our vector store:
 
 
 ```typescript
-import { z } from "zod";
+import * as z from "zod";
 import { tool } from "@langchain/core/tools";
 
 const retrieveSchema = z.object({ query: z.string() });

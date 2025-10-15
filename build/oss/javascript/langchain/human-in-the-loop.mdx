@@ -182,13 +182,13 @@ await agent.invoke(
                 decisions: [
                     {
                         type: "edit",
-                        // Edited action with tool name and arguments
+                        // Edited action with tool name and args
                         editedAction: {
                             // Tool name to call.
                             // Will usually be the same as the original action.
                             name: "new_tool_name",
                             // Arguments to pass to the tool.
-                            arguments: { key1: "new_value", key2: "original_value" },
+                            args: { key1: "new_value", key2: "original_value" },
                         }
                     }
                 ]
@@ -229,6 +229,36 @@ await agent.invoke(
         config  // Same thread ID to resume the paused conversation
     );
     ```
+
+
+The `message` is added to the conversation as feedback to help the agent understand why the action was rejected and what it should do instead.
+
+---
+
+### Multiple decisions
+
+When multiple actions are under review, provide a decision for each action in the same order as they appear in the interrupt:
+
+
+
+```typescript
+{
+    decisions: [
+        { type: "approve" },
+        {
+            type: "edit",
+            editedAction: {
+                name: "tool_name",
+                args: { param: "new_value" }
+            }
+        },
+        {
+            type: "reject",
+            message: "This action is not allowed"
+        }
+    ]
+}
+```
 
 
 </Tab>

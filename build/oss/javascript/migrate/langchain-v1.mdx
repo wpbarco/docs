@@ -108,7 +108,7 @@ Dynamic prompts are a core context engineering pattern— they adapt what you te
 <CodeGroup>
 ```typescript v1 (new)
 import { createAgent, dynamicSystemPromptMiddleware } from "langchain";
-import { z } from "zod";
+import * as z from "zod";
 
 const contextSchema = z.object({
   userRole: z.enum(["expert", "beginner"]).default("user"),
@@ -274,7 +274,7 @@ Custom state is now defined in middleware using the `stateSchema` property. Use 
 
 <CodeGroup>
 ```typescript v1 (new)
-import { z } from "zod";
+import * as z from "zod";
 import { createAgent, createMiddleware, tool } from "langchain";
 
 const UserState = z.object({
@@ -317,7 +317,7 @@ await agent.invoke({
 ```typescript v0 (old)
 import { getCurrentTaskInput } from "@langchain/langgraph";
 import { createReactAgent } from "@langchain/langgraph/prebuilts";
-import { z } from "zod";
+import * as z from "zod";
 
 const UserState = z.object({
   userName: z.string(),
@@ -452,7 +452,7 @@ In v1, there are two strategies:
 <CodeGroup>
 ```typescript v1 (new)
 import { createAgent, toolStrategy } from "langchain";
-import { z } from "zod";
+import * as z from "zod";
 
 const OutputSchema = z.object({
   summary: z.string(),
@@ -468,7 +468,7 @@ const agent = createAgent({
 ```
 ```typescript v0 (old)
 import { createReactAgent } from "@langchain/langgraph/prebuilts";
-import { z } from "zod";
+import * as z from "zod";
 
 const OutputSchema = z.object({
   summary: z.string(),
@@ -499,7 +499,7 @@ When invoking an agent, pass static, read-only configuration via the `context` c
 <CodeGroup>
 ```typescript v1 (new)
 import { createAgent, HumanMessage } from "langchain";
-import { z } from "zod";
+import * as z from "zod";
 
 const agent = createAgent({
   model: "openai:gpt-4o",

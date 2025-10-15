@@ -65,32 +65,28 @@ await graph.invoke(
 
 
     ```typescript
-    import type { BaseMessage } from "@langchain/core/messages";
-    import { createReactAgent } from "@langchain/langgraph/prebuilt";
-    import { MessagesZodMeta } from "@langchain/langgraph";
-    import { registry } from "@langchain/langgraph/zod";
+    import { createAgent, createMiddleware } from "langchain";
+    import type { AgentState } from "langchain";
     import * as z from "zod";
 
     const CustomState = z.object({ // [!code highlight]
-      messages: z
-        .array(z.custom<BaseMessage>())
-        .register(registry, MessagesZodMeta),
       userName: z.string(),
     });
 
-    const prompt = (
-      state: z.infer<typeof CustomState>
-    ): BaseMessage[] => {
-      const userName = state.userName;
-      const systemMsg = `You are a helpful assistant. User's name is ${userName}`;
-      return [{ role: "system", content: systemMsg }, ...state.messages];
-    };
+    const personalizedPrompt = createMiddleware({ // [!code highlight]
+      name: "PersonalizedPrompt",
+      stateSchema: CustomState,
+      wrapModelCall: (request, handler) => {
+        const userName = request.state.userName || "User";
+        const systemPrompt = `You are a helpful assistant. User's name is ${userName}`;
+        return handler({ ...request, systemPrompt });
+      },
+    });
 
-    const agent = createReactAgent({  // [!code highlight]
-      llm: model,
-      tools: [...],
-      stateSchema: CustomState, // [!code highlight]
-      stateModifier: prompt,
+    const agent = createAgent({  // [!code highlight]
+      model: "anthropic:claude-3-7-sonnet-latest",
+      tools: [/* your tools here */],
+      middleware: [personalizedPrompt] as const, // [!code highlight]
     });
 
     await agent.invoke({

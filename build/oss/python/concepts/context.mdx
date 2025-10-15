@@ -125,33 +125,30 @@ See the [Runtime][langgraph.runtime.Runtime] documentation for details.
     State can also be accessed by the agent's **tools**, which can read or update the state as needed. See [tool calling guide](/oss/python/langchain/tools#short-term-memory) for details.
 
     ```python
-    from langchain.messages import AnyMessage
-    from langchain_core.runnables import RunnableConfig
-    from langgraph.prebuilt import create_react_agent
+    from langchain.agents import create_agent
+    from langchain.agents.middleware import dynamic_prompt, ModelRequest
     from langgraph.prebuilt.chat_agent_executor import AgentState
 
     class CustomState(AgentState):  # [!code highlight]
         user_name: str
 
-    def prompt(
-        state: CustomState  # [!code highlight]
-    ) -> list[AnyMessage]:
-        user_name = state["user_name"]
-        system_msg = f"You are a helpful assistant. User's name is {user_name}"
-        return [{"role": "system", "content": system_msg}] + state["messages"]
+    @dynamic_prompt  # [!code highlight]
+    def personalized_prompt(request: ModelRequest) -> str:  # [!code highlight]
+        user_name = request.state.get("user_name", "User")
+        return f"You are a helpful assistant. User's name is {user_name}"
 
-    agent = create_react_agent(
+    agent = create_agent(
         model="anthropic:claude-3-7-sonnet-latest",
         tools=[...],
         state_schema=CustomState,  # [!code highlight]
-        prompt=prompt
+        middleware=[personalized_prompt],  # [!code highlight]
     )
 
     agent.invoke({
         "messages": "hi!",
         "user_name": "John Smith"
     })
-```
+    ```
 
 
 

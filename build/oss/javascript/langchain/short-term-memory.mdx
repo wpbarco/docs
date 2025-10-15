@@ -78,7 +78,7 @@ You can extend `AgentState` to add additional fields. Custom state schemas are d
 
 
 ```typescript
-import { z } from "zod";
+import * as z from "zod";
 import { createAgent, createMiddleware } from "langchain";
 import { MessagesZodState, MemorySaver } from "@langchain/langgraph";
 
@@ -331,7 +331,7 @@ This annotation hides the state from the tool signature (so the model doesn't se
 
 
 ```typescript
-import { z } from "zod";
+import * as z from "zod";
 import { createAgent, tool } from "langchain";
 
 const stateSchema = z.object({
@@ -381,7 +381,7 @@ This is useful for persisting intermediate results or making information accessi
 
 
 ```typescript
-import { z } from "zod";
+import * as z from "zod";
 import { tool, createAgent } from "langchain";
 import { MessagesZodState, Command } from "@langchain/langgraph";
 
@@ -428,7 +428,7 @@ const greet = tool(
 );
 
 const agent = createAgent({
-    llm: model,
+    model,
     tools: [updateUserInfo, greet],
     stateSchema: CustomState,
 });
@@ -446,7 +446,7 @@ Access short term memory (state) in middleware to create dynamic prompts based o
 
 
 ```typescript
-import { z } from "zod";
+import * as z from "zod";
 import { createAgent, tool, SystemMessage } from "langchain";
 
 const contextSchema = z.object({

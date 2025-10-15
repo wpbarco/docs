@@ -68,7 +68,7 @@ For more information about the memory store, see the [Persistence](/oss/javascri
 
 
 ```typescript A tool the agent can use to look up user information
-import { z } from "zod";
+import * as z from "zod";
 import { createAgent, tool } from "langchain";
 import { InMemoryStore, type Runtime } from "@langchain/langgraph";
 
@@ -138,7 +138,7 @@ console.log(result.messages.at(-1)?.content);
 
 
 ```typescript Example of a tool that updates user information
-import { z } from "zod";
+import * as z from "zod";
 import { tool, createAgent, type AgentRuntime } from "langchain";
 import { InMemoryStore, type Runtime } from "@langchain/langgraph";
 

@@ -58,7 +58,7 @@ Workflows and agentic systems are based on LLMs and the various augmentations yo
 
 ```typescript
 
-import { z } from "zod";
+import * as z from "zod";
 import { tool } from "langchain";
 
 // Schema for structured output
@@ -399,7 +399,7 @@ Routing workflows process inputs and then directs them to context-specific tasks
 <CodeGroup>
 ```typescript Graph API
 import { StateGraph, Annotation } from "@langchain/langgraph";
-import { z } from "zod";
+import * as z from "zod";
 
 // Schema for structured output to use as routing logic
 const routeSchema = z.object({
@@ -507,7 +507,7 @@ const state = await routerWorkflow.invoke({
 console.log(state.output);
 ```
 ```typescript Functional API
-import { z } from "zod";
+import * as z from "zod";
 import { task, entrypoint } from "@langchain/langgraph";
 
 // Schema for structured output to use as routing logic
@@ -633,7 +633,7 @@ type SectionsSchema = {
 const planner = llm.withStructuredOutput(sectionsSchema);
 ```
 ```typescript Functional API
-import { z } from "zod";
+import * as z from "zod";
 import { task, entrypoint } from "@langchain/langgraph";
 
 // Schema for structured output to use in planning
@@ -817,7 +817,7 @@ Evaluator-optimizer workflows are commonly used when there's particular success 
 
 <CodeGroup>
 ```typescript Graph API
-import { z } from "zod";
+import * as z from "zod";
 import { Annotation, StateGraph } from "@langchain/langgraph";
 
 // Graph state
@@ -893,7 +893,7 @@ const state = await optimizerWorkflow.invoke({ topic: "Cats" });
 console.log(state.joke);
 ```
 ```typescript Functional API
-import { z } from "zod";
+import * as z from "zod";
 import { task, entrypoint } from "@langchain/langgraph";
 
 // Schema for structured output to use in evaluation
@@ -975,7 +975,7 @@ To get started with agents, see the [quickstart](/oss/javascript/langchain/quick
 
 ```typescript Using tools
 import { tool } from "@langchain/core/tools";
-import { z } from "zod";
+import * as z from "zod";
 
 // Define tools
 const multiply = tool(

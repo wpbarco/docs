@@ -65,7 +65,7 @@ LangChain automatically uses `ProviderStrategy` when you pass a schema type dire
 
 <CodeGroup>
     ```ts Zod Schema
-    import { z } from "zod";
+    import * as z from "zod";
     import { createAgent, providerStrategy } from "langchain";
 
     const ContactInfo = z.object({
@@ -164,7 +164,7 @@ function toolStrategy<StructuredResponseT>(
 
 <CodeGroup>
     ```ts Zod Schema
-    import { z } from "zod";
+    import * as z from "zod";
     import { createAgent, toolStrategy } from "langchain";
 
     const ProductReview = z.object({
@@ -229,7 +229,7 @@ function toolStrategy<StructuredResponseT>(
     ```
 
     ```ts Union Types
-    import { z } from "zod";
+    import * as z from "zod";
     import { createAgent, toolStrategy } from "langchain";
 
     const ProductReview = z.object({
@@ -264,7 +264,7 @@ function toolStrategy<StructuredResponseT>(
 The `toolMessageContent` parameter allows you to customize the message that appears in the conversation history when structured output is generated:
 
 ```ts
-import { z } from "zod";
+import * as z from "zod";
 import { createAgent, toolStrategy } from "langchain";
 
 const MeetingAction = z.object({
@@ -324,7 +324,7 @@ When a model incorrectly calls multiple structured output tools, the agent provi
 
 
 ```ts
-import { z } from "zod";
+import * as z from "zod";
 import { createAgent, toolStrategy } from "langchain";
 
 const ContactInfo = z.object({
@@ -377,7 +377,7 @@ When structured output doesn't match the expected schema, the agent provides spe
 
 
 ```ts
-import { z } from "zod";
+import * as z from "zod";
 import { createAgent, toolStrategy } from "langchain";
 
 const ProductRating = z.object({
