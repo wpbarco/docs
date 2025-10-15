@@ -544,7 +544,7 @@ for tool_call in response.tool_calls:
 :::js
 ```typescript Binding user tools
 import { tool } from "langchain";
-import { z } from "zod";
+import * as z from "zod";
 import { ChatOpenAI } from "@langchain/openai";
 
 const getWeather = tool(
@@ -911,7 +911,7 @@ Models can be requested to provide their response in a format matching a given s
         A [zod schema](https://zod.dev/) is the preferred method of defining an output schema. Note that when a zod schema is provided, the model output will also be validated against the schema using zod's parse methods.
 
         ```typescript
-        import { z } from "zod";
+        import * as z from "zod";
 
         const Movie = z.object({
           title: z.string().describe("The title of the movie"),
@@ -1024,7 +1024,7 @@ It can be useful to return the raw `AIMessage` object alongside the parsed repre
 
     :::js
     ```typescript
-    import { z } from "zod";
+    import * as z from "zod";
 
     const Movie = z.object({
       title: z.string().describe("The title of the movie"),
@@ -1090,7 +1090,7 @@ It can be useful to return the raw `AIMessage` object alongside the parsed repre
 
     :::js
     ```typescript
-    import { z } from "zod";
+    import * as z from "zod";
 
     const Actor = z.object({
       name: str

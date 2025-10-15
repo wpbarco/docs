@@ -57,7 +57,7 @@ agent.invoke(
 :::
 :::js
 ```ts
-import { z } from "zod";
+import * as z from "zod";
 import { createAgent } from "langchain";
 
 const contextSchema = z.object({ // [!code highlight]
@@ -112,7 +112,7 @@ def fetch_user_email_preferences() -> str:
 Use the `runtime` parameter to access the @[Runtime] object inside a tool.
 
 ```ts
-import { z } from "zod";
+import * as z from "zod";
 import { tool } from "langchain";
 import { type Runtime } from "@langchain/langgraph"; // [!code highlight]
 
@@ -200,7 +200,7 @@ agent.invoke(
 Use the `runtime` parameter to access the @[Runtime] object inside middleware.
 
 ```ts
-import { z } from "zod";
+import * as z from "zod";
 import { createAgent, createMiddleware, type AgentState, SystemMessage } from "langchain";
 import { type Runtime } from "@langchain/langgraph"; // [!code highlight]
 

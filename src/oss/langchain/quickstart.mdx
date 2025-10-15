@@ -36,6 +36,7 @@ agent.invoke(
 :::js
 ```ts
 import { createAgent, tool } from "langchain";
+import * as z from "zod";
 
 const getWeather = tool(
   (input) => `It's always sunny in ${input.city}!`,
@@ -147,7 +148,7 @@ Let's walk through each step:
         ```ts
         import { type Runtime } from "@langchain/langgraph";
         import { tool } from "langchain";
-        import { z } from "zod";
+        import * as z from "zod";
 
         const getWeather = tool(
           (input) => `It's always sunny in ${input.city}!`,
@@ -477,7 +478,7 @@ print(response['structured_response'])
 import { createAgent, tool } from "langchain";
 import { initChatModel } from "langchain/chat_models";
 import { MemorySaver, type Runtime } from "@langchain/langgraph";
-import { z } from "zod";
+import * as z from "zod";
 
 // Define system prompt
 const systemPrompt = `You are an expert weather forecaster, who speaks in puns.

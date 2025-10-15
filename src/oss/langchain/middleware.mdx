@@ -1269,7 +1269,7 @@ class CallCounterMiddleware(AgentMiddleware[CustomState]):
 :::js
 ```typescript
 import { createMiddleware, createAgent, HumanMessage } from "langchain";
-import { z } from "zod";
+import * as z from "zod";
 
 // Middleware with custom state requirements
 const callCounterMiddleware = createMiddleware({
@@ -1337,7 +1337,7 @@ Context properties are configuration values passed through the runnable config. 
 Middleware can define context requirements that must be satisfied through the agent's configuration:
 
 ```typescript
-import { z } from "zod";
+import * as z from "zod";
 import { createMiddleware, HumanMessage } from "langchain";
 
 const rateLimitMiddleware = createMiddleware({
@@ -1650,7 +1650,7 @@ agent.invoke(
 
 :::js
 ```typescript
-import { z } from "zod";
+import * as z from "zod";
 import { createAgent, createMiddleware, tool, HumanMessage } from "langchain";
 
 const githubCreateIssue = tool(

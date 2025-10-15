@@ -200,7 +200,7 @@ You don't need to learn LangGraph to use these features—they work out of the b
 
 ```ts
 import { createAgent } from "langchain";
-import { z } from "zod";
+import * as z from "zod";
 
 const weatherSchema = z.object({
   temperature: z.number(),

@@ -115,7 +115,7 @@ agent = create_agent(..., tools=[call_subagent1])
 :::js
 ```typescript
 import { createAgent, tool } from "langchain";
-import { z } from "zod";
+import * as z from "zod";
 
 const subagent1 = createAgent({...});
 
@@ -193,7 +193,7 @@ def call_subagent1(query: str, state: Annotated[AgentState, InjectedState]):
 ```typescript
 import { createAgent, tool, AgentState, ToolMessage } from "langchain";
 import { Command } from "@langchain/langgraph";
-import { z } from "zod";
+import * as z from "zod";
 
 // Example of passing the full conversation history to the sub agent via the state.
 const callSubagent1 = tool(
@@ -267,7 +267,7 @@ def call_subagent1(
 ```typescript
 import { tool, ToolMessage } from "langchain";
 import { Command } from "@langchain/langgraph";
-import { z } from "zod";
+import * as z from "zod";
 
 const callSubagent1 = tool(
   async ({ query }, config) => {

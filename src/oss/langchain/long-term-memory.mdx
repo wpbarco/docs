@@ -154,7 +154,7 @@ agent.invoke(
 
 :::js
 ```typescript A tool the agent can use to look up user information
-import { z } from "zod";
+import * as z from "zod";
 import { createAgent, tool } from "langchain";
 import { InMemoryStore, type Runtime } from "@langchain/langgraph";
 
@@ -274,7 +274,7 @@ store.get(("users",), "user_123").value
 
 :::js
 ```typescript Example of a tool that updates user information
-import { z } from "zod";
+import * as z from "zod";
 import { tool, createAgent, type AgentRuntime } from "langchain";
 import { InMemoryStore, type Runtime } from "@langchain/langgraph";
 

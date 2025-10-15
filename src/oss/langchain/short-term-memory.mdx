@@ -137,7 +137,7 @@ result = agent.invoke({
 :::
 :::js
 ```typescript
-import { z } from "zod";
+import * as z from "zod";
 import { createAgent, createMiddleware } from "langchain";
 import { MessagesZodState, MemorySaver } from "@langchain/langgraph";
 
@@ -595,7 +595,7 @@ print(result["messages"][-1].content)
 :::
 :::js
 ```typescript
-import { z } from "zod";
+import * as z from "zod";
 import { createAgent, tool } from "langchain";
 
 const stateSchema = z.object({
@@ -700,7 +700,7 @@ agent.invoke(
 
 :::js
 ```typescript
-import { z } from "zod";
+import * as z from "zod";
 import { tool, createAgent } from "langchain";
 import { MessagesZodState, Command } from "@langchain/langgraph";
 
@@ -825,7 +825,7 @@ Hi John Smith, the weather in San Francisco is always sunny!
 :::
 :::js
 ```typescript
-import { z } from "zod";
+import * as z from "zod";
 import { createAgent, tool, SystemMessage } from "langchain";
 
 const contextSchema = z.object({

@@ -251,7 +251,7 @@ agent = create_agent(model, tools=[search, get_weather])
 :::
 :::js
 ```ts wrap
-import { z } from "zod";
+import * as z from "zod";
 import { createAgent, tool } from "langchain";
 
 const search = tool(
@@ -490,7 +490,7 @@ result = agent.invoke(
 
 :::js
 ```typescript wrap
-import { z } from "zod";
+import * as z from "zod";
 import { createAgent } from "langchain";
 import { dynamicSystemPromptMiddleware } from "langchain/middleware";
 
@@ -587,7 +587,7 @@ In v1, simply passing a schema (e.g., `response_format=ContactInfo`) is no longe
 In some situations, you may want the agent to return an output in a specific format. LangChain provides a simple, universal way to do this with the `responseFormat` parameter.
 
 ```ts wrap
-import { z } from "zod";
+import * as z from "zod";
 import { createAgent } from "langchain";
 
 const ContactInfo = z.object({
@@ -666,7 +666,7 @@ In v1, custom state schemas **must** be `TypedDict` types. Pydantic models and d
 :::
 :::js
 ```ts wrap
-import { z } from "zod";
+import * as z from "zod";
 import { MessagesZodState } from "@langchain/langgraph";
 import { createAgent, type BaseMessage } from "langchain";
 

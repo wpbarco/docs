@@ -172,7 +172,7 @@ def test_weather_tool_called_strict():
 ```ts
 import { createAgent, tool, HumanMessage, AIMessage, ToolMessage } from "langchain"
 import { createTrajectoryMatchEvaluator } from "agentevals";
-import { z } from "zod";
+import * as z from "zod";
 
 const getWeather = tool(
   async ({ city }: { city: string }) => {
@@ -292,7 +292,7 @@ def test_multiple_tools_any_order():
 ```ts
 import { createAgent, tool, HumanMessage, AIMessage, ToolMessage } from "langchain"
 import { createTrajectoryMatchEvaluator } from "agentevals";
-import { z } from "zod";
+import * as z from "zod";
 
 const getWeather = tool(
   async ({ city }: { city: string }) => {
@@ -427,7 +427,7 @@ import { createAgent } from "langchain"
 import { tool } from "@langchain/core/tools";
 import { HumanMessage, AIMessage, ToolMessage } from "@langchain/core/messages";
 import { createTrajectoryMatchEvaluator } from "agentevals";
-import { z } from "zod";
+import * as z from "zod";
 
 const getWeather = tool(
   async ({ city }: { city: string }) => {
@@ -557,7 +557,7 @@ import { createAgent } from "langchain"
 import { tool } from "@langchain/core/tools";
 import { HumanMessage, AIMessage, ToolMessage } from "@langchain/core/messages";
 import { createTrajectoryLLMAsJudge, TRAJECTORY_ACCURACY_PROMPT } from "agentevals";
-import { z } from "zod";
+import * as z from "zod";
 
 const getWeather = tool(
   async ({ city }: { city: string }) => {

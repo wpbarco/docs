@@ -38,7 +38,7 @@ Type hints are **required** as they define the tool's input schema. The docstrin
 The simplest way to create a tool is by importing the `tool` function from the `langchain` package. You can use [zod](https://zod.dev/) to define the tool's input schema:
 
 ```ts
-import { z } from "zod"
+import * as z from "zod"
 import { tool } from "langchain"
 
 const searchDatabase = tool(
@@ -292,7 +292,7 @@ result = agent.invoke(
 Tools can access an agent's runtime context through the `config` parameter:
 
 ```ts wrap
-import { z } from "zod"
+import * as z from "zod"
 import { ChatOpenAI } from "@langchain/openai"
 import { createAgent } from "langchain"
 
@@ -383,7 +383,7 @@ agent.invoke({
 
 :::js
 ```ts wrap expandable
-import { z } from "zod";
+import * as z from "zod";
 import { createAgent, tool } from "langchain";
 import { InMemoryStore } from "@langchain/langgraph";
 import { ChatOpenAI } from "@langchain/openai";
@@ -484,7 +484,7 @@ If you use `get_runtime().stream_writer` inside your tool, the tool must be invo
 
 :::js
 ```ts wrap
-import { z } from "zod";
+import * as z from "zod";
 import { tool } from "langchain";
 
 const getWeather = tool(

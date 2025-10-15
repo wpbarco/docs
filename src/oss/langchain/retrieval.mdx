@@ -319,7 +319,7 @@ print(response['messages'][-1].content)
 :::js
 ```typescript
 import { tool, createAgent, initChatModel, HumanMessage } from "langchain";
-import { z } from "zod";
+import * as z from "zod";
 
 const ALLOWED_DOMAINS = ["https://langchain-ai.github.io/"];
 const LLMS_TXT = "https://langchain-ai.github.io/langgraph/llms.txt";

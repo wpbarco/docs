@@ -175,7 +175,7 @@ result = agent.invoke(
 
 :::js
 ```typescript
-import { z } from "zod";
+import * as z from "zod";
 import { createAgent, dynamicSystemPromptMiddleware } from "langchain";
 
 const contextSchema = z.object({
