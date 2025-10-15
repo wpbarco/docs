@@ -1,6 +1,6 @@
 ---
 title: Environment variables
-sidebarTitle: Environment variables
+sidebarTitle: LangGraph Server environment variables
 ---
 The LangGraph Server supports specific environment variables for configuring a deployment.
 
@@ -115,10 +115,10 @@ Postgres:
 
 Control Plane Functionality:
 
-* If `POSTGRES_URI_CUSTOM` is specified, the LangGraph Control Plane will not provision a database for the server.
-* If `POSTGRES_URI_CUSTOM` is removed, the LangGraph Control Plane will not provision a database for the server and will not delete the externally managed Postgres instance.
+* If `POSTGRES_URI_CUSTOM` is specified, the control plane will not provision a database for the server.
+* If `POSTGRES_URI_CUSTOM` is removed, the control plane will not provision a database for the server and will not delete the externally managed Postgres instance.
 * If `POSTGRES_URI_CUSTOM` is removed, deployment of the revision will not succeed. Once `POSTGRES_URI_CUSTOM` is specified, it must always be set for the lifecycle of the deployment.
-* If the deployment is deleted, the LangGraph Control Plane will not delete the externally managed Postgres instance.
+* If the deployment is deleted, the control plane will not delete the externally managed Postgres instance.
 * The value of `POSTGRES_URI_CUSTOM` can be updated. For example, a password in the URI can be updated.
 
 Database Connectivity:
