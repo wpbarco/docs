@@ -1417,7 +1417,7 @@
   },
   {
     "source": "/langgraph-platform/index",
-    "destination": "/langsmith/home"
+    "destination": "/langsmith/deployments"
   },
   {
     "source": "/langsmith/langgraph-platform-logs",
