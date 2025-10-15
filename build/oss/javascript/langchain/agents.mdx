@@ -195,26 +195,36 @@ If an empty tool list is provided, the agent will consist of a single LLM node w
 #### Tool error handling
 
 
-```ts wrap
-import { ToolNode, ToolMessage } from "langchain";
+To customize how tool errors are handled, use the `wrapToolCall` hook in a custom middleware:
 
-const toolNode = new ToolNode(
-  [search, calculate],
-  {
-    handleToolErrors: (error, toolCall) => {
+```ts wrap
+import { createAgent, createMiddleware, ToolMessage } from "langchain";
+
+const handleToolErrors = createMiddleware({
+  name: "HandleToolErrors",
+  wrapToolCall: (request, handler) => {
+    try {
+      return handler(request);
+    } catch (error) {
+      // Return a custom error message to the model
       return new ToolMessage({
-        content: "Please check your input and try again.",
-        tool_call_id: toolCall.id
+        content: `Tool error: Please check your input and try again. (${error})`,
+        tool_call_id: request.toolCall.id!,
       });
     }
-  }
-);
+  },
+});
 
 const agent = createAgent({
   model: "openai:gpt-4o",
-  tools: toolNode,
-})
+  tools: [
+    /* ... */
+  ],
+  middleware: [handleToolErrors] as const,
+});
 ```
+
+The agent will return a `ToolMessage` with the custom error message when a tool fails.
 
 
 <Tip>
@@ -306,8 +316,7 @@ For more advanced use cases where you need to modify the system prompt based on 
 
 ```typescript wrap
 import * as z from "zod";
-import { createAgent } from "langchain";
-import { dynamicSystemPromptMiddleware } from "langchain/middleware";
+import { createAgent, dynamicSystemPromptMiddleware } from "langchain";
 
 const contextSchema = z.object({
   userRole: z.enum(["expert", "beginner"]),

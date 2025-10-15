@@ -46,7 +46,7 @@ The import path for the react agent prebuilt has changed from `@langchain/langgr
 
 ```typescript
 import { createReactAgent } from "@langchain/langgraph/prebuilts"; // [!code --]
-import { createAgent } from "langchain/agents"; // [!code ++]
+import { createAgent } from "langchain"; // [!code ++]
 ```
 
 ### Prompts
@@ -57,7 +57,7 @@ The `prompt` parameter has been renamed to `systemPrompt`:
 
 <CodeGroup>
 ```typescript v1 (new)
-import { createAgent } from "langchain/agents";
+import { createAgent } from "langchain";
 
 agent = createAgent({
   model,
@@ -68,7 +68,7 @@ agent = createAgent({
 ```typescript v0 (old)
 import { createReactAgent } from "@langchain/langgraph/prebuilts";
 
-agent = createReactAgent({
+const agent = createReactAgent({
   model,
   tools,
   prompt: "You are a helpful assistant.", // [!code highlight]
@@ -84,7 +84,7 @@ If using `SystemMessage` objects in the system prompt, the string content is now
 ```typescript v1 (new)
 import { SystemMessage, createAgent } from "langchain";
 
-agent = createAgent({
+const agent = createAgent({
   model,
   tools,
   systemPrompt: "You are a helpful assistant.", // [!code highlight]
@@ -93,7 +93,7 @@ agent = createAgent({
 ```typescript v0 (old)
 import { createReactAgent } from "@langchain/langgraph/prebuilts";
 
-agent = createReactAgent({
+const agent = createReactAgent({
   model,
   tools,
   prompt: new SystemMessage(content: "You are a helpful assistant."), // [!code highlight]
@@ -160,7 +160,7 @@ const userRolePrompt = dynamicSystemPromptMiddleware((request) => {
   return basePrompt;
 });
 
-agent = createReactAgent({
+const agent = createReactAgent({
   model,
   tools,
   prompt: (state) => {

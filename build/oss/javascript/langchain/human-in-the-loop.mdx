@@ -44,9 +44,8 @@ You configure it with a mapping of tool actions to the decision types that are a
 
 
 ```ts
-import { createAgent } from "langchain";
+import { createAgent, humanInTheLoopMiddleware } from "langchain"; // [!code highlight]
 import { MemorySaver } from "@langchain/langgraph"; // [!code highlight]
-import { humanInTheLoopMiddleware } from "langchain/middleware"; // [!code highlight]
 
 const agent = createAgent({
     model: "openai:gpt-4o",

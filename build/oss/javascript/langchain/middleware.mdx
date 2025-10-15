@@ -454,13 +454,14 @@ This middleware automatically provides agents with a `write_todos` tool and syst
 
 
 ```typescript
-import { createAgent, HumanMessage } from "langchain";
-import { planningMiddleware } from "langchain/agents/middleware";
+import { createAgent, HumanMessage, todoListMiddleware } from "langchain";
 
 const agent = createAgent({
   model: "openai:gpt-4o",
-  tools: [...],
-  middleware: [planningMiddleware()],
+  tools: [
+    /* ... */
+  ],
+  middleware: [todoListMiddleware()] as const,
 });
 
 const result = await agent.invoke({
