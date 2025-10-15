@@ -2,9 +2,12 @@
 title: Agents
 ---
 
-import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
+import AlphaCalloutPy from '/snippets/alpha-lc-callout-py.mdx';
+import AlphaCalloutJS from '/snippets/alpha-lc-callout-js.mdx';
 
-<AlphaCallout />
+<AlphaCalloutPy />
+
+
 
 Agents combine language models with tools to create systems that can reason about tasks, decide which tools to use, and iteratively work towards solutions.
 
@@ -355,6 +358,22 @@ result = agent.invoke(
 For more details on message types and formatting, see [Messages](/oss/python/langchain/messages). For comprehensive middleware documentation, see [Middleware](/oss/python/langchain/middleware).
 </Tip>
 
+## Invocation
+
+You can invoke an agent by passing an update to its [state](/oss/python/langgraph/graph-api#state). All agents include a [sequence of messages](/oss/python/langgraph/use-graph-api#messagesstate) in their state; to invoke the agent, pass a new message:
+
+```python
+result = agent.invoke(
+    {"messages": [{"role": "user", "content": "What's the weather in San Francisco?"}]}
+)
+```
+
+
+
+For streaming steps and / or tokens from the agent, refer to the [streaming](/oss/python/langchain/streaming) guide.
+
+Otherwise, the agent follows the LangGraph [Graph API](/oss/python/langgraph/use-graph-api) and supports all associated methods.
+
 ## Advanced concepts
 
 ### Structured output
@@ -448,7 +467,7 @@ result = agent.invoke({
 ```
 
 <Note>
-In v1, custom state schemas **must** be `TypedDict` types. Pydantic models and dataclasses are no longer supported. See the [v1 migration guide](/oss/python/python/migrate/langchain-v1#state-type-restrictions) for more details.
+In v1, custom state schemas **must** be `TypedDict` types. Pydantic models and dataclasses are no longer supported. See the [v1 migration guide](/oss/python/migrate/langchain-v1#state-type-restrictions) for more details.
 </Note>
 
 

@@ -3,9 +3,12 @@ title: Middleware
 description: Control and customize agent execution at every step
 ---
 
-import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
+import AlphaCalloutPy from '/snippets/alpha-lc-callout-py.mdx';
+import AlphaCalloutJS from '/snippets/alpha-lc-callout-js.mdx';
 
-<AlphaCallout />
+
+<AlphaCalloutJS />
+
 
 Middleware provides a way to more tightly control what happens inside the agent.
 
@@ -172,9 +175,9 @@ const agent = createAgent({
 </Accordion>
 
 <Note>
-**Important:** Human-in-the-loop middleware requires a [checkpointer](/oss/javascript/python/langgraph/checkpointing) to maintain state across interruptions.
+**Important:** Human-in-the-loop middleware requires a [checkpointer](/oss/javascript/langgraph/persistence#checkpoints) to maintain state across interruptions.
 
-See the [human-in-the-loop documentation](/oss/javascript/python/langchain/human-in-the-loop) for complete examples and integration patterns.
+See the [human-in-the-loop documentation](/oss/javascript/langchain/human-in-the-loop) for complete examples and integration patterns.
 </Note>
 
 ### Anthropic prompt caching

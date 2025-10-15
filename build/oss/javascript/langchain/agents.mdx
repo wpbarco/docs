@@ -2,9 +2,12 @@
 title: Agents
 ---
 
-import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
+import AlphaCalloutPy from '/snippets/alpha-lc-callout-py.mdx';
+import AlphaCalloutJS from '/snippets/alpha-lc-callout-js.mdx';
 
-<AlphaCallout />
+
+<AlphaCalloutJS />
+
 
 Agents combine language models with tools to create systems that can reason about tasks, decide which tools to use, and iteratively work towards solutions.
 
@@ -340,6 +343,22 @@ const result = await agent.invoke(
 <Tip>
 For more details on message types and formatting, see [Messages](/oss/javascript/langchain/messages). For comprehensive middleware documentation, see [Middleware](/oss/javascript/langchain/middleware).
 </Tip>
+
+## Invocation
+
+You can invoke an agent by passing an update to its [state](/oss/javascript/langgraph/graph-api#state). All agents include a [sequence of messages](/oss/javascript/langgraph/use-graph-api#messagesstate) in their state; to invoke the agent, pass a new message:
+
+
+```typescript
+await agent.invoke({
+  messages: [{ role: "user", content: "What's the weather in San Francisco?" }],
+})
+```
+
+
+For streaming steps and / or tokens from the agent, refer to the [streaming](/oss/javascript/langchain/streaming) guide.
+
+Otherwise, the agent follows the LangGraph [Graph API](/oss/javascript/langgraph/use-graph-api) and supports all associated methods.
 
 ## Advanced concepts
 
