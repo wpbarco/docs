@@ -340,14 +340,9 @@
                 "pages": [
                   "oss/python/reference/overview",
                   {
-                    "group": "LangChain",
+                    "group": "Reference",
                     "pages": [
-                      "oss/python/reference/langchain-python"
-                    ]
-                  },
-                  {
-                    "group": "LangGraph",
-                    "pages": [
+                      "oss/python/reference/langchain-python",
                       "oss/python/reference/langgraph-python"
                     ]
                   },
@@ -670,16 +665,11 @@
               {
                 "tab": "Reference",
                 "pages": [
-                  "oss/python/reference/overview",
+                  "oss/javascript/reference/overview",
                   {
-                    "group": "LangChain ",
+                    "group": "Reference",
                     "pages": [
-                      "oss/javascript/reference/langchain-javascript"
-                    ]
-                  },
-                  {
-                    "group": "LangGraph",
-                    "pages": [
+                      "oss/javascript/reference/langchain-javascript",
                       "oss/javascript/reference/langgraph-javascript"
                     ]
                   },
