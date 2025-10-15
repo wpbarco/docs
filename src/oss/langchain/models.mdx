@@ -51,7 +51,8 @@ The easiest way to get started with a standalone model in LangChain is to use `i
 ```python
 response = model.invoke("Why do parrots talk?")
 ```
-See @[`init_chat_model`][init_chat_model] for more detail.
+
+See @[`init_chat_model`][init_chat_model] for more detail, including information on how to pass model [parameters](#parameters).
 :::
 :::js
 The easiest way to get started with a standalone model in LangChain is to use `initChatModel` to initialize one from a [provider](/oss/integrations/providers) of your choice (examples below):
@@ -60,7 +61,7 @@ The easiest way to get started with a standalone model in LangChain is to use `i
 ```typescript
 const response = await model.invoke("Why do parrots talk?");
 ```
-See @[`initChatModel`][initChatModel] for more detail.
+See @[`initChatModel`][initChatModel] for more detail, including information on how to pass model [parameters](#parameters).
 :::
 
 
@@ -125,8 +126,35 @@ A chat model takes parameters that can be used to configure its behavior. The fu
     The maximum number of attempts the system will make to resend a request if it fails due to issues like network timeouts or rate limits.
 </ParamField>
 :::
+
+:::python
+Using `init_chat_model`, pass these parameters as inline <Tooltip tip="Arbitrary keyword arguments" cta="Learn more" href="https://www.w3schools.com/python/python_args_kwargs.asp">`**kwargs`</Tooltip>:
+
+```python Initialize using model parameters
+model = init_chat_model(
+    "anthropic:claude-sonnet-4-5-20250929",
+    # Kwargs passed to the model:
+    temperature=0.7,
+    timeout=30,
+    max_tokens=1000,
+)
+```
+:::
+:::js
+Using `initChatModel`, pass these parameters as inline parameters:
+
+```typescript Initialize using model parameters
+const model = await initChatModel(
+    "anthropic:claude-sonnet-4-5-20250929",
+    { temperature: 0.7, timeout: 30, max_tokens: 1000 }
+)
+```
+:::
+
 <Info>
-    To find all the parameters supported by a given chat model, head to the [integrations](/oss/integrations/providers) page.
+    Each chat model integration may have additional params used to control provider-specific functionality. For example, `ChatOpenAI` has `use_responses_api` to dictate whether to use the OpenAI Responses or Completions API.
+
+    To find all the parameters supported by a given chat model, head to the [chat model integrations](/oss/integrations/chat) page.
 </Info>
 
 ---
@@ -521,7 +549,7 @@ To make tools that you have defined available for use by a model, you must bind 
 To make tools that you have defined available for use by a model, you must bind them using @[`bindTools()`][BaseChatModel.bindTools]. In subsequent invocations, the model can choose to call any of the bound tools as needed.
 :::
 
-Some model providers offer built-in tools that can be enabled via model or invocation parameters. Check the respective [provider reference](/oss/integrations/providers) for details.
+Some model providers offer built-in tools that can be enabled via model or invocation parameters (e.g. [`ChatOpenAI`](/oss/integrations/chat/openai), [`ChatAnthropic`](/oss/integrations/chat/anthropic)). Check the respective [provider reference](/oss/integrations/providers) for details.
 
 <Tip>
     See the [tools guide](/oss/langchain/tools) for details and other options for creating tools.
@@ -1606,7 +1634,7 @@ configurable_model.invoke(
 )
 configurable_model.invoke(
     "what's your name",
-        config={"configurable": {"model": "claude-3-5-sonnet-latest"}},  # Run with Claude
+        config={"configurable": {"model": "claude-sonnet-4-5-20250929"}},  # Run with Claude
 )
 ```
 
@@ -1627,7 +1655,7 @@ configurable_model.invoke(
         "what's your name",
             config={
             "configurable": {
-                "first_model": "claude-3-5-sonnet-latest",
+                "first_model": "claude-sonnet-4-5-20250929",
                 "first_temperature": 0.5,
                 "first_max_tokens": 100,
             }
@@ -1681,7 +1709,7 @@ configurable_model.invoke(
     ```python
     llm_with_tools.invoke(
         "what's bigger in 2024 LA or NYC",
-            config={"configurable": {"model": "claude-3-5-sonnet-latest"}},
+            config={"configurable": {"model": "claude-sonnet-4-5-20250929"}},
     ).tool_calls
     ```
     ```

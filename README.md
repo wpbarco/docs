@@ -297,3 +297,15 @@ If adding a new group, ensure the root `index.mdx` is included in the `pages` ar
 ```
 
 If the trailing `/index` (no extension included) is omitted, the Mintlify parser will raise a warning even though the site will still build.
+
+### General Mintlify errors
+
+In some cases, we use new features that are only available in the latest Mintlify CLI. If you encounter errors, ensure you have the latest version installed:
+
+```bash
+mint update
+
+# or
+
+npm install -g mint
+```

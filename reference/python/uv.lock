@@ -1670,8 +1670,8 @@ wheels = [
 
 [[package]]
 name = "langchain"
-version = "1.0.0a14"
-source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Flangchain_v1#53e9f00804b8c285925ee2449284324b80f19f6a" }
+version = "1.0.0a15"
+source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Flangchain_v1#26e0a00c4c5ffb1fd9a53bd71ce489b4664a8583" }
 dependencies = [
     { name = "langchain-core" },
     { name = "langgraph" },
@@ -1680,8 +1680,8 @@ dependencies = [
 
 [[package]]
 name = "langchain-anthropic"
-version = "1.0.0a4"
-source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Fanthropic#53e9f00804b8c285925ee2449284324b80f19f6a" }
+version = "1.0.0a5"
+source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Fanthropic#26e0a00c4c5ffb1fd9a53bd71ce489b4664a8583" }
 dependencies = [
     { name = "anthropic" },
     { name = "langchain-core" },
@@ -1691,7 +1691,7 @@ dependencies = [
 [[package]]
 name = "langchain-astradb"
 version = "0.6.1"
-source = { git = "https://github.com/langchain-ai/langchain-datastax.git?subdirectory=libs%2Fastradb#8d4faadac755c4ac996eed10737806ebe5af88a6" }
+source = { git = "https://github.com/langchain-ai/langchain-datastax.git?subdirectory=libs%2Fastradb#662fe43b54c3e38f21927368ef33e1cad214f32c" }
 dependencies = [
     { name = "astrapy" },
     { name = "langchain-core" },
@@ -1712,7 +1712,7 @@ dependencies = [
 [[package]]
 name = "langchain-chroma"
 version = "1.0.0a1"
-source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Fchroma#53e9f00804b8c285925ee2449284324b80f19f6a" }
+source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Fchroma#26e0a00c4c5ffb1fd9a53bd71ce489b4664a8583" }
 dependencies = [
     { name = "chromadb" },
     { name = "langchain-core" },
@@ -1722,7 +1722,7 @@ dependencies = [
 [[package]]
 name = "langchain-classic"
 version = "1.0.0a1"
-source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Flangchain#53e9f00804b8c285925ee2449284324b80f19f6a" }
+source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Flangchain#26e0a00c4c5ffb1fd9a53bd71ce489b4664a8583" }
 dependencies = [
     { name = "langchain-core" },
     { name = "langchain-text-splitters" },
@@ -1758,8 +1758,8 @@ wheels = [
 
 [[package]]
 name = "langchain-core"
-version = "1.0.0a8"
-source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fcore#53e9f00804b8c285925ee2449284324b80f19f6a" }
+version = "1.0.0rc1"
+source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fcore#26e0a00c4c5ffb1fd9a53bd71ce489b4664a8583" }
 dependencies = [
     { name = "jsonpatch" },
     { name = "langsmith" },
@@ -1773,7 +1773,7 @@ dependencies = [
 [[package]]
 name = "langchain-deepseek"
 version = "1.0.0a1"
-source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Fdeepseek#53e9f00804b8c285925ee2449284324b80f19f6a" }
+source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Fdeepseek#26e0a00c4c5ffb1fd9a53bd71ce489b4664a8583" }
 dependencies = [
     { name = "langchain-core" },
     { name = "langchain-openai" },
@@ -1782,7 +1782,7 @@ dependencies = [
 [[package]]
 name = "langchain-exa"
 version = "1.0.0a1"
-source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Fexa#53e9f00804b8c285925ee2449284324b80f19f6a" }
+source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Fexa#26e0a00c4c5ffb1fd9a53bd71ce489b4664a8583" }
 dependencies = [
     { name = "exa-py" },
     { name = "langchain-core" },
@@ -1791,7 +1791,7 @@ dependencies = [
 [[package]]
 name = "langchain-fireworks"
 version = "1.0.0a1"
-source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Ffireworks#53e9f00804b8c285925ee2449284324b80f19f6a" }
+source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Ffireworks#26e0a00c4c5ffb1fd9a53bd71ce489b4664a8583" }
 dependencies = [
     { name = "aiohttp" },
     { name = "fireworks-ai" },
@@ -1845,7 +1845,7 @@ dependencies = [
 [[package]]
 name = "langchain-groq"
 version = "1.0.0a1"
-source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Fgroq#53e9f00804b8c285925ee2449284324b80f19f6a" }
+source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Fgroq#26e0a00c4c5ffb1fd9a53bd71ce489b4664a8583" }
 dependencies = [
     { name = "groq" },
     { name = "langchain-core" },
@@ -1877,7 +1877,7 @@ dependencies = [
 [[package]]
 name = "langchain-nomic"
 version = "1.0.0a1"
-source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Fnomic#53e9f00804b8c285925ee2449284324b80f19f6a" }
+source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Fnomic#26e0a00c4c5ffb1fd9a53bd71ce489b4664a8583" }
 dependencies = [
     { name = "langchain-core" },
     { name = "nomic" },
@@ -1887,7 +1887,7 @@ dependencies = [
 [[package]]
 name = "langchain-ollama"
 version = "1.0.0a1"
-source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Follama#53e9f00804b8c285925ee2449284324b80f19f6a" }
+source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Follama#26e0a00c4c5ffb1fd9a53bd71ce489b4664a8583" }
 dependencies = [
     { name = "langchain-core" },
     { name = "ollama" },
@@ -1896,7 +1896,7 @@ dependencies = [
 [[package]]
 name = "langchain-openai"
 version = "1.0.0a4"
-source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Fopenai#53e9f00804b8c285925ee2449284324b80f19f6a" }
+source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Fopenai#26e0a00c4c5ffb1fd9a53bd71ce489b4664a8583" }
 dependencies = [
     { name = "langchain-core" },
     { name = "openai" },
@@ -1906,7 +1906,7 @@ dependencies = [
 [[package]]
 name = "langchain-perplexity"
 version = "1.0.0a1"
-source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Fperplexity#53e9f00804b8c285925ee2449284324b80f19f6a" }
+source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Fperplexity#26e0a00c4c5ffb1fd9a53bd71ce489b4664a8583" }
 dependencies = [
     { name = "langchain-core" },
     { name = "openai" },
@@ -1915,7 +1915,7 @@ dependencies = [
 [[package]]
 name = "langchain-prompty"
 version = "1.0.0a1"
-source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Fprompty#53e9f00804b8c285925ee2449284324b80f19f6a" }
+source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Fprompty#26e0a00c4c5ffb1fd9a53bd71ce489b4664a8583" }
 dependencies = [
     { name = "langchain-core" },
     { name = "pyyaml" },
@@ -1924,7 +1924,7 @@ dependencies = [
 [[package]]
 name = "langchain-qdrant"
 version = "1.0.0a1"
-source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Fqdrant#53e9f00804b8c285925ee2449284324b80f19f6a" }
+source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Fqdrant#26e0a00c4c5ffb1fd9a53bd71ce489b4664a8583" }
 dependencies = [
     { name = "langchain-core" },
     { name = "pydantic" },
@@ -2044,7 +2044,7 @@ dependencies = [
 [[package]]
 name = "langchain-text-splitters"
 version = "1.0.0a1"
-source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Ftext-splitters#53e9f00804b8c285925ee2449284324b80f19f6a" }
+source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Ftext-splitters#26e0a00c4c5ffb1fd9a53bd71ce489b4664a8583" }
 dependencies = [
     { name = "langchain-core" },
 ]
@@ -2052,7 +2052,7 @@ dependencies = [
 [[package]]
 name = "langchain-xai"
 version = "1.0.0a1"
-source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Fxai#53e9f00804b8c285925ee2449284324b80f19f6a" }
+source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Fxai#26e0a00c4c5ffb1fd9a53bd71ce489b4664a8583" }
 dependencies = [
     { name = "aiohttp" },
     { name = "langchain-core" },

@@ -30,6 +30,7 @@ This site is currently being migrated from a previous Sphinx-based implementatio
 - [ ] [Inheritance diagrams](https://mkdocstrings.github.io/python/usage/configuration/general/#show_inheritance_diagram)
 - [ ] Consider using [inherited docstrings](https://mkdocstrings.github.io/griffe/extensions/official/inherited-docstrings/)
 - [ ] Pydantic object refs preloading so that we link to them? Should find their tree and load it in (like we did for old LC)
+- [ ] Fix TOC shadow overflow (started in `reference/python/docs/stylesheets/toc.css`) but was funky
 - [ ] Post-processing step to link out to imports from code blocks
   - [ ] Maybe there's a plugin?
 - [ ] Fix `navigation.path` feature/plugin in `mkdocs.yml` not working

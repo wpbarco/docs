@@ -1580,7 +1580,7 @@ from langgraph.func import entrypoint, task
 from langgraph.checkpoint.memory import InMemorySaver
 from langchain_anthropic import ChatAnthropic
 
-model = ChatAnthropic(model="claude-3-5-sonnet-latest")
+model = ChatAnthropic(model="claude-sonnet-4-5-20250929")
 
 @task
 def call_model(messages: list[BaseMessage]):
@@ -1619,7 +1619,7 @@ import {
 } from "@langchain/langgraph";
 import { ChatAnthropic } from "@langchain/anthropic";
 
-const model = new ChatAnthropic({ model: "claude-3-5-sonnet-latest" });
+const model = new ChatAnthropic({ model: "claude-sonnet-4-5-20250929" });
 
 const callModel = task(
   "callModel",

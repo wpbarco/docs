@@ -87,6 +87,7 @@ In general, follow the [Google Developer Documentation Style Guide](https://deve
 - Correct spelling
 - Correct grammar
 - Sentence-case for headings
+- Ensure American English spelling
 
 ## Do not
 
