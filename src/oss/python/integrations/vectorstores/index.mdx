@@ -407,11 +407,11 @@ vector_store = AstraDBVectorStore(
 )
 ```
 </Accordion>
-<Accordian titel="Azure Cosmos DB NoSQL">
+<Accordion title="Azure Cosmos DB NoSQL">
 
 <CodeGroup>
 ```bash pip
-pip install -qU langchain-azure-ai
+pip install -qU langchain-azure-ai auzre-cosmos
 ```
 
 ```bash uv
@@ -437,12 +437,12 @@ vector_search = AzureCosmosDBNoSqlVectorSearch.from_documents(
     full_text_search_enabled=True,
 )
 ```
-</Accordian>
-<Accordian titel="Azure Cosmos DB Mongo vCore">
+</Accordion>
+<Accordion title="Azure Cosmos DB Mongo vCore">
 
 <CodeGroup>
 ```bash pip 
-pip install pymongo
+pip install langchain-azure-ai pymongo
 ```
 
 ```bash uv
@@ -462,7 +462,7 @@ vectorstore = AzureCosmosDBMongoVCoreVectorSearch.from_documents(
     index_name=INDEX_NAME,
 )
 ```
-</Accordian>    
+</Accordion>    
 <Accordion title="Chroma">
 
 <CodeGroup>

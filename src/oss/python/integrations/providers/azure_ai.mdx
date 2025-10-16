@@ -2,7 +2,7 @@
 title: Azure AI
 ---
 
-All LangChain integrations with the [Microsoft Azure](https://azure.micorsoft.com/) and its related projects.
+All LangChain integrations with the [Microsoft Azure](https://azure.microsoft.com/) and its related projects.
 
 Integration packages for Azure AI, Dynamic Sessions, SQL Server are maintained in
 the [langchain-azure](https://github.com/langchain-ai/langchain-azure) repository.
@@ -116,17 +116,15 @@ vector_search = AzureCosmosDBNoSqlVectorSearch.from_documents(
 )
 ```
 
-See a [usage example](/oss/python/integrations/vectorstores/azure_cosmosdb_nosql).
+See a [usage example](/oss/python/integrations/vectorstores/azure_cosmos_db_no_sql).
 
-
-## Vector stores
 
 ### Azure CosmosDB Mongo vCore Vector Search
 
 > [Azure CosmosDB Mongo vCore](https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/vcore/) architecture makes 
 it easy to create a database with full native MongoDB support. You can apply your MongoDB experience and continue 
 to use your favorite MongoDB drivers, SDKs, and tools by pointing your application to the API for MongoDB (vCore) 
-cluster's connection string/
+cluster's connection string.
 
 We need to install the `pymongo` package to use this vector store.
 
@@ -153,4 +151,4 @@ vectorstore = AzureCosmosDBMongoVCoreVectorSearch.from_documents(
 )
 ```
 
-See a [usage example](/oss/python/integrations/vectorstores/azure_cosmosdb_mongo_vcore).
+See a [usage example](/oss/python/integrations/vectorstores/azure_cosmos_db_mongo_vcore).
