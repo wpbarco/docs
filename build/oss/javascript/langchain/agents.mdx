@@ -53,7 +53,7 @@ graph TD
 `createAgent()` builds a **graph**-based agent runtime using [LangGraph](/oss/javascript/langgraph/overview). A graph consists of nodes (steps) and edges (connections) that define how your agent processes information. The agent moves through this graph, executing nodes like the model node (which calls the model), the tools node (which executes tools), or middleware.
 
 
-Learn more about the [graph API](/oss/javascript/langgraph/graph-api).
+Learn more about the [Graph API](/oss/javascript/langgraph/graph-api).
 
 </Info>
 
@@ -233,7 +233,7 @@ Learn more about tools in [tools](/oss/javascript/langchain/tools).
 
 #### Tool use in the ReAct loop
 
-Agents follow the ReAct (*Reasoning* + *Acting*) pattern, alternating between brief reasoning steps with targeted tool calls and feeding the resulting observations into subsequent decisions until they can deliver a final answer.
+Agents follow the ReAct ("Reasoning + Acting") pattern, alternating between brief reasoning steps with targeted tool calls and feeding the resulting observations into subsequent decisions until they can deliver a final answer.
 
 <Accordion title="Example of ReAct loop">
 Prompt: Identify the current most popular wireless headphones and verify availability.
@@ -294,7 +294,7 @@ To learn more about tools, see [Tools](/oss/javascript/langchain/tools).
 
 ### System prompt
 
-You can shape how your agent approaches tasks by providing a prompt. The `system_prompt` parameter can be provided as a string:
+You can shape how your agent approaches tasks by providing a prompt. The @[`system_prompt`] parameter can be provided as a string:
 
 
 ```ts wrap
@@ -443,7 +443,7 @@ To learn more about memory, see [Memory](/oss/javascript/concepts/memory). For i
 
 ### Streaming
 
-We've seen how the agent can be called with `.invoke` to get a final response. If the agent executes multiple steps, this may take a while. To show intermediate progress, we can stream back messages as they occur.
+We've seen how the agent can be called with `invoke` to get a final response. If the agent executes multiple steps, this may take a while. To show intermediate progress, we can stream back messages as they occur.
 
 
 ```ts wrap

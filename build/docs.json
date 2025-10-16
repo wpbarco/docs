@@ -764,12 +764,11 @@
             "pages": [
               "langsmith/home",
               "langsmith/pricing-plans",
-
+              "langsmith/create-account-api-key",
               {
                 "group": "Account administration",
                 "pages": [
                   "langsmith/administration-overview",
-                  "langsmith/create-account-api-key",
                   "langsmith/set-up-a-workspace",
                   "langsmith/manage-organization-by-api",
                   "langsmith/billing",

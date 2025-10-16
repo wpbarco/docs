@@ -71,7 +71,7 @@ os.environ["LANGSMITH_API_KEY"] = getpass.getpass()
 
 ## 1. Documents and Document Loaders
 
-LangChain implements a [Document](https://python.langchain.com/api_reference/core/documents/langchain_core.documents.base.Document.html) abstraction, which is intended to represent a unit of text and associated metadata. It has three attributes:
+LangChain implements a [Document](https://reference.langchain.com/python/langchain_core/documents/#langchain_core.documents.base.Document) abstraction, which is intended to represent a unit of text and associated metadata. It has three attributes:
 
 - `page_content`: a string representing the content;
 - `metadata`: a dict containing arbitrary metadata;
@@ -233,7 +233,7 @@ Once we've instantiated a `VectorStore` that contains documents, we can query it
 - With and without returning similarity scores;
 - By similarity and @[maximum marginal relevance][VectorStore.max_marginal_relevance_search] (to balance similarity with query to diversity in retrieved results).
 
-The methods will generally include a list of [Document](https://python.langchain.com/api_reference/core/documents/langchain_core.documents.base.Document.html) objects in their outputs.
+The methods will generally include a list of [Document](https://reference.langchain.com/python/langchain_core/documents/#langchain_core.documents.base.Document) objects in their outputs.
 
 **Usage**
 

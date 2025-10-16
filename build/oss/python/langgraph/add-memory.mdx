@@ -916,7 +916,7 @@ builder.add_node(call_model)
   from langchain.chat_models import init_chat_model
   from langgraph.graph import StateGraph, START, MessagesState
 
-  model = init_chat_model("anthropic:claude-3-7-sonnet-latest")
+  model = init_chat_model("anthropic:claude-sonnet-4-5-20250929")
   summarization_model = model.bind(max_tokens=128)
 
   def call_model(state: MessagesState):
@@ -1099,7 +1099,7 @@ def summarize_conversation(state: State):
   from langgraph.checkpoint.memory import InMemorySaver
   from langmem.short_term import SummarizationNode, RunningSummary  # [!code highlight]
 
-  model = init_chat_model("anthropic:claude-3-7-sonnet-latest")
+  model = init_chat_model("anthropic:claude-sonnet-4-5-20250929")
   summarization_model = model.bind(max_tokens=128)
 
   class State(MessagesState):

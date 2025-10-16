@@ -48,7 +48,7 @@ The easiest way to get started with a standalone model in LangChain is to use `i
 ```typescript
 const response = await model.invoke("Why do parrots talk?");
 ```
-See [`initChatModel`](https://v03.api.js.langchain.com/functions/langchain.chat_models_universal.initChatModel.html) for more detail.
+See [`initChatModel`](https://v03.api.js.langchain.com/functions/langchain.chat_models_universal.initChatModel.html) for more detail, including information on how to pass model [parameters](#parameters).
 
 
 
@@ -99,8 +99,22 @@ A chat model takes parameters that can be used to configure its behavior. The fu
     The maximum number of attempts the system will make to resend a request if it fails due to issues like network timeouts or rate limits.
 </ParamField>
 
+
+
+Using `initChatModel`, pass these parameters as inline parameters:
+
+```typescript Initialize using model parameters
+const model = await initChatModel(
+    "anthropic:claude-sonnet-4-5-20250929",
+    { temperature: 0.7, timeout: 30, max_tokens: 1000 }
+)
+```
+
+
 <Info>
-    To find all the parameters supported by a given chat model, head to the [integrations](/oss/javascript/integrations/providers) page.
+    Each chat model integration may have additional params used to control provider-specific functionality. For example, `ChatOpenAI` has `use_responses_api` to dictate whether to use the OpenAI Responses or Completions API.
+
+    To find all the parameters supported by a given chat model, head to the [chat model integrations](/oss/javascript/integrations/chat) page.
 </Info>
 
 ---
@@ -325,7 +339,7 @@ Models can request to call tools that perform tasks such as fetching data from a
 To make tools that you have defined available for use by a model, you must bind them using [`bindTools()`](https://v03.api.js.langchain.com/classes/langchain.chat_models_universal.ConfigurableModel.html#bindTools). In subsequent invocations, the model can choose to call any of the bound tools as needed.
 
 
-Some model providers offer built-in tools that can be enabled via model or invocation parameters. Check the respective [provider reference](/oss/javascript/integrations/providers) for details.
+Some model providers offer built-in tools that can be enabled via model or invocation parameters (e.g. [`ChatOpenAI`](/oss/javascript/integrations/chat/openai), [`ChatAnthropic`](/oss/javascript/integrations/chat/anthropic)). Check the respective [provider reference](/oss/javascript/integrations/providers) for details.
 
 <Tip>
     See the [tools guide](/oss/javascript/langchain/tools) for details and other options for creating tools.

@@ -47,7 +47,8 @@ The easiest way to get started with a standalone model in LangChain is to use `i
 ```python
 response = model.invoke("Why do parrots talk?")
 ```
-See [`init_chat_model`](https://python.langchain.com/api_reference/langchain/chat_models/langchain.chat_models.base.init_chat_model.html) for more detail.
+
+See [`init_chat_model`](https://reference.langchain.com/python/langchain/models/#langchain.chat_models.init_chat_model) for more detail, including information on how to pass model [parameters](#parameters).
 
 
 
@@ -99,8 +100,25 @@ A chat model takes parameters that can be used to configure its behavior. The fu
 </ParamField>
 
 
+
+Using `init_chat_model`, pass these parameters as inline <Tooltip tip="Arbitrary keyword arguments" cta="Learn more" href="https://www.w3schools.com/python/python_args_kwargs.asp">`**kwargs`</Tooltip>:
+
+```python Initialize using model parameters
+model = init_chat_model(
+    "anthropic:claude-sonnet-4-5-20250929",
+    # Kwargs passed to the model:
+    temperature=0.7,
+    timeout=30,
+    max_tokens=1000,
+)
+```
+
+
+
 <Info>
-    To find all the parameters supported by a given chat model, head to the [integrations](/oss/python/integrations/providers) page.
+    Each chat model integration may have additional params used to control provider-specific functionality. For example, `ChatOpenAI` has `use_responses_api` to dictate whether to use the OpenAI Responses or Completions API.
+
+    To find all the parameters supported by a given chat model, head to the [chat model integrations](/oss/python/integrations/chat) page.
 </Info>
 
 ---
@@ -120,7 +138,7 @@ A chat model must be invoked to generate an output. There are three primary invo
 
 ### Invoke
 
-The most straightforward way to call a model is to use [`invoke()`](https://python.langchain.com/api_reference/core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.invoke) with a single message or a list of messages.
+The most straightforward way to call a model is to use [`invoke()`](https://reference.langchain.com/python/langchain_core/language_models/#langchain_core.language_models.chat_models.BaseChatModel.invoke) with a single message or a list of messages.
 
 ```python Single message
 response = model.invoke("Why do parrots have colorful feathers?")
@@ -166,7 +184,7 @@ print(response)  // AIMessage("J'adore créer des applications.")
 
 Most models can stream their output content while it is being generated. By displaying output progressively, streaming significantly improves user experience, particularly for longer responses.
 
-Calling [`stream()`](https://python.langchain.com/api_reference/core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.stream) returns an <Tooltip tip="An object that progressively provides access to each item of a collection, in order.">iterator</Tooltip> that yields output chunks as they are produced. You can use a loop to process each chunk in real-time:
+Calling [`stream()`](https://reference.langchain.com/python/langchain_core/language_models/#langchain_core.language_models.chat_models.BaseChatModel.stream) returns an <Tooltip tip="An object that progressively provides access to each item of a collection, in order.">iterator</Tooltip> that yields output chunks as they are produced. You can use a loop to process each chunk in real-time:
 
 <CodeGroup>
     ```python Basic text streaming
@@ -190,7 +208,7 @@ Calling [`stream()`](https://python.langchain.com/api_reference/core/language_mo
 
 
 
-As opposed to `invoke()`, which returns a single [`AIMessage`](https://python.langchain.com/api_reference/core/messages/langchain_core.messages.ai.AIMessage.html) after the model has finished generating its full response, `stream()` returns multiple [`AIMessageChunk`](https://python.langchain.com/api_reference/core/messages/langchain_core.messages.ai.AIMessageChunk.html) objects, each containing a portion of the output text. Importantly, each chunk in a stream is designed to be gathered into a full message via summation:
+As opposed to `invoke()`, which returns a single [`AIMessage`](https://reference.langchain.com/python/langchain/messages/#langchain.messages.AIMessage) after the model has finished generating its full response, `stream()` returns multiple [`AIMessageChunk`](https://reference.langchain.com/python/langchain/messages/#langchain.messages.AIMessageChunk) objects, each containing a portion of the output text. Importantly, each chunk in a stream is designed to be gathered into a full message via summation:
 
 ```python Construct an AIMessage
 full = None  # None | AIMessageChunk
@@ -228,7 +246,7 @@ The resulting message can be treated the same as a message that was generated wi
 
         When you `invoke()` a chat model, LangChain will automatically switch to an internal streaming mode if it detects that you are trying to stream the overall application. The result of the invocation will be the same as far as the code that was using invoke is concerned; however, while the chat model is being streamed, LangChain will take care of invoking `on_llm_new_token` events in LangChain's callback system.
 
-        Callback events allow LangGraph `stream()` and [`astream_events()`](https://python.langchain.com/api_reference/core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.astream_events) to surface the chat model's output in real-time.
+        Callback events allow LangGraph `stream()` and [`astream_events()`](https://reference.langchain.com/python/langchain_core/language_models/#langchain_core.language_models.chat_models.BaseChatModel.astream_events) to surface the chat model's output in real-time.
 
 
     </Accordion>
@@ -264,7 +282,7 @@ The resulting message can be treated the same as a message that was generated wi
         Full message: Hi there! How can I help today?
         ```
 
-        See the [`astream_events()`](https://python.langchain.com/api_reference/core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.astream_events)
+        See the [`astream_events()`](https://reference.langchain.com/python/langchain_core/language_models/#langchain_core.language_models.chat_models.BaseChatModel.astream_events)
         reference for event types and other details.
 
 
@@ -292,7 +310,7 @@ for response in responses:
     It is **distinct** from batch APIs supported by inference providers, such as [OpenAI](https://platform.openai.com/docs/guides/batch) or [Anthropic](https://docs.anthropic.com/en/docs/build-with-claude/batch-processing#message-batches-api).
 </Note>
 
-By default, [`batch()`](https://python.langchain.com/api_reference/core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.batch) will only return the final output for the entire batch. If you want to receive the output for each individual input as it finishes generating, you can stream results with [`batch_as_completed()`](https://python.langchain.com/api_reference/core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.batch_as_completed):
+By default, [`batch()`](https://reference.langchain.com/python/langchain_core.language_models.chat_models.BaseChatModel.batch) will only return the final output for the entire batch. If you want to receive the output for each individual input as it finishes generating, you can stream results with [`batch_as_completed()`](https://reference.langchain.com/python/langchain_core.language_models.chat_models.BaseChatModel.batch_as_completed):
 
 ```python Yield batch responses upon completion
 for response in model.batch_as_completed([
@@ -318,10 +336,10 @@ for response in model.batch_as_completed([
     )
     ```
 
-    See the [`RunnableConfig`](https://python.langchain.com/api_reference/core/runnables/langchain_core.runnables.config.RunnableConfig.html) reference for a full list of supported attributes.
+    See the [`RunnableConfig`](https://reference.langchain.com/python/langchain_core/runnables/#langchain_core.runnables.RunnableConfig) reference for a full list of supported attributes.
 </Tip>
 
-For more details on batching, see the [reference](https://python.langchain.com/api_reference/core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.batch).
+For more details on batching, see the [reference](https://reference.langchain.com/python/langchain_core.language_models.chat_models.BaseChatModel.batch).
 
 
 
@@ -339,12 +357,12 @@ Models can request to call tools that perform tasks such as fetching data from a
     You may hear the term "function calling". We use this interchangeably with "tool calling".
 </Note>
 
-To make tools that you have defined available for use by a model, you must bind them using [`bind_tools()`](https://python.langchain.com/api_reference/core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.bind_tools). In subsequent invocations, the model can choose to call any of the bound tools as needed.
+To make tools that you have defined available for use by a model, you must bind them using [`bind_tools()`](https://reference.langchain.com/python/langchain_core/language_models/#langchain_core.language_models.chat_models.BaseChatModel.bind_tools). In subsequent invocations, the model can choose to call any of the bound tools as needed.
 
 
 
 
-Some model providers offer built-in tools that can be enabled via model or invocation parameters. Check the respective [provider reference](/oss/python/integrations/providers) for details.
+Some model providers offer built-in tools that can be enabled via model or invocation parameters (e.g. [`ChatOpenAI`](/oss/python/integrations/chat/openai), [`ChatAnthropic`](/oss/python/integrations/chat/anthropic)). Check the respective [provider reference](/oss/python/integrations/providers) for details.
 
 <Tip>
     See the [tools guide](/oss/python/langchain/tools) for details and other options for creating tools.
@@ -984,7 +1002,7 @@ You can track aggregate token counts across models in an application using eithe
 
 ### Invocation config
 
-When invoking a model, you can pass additional configuration through the `config` parameter using a [`RunnableConfig`](https://python.langchain.com/api_reference/core/runnables/langchain_core.runnables.config.RunnableConfig.html) dictionary. This provides run-time control over execution behavior, callbacks, and metadata tracking.
+When invoking a model, you can pass additional configuration through the `config` parameter using a [`RunnableConfig`](https://reference.langchain.com/python/langchain_core/runnables/#langchain_core.runnables.RunnableConfig) dictionary. This provides run-time control over execution behavior, callbacks, and metadata tracking.
 
 
 
@@ -1041,7 +1059,7 @@ These configuration values are particularly useful when:
 - Controlling resource usage in production
 - Tracking invocations across complex pipelines
 
-For more information on all supported `RunnableConfig` attributes, see the [`RunnableConfig`](https://python.langchain.com/api_reference/core/runnables/langchain_core.runnables.config.RunnableConfig.html) reference.
+For more information on all supported `RunnableConfig` attributes, see the [`RunnableConfig`](https://reference.langchain.com/python/langchain_core/runnables/#langchain_core.runnables.RunnableConfig) reference.
 
 ### Configurable models
 
@@ -1058,7 +1076,7 @@ configurable_model.invoke(
 )
 configurable_model.invoke(
     "what's your name",
-        config={"configurable": {"model": "claude-3-5-sonnet-latest"}},  # Run with Claude
+        config={"configurable": {"model": "claude-sonnet-4-5-20250929"}},  # Run with Claude
 )
 ```
 
@@ -1079,7 +1097,7 @@ configurable_model.invoke(
         "what's your name",
             config={
             "configurable": {
-                "first_model": "claude-3-5-sonnet-latest",
+                "first_model": "claude-sonnet-4-5-20250929",
                 "first_temperature": 0.5,
                 "first_max_tokens": 100,
             }
@@ -1133,7 +1151,7 @@ configurable_model.invoke(
     ```python
     llm_with_tools.invoke(
         "what's bigger in 2024 LA or NYC",
-            config={"configurable": {"model": "claude-3-5-sonnet-latest"}},
+            config={"configurable": {"model": "claude-sonnet-4-5-20250929"}},
     ).tool_calls
     ```
     ```

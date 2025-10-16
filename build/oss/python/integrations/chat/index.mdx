@@ -10,30 +10,30 @@ title: "Chat models"
     **While all these LangChain classes support the indicated advanced feature**, you may have to open the provider-specific documentation to learn which hosted models or backends support the feature.
 </Info>
 
+{/* TODO: finish linking to specific section for `ChatModel` */}
 | Provider | [Tool calling](/oss/python/langchain/tools) | [Structured output](/oss/python/langchain/structured-output/) | JSON mode | Local | [Multimodal](/oss/python/langchain/messages#multimodal) | Package |
 |----------|------------|-------------------|-----------|-------|------------|---------|
-| [ChatAnthropic](/oss/python/integrations/chat/anthropic) | ✅ | ✅ | ❌ | ❌ | ✅ | [langchain-anthropic](https://python.langchain.com/api_reference/anthropic/chat_models/langchain_anthropic.chat_models.ChatAnthropic.html) |
-| [ChatOpenAI](/oss/python/integrations/chat/openai) | ✅ | ✅ | ✅ | ❌ | ✅ | [langchain-openai](https://python.langchain.com/api_reference/openai/chat_models/langchain_openai.chat_models.base.ChatOpenAI.html) |
-| [ChatVertexAI](/oss/python/integrations/chat/google_vertex_ai_palm) | ✅ | ✅ | ❌ | ❌ | ✅ | [langchain-google-vertexai](https://python.langchain.com/api_reference/google_vertexai/chat_models/langchain_google_vertexai.chat_models.ChatVertexAI.html) |
-| [ChatGoogleGenerativeAI](/oss/python/integrations/chat/google_generative_ai) | ✅ | ✅ | ❌ | ❌ | ✅ | [langchain-google-genai](https://python.langchain.com/api_reference/google_genai/chat_models/langchain_google_genai.chat_models.ChatGoogleGenerativeAI.html) |
-| [ChatGroq](/oss/python/integrations/chat/groq) | ✅ | ✅ | ✅ | ❌ | ❌ | [langchain-groq](https://python.langchain.com/api_reference/groq/chat_models/langchain_groq.chat_models.ChatGroq.html) |
-| [ChatBedrock](/oss/python/integrations/chat/bedrock) | ✅ | ✅ | ❌ | ❌ | ❌ | [langchain-aws](https://python.langchain.com/api_reference/aws/chat_models/langchain_aws.chat_models.bedrock.ChatBedrock.html) |
-| [ChatHuggingFace](/oss/python/integrations/chat/huggingface) | ✅ | ✅ | ❌ | ✅ | ❌ | [langchain-huggingface](https://python.langchain.com/api_reference/huggingface/chat_models/langchain_huggingface.chat_models.huggingface.ChatHuggingFace.html) |
-| [ChatOllama](/oss/python/integrations/chat/ollama) | ✅ | ✅ | ✅ | ✅ | ❌ | [langchain-ollama](https://python.langchain.com/api_reference/ollama/chat_models/langchain_ollama.chat_models.ChatOllama.html) |
-| [ChatXAI](/oss/python/integrations/chat/xai) | ✅ | ✅ | ❌ | ❌ | ❌ | [langchain-xai](https://python.langchain.com/api_reference/xai/chat_models/langchain_xai.chat_models.ChatXAI.html) |
-| [ChatNVIDIA](/oss/python/integrations/chat/nvidia_ai_endpoints) | ✅ | ✅ | ✅ | ✅ | ✅ | [langchain-nvidia-ai-endpoints](https://python.langchain.com/api_reference/nvidia_ai_endpoints/chat_models/langchain_nvidia_ai_endpoints.chat_models.ChatNVIDIA.html) |
-| [ChatCohere](/oss/python/integrations/chat/cohere) | ✅ | ✅ | ❌ | ❌ | ❌ | [langchain-cohere](https://python.langchain.com/api_reference/cohere/chat_models/langchain_cohere.chat_models.ChatCohere.html) |
-| [ChatMistralAI](/oss/python/integrations/chat/mistralai) | ✅ | ✅ | ❌ | ❌ | ❌ | [langchain-mistralai](https://python.langchain.com/api_reference/mistralai/chat_models/langchain_mistralai.chat_models.ChatMistralAI.html) |
-| [ChatTogether](/oss/python/integrations/chat/together) | ✅ | ✅ | ✅ | ❌ | ❌ | [langchain-together](https://python.langchain.com/api_reference/together/chat_models/langchain_together.chat_models.ChatTogether.html) |
-| [ChatFireworks](/oss/python/integrations/chat/fireworks) | ✅ | ✅ | ✅ | ❌ | ❌ | [langchain-fireworks](https://python.langchain.com/api_reference/fireworks/chat_models/langchain_fireworks.chat_models.ChatFireworks.html) |
-| [AzureChatOpenAI](/oss/python/integrations/chat/azure_chat_openai) | ✅ | ✅ | ✅ | ❌ | ✅ | [langchain-openai](https://python.langchain.com/api_reference/openai/chat_models/langchain_openai.chat_models.azure.AzureChatOpenAI.html) |
-| [ChatAIMLAPI](/oss/python/integrations/chat/aimlapi) | ✅ | ✅ | ✅ | ❌ | ✅ | [langchain-aimlapi](https://python.langchain.com/api_reference/aimlapi/chat_models/langchain_aimlapi.chat_models.ChatAimlapi.html) |
-| [ChatLlamaCpp](/oss/python/integrations/chat/llamacpp) | ✅ | ✅ | ❌ | ✅ | ❌ | [langchain-community](https://python.langchain.com/api_reference/community/chat_models/langchain_community.chat_models.llamacpp.ChatLlamaCpp.html) |
-| [ChatAI21](/oss/python/integrations/chat/ai21) | ✅ | ✅ | ❌ | ❌ | ❌ | [langchain-ai21](https://python.langchain.com/api_reference/ai21/chat_models/langchain_ai21.chat_models.ChatAI21.html) |
-| [ChatUpstage](/oss/python/integrations/chat/upstage) | ✅ | ✅ | ❌ | ❌ | ❌ | [langchain-upstage](https://python.langchain.com/api_reference/upstage/chat_models/langchain_upstage.chat_models.ChatUpstage.html) |
-| [ChatDatabricks](/oss/python/integrations/chat/databricks) | ✅ | ✅ | ❌ | ❌ | ❌ | [databricks-langchain](https://api-docs.databricks.com/python/databricks-ai-bridge/latest/databricks_langchain.html#databricks_langchain.ChatDatabricks) |
-| [ChatWatsonx](/oss/python/integrations/chat/ibm_watsonx) | ✅ | ✅ | ✅ | ❌ | ❌ | [langchain-ibm](https://python.langchain.com/api_reference/ibm/chat_models/langchain_ibm.chat_models.ChatWatsonx.html) |
-| [ChatPerplexity](/oss/python/integrations/chat/perplexity) | ❌ | ✅ | ✅ | ❌ | ✅ | [langchain-perplexity](https://python.langchain.com/api_reference/perplexity/chat_models/langchain_perplexity.chat_models.ChatPerplexity.html) |
+| [`ChatAnthropic`](/oss/python/integrations/chat/anthropic) | ✅ | ✅ | ❌ | ❌ | ✅ | [`langchain-anthropic`](https://reference.langchain.com/python/integrations/langchain_anthropic/) |
+| [`ChatOpenAI`](/oss/python/integrations/chat/openai) | ✅ | ✅ | ✅ | ❌ | ✅ | [`langchain-openai`](https://reference.langchain.com/python/integrations/langchain_openai/ChatOpenAI/) |
+| [`AzureChatOpenAI`](/oss/python/integrations/chat/azure_chat_openai) | ✅ | ✅ | ✅ | ❌ | ✅ | [`langchain-openai`](https://reference.langchain.com/python/integrations/langchain_openai/AzureChatOpenAI/) |
+| [`ChatVertexAI`](/oss/python/integrations/chat/google_vertex_ai_palm) | ✅ | ✅ | ❌ | ❌ | ✅ | [`langchain-google-vertexai`](https://reference.langchain.com/python/integrations/langchain_google_vertexai/) |
+| [`ChatGoogleGenerativeAI`](/oss/python/integrations/chat/google_generative_ai) | ✅ | ✅ | ❌ | ❌ | ✅ | [`langchain-google-genai`](https://reference.langchain.com/python/integrations/langchain_google_genai/) |
+| [`ChatGroq`](/oss/python/integrations/chat/groq) | ✅ | ✅ | ✅ | ❌ | ❌ | [`langchain-groq`](https://reference.langchain.com/python/integrations/langchain_groq/) |
+| [`ChatBedrock`](/oss/python/integrations/chat/bedrock) | ✅ | ✅ | ❌ | ❌ | ❌ | [`langchain-aws`](https://reference.langchain.com/python/integrations/langchain_aws/) |
+| [`ChatHuggingFace`](/oss/python/integrations/chat/huggingface) | ✅ | ✅ | ❌ | ✅ | ❌ | [`langchain-huggingface`](https://reference.langchain.com/python/integrations/langchain_huggingface/) |
+| [`ChatOllama`](/oss/python/integrations/chat/ollama) | ✅ | ✅ | ✅ | ✅ | ❌ | [`langchain-ollama`](https://reference.langchain.com/python/integrations/langchain_ollama/) |
+| [`ChatXAI`](/oss/python/integrations/chat/xai) | ✅ | ✅ | ❌ | ❌ | ❌ | [`langchain-xai`](https://reference.langchain.com/python/integrations/langchain_xai/) |
+| [`ChatNVIDIA`](/oss/python/integrations/chat/nvidia_ai_endpoints) | ✅ | ✅ | ✅ | ✅ | ✅ | [`langchain-nvidia-ai-endpoints`](https://reference.langchain.com/python/integrations/langchain_nvidia_ai_endpoints/) |
+| [`ChatCohere`](/oss/python/integrations/chat/cohere) | ✅ | ✅ | ❌ | ❌ | ❌ | [`langchain-cohere`](https://reference.langchain.com/python/integrations/langchain_cohere/) |
+| [`ChatMistralAI`](/oss/python/integrations/chat/mistralai) | ✅ | ✅ | ❌ | ❌ | ❌ | [`langchain-mistralai`](https://reference.langchain.com/python/integrations/langchain_mistralai/) |
+| [`ChatTogether`](/oss/python/integrations/chat/together) | ✅ | ✅ | ✅ | ❌ | ❌ | [`langchain-together`](https://reference.langchain.com/python/integrations/langchain_together/) |
+| [`ChatFireworks`](/oss/python/integrations/chat/fireworks) | ✅ | ✅ | ✅ | ❌ | ❌ | [`langchain-fireworks`](https://reference.langchain.com/python/integrations/langchain_fireworks/) |
+| [`ChatAI21`](/oss/python/integrations/chat/ai21) | ✅ | ✅ | ❌ | ❌ | ❌ | [`langchain-ai21`](https://python.langchain.com/api_reference/ai21/chat_models/langchain_ai21.chat_models.ChatAI21.html) |
+| [`ChatLlamaCpp`](/oss/python/integrations/chat/llamacpp) | ✅ | ✅ | ❌ | ✅ | ❌ | [`langchain-community`](https://python.langchain.com/api_reference/community/chat_models/langchain_community.chat_models.llamacpp.ChatLlamaCpp.html) |
+| [`ChatUpstage`](/oss/python/integrations/chat/upstage) | ✅ | ✅ | ❌ | ❌ | ❌ | [`langchain-upstage`](https://reference.langchain.com/python/integrations/langchain_upstage/) |
+| [`ChatDatabricks`](/oss/python/integrations/chat/databricks) | ✅ | ✅ | ❌ | ❌ | ❌ | [`databricks-langchain`](https://api-docs.databricks.com/python/databricks-ai-bridge/latest/databricks_langchain.html#databricks_langchain.ChatDatabricks) |
+| [`ChatWatsonx`](/oss/python/integrations/chat/ibm_watsonx) | ✅ | ✅ | ✅ | ❌ | ❌ | [`langchain-ibm`](https://reference.langchain.com/python/integrations/langchain_ibm/) |
+| [`ChatPerplexity`](/oss/python/integrations/chat/perplexity) | ❌ | ✅ | ✅ | ❌ | ✅ | [`langchain-perplexity`](https://reference.langchain.com/python/integrations/langchain_perplexity/) |
 
 ## All chat models
 
