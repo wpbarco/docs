@@ -557,7 +557,7 @@ response.content_blocks[0]
 
 `ChatOpenAI` supports the `"computer-use-preview"` model, which is a specialized model for the built-in computer use tool. To enable, pass a [computer use tool](https://platform.openai.com/docs/guides/tools-computer-use) as you would pass another tool.
 
-Currently, tool outputs for computer use are present in the message `content` field. To reply to the computer use tool call, construct a `ToolMessage` with `{"type": "computer_call_output"}` in its `additional_kwargs`. The content of the message will be a screenshot. Below, we demonstrate a simple example.
+Currently, tool outputs for computer use are present in the message `content` field. To reply to the computer use tool call, construct a @[`ToolMessage`] with `{"type": "computer_call_output"}` in its `additional_kwargs`. The content of the message will be a screenshot. Below, we demonstrate a simple example.
 
 First, load two screenshots:
 

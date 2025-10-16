@@ -53,7 +53,6 @@ LINK_MAPS: list[LinkMap] = [
             "entrypoint": "reference/func/#langgraph.func.entrypoint",
             "from_pycryptodome_aes": "reference/checkpoints/#langgraph.checkpoint.serde.encrypted.EncryptedSerializer.from_pycryptodome_aes",
             "get_state_history": "reference/graphs/#langgraph.graph.state.CompiledStateGraph.get_state_history",
-            "get_stream_writer": "reference/config/#langgraph.config.get_stream_writer",
             "HumanInterrupt": "reference/prebuilt/#langgraph.prebuilt.interrupt.HumanInterrupt",
             "InjectedState": "reference/agents/#langgraph.prebuilt.tool_node.InjectedState",
             "InMemorySaver": "reference/checkpoints/#langgraph.checkpoint.memory.InMemorySaver",
@@ -68,7 +67,6 @@ LINK_MAPS: list[LinkMap] = [
             "Pregel.stream": "reference/pregel/#langgraph.pregel.Pregel.stream",
             "pre_model_hook": "reference/prebuilt/#langgraph.prebuilt.chat_agent_executor.create_react_agent",
             "protocol": "reference/checkpoints/#langgraph.checkpoint.serde.base.SerializerProtocol",
-            "Reference": "https://python.langchain.com/api_reference/",
             "Runtime": "reference/runtime/#langgraph.runtime.Runtime",
             "Send": "reference/types/#langgraph.types.Send",
             "SerializerProtocol": "reference/checkpoints/#langgraph.checkpoint.serde.base.SerializerProtocol",
@@ -163,19 +161,29 @@ LINK_MAPS: list[LinkMap] = [
             # Agents
             "create_agent": "langchain/agents/#langchain.agents.create_agent",
             "create_agent(tools)": "langchain/agents/#langchain.agents.create_agent(tools)",
+            "create_agent(response_format)": "langchain/agents/#langchain.agents.create_agent(response_format)",
             "system_prompt": "langchain/agents/#langchain.agents.create_agent(system_prompt)",
             "AgentState": "langchain/agents/#langchain.agents.AgentState",
+            "ModelRequest": "langchain/middleware/#langchain.agents.middleware.ModelRequest",
+            "ModelRequest(response_format)": "langchain/middleware/#langchain.agents.middleware.ModelRequest(response_format)",
+            "@dynamic_prompt": "langchain/middleware/#langchain.agents.middleware.dynamic_prompt",
+            "@before_model": "langchain/middleware/#langchain.agents.middleware.before_model",
+            "@after_model": "langchain/middleware/#langchain.agents.middleware.after_model",
+            "@wrap_tool_call": "langchain/middleware/#langchain.agents.middleware.wrap_tool_call",
+            "@wrap_model_call": "langchain/middleware/#langchain.agents.middleware.wrap_model_call",
             # Middleware
             "AgentMiddleware": "langchain/middleware/#langchain.agents.middleware.AgentMiddleware",
             "state_schema": "langchain/middleware/#langchain.agents.middleware.AgentMiddleware.state_schema",
             "PIIMiddleware": "langchain/middleware/#langchain.agents.middleware.PIIMiddleware",
             "SummarizationMiddleware": "langchain/middleware/#langchain.agents.middleware.SummarizationMiddleware",
             "HumanInTheLoopMiddleware": "langchain/middleware/#langchain.agents.middleware.HumanInTheLoopMiddleware",
+            "ClearToolUsesEdit": "langchain/middleware/#langchain.agents.middleware.ClearToolUsesEdit",
             # Messages
             "AIMessage": "langchain/messages/#langchain.messages.AIMessage",
             "AIMessageChunk": "langchain/messages/#langchain.messages.AIMessageChunk",
             "ToolMessage": "langchain/messages/#langchain.messages.ToolMessage",
             "SystemMessage": "langchain/messages/#langchain.messages.SystemMessage",
+            "HumanMessage": "langchain/messages/#langchain.messages.HumanMessage",
             "trim_messages": "langchain/messages/#langchain.messages.trim_messages",
             # Content blocks
             "BaseMessage": "langchain_core/language_models/#langchain_core.messages.BaseMessage",
@@ -206,9 +214,12 @@ LINK_MAPS: list[LinkMap] = [
             "BaseChatModel.invoke": "langchain_core/language_models/#langchain_core.language_models.chat_models.BaseChatModel.invoke",
             "BaseChatModel.stream": "langchain_core/language_models/#langchain_core.language_models.chat_models.BaseChatModel.stream",
             "BaseChatModel.astream_events": "langchain_core/language_models/#langchain_core.language_models.chat_models.BaseChatModel.astream_events",
-            "BaseChatModel.batch": "langchain_core.language_models.chat_models.BaseChatModel.batch",
-            "BaseChatModel.batch_as_completed": "langchain_core.language_models.chat_models.BaseChatModel.batch_as_completed",
+            "BaseChatModel.batch": "langchain_core/language_models/#langchain_core.language_models.chat_models.BaseChatModel.batch",
+            "BaseChatModel.batch_as_completed": "langchain_core/language_models/#langchain_core.language_models.chat_models.BaseChatModel.batch_as_completed",
             "BaseChatModel.bind_tools": "langchain_core/language_models/#langchain_core.language_models.chat_models.BaseChatModel.bind_tools",
+            "BaseChatModel.configurable_fields": "langchain_core/language_models/#langchain_core.language_models.chat_models.BaseChatModel.configurable_fields",
+            "BaseChatModel.with_structured_output": "langchain_core/language_models/#langchain_core.language_models.chat_models.BaseChatModel.with_structured_output",
+            "BaseChatModel.with_structured_output(include_raw)": "langchain_core/language_models/#langchain_core.language_models.chat_models.BaseChatModel.with_structured_output(include_raw)",
             # Tools
             "@tool": "langchain/tools/#langchain.tools.tool",
             "BaseTool": "langchain/tools/#langchain.tools.BaseTool",
@@ -219,6 +230,15 @@ LINK_MAPS: list[LinkMap] = [
             "Document": "langchain_core/documents/#langchain_core.documents.base.Document",
             # Runnables
             "RunnableConfig": "langchain_core/runnables/#langchain_core.runnables.RunnableConfig",
+            "RunnableConfig(max_concurrency)": "langchain_core/runnables/#langchain_core.runnables.RunnableConfig.max_concurrency",
+            # VectorStores
+            "VectorStore": "langchain_core/vectorstores/?h=#langchain_core.vectorstores.base.VectorStore",
+            # Callbacks
+            "on_llm_new_token": "langchain_core/callbacks/#langchain_core.callbacks.base.AsyncCallbackHandler.on_llm_new_token",
+            # Rate limiters
+            "InMemoryRateLimiter": "langchain_core/rate_limiters/#langchain_core.rate_limiters.InMemoryRateLimiter",
+            # LangGraph
+            "get_stream_writer": "langgraph/config/#langgraph.config.get_stream_writer",
         },
     },
     {

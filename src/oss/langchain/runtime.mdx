@@ -15,7 +15,7 @@ import AlphaCalloutJS from '/snippets/alpha-lc-callout-js.mdx';
 ## Overview
 
 :::python
-LangChain's `create_agent` runs on LangGraph's runtime under the hood.
+LangChain's @[`create_agent`] runs on LangGraph's runtime under the hood.
 :::
 :::js
 LangChain's `createAgent` runs on LangGraph's runtime under the hood.
@@ -31,7 +31,7 @@ You can access the runtime information within [tools](#inside-tools) and [middle
 ## Access
 
 :::python
-When creating an agent with `create_agent`, you can specify a `context_schema` to define the structure of the `context` stored in the agent @[Runtime].
+When creating an agent with @[`create_agent`], you can specify a `context_schema` to define the structure of the `context` stored in the agent @[Runtime].
 :::
 :::js
 When creating an agent with `createAgent`, you can specify a `contextSchema` to define the structure of the `context` stored in the agent @[Runtime].
@@ -159,7 +159,7 @@ const fetchUserEmailPreferences = tool(
 You can access runtime information in middleware to create dynamic prompts, modify messages, or control agent behavior based on user context.
 
 :::python
-Use `request.runtime` to access the @[Runtime] object inside middleware decorators. The runtime object is available in the `ModelRequest` parameter passed to middleware functions.
+Use `request.runtime` to access the @[Runtime] object inside middleware decorators. The runtime object is available in the @[`ModelRequest`] parameter passed to middleware functions.
 
 ```python
 from dataclasses import dataclass
