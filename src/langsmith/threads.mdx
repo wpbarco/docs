@@ -21,7 +21,7 @@ The value can be any string you want, but we recommend using UUIDs, such as `f47
 
 This example demonstrates how to log and retrieve conversation history from LangSmith to maintain long-running chats.
 
-You can [add metadata to your traces](./add-metadata-tags) in LangSmith in a variety of ways, this code will show how to do so dynamically, but linked guide has various other ways to add thread identifier metadata to your traces.
+You can [add metadata to your traces](./add-metadata-tags) in LangSmith in a variety of ways, this code will show how to do so dynamically, but the linked guide has various other ways to add thread identifier metadata to your traces.
 
 <CodeGroup>
 
@@ -190,7 +190,7 @@ await chatPipeline("What was the first message I sent you", { getChatHistory: tr
 
 ## View threads
 
-You can view threads by clicking on the `Threads` tab in any project details page. You will then see a list of all threads, sorted by the most recent activity.
+You can view threads by clicking on the **Threads** tab in any project details page. You will then see a list of all threads, sorted by the most recent activity.
 
 <div style={{ textAlign: 'center' }}>
 <img
@@ -227,25 +227,25 @@ You can then click into a particular thread. This will open the history for a pa
 
 Threads can be viewed in two different ways:
 
-- Thread overview
-- Trace view
+- [Thread overview](/langsmith/threads#thread-overview)
+- [Trace view](/langsmith/threads#trace-view)
 
 You can use the buttons at the top of the page to switch between the two views or use the keyboard shortcut `T` to toggle between the two views.
 
-#### 1. Thread overview
+#### Thread overview
 
 The thread overview page shows you a chatbot-like UI where you can see the inputs and outputs for each turn of the conversation. You can configure which fields in the inputs and outputs are displayed in the overview, or show multiple fields by clicking the **Configure** button.
 
 The JSON path for the inputs and outputs supports negative indexing, so you can use `-1` to access the last element of an array. For example, `inputs.messages[-1].content` will access the last message in the `messages` array.
 
 
-#### 2. Trace view
+#### Trace view
 
 The trace view here is similar to the trace view when looking at a single run, except that you have easy access to all the runs for each turn in the thread.
 
 ### View feedback
 
-When viewing a thread, across the top of the page you will see a section called `Feedback`. This is where you can see the feedback for each of the runs that make up the thread. This feedback is aggregated, so if you evaluate each run of a thread for the same critera, you will see the average score across all the runs displayed. You can also see thread level feedback [LINK] left here.
+When viewing a thread, across the top of the page you will see a section called `Feedback`. This is where you can see the feedback for each of the runs that make up the thread. This feedback is aggregated, so if you evaluate each run of a thread for the same critera, you will see the average score across all the runs displayed. You can also see [thread level feedback](/langsmith/online-evaluations#configure-multi-turn-online-evaluators) left here.
 
 ### Save thread level filter
 
