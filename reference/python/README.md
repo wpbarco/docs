@@ -117,7 +117,7 @@ make build
 **How it works:** The `make prod-install` command:
 
 1. Restores `pyproject.toml` to use git sources
-2. Installs all packages from git with `uv sync --link-mode=copy`
+2. Installs all packages from git with `uv sync`
 
 ### Manual Configuration Switching
 

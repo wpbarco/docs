@@ -101,7 +101,7 @@ Let's explore the concrete patterns LangChain provides for context engineering.
 
 #### Static instructions
 
-For fixed instructions that don't change, use the `system_prompt` parameter:
+For fixed instructions that don't change, use the @[`system_prompt`] parameter:
 
 :::python
 ```python
@@ -129,7 +129,7 @@ const agent = createAgent({
 
 #### Dynamic instructions
 
-For instructions that depend on context (user profile, preferences, session data), use the `@dynamic_prompt` middleware:
+For instructions that depend on context (user profile, preferences, session data), use the @[`@dynamic_prompt`] middleware:
 
 :::python
 ```python
@@ -295,7 +295,7 @@ const agent = createAgent({
 ```
 :::
 
-For more sophisticated message management, use the built-in [SummarizationMiddleware](/oss/langchain/middleware#summarization) which automatically summarizes old messages when approaching token limits.
+For more sophisticated message management, use the built-in [`SummarizationMiddleware`](/oss/langchain/middleware#summarization) which automatically summarizes old messages when approaching token limits.
 
 See [Before model hook](/oss/langchain/agents#before-model-hook) for more examples.
 
@@ -483,7 +483,7 @@ See [Dynamic model](/oss/langchain/agents#dynamic-model) for more examples.
 1. **Start simple** - Begin with static prompts and tools, add dynamics only when needed
 2. **Test incrementally** - Add one context engineering feature at a time
 3. **Monitor performance** - Track model calls, token usage, and latency
-4. **Use built-in middleware** - Leverage [SummarizationMiddleware](/oss/langchain/middleware#summarization), [LLMToolSelectorMiddleware](/oss/langchain/middleware#llm-tool-selector), etc.
+4. **Use built-in middleware** - Leverage [`SummarizationMiddleware`](/oss/langchain/middleware#summarization), [`LLMToolSelectorMiddleware`](/oss/langchain/middleware#llm-tool-selector), etc.
 5. **Document your context strategy** - Make it clear what context is being passed and why
 
 ## Related resources

@@ -94,6 +94,10 @@ dependencies = [
 
 [tool.uv]
 package = false
+# Use copy mode instead of hardlink to avoid filesystem compatibility issues
+# This is necessary for CI/CD environments like Vercel where cache and target
+# directories may be on different filesystems
+link-mode = "copy"
 override-dependencies = [
     "pytest-codspeed>=3.1.0,<4.0.0",
 ]

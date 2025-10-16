@@ -1,5 +1,7 @@
 ---
 title: LangChain Python Reference
+hide:
+  - toc
 ---
 
 Welcome to the [LangChain](https://langchain.com) Python reference documentation!
