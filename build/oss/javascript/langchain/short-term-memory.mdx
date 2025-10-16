@@ -78,7 +78,7 @@ const checkpointer = PostgresSaver.fromConnString(DB_URI);
 
 By default, agents use `AgentState` to manage short term memory, specifically the conversation history via a `messages` key.
 
-You can extend `AgentState` to add additional fields. Custom state schemas are defined in middleware using the `state_schema` attribute.
+You can extend `AgentState` to add additional fields. Custom state schemas are passed to `create_agent` using the `state_schema` parameter.
 
 
 ```typescript
