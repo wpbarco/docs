@@ -11,7 +11,7 @@ import AlphaCalloutJS from '/snippets/alpha-lc-callout-js.mdx';
 
 ## Overview
 
-LangChain's `create_agent` runs on LangGraph's runtime under the hood.
+LangChain's [`create_agent`](https://reference.langchain.com/python/langchain/agents/#langchain.agents.create_agent) runs on LangGraph's runtime under the hood.
 
 
 LangGraph exposes a [Runtime](https://langchain-ai.github.io/langgraph/reference/runtime/#langgraph.runtime.Runtime) object with the following information:
@@ -24,7 +24,7 @@ You can access the runtime information within [tools](#inside-tools) and [middle
 
 ## Access
 
-When creating an agent with `create_agent`, you can specify a `context_schema` to define the structure of the `context` stored in the agent [Runtime](https://langchain-ai.github.io/langgraph/reference/runtime/#langgraph.runtime.Runtime).
+When creating an agent with [`create_agent`](https://reference.langchain.com/python/langchain/agents/#langchain.agents.create_agent), you can specify a `context_schema` to define the structure of the `context` stored in the agent [Runtime](https://langchain-ai.github.io/langgraph/reference/runtime/#langgraph.runtime.Runtime).
 
 
 
@@ -90,7 +90,7 @@ def fetch_user_email_preferences(runtime: ToolRuntime[Context]) -> str:  # [!cod
 
 You can access runtime information in middleware to create dynamic prompts, modify messages, or control agent behavior based on user context.
 
-Use `request.runtime` to access the [Runtime](https://langchain-ai.github.io/langgraph/reference/runtime/#langgraph.runtime.Runtime) object inside middleware decorators. The runtime object is available in the `ModelRequest` parameter passed to middleware functions.
+Use `request.runtime` to access the [Runtime](https://langchain-ai.github.io/langgraph/reference/runtime/#langgraph.runtime.Runtime) object inside middleware decorators. The runtime object is available in the [`ModelRequest`](https://reference.langchain.com/python/langchain/middleware/#langchain.agents.middleware.ModelRequest) parameter passed to middleware functions.
 
 ```python
 from dataclasses import dataclass

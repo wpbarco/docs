@@ -314,7 +314,7 @@ for mode, chunk in main.stream(   # [!code highlight]
     print(f"{mode}: {chunk}")
 ```
 
-1. Import `get_stream_writer` from `langgraph.config`.
+1. Import [`get_stream_writer`](https://reference.langchain.com/python/langgraph/config/#langgraph.config.get_stream_writer) from `langgraph.config`.
 2. Obtain a stream writer instance within the entrypoint.
 3. Emit custom data before computation begins.
 4. Emit another custom message after computing the result.
@@ -331,7 +331,7 @@ for mode, chunk in main.stream(   # [!code highlight]
 
 <Warning>
 **Async with Python < 3.11**
-If using Python < 3.11 and writing async code, using `get_stream_writer()` will not work. Instead please
+If using Python < 3.11 and writing async code, using [`get_stream_writer`](https://reference.langchain.com/python/langgraph/config/#langgraph.config.get_stream_writer) will not work. Instead please
 use the `StreamWriter` class directly. See [Async with Python < 3.11](/oss/python/langgraph/streaming#async) for more details.
 
 ```python
@@ -632,7 +632,7 @@ def review_tool_call(tool_call: ToolCall) -> Union[ToolCall, ToolMessage]:
 
 
 
-We can now update our [entrypoint](/oss/python/langgraph/functional-api#entrypoint) to review the generated tool calls. If a tool call is accepted or revised, we execute in the same way as before. Otherwise, we just append the `ToolMessage` supplied by the human. The results of prior tasks — in this case the initial model call — are persisted, so that they are not run again following the `interrupt`.
+We can now update our [entrypoint](/oss/python/langgraph/functional-api#entrypoint) to review the generated tool calls. If a tool call is accepted or revised, we execute in the same way as before. Otherwise, we just append the [`ToolMessage`](https://reference.langchain.com/python/langchain/messages/#langchain.messages.ToolMessage) supplied by the human. The results of prior tasks — in this case the initial model call — are persisted, so that they are not run again following the `interrupt`.
 
 ```python
 from langgraph.checkpoint.memory import InMemorySaver

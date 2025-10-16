@@ -51,7 +51,7 @@ Middleware exposes hooks before and after each of those steps:
   </Card>
 </CardGroup>
 
-Add middleware by passing it to `create_agent`:
+Add middleware by passing it to [`create_agent`](https://reference.langchain.com/python/langchain/agents/#langchain.agents.create_agent):
 
 ```python
 from langchain.agents import create_agent
@@ -463,7 +463,7 @@ print(result["todos"])  # Array of todo items with status tracking
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
-| `system_prompt` | Custom system prompt for guiding todo usage | Built-in prompt |
+| [`system_prompt`](https://reference.langchain.com/python/langchain/agents/#langchain.agents.create_agent(system_prompt)) | Custom system prompt for guiding todo usage | Built-in prompt |
 | `tool_description` | Custom description for the `write_todos` tool | Built-in description |
 
 
@@ -507,7 +507,7 @@ agent = create_agent(
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `model` | Model for tool selection (string or `BaseChatModel` instance) | Uses agent's main model |
-| `system_prompt` | Instructions for the selection model | Built-in prompt |
+| [`system_prompt`](https://reference.langchain.com/python/langchain/agents/#langchain.agents.create_agent(system_prompt)) | Instructions for the selection model | Built-in prompt |
 | `max_tools` | Maximum number of tools to select | `None` (no limit) |
 | `always_include` | Tool names to always include | `None` |
 
@@ -554,7 +554,7 @@ agent = create_agent(
 | `edits` | List of `ContextEdit` strategies to apply | `[ClearToolUsesEdit()]` |
 | `token_count_method` | Token counting method (`"approximate"` or `"model"`) | `"approximate"` |
 
-**`ClearToolUsesEdit` options:**
+**[`ClearToolUsesEdit`](https://reference.langchain.com/python/langchain/middleware/#langchain.agents.middleware.ClearToolUsesEdit) options:**
 - `trigger`: Token count that triggers the edit (default: `100000`)
 - `clear_at_least`: Minimum tokens to reclaim (default: `0`)
 - `keep`: Number of recent tool results to preserve (default: `3`)
@@ -636,16 +636,16 @@ agent = create_agent(
 
 **Node-style** (run at specific execution points):
 - `@before_agent` - Before agent starts (once per invocation)
-- `@before_model` - Before each model call
-- `@after_model` - After each model response
+- [`@before_model`](https://reference.langchain.com/python/langchain/middleware/#langchain.agents.middleware.before_model) - Before each model call
+- [`@after_model`](https://reference.langchain.com/python/langchain/middleware/#langchain.agents.middleware.after_model) - After each model response
 - `@after_agent` - After agent completes (once per invocation)
 
 **Wrap-style** (intercept and control execution):
-- `@wrap_model_call` - Around each model call
-- `@wrap_tool_call` - Around each tool call
+- [`@wrap_model_call`](https://reference.langchain.com/python/langchain/middleware/#langchain.agents.middleware.wrap_model_call) - Around each model call
+- [`@wrap_tool_call`](https://reference.langchain.com/python/langchain/middleware/#langchain.agents.middleware.wrap_tool_call) - Around each tool call
 
 **Convenience decorators**:
-- `@dynamic_prompt` - Generates dynamic system prompts (equivalent to `@wrap_model_call` that modifies the prompt)
+- [`@dynamic_prompt`](https://reference.langchain.com/python/langchain/middleware/#langchain.agents.middleware.dynamic_prompt) - Generates dynamic system prompts (equivalent to [`@wrap_model_call`](https://reference.langchain.com/python/langchain/middleware/#langchain.agents.middleware.wrap_model_call) that modifies the prompt)
 
 ### When to use decorators
 
@@ -980,15 +980,15 @@ class ConditionalMiddleware(AgentMiddleware):
 
 ### Best practices
 
-1. **Keep middleware focused** - Each middleware should do one thing well
-2. **Handle errors gracefully** - Don't let middleware errors crash the agent
+1. Keep middleware focused - each should do one thing well
+2. Handle errors gracefully - don't let middleware errors crash the agent
 3. **Use appropriate hook types**:
-   - Node-style for sequential logic (logging, validation)
-   - Wrap-style for control flow (retry, fallback, caching)
-4. **Document state requirements** - Clearly document any custom state properties
-5. **Test middleware independently** - Unit test middleware before integrating
-6. **Consider execution order** - Place critical middleware first in the list
-7. **Use built-in middleware when possible** - Don't reinvent the wheel
+    - Node-style for sequential logic (logging, validation)
+    - Wrap-style for control flow (retry, fallback, caching)
+4. Clearly document any custom state properties
+5. Unit test middleware independently before integrating
+6. Consider execution order - place critical middleware first in the list
+7. Use built-in middleware when possible, don't reinvent the wheel :)
 
 ## Examples
 
@@ -1102,6 +1102,12 @@ agent.invoke(
 
 
 </Expandable>
+
+## Additional resources
+
+- [Middleware API reference](https://reference.langchain.com/python/langchain/middleware/) - Complete guide to custom middleware
+- [Human-in-the-loop](/oss/python/langchain/human-in-the-loop) - Add human review for sensitive operations
+- [Testing agents](/oss/python/langchain/test) - Strategies for testing safety mechanisms
 
 ---
 

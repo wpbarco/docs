@@ -284,7 +284,7 @@ into the context window of many models. Even for those models that could
 fit the full post in their context window, models can struggle to find
 information in very long inputs.
 
-To handle this we'll split the `Document` into chunks for embedding and
+To handle this we'll split the [`Document`](https://reference.langchain.com/python/langchain_core/documents/#langchain_core.documents.base.Document) into chunks for embedding and
 vector storage. This should help us retrieve only the most relevant parts
 of the blog post at run time.
 
@@ -311,7 +311,7 @@ Split blog post into 66 sub-documents.
 
 **Go deeper**
 
-`TextSplitter`: Object that splits a list of `Document` objects into smaller
+`TextSplitter`: Object that splits a list of [`Document`](https://reference.langchain.com/python/langchain_core/documents/#langchain_core.documents.base.Document) objects into smaller
 chunks for storage and retrieval.
 
 - [Integrations](/oss/python/integrations/splitters/)
@@ -640,7 +640,7 @@ agent = create_agent(
 
 ## Next steps
 
-Now that we've implemented a simple RAG application via `create_agent`, we can easily
+Now that we've implemented a simple RAG application via [`create_agent`](https://reference.langchain.com/python/langchain/agents/#langchain.agents.create_agent), we can easily
 incorporate new features and go deeper:
 
 - [Stream](/oss/python/langchain/streaming) tokens and other information for responsive user experiences

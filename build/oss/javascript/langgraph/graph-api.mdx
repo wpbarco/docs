@@ -200,7 +200,7 @@ In this example, we've used [Zod 4 registries](https://zod.dev/metadata) to spec
 
 
 
-Most modern LLM providers have a chat model interface that accepts a list of messages as input. LangChain's [`ChatModel`](https://js.langchain.com/docs/concepts/#chat-models) in particular accepts a list of `Message` objects as inputs. These messages come in a variety of forms such as `HumanMessage` (user input) or `AIMessage` (LLM response). To read more about what message objects are, please refer to [this](https://js.langchain.com/docs/concepts/#messages) conceptual guide.
+Most modern LLM providers have a chat model interface that accepts a list of messages as input. LangChain's [`ChatModel`](https://js.langchain.com/docs/concepts/#chat-models) in particular accepts a list of `Message` objects as inputs. These messages come in a variety of forms such as @[`HumanMessage`] (user input) or [`AIMessage`](https://v03.api.js.langchain.com/classes/_langchain_core.messages_ai_message.AIMessage.html) (LLM response). To read more about what message objects are, please refer to [this](https://js.langchain.com/docs/concepts/#messages) conceptual guide.
 
 
 #### Using Messages in your Graph
@@ -247,7 +247,7 @@ const graph = new StateGraph(MessagesZodState)
   ...
 ```
 
-`MessagesZodState` is defined with a single `messages` key which is a list of `BaseMessage` objects and uses the appropriate reducer. Typically, there is more state to track than just messages, so we see people extend this state and add more fields, like:
+`MessagesZodState` is defined with a single `messages` key which is a list of @[`BaseMessage`] objects and uses the appropriate reducer. Typically, there is more state to track than just messages, so we see people extend this state and add more fields, like:
 
 ```typescript
 const State = z.object({
@@ -269,7 +269,7 @@ const State = z.object({
 In LangGraph, nodes are typically functions (sync or async) that accept the following arguments:
 
 1. `state`: The [state](#state) of the graph
-2. `config`: A `RunnableConfig` object that contains configuration information like `thread_id` and tracing information like `tags`
+2. `config`: A [`RunnableConfig`](https://v03.api.js.langchain.com/interfaces/_langchain_core.runnables.RunnableConfig.html) object that contains configuration information like `thread_id` and tracing information like `tags`
 
 You can add nodes to a graph using the `addNode` method.
 

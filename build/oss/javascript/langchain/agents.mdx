@@ -65,7 +65,7 @@ The [model](/oss/javascript/langchain/models) is the reasoning engine of your ag
 
 #### Static model
 
-Static models are configured once when creating the agent and remain unchanged throughout execution. This is the most common and straightforward approach. To initialize a static model from a <Tooltip tip="A string that follows the format `provider:model` (e.g. openai:gpt-5)">model identifier string</Tooltip>:
+Static models are configured once when creating the agent and remain unchanged throughout execution. This is the most common and straightforward approach. To initialize a static model from a <Tooltip tip="A string that follows the format `provider:model` (e.g. openai:gpt-5)" cta="See mappings" href="https://reference.langchain.com/python/langchain/models/#langchain.chat_models.init_chat_model(model_provider)">model identifier string</Tooltip>:
 
 
 ```ts wrap
@@ -98,7 +98,7 @@ const agent = createAgent({
 });
 ```
 
-Model instances give you complete control over configuration. Use them when you need to set specific parameters like temperature, max tokens, timeouts, or configure API keys, base URLs, and other provider-specific settings. Refer to the [API reference](/oss/javascript/integrations/providers/) to see available params and methods on your model.
+Model instances give you complete control over configuration. Use them when you need to set specific parameters like `temperature`, `max_tokens`, `timeouts`, or configure API keys, `base_url`, and other provider-specific settings. Refer to the [API reference](/oss/javascript/integrations/providers/) to see available params and methods on your model.
 
 
 #### Dynamic model
@@ -224,7 +224,7 @@ const agent = createAgent({
 });
 ```
 
-The agent will return a `ToolMessage` with the custom error message when a tool fails.
+The agent will return a @[`ToolMessage`] with the custom error message when a tool fails.
 
 
 <Tip>
@@ -306,7 +306,7 @@ const agent = createAgent({
 ```
 
 
-When no `system_prompt` is provided, the agent will infer its task from the messages directly.
+When no @[`system_prompt`] is provided, the agent will infer its task from the messages directly.
 
 #### Dynamic system prompt
 

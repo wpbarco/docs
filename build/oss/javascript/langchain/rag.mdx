@@ -251,7 +251,7 @@ into the context window of many models. Even for those models that could
 fit the full post in their context window, models can struggle to find
 information in very long inputs.
 
-To handle this we'll split the `Document` into chunks for embedding and
+To handle this we'll split the [`Document`](https://v03.api.js.langchain.com/classes/_langchain_core.documents.Document.html) into chunks for embedding and
 vector storage. This should help us retrieve only the most relevant parts
 of the blog post at run time.
 
@@ -599,7 +599,7 @@ const agent = createAgent({
 
 ## Next steps
 
-Now that we've implemented a simple RAG application via `create_agent`, we can easily
+Now that we've implemented a simple RAG application via @[`create_agent`], we can easily
 incorporate new features and go deeper:
 
 - [Stream](/oss/javascript/langchain/streaming) tokens and other information for responsive user experiences

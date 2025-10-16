@@ -27,7 +27,7 @@ The quality and capabilities of the model you choose directly impact your agent'
 LangChain's standard model interfaces give you access to many different provider integrations, which makes it easy to experiment with and switch between models to find the best fit for your case.
 
 <Info>
-    For provider-specific integration information and capabilities, see the provider's [integration page](/oss/javascript/integrations/providers).
+    For provider-specific integration information and capabilities, see the provider's [integration page](/oss/javascript/integrations/providers/overview).
 </Info>
 
 ## Basic usage
@@ -42,7 +42,7 @@ The same model interface works in both contexts, which gives you the flexibility
 ### Initialize a model
 
 
-The easiest way to get started with a standalone model in LangChain is to use `initChatModel` to initialize one from a [provider](/oss/javascript/integrations/providers) of your choice (examples below):
+The easiest way to get started with a standalone model in LangChain is to use `initChatModel` to initialize one from a [provider](/oss/javascript/integrations/providers/overview) of your choice (examples below):
 
 <ChatModelTabsJS />
 ```typescript
@@ -65,7 +65,7 @@ See [`initChatModel`](https://v03.api.js.langchain.com/functions/langchain.chat_
 </Card>
 
 <Info>
-    In addition to chat models, LangChain provides support for other adjacent technologies, such as embedding models and vector stores. See the [integrations page](/oss/javascript/integrations/providers) for details.
+    In addition to chat models, LangChain provides support for other adjacent technologies, such as embedding models and vector stores. See the [integrations page](/oss/javascript/integrations/providers/overview) for details.
 </Info>
 
 ## Parameters
@@ -112,7 +112,7 @@ const model = await initChatModel(
 
 
 <Info>
-    Each chat model integration may have additional params used to control provider-specific functionality. For example, `ChatOpenAI` has `use_responses_api` to dictate whether to use the OpenAI Responses or Completions API.
+    Each chat model integration may have additional params used to control provider-specific functionality. For example, @[`ChatOpenAI`] has `use_responses_api` to dictate whether to use the OpenAI Responses or Completions API.
 
     To find all the parameters supported by a given chat model, head to the [chat model integrations](/oss/javascript/integrations/chat) page.
 </Info>
@@ -201,7 +201,7 @@ Calling [`stream()`](https://v03.api.js.langchain.com/classes/_langchain_core.la
 </CodeGroup>
 
 
-As opposed to `invoke()`, which returns a single [`AIMessage`](https://v03.api.js.langchain.com/classes/_langchain_core.messages_ai_message.AIMessage.html) after the model has finished generating its full response, `stream()` returns multiple [`AIMessageChunk`](https://v03.api.js.langchain.com/classes/_langchain_core.messages_ai_message.AIMessageChunk.html) objects, each containing a portion of the output text. Importantly, each chunk in a stream is designed to be gathered into a full message via summation:
+As opposed to [`invoke()`](#invoke), which returns a single [`AIMessage`](https://v03.api.js.langchain.com/classes/_langchain_core.messages_ai_message.AIMessage.html) after the model has finished generating its full response, `stream()` returns multiple [`AIMessageChunk`](https://v03.api.js.langchain.com/classes/_langchain_core.messages_ai_message.AIMessageChunk.html) objects, each containing a portion of the output text. Importantly, each chunk in a stream is designed to be gathered into a full message via summation:
 
 
 
@@ -238,7 +238,7 @@ The resulting message can be treated the same as a message that was generated wi
 
         #### How it works
 
-        When you `invoke()` a chat model, LangChain will automatically switch to an internal streaming mode if it detects that you are trying to stream the overall application. The result of the invocation will be the same as far as the code that was using invoke is concerned; however, while the chat model is being streamed, LangChain will take care of invoking `on_llm_new_token` events in LangChain's callback system.
+        When you `invoke()` a chat model, LangChain will automatically switch to an internal streaming mode if it detects that you are trying to stream the overall application. The result of the invocation will be the same as far as the code that was using invoke is concerned; however, while the chat model is being streamed, LangChain will take care of invoking @[`on_llm_new_token`] events in LangChain's callback system.
 
 
         Callback events allow LangGraph `stream()` and [`streamEvents()`](https://v03.api.js.langchain.com/classes/_langchain_core.language_models_chat_models.BaseChatModel.html#streamEvents) to surface the chat model's output in real-time.
@@ -304,7 +304,7 @@ for (const response of responses) {
 ```
 
 <Tip>
-    When processing a large number of inputs using `batch()`, you may want to control the maximum number of parallel calls. This can be done by setting the `maxConcurrency` attribute in the `RunnableConfig` dictionary.
+    When processing a large number of inputs using `batch()`, you may want to control the maximum number of parallel calls. This can be done by setting the `maxConcurrency` attribute in the [`RunnableConfig`](https://v03.api.js.langchain.com/interfaces/_langchain_core.runnables.RunnableConfig.html) dictionary.
 
     ```typescript Batch with max concurrency
     model.batch(
@@ -339,7 +339,7 @@ Models can request to call tools that perform tasks such as fetching data from a
 To make tools that you have defined available for use by a model, you must bind them using [`bindTools()`](https://v03.api.js.langchain.com/classes/langchain.chat_models_universal.ConfigurableModel.html#bindTools). In subsequent invocations, the model can choose to call any of the bound tools as needed.
 
 
-Some model providers offer built-in tools that can be enabled via model or invocation parameters (e.g. [`ChatOpenAI`](/oss/javascript/integrations/chat/openai), [`ChatAnthropic`](/oss/javascript/integrations/chat/anthropic)). Check the respective [provider reference](/oss/javascript/integrations/providers) for details.
+Some model providers offer built-in tools that can be enabled via model or invocation parameters (e.g. [`ChatOpenAI`](/oss/javascript/integrations/chat/openai), [`ChatAnthropic`](/oss/javascript/integrations/chat/anthropic)). Check the respective [provider reference](/oss/javascript/integrations/providers/overview) for details.
 
 <Tip>
     See the [tools guide](/oss/javascript/langchain/tools) for details and other options for creating tools.
@@ -411,10 +411,10 @@ Below, we show some common ways you can use tool calling.
 
 
 
-        Each `ToolMessage` returned by the tool includes a `tool_call_id` that matches the original tool call, helping the model correlate results with requests.
+        Each @[`ToolMessage`] returned by the tool includes a `tool_call_id` that matches the original tool call, helping the model correlate results with requests.
     </Accordion>
     <Accordion title="Forcing tool calls" icon="asterisk">
-        By default, the model has the freedom to choose which bound tool to use based on the user's input. However, you might want to force choosing a tool, ensuring the model uses either a particular tool or *any* tool from a given list:
+        By default, the model has the freedom to choose which bound tool to use based on the user's input. However, you might want to force choosing a tool, ensuring the model uses either a particular tool or **any** tool from a given list:
 
 
         <CodeGroup>
@@ -469,7 +469,7 @@ Below, we show some common ways you can use tool calling.
         </Tip>
     </Accordion>
     <Accordion title="Streaming tool calls" icon="rss">
-        When streaming responses, tool calls are progressively built through `ToolCallChunk`. This allows you to see tool calls as they're being generated rather than waiting for the complete response.
+        When streaming responses, tool calls are progressively built through @[`ToolCallChunk`]. This allows you to see tool calls as they're being generated rather than waiting for the complete response.
 
 
         ```typescript Streaming tool calls
@@ -595,14 +595,14 @@ Models can be requested to provide their response in a format matching a given s
     **Key considerations for structured outputs:**
 
     - **Method parameter**: Some providers support different methods (`'jsonSchema'`, `'functionCalling'`, `'jsonMode'`)
-    - **Include raw**: Use `includeRaw: true` to get both the parsed output and the raw AI message
+    - **Include raw**: Use @[`includeRaw: true`][BaseChatModel.with_structured_output(include_raw)] to get both the parsed output and the raw [`AIMessage`](https://v03.api.js.langchain.com/classes/_langchain_core.messages_ai_message.AIMessage.html)
     - **Validation**: Zod models provide automatic validation, while JSON Schema requires manual validation
 </Note>
 
 
 <Accordion title="Example: Message output alongside parsed structure">
 
-It can be useful to return the raw `AIMessage` object alongside the parsed representation to access response metadata such as [token counts](#token-usage). To do this, set `include_raw=True` when calling `with_structured_output`:
+It can be useful to return the raw [`AIMessage`](https://v03.api.js.langchain.com/classes/_langchain_core.messages_ai_message.AIMessage.html) object alongside the parsed representation to access response metadata such as [token counts](#token-usage). To do this, set @[`include_raw=True`][BaseChatModel.with_structured_output(include_raw)] when calling @[`with_structured_output`][BaseChatModel.with_structured_output]:
 
 
 
@@ -660,7 +660,7 @@ It can be useful to return the raw `AIMessage` object alongside the parsed repre
 
 ## Supported models
 
-LangChain supports all major model providers, including OpenAI, Anthropic, Google, Azure, AWS Bedrock, and more. Each provider offers a variety of models with different capabilities. For a full list of supported models in LangChain, see the [integrations page](/oss/javascript/integrations/providers).
+LangChain supports all major model providers, including OpenAI, Anthropic, Google, Azure, AWS Bedrock, and more. Each provider offers a variety of models with different capabilities. For a full list of supported models in LangChain, see the [integrations page](/oss/javascript/integrations/providers/overview).
 
 ---
 
@@ -680,7 +680,7 @@ Certain models can process and return non-textual data such as images, audio, an
 
 See the [multimodal section](/oss/javascript/langchain/messages#multimodal) of the messages guide for details.
 
-Some models can also return multimodal data as part of their response. In such cases, the resulting `AIMessage` will have content blocks with multimodal types.
+Some models can also return multimodal data as part of their response. In such cases, the resulting [`AIMessage`](https://v03.api.js.langchain.com/classes/_langchain_core.messages_ai_message.AIMessage.html) will have content blocks with multimodal types.
 
 
 
@@ -694,13 +694,13 @@ console.log(response.contentBlocks);
 ```
 
 
-See the [integrations page](/oss/javascript/integrations/providers) for details on specific providers.
+See the [integrations page](/oss/javascript/integrations/providers/overview) for details on specific providers.
 
 ### Reasoning
 
 Newer models are capable of performing multi-step reasoning to arrive at a conclusion. This involves breaking down complex problems into smaller, more manageable steps.
 
-If supported by the underlying model, you can surface this reasoning process to better understand how the model arrived at its final answer.
+**If supported by the underlying model,** you can surface this reasoning process to better understand how the model arrived at its final answer.
 
 
 
@@ -721,25 +721,27 @@ If supported by the underlying model, you can surface this reasoning process to 
 </CodeGroup>
 
 
-Depending on the model, you can sometimes specify the level of effort it should put into reasoning. Alternatively, you can request that the model turn off reasoning entirely. This may take the form of categorical "tiers" of reasoning (e.g., `'low'` or `'high'`) or integer token budgets.
+Depending on the model, you can sometimes specify the level of effort it should put into reasoning. Similarly, you can request that the model turn off reasoning entirely. This may take the form of categorical "tiers" of reasoning (e.g., `'low'` or `'high'`) or integer token budgets.
 
-For details, see the relevant chat model in the [integrations page](/oss/javascript/integrations/providers).
+For details, see the [integrations page](/oss/javascript/integrations/providers/overview) or [reference](https://reference.langchain.com/python/integrations/) for your respective chat model.
 
 
 ### Local models
 
-LangChain supports running models locally on your own hardware. This is useful for scenarios where data privacy is critical, or when you want to avoid the cost of using a cloud-based model.
+LangChain supports running models locally on your own hardware. This is useful for scenarios where either data privacy is critical, you want to invoke a custom model, or when you want to avoid the costs incurred when using a cloud-based model.
 
-[Ollama](/oss/javascript/integrations/chat/ollama) is one of the easiest ways to run models locally. See the full list of local integrations on the [integrations page](/oss/javascript/integrations/providers).
+[Ollama](/oss/javascript/integrations/chat/ollama) is one of the easiest ways to run models locally. See the full list of local integrations on the [integrations page](/oss/javascript/integrations/providers/overview).
 
 ### Prompt caching
 
 Many providers offer prompt caching features to reduce latency and cost on repeat processing of the same tokens. These features can be **implicit** or **explicit**:
 
-- Implicit prompt caching: providers will automatically pass on cost savings if a request hits a cache. Examples: [OpenAI](/oss/javascript/integrations/chat/openai) and [Gemini](/oss/javascript/integrations/chat/google_generative_ai) (Gemini 2.5 and above).
-- Explicit caching: providers allow you to manually indicate cache points for greater control or to guarantee cost savings. Examples: [OpenAI](https://python.langchain.com/api_reference/openai/chat_models/langchain_openai.chat_models.base.ChatOpenAI.html) (via `prompt_cache_key`), [Anthropic](/oss/javascript/integrations/chat/anthropic#prompt-caching), [AWS Bedrock](/oss/javascript/integrations/chat/bedrock#prompt-caching), [Gemini](https://python.langchain.com/api_reference/google_genai/chat_models/langchain_google_genai.chat_models.ChatGoogleGenerativeAI.html).
+- **Implicit prompt caching:** providers will automatically pass on cost savings if a request hits a cache. Examples: [OpenAI](/oss/javascript/integrations/chat/openai) and [Gemini](/oss/javascript/integrations/chat/google_generative_ai) (Gemini 2.5 and above).
+- **Explicit caching:** providers allow you to manually indicate cache points for greater control or to guarantee cost savings. Examples: @[`ChatOpenAI`] (via `prompt_cache_key`), [Anthropic](/oss/javascript/integrations/chat/anthropic#prompt-caching), [AWS Bedrock](/oss/javascript/integrations/chat/bedrock#prompt-caching), [Gemini](https://python.langchain.com/api_reference/google_genai/chat_models/langchain_google_genai.chat_models.ChatGoogleGenerativeAI.html).
 
-Prompt caching is often only engaged above a minimum input token threshold. See [provider pages](/oss/javascript/integrations/chat) for details.
+<Warning>
+    Prompt caching is often only engaged above a minimum input token threshold. See [provider pages](/oss/javascript/integrations/chat) for details.
+</Warning>
 
 Cache usage will be reflected in the [usage metadata](/oss/javascript/langchain/messages#token-usage) of the model response.
 
@@ -788,7 +790,7 @@ For many chat model integrations, you can configure the base URL for API request
 
 
     <Note>
-        When using direct chat model class instantiation, the parameter name may vary by provider. Check the respective [reference](/oss/javascript/integrations/providers) for details.
+        When using direct chat model class instantiation, the parameter name may vary by provider. Check the respective [reference](/oss/javascript/integrations/providers/overview) for details.
     </Note>
 </Accordion>
 
@@ -815,7 +817,7 @@ responseMessage.response_metadata.logprobs.content.slice(0, 5);
 
 ### Token usage
 
-A number of model providers return token usage information as part of the invocation response. When available, this information will be included on the `AIMessage` objects produced by the corresponding model. For more details, see the [messages](/oss/javascript/langchain/messages) guide.
+A number of model providers return token usage information as part of the invocation response. When available, this information will be included on the [`AIMessage`](https://v03.api.js.langchain.com/classes/_langchain_core.messages_ai_message.AIMessage.html) objects produced by the corresponding model. For more details, see the [messages](/oss/javascript/langchain/messages) guide.
 
 <Note>
     Some provider APIs, notably OpenAI and Azure OpenAI chat completions, require users opt-in to receiving token usage data in streaming contexts. See the [streaming usage metadata](/oss/javascript/integrations/chat/openai#streaming-usage-metadata) section of the integration guide for details.
@@ -847,6 +849,12 @@ const response = await model.invoke(
 ```
 
 
+These configuration values are particularly useful when:
+- Debugging with [LangSmith](https://docs.smith.langchain.com/) tracing
+- Implementing custom logging or monitoring
+- Controlling resource usage in production
+- Tracking invocations across complex pipelines
+
 
 
 <Accordion title="Key configuration attributes">
@@ -876,13 +884,9 @@ const response = await model.invoke(
 </Accordion>
 
 
-These configuration values are particularly useful when:
-- Debugging with [LangSmith](https://docs.smith.langchain.com/) tracing
-- Implementing custom logging or monitoring
-- Controlling resource usage in production
-- Tracking invocations across complex pipelines
-
-For more information on all supported `RunnableConfig` attributes, see the [`RunnableConfig`](https://v03.api.js.langchain.com/interfaces/_langchain_core.runnables.RunnableConfig.html) reference.
+<Tip>
+    See full [`RunnableConfig`](https://v03.api.js.langchain.com/interfaces/_langchain_core.runnables.RunnableConfig.html) reference for all supported attributes.
+</Tip>
 
 ---
 

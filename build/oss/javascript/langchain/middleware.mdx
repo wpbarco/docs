@@ -51,7 +51,7 @@ Middleware exposes hooks before and after each of those steps:
   </Card>
 </CardGroup>
 
-Add middleware by passing it to `create_agent`:
+Add middleware by passing it to @[`create_agent`]:
 
 
 
@@ -561,7 +561,7 @@ const agent = createAgent({
 |-----------|-------------|---------|
 | `edits` | Array of `ContextEdit` strategies to apply | `[new ClearToolUsesEdit()]` |
 
-**`ClearToolUsesEdit` options:**
+**@[`ClearToolUsesEdit`] options:**
 - `maxTokens`: Token count that triggers the edit (default: `1000`)
 
 
@@ -934,15 +934,15 @@ const conditionalMiddleware = createMiddleware({
 
 ### Best practices
 
-1. **Keep middleware focused** - Each middleware should do one thing well
-2. **Handle errors gracefully** - Don't let middleware errors crash the agent
+1. Keep middleware focused - each should do one thing well
+2. Handle errors gracefully - don't let middleware errors crash the agent
 3. **Use appropriate hook types**:
-   - Node-style for sequential logic (logging, validation)
-   - Wrap-style for control flow (retry, fallback, caching)
-4. **Document state requirements** - Clearly document any custom state properties
-5. **Test middleware independently** - Unit test middleware before integrating
-6. **Consider execution order** - Place critical middleware first in the list
-7. **Use built-in middleware when possible** - Don't reinvent the wheel
+    - Node-style for sequential logic (logging, validation)
+    - Wrap-style for control flow (retry, fallback, caching)
+4. Clearly document any custom state properties
+5. Unit test middleware independently before integrating
+6. Consider execution order - place critical middleware first in the list
+7. Use built-in middleware when possible, don't reinvent the wheel :)
 
 ## Examples
 
@@ -1056,6 +1056,12 @@ await agent.invoke(
 
 
 </Expandable>
+
+## Additional resources
+
+- [Middleware API reference](https://reference.langchain.com/python/langchain/middleware/) - Complete guide to custom middleware
+- [Human-in-the-loop](/oss/javascript/langchain/human-in-the-loop) - Add human review for sensitive operations
+- [Testing agents](/oss/javascript/langchain/test) - Strategies for testing safety mechanisms
 
 ---
 

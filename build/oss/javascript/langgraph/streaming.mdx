@@ -712,7 +712,7 @@ for await (const chunk of await graph.stream(
     .compile();
   ```
 
-  Let's invoke the graph with an AI message that includes a tool call:
+  Let's invoke the graph with an [`AIMessage`](https://v03.api.js.langchain.com/classes/_langchain_core.messages_ai_message.AIMessage.html) that includes a tool call:
 
   ```typescript
   const inputs = {
