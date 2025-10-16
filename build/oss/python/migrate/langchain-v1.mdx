@@ -15,7 +15,7 @@ The `langchain` package namespace has been significantly reduced in v1 to focus 
 |-------------------------|------------------------------------------------|-----------------------------------|
 | [`langchain.agents`](https://reference.langchain.com/python/langchain/agents)      | [`create_agent`](https://reference.langchain.com/python/langchain/agents/#langchain.agents.create_agent), [`AgentState`](https://reference.langchain.com/python/langchain/agents/#langchain.agents.AgentState)                   | Core agent creation functionality |
 | [`langchain.messages`](https://reference.langchain.com/python/langchain/messages)    | Message types, [content blocks](https://reference.langchain.com/python/langchain/messages/#langchain.messages.ContentBlock), [`trim_messages`](https://reference.langchain.com/python/langchain/messages/#langchain.messages.trim_messages) | Re-exported from `langchain-core` |
-| [`langchain.tools`](https://reference.langchain.com/python/langchain/tools)       | @[`tool`], [`BaseTool`](https://reference.langchain.com/python/langchain/tools/#langchain.tools.BaseTool), injection helpers          | Re-exported from `langchain-core` |
+| [`langchain.tools`](https://reference.langchain.com/python/langchain/tools)       | [`@tool`](https://reference.langchain.com/python/langchain/tools/#langchain.tools.tool), [`BaseTool`](https://reference.langchain.com/python/langchain/tools/#langchain.tools.BaseTool), injection helpers          | Re-exported from `langchain-core` |
 | [`langchain.chat_models`](https://reference.langchain.com/python/langchain/models) | [`init_chat_model`](https://reference.langchain.com/python/langchain/models/#langchain.chat_models.init_chat_model), [`BaseChatModel`](https://reference.langchain.com/python/langchain_core/language_models/#langchain_core.language_models.chat_models.BaseChatModel)             | Unified model initialization      |
 | [`langchain.embeddings`](https://reference.langchain.com/python/langchain/embeddings)  | [`init_embeddings`](https://reference.langchain.com/python/langchain_core/embeddings/#langchain_core.embeddings.embeddings.Embeddings), [`Embeddings`](https://reference.langchain.com/python/langchain_core/embeddings/#langchain_core.embeddings.embeddings.Embeddings)                | Embedding models                  |
 
@@ -235,7 +235,7 @@ agent.invoke(
 ### Pre-model hook
 
 Pre-model hooks are now implemented as middleware with the `before_model` method.
-This new pattern is more extensible-- you can define multiple middlewares to run before the model is called,
+This new pattern is more extensible--you can define multiple middlewares to run before the model is called,
 reusing common patterns across different agents.
 
 Common use cases include:
@@ -279,7 +279,7 @@ agent = create_react_agent(
 ### Post-model hook
 
 Post-model hooks are now implemented as middleware with the `after_model` method.
-This new pattern is more extensible-- you can define multiple middlewares to run after the model is called,
+This new pattern is more extensible--you can define multiple middlewares to run after the model is called,
 reusing common patterns across different agents.
 
 Common use cases include:
@@ -788,7 +788,7 @@ The `langchain` package namespace has been significantly reduced in v1 to focus 
 |-------------------------|------------------------------------------------|-----------------------------------|
 | [`langchain.agents`](https://reference.langchain.com/python/langchain/agents)      | [`create_agent`](https://reference.langchain.com/python/langchain/agents/#langchain.agents.create_agent), [`AgentState`](https://reference.langchain.com/python/langchain/agents/#langchain.agents.AgentState)                   | Core agent creation functionality |
 | [`langchain.messages`](https://reference.langchain.com/python/langchain/messages)    | Message types, [content blocks](https://reference.langchain.com/python/langchain/messages/#langchain.messages.ContentBlock), [`trim_messages`](https://reference.langchain.com/python/langchain/messages/#langchain.messages.trim_messages) | Re-exported from `langchain-core` |
-| [`langchain.tools`](https://reference.langchain.com/python/langchain/tools)       | @[`tool`], [`BaseTool`](https://reference.langchain.com/python/langchain/tools/#langchain.tools.BaseTool), injection helpers          | Re-exported from `langchain-core` |
+| [`langchain.tools`](https://reference.langchain.com/python/langchain/tools)       | [`@tool`](https://reference.langchain.com/python/langchain/tools/#langchain.tools.tool), [`BaseTool`](https://reference.langchain.com/python/langchain/tools/#langchain.tools.BaseTool), injection helpers          | Re-exported from `langchain-core` |
 | [`langchain.chat_models`](https://reference.langchain.com/python/langchain/models) | [`init_chat_model`](https://reference.langchain.com/python/langchain/models/#langchain.chat_models.init_chat_model), [`BaseChatModel`](https://reference.langchain.com/python/langchain_core/language_models/#langchain_core.language_models.chat_models.BaseChatModel)             | Unified model initialization      |
 | [`langchain.embeddings`](https://reference.langchain.com/python/langchain/embeddings)  | [`init_embeddings`](https://reference.langchain.com/python/langchain_core/embeddings/#langchain_core.embeddings.embeddings.Embeddings), [`Embeddings`](https://reference.langchain.com/python/langchain_core/embeddings/#langchain_core.embeddings.embeddings.Embeddings)                | Embedding models                  |
 
