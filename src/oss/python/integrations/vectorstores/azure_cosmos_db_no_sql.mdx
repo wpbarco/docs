@@ -281,7 +281,7 @@ Result 5:  {"id":null,"metadata":{"source":"https://arxiv.org/pdf/2303.08774.pdf
 ## Full Text Search BM 25 Ranking
 
 ```python
-query = "Some romantic cities in Europe."
+query = "What were the compute requirements for training GPT 4"
 
 full_text_rank_filter = [
     {"search_field": "description", "search_text": "compute requirements GPT-4"}
@@ -291,7 +291,7 @@ results = vector_search.similarity_search_with_score(
     query=query,
     k=5,
     search_type="full_text_ranking",
-    full_text_rank_filter=full_text_rank_filter
+    full_text_rank_filter=full_text_rank_filter,
 )
 
 # Display results
