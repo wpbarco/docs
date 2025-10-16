@@ -329,9 +329,9 @@ You can access and modify the short-term memory (state) of an agent in several w
 
 #### Read short-term memory in a tool
 
-Access short term memory (state) in a tool by injecting the agent's state into the tool signature with the `InjectedState` annotation.
+Access short term memory (state) in a tool using the `ToolRuntime` parameter.
 
-This annotation hides the state from the tool signature (so the model doesn't see it), but the tool can access it.
+The `tool_runtime` parameter is hidden from the tool signature (so the model doesn't see it), but the tool can access the state through it.
 
 
 ```typescript
