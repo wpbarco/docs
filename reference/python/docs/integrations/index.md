@@ -74,6 +74,14 @@ Welcome! These pages include reference documentation for all `langchain-*` Pytho
 
     [:octicons-arrow-right-24: Reference](./langchain_ollama.md)
 
+- :material-microsoft-azure:{ .lg .middle } __`langchain-azure-ai`__
+
+    ---
+
+    Use integrations related to the Azure platform such Azure Open AI, CosmosDB, and more.
+
+    [:octicons-arrow-right-24: Reference](./langchain_azure_ai.md)
+
 </div>
 
 All providers are listed in the section navigation (left sidebar).
