@@ -327,11 +327,9 @@ Custom state is now defined in middleware using the @[`state_schema`] attribute:
 
 <CodeGroup>
 ```python v1 (new)
-from typing import Annotated
-from langchain.tools import tool
+from langchain.tools import tool, ToolRuntime
 from langchain.agents import create_agent  # [!code highlight]
 from langchain.agents.middleware import AgentMiddleware, AgentState  # [!code highlight]
-from langgraph.prebuilt import InjectedState
 
 # Define custom state extending AgentState
 class CustomState(AgentState):
@@ -343,10 +341,10 @@ class UserStateMiddleware(AgentMiddleware[CustomState]):  # [!code highlight]
 
 @tool  # [!code highlight]
 def greet(
-    state: Annotated[CustomState, InjectedState]
+    runtime: ToolRuntime[CustomState]
 ) -> str:
     """Use this to greet the user by name."""
-    user_name = state.get("user_name", "Unknown")  # [!code highlight]
+    user_name = runtime.state.get("user_name", "Unknown")  # [!code highlight]
     return f"Hello {user_name}!"
 
 agent = create_agent(  # [!code highlight]
