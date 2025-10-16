@@ -2,6 +2,12 @@
 
 This module provides link mappings for different language/framework scopes
 to resolve @[link_name] references to actual URLs.
+
+Link maps are composed of:
+1. MANUAL_LINK_MAPS: Curated, high-quality mappings that override auto-generated ones
+2. AUTO_GENERATED_LINK_MAPS: Generated from objects.inv files via scripts/generate_link_maps.py
+
+Manual maps take precedence over auto-generated ones when merging.
 """
 
 from collections.abc import Mapping
@@ -16,7 +22,12 @@ class LinkMap(TypedDict):
     links: Mapping[str, str]
 
 
-LINK_MAPS: list[LinkMap] = [
+# Manual link maps - these override auto-generated links
+# Use these for:
+# - Custom aliases or shortcuts
+# - Links that need special handling
+# - External documentation not in objects.inv
+MANUAL_LINK_MAPS: list[LinkMap] = [
     {
         # Python LangGraph reference
         "host": "https://langchain-ai.github.io/langgraph/",
@@ -234,7 +245,68 @@ LINK_MAPS: list[LinkMap] = [
 ]
 
 
+def _merge_link_maps(
+    manual_maps: list[LinkMap],
+    auto_maps: list[LinkMap],
+) -> list[LinkMap]:
+    """Merge manual and auto-generated link maps.
+
+    Manual maps take precedence over auto-generated maps for the same keys.
+
+    Args:
+        manual_maps: Manually curated link maps.
+        auto_maps: Auto-generated link maps from objects.inv.
+
+    Returns:
+        Merged list of link maps with manual entries taking precedence.
+    """
+    # Group by (host, scope) for merging
+    merged: dict[tuple[str, str], dict[str, str]] = {}
+
+    # First add auto-generated links
+    for link_map in auto_maps:
+        key = (link_map["host"], link_map["scope"])
+        if key not in merged:
+            merged[key] = {}
+        merged[key].update(link_map["links"])
+
+    # Then overlay manual links (these take precedence)
+    for link_map in manual_maps:
+        key = (link_map["host"], link_map["scope"])
+        if key not in merged:
+            merged[key] = {}
+        merged[key].update(link_map["links"])
+
+    # Convert back to list of LinkMap
+    result: list[LinkMap] = []
+    for (host, scope), links in merged.items():
+        result.append({"host": host, "scope": scope, "links": links})
+
+    return result
+
+
+# Import auto-generated link maps
+try:
+    from pipeline.preprocessors.link_map_generated import (
+        AUTO_GENERATED_LINK_MAPS,
+    )
+except ImportError:
+    # If not generated yet, use empty list
+    AUTO_GENERATED_LINK_MAPS = []
+
+# Merge manual and auto-generated link maps
+LINK_MAPS: list[LinkMap] = _merge_link_maps(MANUAL_LINK_MAPS, AUTO_GENERATED_LINK_MAPS)
+
+
 def _enumerate_links(scope: str) -> dict[str, str]:
+    """Enumerate all links for a given scope.
+
+    Args:
+        scope: The scope to enumerate links for (e.g., 'python', 'js').
+
+    Returns:
+        Dictionary mapping link names to full URLs.
+    """
     result = {}
     for link_map in LINK_MAPS:
         if link_map["scope"] == scope:
