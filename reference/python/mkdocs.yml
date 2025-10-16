@@ -193,6 +193,7 @@ plugins:
             # Import external inventories for cross-referencing documentation
             - https://docs.python.org/3/objects.inv
             - https://docs.pydantic.dev/latest/objects.inv
+            - https://typing-extensions.readthedocs.io/en/latest/objects.inv
           options:
             # # https://mkdocstrings.github.io/python/usage/#load_external_modules
             # load_external_modules: true
@@ -249,7 +250,7 @@ plugins:
 
             # https://mkdocstrings.github.io/python/usage/configuration/docstrings/#merge_init_into_class
             # Merges init method with class signature & docstring
-            merge_init_into_class: true
+            # merge_init_into_class: true
 
             # https://mkdocstrings.github.io/python/usage/configuration/signatures/#show_signature_annotations
             # Show type annotations in signatures
@@ -292,6 +293,10 @@ plugins:
               # Uses our custom `deprecated` admonition
               # Title and label can be customized if desired
               kind: deprecated
+            - griffe_inherited_docstrings:
+              # https://mkdocstrings.github.io/griffe/extensions/official/inherited-docstrings/
+              # Inherit docstrings from parent classes when a method doesn't have its own
+              enabled: true
 
 
 

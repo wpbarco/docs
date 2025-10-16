@@ -92,7 +92,7 @@ client = MultiServerMCPClient(  # [!code highlight]
 
 tools = await client.get_tools()  # [!code highlight]
 agent = create_agent(
-    "anthropic:claude-3-7-sonnet-latest",
+    "anthropic:claude-sonnet-4-5-20250929",
     tools  # [!code highlight]
 )
 math_response = await agent.ainvoke(

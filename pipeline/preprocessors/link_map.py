@@ -131,26 +131,6 @@ LINK_MAPS: list[LinkMap] = [
         },
     },
     {
-        # Python LangChain reference
-        "host": "https://python.langchain.com/api_reference/",
-        "scope": "python",
-        "links": {
-            "AIMessage": "core/messages/langchain_core.messages.ai.AIMessage.html",
-            "AIMessageChunk": "core/messages/langchain_core.messages.ai.AIMessageChunk.html",
-            "BaseChatModel.invoke": "core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.invoke",
-            "BaseChatModel.stream": "core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.stream",
-            "BaseChatModel.astream_events": "core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.astream_events",
-            "BaseChatModel.batch": "core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.batch",
-            "BaseChatModel.batch_as_completed": "core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.batch_as_completed",
-            "BaseChatModel.bind_tools": "core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.bind_tools",
-            "Document": "core/documents/langchain_core.documents.base.Document.html",
-            "init_chat_model": "langchain/chat_models/langchain.chat_models.base.init_chat_model.html",
-            "RunnableConfig": "core/runnables/langchain_core.runnables.config.RunnableConfig.html",
-            "@tool": "core/tools/langchain_core.tools.convert.tool.html",
-            "Embeddings": "core/embeddings/langchain_core.embeddings.embeddings.Embeddings.html",
-        },
-    },
-    {
         "host": "https://v03.api.js.langchain.com/",
         "scope": "js",
         "links": {
@@ -172,9 +152,73 @@ LINK_MAPS: list[LinkMap] = [
         "host": "https://reference.langchain.com/python/",
         "scope": "python",
         "links": {
+            # Module pages
+            "langchain": "langchain/langchain",
+            "langchain.agents": "langchain/agents",
+            "langchain.messages": "langchain/messages",
+            "langchain.tools": "langchain/tools",
+            "langchain.chat_models": "langchain/models",
+            "langchain.embeddings": "langchain/embeddings",
+            "langchain_core": "langchain_core/",
+            # Agents
+            "create_agent": "langchain/agents/#langchain.agents.create_agent",
+            "create_agent(tools)": "langchain/agents/#langchain.agents.create_agent(tools)",
+            "system_prompt": "langchain/agents/#langchain.agents.create_agent(system_prompt)",
+            "AgentState": "langchain/agents/#langchain.agents.AgentState",
+            # Middleware
+            "AgentMiddleware": "langchain/middleware/#langchain.agents.middleware.AgentMiddleware",
+            "state_schema": "langchain/middleware/#langchain.agents.middleware.AgentMiddleware.state_schema",
+            "PIIMiddleware": "langchain/middleware/#langchain.agents.middleware.PIIMiddleware",
+            "SummarizationMiddleware": "langchain/middleware/#langchain.agents.middleware.SummarizationMiddleware",
+            "HumanInTheLoopMiddleware": "langchain/middleware/#langchain.agents.middleware.HumanInTheLoopMiddleware",
+            # Messages
+            "AIMessage": "langchain/messages/#langchain.messages.AIMessage",
+            "AIMessageChunk": "langchain/messages/#langchain.messages.AIMessageChunk",
+            "ToolMessage": "langchain/messages/#langchain.messages.ToolMessage",
+            "SystemMessage": "langchain/messages/#langchain.messages.SystemMessage",
+            "trim_messages": "langchain/messages/#langchain.messages.trim_messages",
+            # Content blocks
+            "BaseMessage": "langchain_core/language_models/#langchain_core.messages.BaseMessage",
+            "BaseMessage(content)": "langchain_core/language_models/#langchain_core.messages.BaseMessage.content",
+            "BaseMessage(content_blocks)": "langchain_core/language_models/#langchain_core.messages.BaseMessage.content_blocks",
+            "ContentBlock": "langchain/messages/#langchain.messages.ContentBlock",
+            "TextContentBlock": "langchain/messages/#langchain.messages.TextContentBlock",
+            "ReasoningContentBlock": "langchain/messages/#langchain.messages.ReasoningContentBlock",
+            "NonStandardContentBlock": "langchain/messages/#langchain.messages.NonStandardContentBlock",
+            "ImageContentBlock": "langchain/messages/#langchain.messages.ImageContentBlock",
+            "VideoContentBlock": "langchain/messages/#langchain.messages.VideoContentBlock",
+            "AudioContentBlock": "langchain/messages/#langchain.messages.AudioContentBlock",
+            "PlainTextContentBlock": "langchain/messages/#langchain.messages.PlainTextContentBlock",
+            "FileContentBlock": "langchain/messages/#langchain.messages.FileContentBlock",
+            "ToolCall": "langchain/messages/#langchain.messages.ToolCall",
+            "ToolCallChunk": "langchain/messages/#langchain.messages.ToolCallChunk",
+            "ServerToolCall": "langchain/messages/#langchain.messages.ServerToolCall",
+            "ServerToolCallChunk": "langchain/messages/#langchain.messages.ServerToolCallChunk",
+            "ServerToolResult": "langchain/messages/#langchain.messages.ServerToolResult",
+            # Integrations
             "langchain-openai": "integrations/langchain_openai",
             "ChatOpenAI": "integrations/langchain_openai/#langchain_openai.ChatOpenAI",
             "AzureChatOpenAI": "integrations/langchain_openai/#langchain_openai.AzureChatOpenAI",
+            # Models
+            "init_chat_model": "langchain/models/#langchain.chat_models.init_chat_model",
+            "init_chat_model(model_provider)": "langchain/models/#langchain.chat_models.init_chat_model(model_provider)",
+            "BaseChatModel": "langchain_core/language_models/#langchain_core.language_models.chat_models.BaseChatModel",
+            "BaseChatModel.invoke": "langchain_core/language_models/#langchain_core.language_models.chat_models.BaseChatModel.invoke",
+            "BaseChatModel.stream": "langchain_core/language_models/#langchain_core.language_models.chat_models.BaseChatModel.stream",
+            "BaseChatModel.astream_events": "langchain_core/language_models/#langchain_core.language_models.chat_models.BaseChatModel.astream_events",
+            "BaseChatModel.batch": "langchain_core.language_models.chat_models.BaseChatModel.batch",
+            "BaseChatModel.batch_as_completed": "langchain_core.language_models.chat_models.BaseChatModel.batch_as_completed",
+            "BaseChatModel.bind_tools": "langchain_core/language_models/#langchain_core.language_models.chat_models.BaseChatModel.bind_tools",
+            # Tools
+            "@tool": "langchain/tools/#langchain.tools.tool",
+            "BaseTool": "langchain/tools/#langchain.tools.BaseTool",
+            # Embeddings
+            "init_embeddings": "langchain_core/embeddings/#langchain_core.embeddings.embeddings.Embeddings",
+            "Embeddings": "langchain_core/embeddings/#langchain_core.embeddings.embeddings.Embeddings",
+            # Documents
+            "Document": "langchain_core/documents/#langchain_core.documents.base.Document",
+            # Runnables
+            "RunnableConfig": "langchain_core/runnables/#langchain_core.runnables.RunnableConfig",
         },
     },
     {

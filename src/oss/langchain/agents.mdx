@@ -15,7 +15,7 @@ import AlphaCalloutJS from '/snippets/alpha-lc-callout-js.mdx';
 Agents combine language models with tools to create systems that can reason about tasks, decide which tools to use, and iteratively work towards solutions.
 
 :::python
-`create_agent()` provides a production-ready agent implementation.
+@[`create_agent`] provides a production-ready agent implementation.
 :::
 :::js
 `createAgent()` provides a production-ready agent implementation.
@@ -56,13 +56,13 @@ graph TD
 <Info>
 
 :::python
-`create_agent()` builds a **graph**-based agent runtime using [LangGraph](/oss/langgraph/overview). A graph consists of nodes (steps) and edges (connections) that define how your agent processes information. The agent moves through this graph, executing nodes like the model node (which calls the model), the tools node (which executes tools), or middleware.
+@[`create_agent`] builds a **graph**-based agent runtime using [LangGraph](/oss/langgraph/overview). A graph consists of nodes (steps) and edges (connections) that define how your agent processes information. The agent moves through this graph, executing nodes like the model node (which calls the model), the tools node (which executes tools), or middleware.
 :::
 :::js
 `createAgent()` builds a **graph**-based agent runtime using [LangGraph](/oss/langgraph/overview). A graph consists of nodes (steps) and edges (connections) that define how your agent processes information. The agent moves through this graph, executing nodes like the model node (which calls the model), the tools node (which executes tools), or middleware.
 :::
 
-Learn more about the [graph API](/oss/langgraph/graph-api).
+Learn more about the [Graph API](/oss/langgraph/graph-api).
 
 </Info>
 
@@ -99,7 +99,7 @@ const agent = createAgent({
 
 :::python
 <Tip>
-    Model identifier strings support automatic inference (e.g., `"gpt-5"` will be inferred as `"openai:gpt-5"`).
+    Model identifier strings support automatic inference (e.g., `"gpt-5"` will be inferred as `"openai:gpt-5"`). Refer to the @[reference][init_chat_model(model_provider)] to see a full list of model identifier strings.
 </Tip>
 
 For more control over the model configuration, initialize a model instance directly using the provider package:
@@ -181,7 +181,7 @@ agent = create_agent(
 ```
 
 <Note>
-Pre-bound models (models with `.bind_tools()` already called) are not supported when using structured output. If you need dynamic model selection with structured output, ensure the models passed to the middleware are not pre-bound.
+Pre-bound models (models with @[`bind_tools`][BaseChatModel.bind_tools] already called) are not supported when using structured output. If you need dynamic model selection with structured output, ensure the models passed to the middleware are not pre-bound.
 </Note>
 
 :::
@@ -321,7 +321,7 @@ agent = create_agent(
 )
 ```
 
-The agent will return a `ToolMessage` with the custom error message when a tool fails:
+The agent will return a @[`ToolMessage`] with the custom error message when a tool fails:
 
 ```python
 # result["messages"]
@@ -376,7 +376,7 @@ Learn more about tools in [tools](/oss/langchain/tools).
 
 #### Tool use in the ReAct loop
 
-Agents follow the ReAct (*Reasoning* + *Acting*) pattern, alternating between brief reasoning steps with targeted tool calls and feeding the resulting observations into subsequent decisions until they can deliver a final answer.
+Agents follow the ReAct ("Reasoning + Acting") pattern, alternating between brief reasoning steps with targeted tool calls and feeding the resulting observations into subsequent decisions until they can deliver a final answer.
 
 <Accordion title="Example of ReAct loop">
 Prompt: Identify the current most popular wireless headphones and verify availability.
@@ -437,7 +437,7 @@ To learn more about tools, see [Tools](/oss/langchain/tools).
 
 ### System prompt
 
-You can shape how your agent approaches tasks by providing a prompt. The `system_prompt` parameter can be provided as a string:
+You can shape how your agent approaches tasks by providing a prompt. The @[`system_prompt`] parameter can be provided as a string:
 
 :::python
 ```python wrap
@@ -669,7 +669,7 @@ Information stored in the state can be thought of as the [short-term memory](/os
 
 :::python
 
-Custom state schemas must extend `AgentState` as a `TypedDict`. Define them in middleware using the `state_schema` attribute:
+Custom state schemas must extend @[`AgentState`] as a `TypedDict`. Define them in middleware using the `state_schema` attribute:
 
 ```python wrap
 from typing import Annotated, TypedDict
@@ -728,7 +728,7 @@ To learn more about memory, see [Memory](/oss/concepts/memory). For information 
 
 ### Streaming
 
-We've seen how the agent can be called with `.invoke` to get a final response. If the agent executes multiple steps, this may take a while. To show intermediate progress, we can stream back messages as they occur.
+We've seen how the agent can be called with `invoke` to get a final response. If the agent executes multiple steps, this may take a while. To show intermediate progress, we can stream back messages as they occur.
 
 :::python
 ```python wrap

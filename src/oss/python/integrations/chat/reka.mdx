@@ -279,7 +279,7 @@ We can check out the LangSmith trace to make sure it's calling the search tool e
 
 [smith.langchain.com/public/013ef704-654b-4447-8428-637b343d646e/r](https://smith.langchain.com/public/013ef704-654b-4447-8428-637b343d646e/r)
 
-We've seen how the agent can be called with `.invoke` to get a final response. If the agent executes multiple steps, this may take a while. To show intermediate progress, we can stream back messages as they occur.
+We've seen how the agent can be called with `invoke` to get a final response. If the agent executes multiple steps, this may take a while. To show intermediate progress, we can stream back messages as they occur.
 
 ```python
 for chunk in agent_executor.stream(
