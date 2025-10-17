@@ -5,6 +5,7 @@ sidebarTitle: With pyproject.toml
 
 import FrameworkAgnosticPy from '/snippets/langsmith/framework-agnostic-py.mdx';
 import FrameworkAgnosticJS from '/snippets/langsmith/framework-agnostic-js.mdx';
+import PrereleaseBehavior from '/snippets/langsmith/pre-release-behavior.mdx';
 
 An application must be configured with a [configuration file](/langsmith/cli#configuration-file) in order to be deployed to LangSmith (or to be self-hosted). This how-to guide discusses the basic steps to set up an application for deployment using `pyproject.toml` to define your package's dependencies.
 
@@ -120,9 +121,7 @@ my-app/
 ```
 
 <Tip>
-We follow `uv`/`pip` convention for allowing prereleases, which means by default they will not be installed. To allow prereleases do the following:
-- Using `pyproject.toml`: add `allow-prereleases = true` to the `[tool.uv]` section.
-- Using `requirements.txt` or `setup.py`: explicitly specify prerelease versions for all dependencies, including transitive ones. For example, if you specify `a==0.0.1a1` which depends on `b==0.0.1a1`, you must also explicitly list `b==0.0.1a1` in your dependencies.
+<PrereleaseBehavior/>
 </Tip>
 
 ## Define Graphs
