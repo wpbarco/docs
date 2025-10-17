@@ -367,7 +367,10 @@ nav:
   - Integrations:
     - LangChain integrations: integrations/index.md
     - All packages:
-      - Anthropic: integrations/langchain_anthropic.md
+      - Anthropic:
+        - integrations/langchain_anthropic/index.md
+        - ChatAnthropic: integrations/langchain_anthropic/ChatAnthropic.md
+        - AnthropicLLM: integrations/langchain_anthropic/AnthropicLLM.md
       - AstraDB: integrations/langchain_astradb.md
       - AWS: integrations/langchain_aws.md
       - Azure AI: integrations/langchain_azure_ai.md
