@@ -35,8 +35,6 @@ LINK_MAPS: list[LinkMap] = [
             "AsyncSqliteSaver": "reference/checkpoints/#langgraph.checkpoint.sqlite.aio.AsyncSqliteSaver",
             "BaseCheckpointSaver": "reference/checkpoints/#langgraph.checkpoint.base.BaseCheckpointSaver",
             "BaseLoader": "https://python.langchain.com/api_reference/core/document_loaders/langchain_core.document_loaders.base.BaseLoader.html",
-            "BaseStore": "reference/store/#langgraph.store.base.BaseStore",
-            "BaseStore.put": "reference/store/#langgraph.store.base.BaseStore.put",
             "BinaryOperatorAggregate": "reference/pregel/#langgraph.pregel.Pregel--advanced-channels-context-and-binaryoperatoraggregate",
             "CipherProtocol": "reference/checkpoints/#langgraph.checkpoint.serde.base.CipherProtocol",
             "client.runs.stream": "cloud/reference/sdk/python_sdk_ref/#langgraph_sdk.client.RunsClient.stream",
@@ -233,6 +231,9 @@ LINK_MAPS: list[LinkMap] = [
             "RunnableConfig(max_concurrency)": "langchain_core/runnables/#langchain_core.runnables.RunnableConfig.max_concurrency",
             # VectorStores
             "VectorStore": "langchain_core/vectorstores/?h=#langchain_core.vectorstores.base.VectorStore",
+            # Key-value stores
+            "BaseStore": "langgraph/store/#langgraph.store.base.BaseStore",
+            "BaseStore.put": "langgraph/store/#langgraph.store.base.BaseStore.put",
             # Callbacks
             "on_llm_new_token": "langchain_core/callbacks/#langchain_core.callbacks.base.AsyncCallbackHandler.on_llm_new_token",
             # Rate limiters

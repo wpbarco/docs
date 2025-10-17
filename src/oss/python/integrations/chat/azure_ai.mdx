@@ -26,19 +26,19 @@ To access AzureAIChatCompletionsModel models, you'll need to create an [Azure ac
 
 ### Credentials
 
-Head to the [Azure docs](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/develop/sdk-overview?tabs=sync&pivots=programming-language-python) to see how to create your deployment and generate an API key. Once your model is deployed, you click the 'get endpoint' button in AI Foundry. This will show you your endpoint and api key. Once you've done this, set the AZURE_INFERENCE_CREDENTIAL and AZURE_INFERENCE_ENDPOINT environment variables:
+Head to the [Azure docs](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/develop/sdk-overview?tabs=sync&pivots=programming-language-python) to see how to create your deployment and generate an API key. Once your model is deployed, you click the 'get endpoint' button in AI Foundry. This will show you your endpoint and api key. Once you've done this, set the AZURE_AI_CREDENTIAL and AZURE_AI_ENDPOINT environment variables:
 
 ```python
 import getpass
 import os
 
-if not os.getenv("AZURE_INFERENCE_CREDENTIAL"):
-    os.environ["AZURE_INFERENCE_CREDENTIAL"] = getpass.getpass(
+if not os.getenv("AZURE_AI_CREDENTIAL"):
+    os.environ["AZURE_AI_CREDENTIAL"] = getpass.getpass(
         "Enter your AzureAIChatCompletionsModel API key: "
     )
 
-if not os.getenv("AZURE_INFERENCE_ENDPOINT"):
-    os.environ["AZURE_INFERENCE_ENDPOINT"] = getpass.getpass(
+if not os.getenv("AZURE_AI_ENDPOINT"):
+    os.environ["AZURE_AI_ENDPOINT"] = getpass.getpass(
         "Enter your model endpoint: "
     )
 ```

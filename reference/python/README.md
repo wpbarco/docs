@@ -164,7 +164,7 @@ The `pyproject.dev.toml` file expects repositories to be cloned in this structur
   ├── langchain-redis/
   ├── langchain-sema4/
   ├── langchain-snowflake/
-  ├── langchain-tavily/
+  ├── langchain-tavily/      # (External org)
   ├── langchain-together/
   ├── langchain-unstructured/
   ├── langchain-upstage/
