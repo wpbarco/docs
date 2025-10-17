@@ -257,6 +257,7 @@
                 "tab": "Integrations",
                 "pages": [
                   "oss/python/integrations/providers/overview",
+                  "oss/python/integrations/providers/all_providers",
                   {
                     "group": "Popular Providers",
                     "icon": "user-group",
@@ -283,8 +284,7 @@
                       "oss/python/integrations/document_loaders/index",
                       "oss/python/integrations/stores/index"
                     ]
-                  },
-                  "oss/python/integrations/providers/all_providers"
+                  }
                 ]
               },
               {
