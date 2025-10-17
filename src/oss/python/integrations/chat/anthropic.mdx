@@ -282,7 +282,7 @@ import json
 from langchain_anthropic import ChatAnthropic
 
 llm = ChatAnthropic(
-    model="claude-sonnet-4-5-20250929",
+    model="claude-sonnet-4-5",
     max_tokens=5000,
     thinking={"type": "enabled", "budget_tokens": 2000},
 )
@@ -866,7 +866,7 @@ See [Anthropic documentation](https://docs.claude.com/en/docs/build-with-claude/
 from langchain_anthropic import ChatAnthropic
 
 llm = ChatAnthropic(
-    model="claude-sonnet-4-5-20250929",
+    model="claude-sonnet-4-5",
     betas=["context-management-2025-06-27"],
     context_management={"edits": [{"type": "clear_tool_uses_20250919"}]},
 )
@@ -889,7 +889,7 @@ Claude can use a [web search tool](https://docs.claude.com/en/docs/agents-and-to
 ```python
 from langchain_anthropic import ChatAnthropic
 
-llm = ChatAnthropic(model="claude-sonnet-4-5-20250929")
+llm = ChatAnthropic(model="claude-sonnet-4-5")
 
 tool = {"type": "web_search_20250305", "name": "web_search", "max_uses": 3}
 llm_with_tools = llm.bind_tools([tool])
@@ -1020,7 +1020,7 @@ Claude supports a memory tool for client-side storage and retrieval of context a
 from langchain_anthropic import ChatAnthropic
 
 llm = ChatAnthropic(
-    model="claude-sonnet-4-5-20250929",
+    model="claude-sonnet-4-5",
     betas=["context-management-2025-06-27"],
 )
 llm_with_tools = llm.bind_tools([{"type": "memory_20250818", "name": "memory"}])
