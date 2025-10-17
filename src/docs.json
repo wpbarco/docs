@@ -199,6 +199,12 @@
                 "pages": [
                   "oss/python/langgraph/overview",
                   {
+                    "group": "LangGraph v1.0",
+                    "pages": [
+                      "oss/python/releases/langgraph-v1"
+                    ]
+                  },
+                  {
                     "group": "Get started",
                     "pages": [
                       "oss/python/langgraph/install",
@@ -490,6 +496,13 @@
                 "tab": "LangGraph",
                 "pages": [
                   "oss/javascript/langgraph/overview",
+                  {
+                    "group": "LangGraph v1.0",
+                    "pages": [
+                      "oss/javascript/releases/langgraph-v1",
+                      "oss/javascript/migrate/langgraph-v1"
+                    ]
+                  },
                   {
                     "group": "Get started",
                     "pages": [
