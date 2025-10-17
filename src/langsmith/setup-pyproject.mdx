@@ -122,7 +122,7 @@ my-app/
 <Tip>
 We follow `uv`/`pip` convention for allowing prereleases, which means by default they will not be installed. To allow prereleases do the following:
 - Using `pyproject.toml`: add `allow-prereleases = true` to the `[tool.uv]` section.
-- Using `requirements.txt`, `setup.py`: make sure you specify prerelease versions for all the dependencies. For instance if you specify `a==0.0.1a1` which relies on `b==0.0.1a1`, then `b==0.0.1a1` must also be specified.
+- Using `requirements.txt` or `setup.py`: explicitly specify prerelease versions for all dependencies, including transitive ones. For example, if you specify `a==0.0.1a1` which depends on `b==0.0.1a1`, you must also explicitly list `b==0.0.1a1` in your dependencies.
 </Tip>
 
 ## Define Graphs
