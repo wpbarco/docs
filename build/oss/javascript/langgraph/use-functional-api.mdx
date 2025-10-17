@@ -3,11 +3,11 @@ title: Use the functional API
 sidebarTitle: Use the Functional API
 ---
 
-import AlphaCalloutPy from '/snippets/alpha-lg-callout-py.mdx';
-import AlphaCalloutJS from '/snippets/alpha-lg-callout-js.mdx';
+import StableCalloutPy from '/snippets/stable-lg-callout-py.mdx';
+import StableCalloutJS from '/snippets/stable-lg-callout-js.mdx';
 
 
-<AlphaCalloutJS />
+<StableCalloutJS />
 
 
 The [**Functional API**](/oss/javascript/langgraph/functional-api) allows you to add LangGraph's key features — [persistence](/oss/javascript/langgraph/persistence), [memory](/oss/javascript/langgraph/add-memory), [human-in-the-loop](/oss/javascript/langgraph/interrupts), and [streaming](/oss/javascript/langgraph/streaming) — to your applications with minimal changes to your existing code.
@@ -902,7 +902,7 @@ import {
 } from "@langchain/langgraph";
 import { ChatAnthropic } from "@langchain/anthropic";
 
-const model = new ChatAnthropic({ model: "claude-sonnet-4-5-20250929" });
+const model = new ChatAnthropic({ model: "claude-sonnet-4-5" });
 
 const callModel = task(
   "callModel",

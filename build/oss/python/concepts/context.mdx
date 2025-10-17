@@ -3,10 +3,10 @@ title: Context overview
 sidebarTitle: Context
 ---
 
-import AlphaCalloutPy from '/snippets/alpha-lg-callout-py.mdx';
-import AlphaCalloutJS from '/snippets/alpha-lg-callout-js.mdx';
+import StableCalloutPy from '/snippets/stable-lg-callout-py.mdx';
+import StableCalloutJS from '/snippets/stable-lg-callout-js.mdx';
 
-<AlphaCalloutPy />
+<StableCalloutPy />
 
 
 
@@ -69,7 +69,7 @@ graph.invoke(
         return f"You are a helpful assistant. Address the user as {user_name}."
 
     agent = create_agent(
-        model="anthropic:claude-sonnet-4-5-20250929",
+        model="anthropic:claude-sonnet-4-5",
         tools=[get_weather],
         middleware=[personalized_prompt],
         context_schema=ContextSchema
@@ -143,7 +143,7 @@ See the [Runtime][langgraph.runtime.Runtime] documentation for details.
         return f"You are a helpful assistant. User's name is {user_name}"
 
     agent = create_agent(
-        model="anthropic:claude-sonnet-4-5-20250929",
+        model="anthropic:claude-sonnet-4-5",
         tools=[...],
         state_schema=CustomState,  # [!code highlight]
         middleware=[personalized_prompt],  # [!code highlight]

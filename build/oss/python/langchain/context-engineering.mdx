@@ -3,10 +3,10 @@ title: Context engineering in agents
 sidebarTitle: Context engineering
 ---
 
-import AlphaCalloutPy from '/snippets/alpha-lc-callout-py.mdx';
-import AlphaCalloutJS from '/snippets/alpha-lc-callout-js.mdx';
+import StableCalloutPy from '/snippets/stable-lc-callout-py.mdx';
+import StableCalloutJS from '/snippets/stable-lc-callout-js.mdx';
 
-<AlphaCalloutPy />
+<StableCalloutPy />
 
 
 
@@ -321,7 +321,7 @@ def adaptive_model(
 
     if message_count > 20:
         # Long conversation - use model with larger context window
-        request.model = init_chat_model("anthropic:claude-sonnet-4-5-20250929")
+        request.model = init_chat_model("anthropic:claude-sonnet-4-5")
     elif message_count > 10:
         # Medium conversation - use mid-tier model
         request.model = init_chat_model("openai:gpt-4o")

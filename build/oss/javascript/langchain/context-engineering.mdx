@@ -3,11 +3,11 @@ title: Context engineering in agents
 sidebarTitle: Context engineering
 ---
 
-import AlphaCalloutPy from '/snippets/alpha-lc-callout-py.mdx';
-import AlphaCalloutJS from '/snippets/alpha-lc-callout-js.mdx';
+import StableCalloutPy from '/snippets/stable-lc-callout-py.mdx';
+import StableCalloutJS from '/snippets/stable-lc-callout-js.mdx';
 
 
-<AlphaCalloutJS />
+<StableCalloutJS />
 
 
 The hard part of building agents (or any LLM application) is making them reliable enough.
@@ -264,7 +264,7 @@ const adaptiveModel = createMiddleware({
 
     if (messageCount > 20) {
       // Long conversation - use model with larger context window
-      model = initChatModel("anthropic:claude-sonnet-4-5-20250929");
+      model = initChatModel("anthropic:claude-sonnet-4-5");
     } else if (messageCount > 10) {
       // Medium conversation - use mid-tier model
       model = initChatModel("openai:gpt-4o");

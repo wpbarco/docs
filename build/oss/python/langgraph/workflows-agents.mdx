@@ -3,6 +3,13 @@ title: Workflows and agents
 sidebarTitle: Workflows + agents
 ---
 
+import StableCalloutPy from '/snippets/stable-lg-callout-py.mdx';
+import StableCalloutJS from '/snippets/stable-lg-callout-js.mdx';
+
+<StableCalloutPy />
+
+
+
 This guide reviews common workflow and agent patterns.
 
 - Workflows have predetermined code paths and are designed to operate in a certain order.
@@ -36,7 +43,7 @@ def _set_env(var: str):
 
 _set_env("ANTHROPIC_API_KEY")
 
-llm = ChatAnthropic(model="claude-sonnet-4-5-20250929")
+llm = ChatAnthropic(model="claude-sonnet-4-5")
 ```
 
 
