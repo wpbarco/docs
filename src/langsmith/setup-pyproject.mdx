@@ -119,6 +119,12 @@ my-app/
 └── pyproject.toml
 ```
 
+<Tip>
+We follow `uv`/`pip` convention for allowing prereleases, which means by default they will not be installed. To allow prereleases do the following:
+- Using `pyproject.toml`: add `allow-prereleases = true` to the `[tool.uv]` section.
+- Using `requirements.txt`, `setup.py`: make sure you specify prerelease versions for all the dependencies. For instance if you specify `a==0.0.1a1` which relies on `b==0.0.1a1`, then `b==0.0.1a1` must also be specified.
+</Tip>
+
 ## Define Graphs
 
 Implement your graphs. Graphs can be defined in a single file or multiple files. Make note of the variable names of each @[CompiledStateGraph] to be included in the application. The variable names will be used later when creating the [configuration file](/langsmith/cli#configuration-file).
