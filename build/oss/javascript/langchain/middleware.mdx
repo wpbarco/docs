@@ -109,14 +109,29 @@ const agent = createAgent({
 
 
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `model` | Model for generating summaries | Required |
-| `maxTokensBeforeSummary` | Token threshold for triggering summarization | - |
-| `messagesToKeep` | Recent messages to preserve | `20` |
-| `tokenCounter` | Custom token counting function | Character-based |
-| `summaryPrompt` | Custom prompt template | Built-in |
-| `summaryPrefix` | Prefix for summary messages | `"## Previous conversation summary:"` |
+<ParamField body="model" type="string" required>
+  Model for generating summaries
+</ParamField>
+
+<ParamField body="maxTokensBeforeSummary" type="number">
+  Token threshold for triggering summarization
+</ParamField>
+
+<ParamField body="messagesToKeep" type="number" default="20">
+  Recent messages to preserve
+</ParamField>
+
+<ParamField body="tokenCounter" type="function">
+  Custom token counting function. Defaults to character-based counting.
+</ParamField>
+
+<ParamField body="summaryPrompt" type="string">
+  Custom prompt template. Uses built-in template if not specified.
+</ParamField>
+
+<ParamField body="summaryPrefix" type="string" default="## Previous conversation summary:">
+  Prefix for summary messages
+</ParamField>
 
 
 </Accordion>
@@ -162,14 +177,23 @@ const agent = createAgent({
 
 
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `interruptOn` | Mapping of tool names to approval configs | Required |
+<ParamField body="interruptOn" type="object" required>
+  Mapping of tool names to approval configs
+</ParamField>
 
 **Tool approval config options:**
-- `allowAccept`: Whether approval is allowed | `false`
-- `allowEdit`: Whether editing is allowed | `false`
-- `allowRespond`: Whether responding/rejection is allowed | `false`
+
+<ParamField body="allowAccept" type="boolean" default="false">
+  Whether approval is allowed
+</ParamField>
+
+<ParamField body="allowEdit" type="boolean" default="false">
+  Whether editing is allowed
+</ParamField>
+
+<ParamField body="allowRespond" type="boolean" default="false">
+  Whether responding/rejection is allowed
+</ParamField>
 
 
 </Accordion>
@@ -228,9 +252,9 @@ const result = await agent.invoke({
 
 
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `ttl` | Time to live (`"5m"` or `"1h"`) | `"5m"` |
+<ParamField body="ttl" type="string" default="5m">
+  Time to live for cached content. Valid values: `"5m"` or `"1h"`
+</ParamField>
 
 
 </Accordion>
@@ -269,11 +293,17 @@ const agent = createAgent({
 
 
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `threadLimit` | Max calls across all runs in thread | `undefined` (no limit) |
-| `runLimit` | Max calls per single invocation | `undefined` (no limit) |
-| `exitBehavior` | `"end"` (graceful) or `"error"` (exception) | `"end"` |
+<ParamField body="threadLimit" type="number">
+  Maximum model calls across all runs in a thread. Defaults to no limit.
+</ParamField>
+
+<ParamField body="runLimit" type="number">
+  Maximum model calls per single invocation. Defaults to no limit.
+</ParamField>
+
+<ParamField body="exitBehavior" type="string" default="end">
+  Behavior when limit is reached. Options: `"end"` (graceful termination) or `"error"` (throw exception)
+</ParamField>
 
 
 </Accordion>
@@ -316,12 +346,21 @@ const agent = createAgent({
 
 
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `toolName` | Specific tool to limit (`undefined` = all tools) | `undefined` |
-| `threadLimit` | Max calls across all runs in thread | `undefined` (no limit) |
-| `runLimit` | Max calls per single invocation | `undefined` (no limit) |
-| `exitBehavior` | `"end"` (graceful) or `"error"` (exception) | `"end"` |
+<ParamField body="toolName" type="string">
+  Specific tool to limit. If not provided, limits apply to all tools.
+</ParamField>
+
+<ParamField body="threadLimit" type="number">
+  Maximum tool calls across all runs in a thread. Defaults to no limit.
+</ParamField>
+
+<ParamField body="runLimit" type="number">
+  Maximum tool calls per single invocation. Defaults to no limit.
+</ParamField>
+
+<ParamField body="exitBehavior" type="string" default="end">
+  Behavior when limit is reached. Options: `"end"` (graceful termination) or `"error"` (throw exception)
+</ParamField>
 
 
 </Accordion>
@@ -360,13 +399,18 @@ const agent = createAgent({
 
 
 The middleware accepts a variable number of string arguments representing fallback models in order:
-```typescript
-modelFallbackMiddleware(
-  "first-fallback-model",
-  "second-fallback-model",
-  // ... more models
-)
-```
+
+<ParamField body="...models" type="string[]" required>
+  One or more fallback model strings to try in order when the primary model fails
+
+  ```typescript
+  modelFallbackMiddleware(
+    "first-fallback-model",
+    "second-fallback-model",
+    // ... more models
+  )
+  ```
+</ParamField>
 
 
 </Accordion>
@@ -418,28 +462,34 @@ const agent = createAgent({
 
 
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `piiType` | Type of PII to detect (built-in or custom) | Required |
-| `strategy` | How to handle detected PII (`"block"`, `"redact"`, `"mask"`, `"hash"`) | `"redact"` |
-| `detector` | Custom detector regex pattern | `undefined` (uses built-in) |
-| `applyToInput` | Check user messages before model call | `true` |
-| `applyToOutput` | Check AI messages after model call | `false` |
-| `applyToToolResults` | Check tool result messages after execution | `false` |
+<ParamField body="piiType" type="string" required>
+  Type of PII to detect. Can be a built-in type (`email`, `credit_card`, `ip`, `mac_address`, `url`) or a custom type name.
+</ParamField>
 
+<ParamField body="strategy" type="string" default="redact">
+  How to handle detected PII. Options:
+  - `"block"` - Throw error when detected
+  - `"redact"` - Replace with `[REDACTED_TYPE]`
+  - `"mask"` - Partially mask (e.g., `****-****-****-1234`)
+  - `"hash"` - Replace with deterministic hash
+</ParamField>
 
-**Built-in PII types:**
-- `email` - Email addresses
-- `credit_card` - Credit card numbers (Luhn validated)
-- `ip` - IP addresses
-- `mac_address` - MAC addresses
-- `url` - URLs
+<ParamField body="detector" type="RegExp">
+  Custom detector regex pattern. If not provided, uses built-in detector for the PII type.
+</ParamField>
 
-**Strategies:**
-- `block` - Raise exception when detected
-- `redact` - Replace with `[REDACTED_TYPE]`
-- `mask` - Partially mask (e.g., `****-****-****-1234`)
-- `hash` - Replace with deterministic hash
+<ParamField body="applyToInput" type="boolean" default="true">
+  Check user messages before model call
+</ParamField>
+
+<ParamField body="applyToOutput" type="boolean" default="false">
+  Check AI messages after model call
+</ParamField>
+
+<ParamField body="applyToToolResults" type="boolean" default="false">
+  Check tool result messages after execution
+</ParamField>
+
 
 </Accordion>
 
@@ -514,14 +564,24 @@ const agent = createAgent({
 
 
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `model` | Model for tool selection (string) | Uses agent's main model |
-| `maxTools` | Maximum number of tools to select | `undefined` (no limit) |
-| `alwaysInclude` | Tool names to always include | `undefined` |
+<ParamField body="model" type="string">
+  Model for tool selection. Defaults to the agent's main model.
+</ParamField>
+
+<ParamField body="maxTools" type="number">
+  Maximum number of tools to select. Defaults to no limit.
+</ParamField>
+
+<ParamField body="alwaysInclude" type="string[]">
+  Array of tool names to always include in the selection
+</ParamField>
 
 
 </Accordion>
+
+
+
+
 
 ### Context editing
 
@@ -557,12 +617,15 @@ const agent = createAgent({
 
 
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `edits` | Array of `ContextEdit` strategies to apply | `[new ClearToolUsesEdit()]` |
+<ParamField body="edits" type="ContextEdit[]" default="[new ClearToolUsesEdit()]">
+  Array of `ContextEdit` strategies to apply
+</ParamField>
 
 **@[`ClearToolUsesEdit`] options:**
-- `maxTokens`: Token count that triggers the edit (default: `1000`)
+
+<ParamField body="maxTokens" type="number" default="1000">
+  Token count that triggers the edit
+</ParamField>
 
 
 </Accordion>

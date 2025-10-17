@@ -160,7 +160,7 @@ def workflow(topic: str) -> dict:
 
 ## Entrypoint
 
-The [`@entrypoint`](https://langchain-ai.github.io/langgraph/reference/func/#langgraph.func.entrypoint) decorator can be used to create a workflow from a function. It encapsulates workflow logic and manages execution flow, including handling _long-running tasks_ and [interrupts](/oss/python/langgraph/interrupts).
+The [`@entrypoint`](https://reference.langchain.com/python/langgraph/func/#langgraph.func.entrypoint) decorator can be used to create a workflow from a function. It encapsulates workflow logic and manages execution flow, including handling _long-running tasks_ and [interrupts](/oss/python/langgraph/interrupts).
 
 
 
@@ -171,7 +171,7 @@ An **entrypoint** is defined by decorating a function with the `@entrypoint` dec
 
 The function **must accept a single positional argument**, which serves as the workflow input. If you need to pass multiple pieces of data, use a dictionary as the input type for the first argument.
 
-Decorating a function with an `entrypoint` produces a [`Pregel`](https://langchain-ai.github.io/langgraph/reference/pregel/#langgraph.pregel.Pregel.stream) instance which helps to manage the execution of the workflow (e.g., handles streaming, resumption, and checkpointing).
+Decorating a function with an `entrypoint` produces a [`Pregel`](https://reference.langchain.com/python/langgraph/pregel/#langgraph.pregel.Pregel.stream) instance which helps to manage the execution of the workflow (e.g., handles streaming, resumption, and checkpointing).
 
 You will usually want to pass a **checkpointer** to the `@entrypoint` decorator to enable persistence and use features like **human-in-the-loop**.
 
@@ -252,7 +252,7 @@ Declare the parameters with the appropriate name and type annotation.
 
 ### Executing
 
-Using the [`@entrypoint`](#entrypoint) yields a [`Pregel`](https://langchain-ai.github.io/langgraph/reference/pregel/#langgraph.pregel.Pregel.stream) object that can be executed using the `invoke`, `ainvoke`, `stream`, and `astream` methods.
+Using the [`@entrypoint`](#entrypoint) yields a [`Pregel`](https://reference.langchain.com/python/langgraph/pregel/#langgraph.pregel.Pregel.stream) object that can be executed using the `invoke`, `ainvoke`, `stream`, and `astream` methods.
 
 <Tabs>
     <Tab title="Invoke">
@@ -306,7 +306,7 @@ Using the [`@entrypoint`](#entrypoint) yields a [`Pregel`](https://langchain-ai.
 
 ### Resuming
 
-Resuming an execution after an [interrupt](https://langchain-ai.github.io/langgraph/reference/types/#langgraph.types.interrupt) can be done by passing a **resume** value to the [Command](https://langchain-ai.github.io/langgraph/reference/types/#langgraph.types.Command) primitive.
+Resuming an execution after an [interrupt](https://reference.langchain.com/python/langgraph/types/#langgraph.types.interrupt) can be done by passing a **resume** value to the [Command](https://reference.langchain.com/python/langgraph/types/#langgraph.types.Command) primitive.
 
 <Tabs>
     <Tab title="Invoke">
@@ -459,7 +459,7 @@ my_workflow.invoke(2, config)  # 3 (previous was 1 from the previous invocation)
 
 #### `entrypoint.final`
 
-[`entrypoint.final`](https://langchain-ai.github.io/langgraph/reference/func/#langgraph.func.entrypoint.final) is a special primitive that can be returned from an entrypoint and allows **decoupling** the value that is **saved in the checkpoint** from the **return value of the entrypoint**.
+[`entrypoint.final`](https://reference.langchain.com/python/langgraph/func/#langgraph.func.entrypoint.final) is a special primitive that can be returned from an entrypoint and allows **decoupling** the value that is **saved in the checkpoint** from the **return value of the entrypoint**.
 
 The first value is the return value of the entrypoint, and the second value is the value that will be saved in the checkpoint. The type annotation is `entrypoint.final[return_type, save_type]`.
 
