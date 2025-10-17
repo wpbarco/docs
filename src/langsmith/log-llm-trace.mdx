@@ -17,11 +17,299 @@ If you are using [LangChain OSS](https://python.langchain.com/docs/tutorials/llm
 The examples on this page use the `traceable` decorator/wrapper to log the model run (which is the recommended approach for Python and JS/TS). However, the same idea applies if you are using the [RunTree](/langsmith/annotate-code#use-the-runtree-api) or [API](https://api.smith.langchain.com/redoc) directly.
 </Note>
 
+
 ## Messages Format
 
-When tracing a custom model or a custom input/output format, it must either follow the LangChain format, OpenAI completions format or Anthropic messages format. For more details,  refer to the [OpenAI Chat Completions](https://platform.openai.com/docs/api-reference/chat/create) or [Anthropic Messages](https://docs.claude.com/en/api/messages) documentation. The LangChain format is:
+When tracing a custom model or a custom input/output format, it must either follow the LangChain formats, OpenAI completions format or Anthropic messages format. For more details,  refer to the [OpenAI Chat Completions](https://platform.openai.com/docs/api-reference/chat/create) or [Anthropic Messages](https://docs.claude.com/en/api/messages) documentation. The LangChain formats are:
 
-<Expandable title="LangChain format">
+
+<Tabs>
+  <Tab title="LangChain v1 format">
+
+ <Expandable title="LangChain v1 format">
+
+<ParamField path="messages" type="array" required>
+  A list of messages containing the content of the conversation.
+
+    <ParamField path="type" type="string" required>
+  Identifies the message type. One of: <code>system</code> | <code>reasoning</code> | <code>user</code> | <code>assistant</code> | <code>tool</code>
+</ParamField>
+
+    <ParamField path="content" type="array" required>
+      Content of the message. List of typed dictionaries.
+
+      <Expandable title="Content options">
+        <ParamField path="type" type="string" required>
+          One of: <code>text</code> | <code>image</code> | <code>file</code> | <code>audio</code> | <code>video</code> | <code>tool_call</code> | <code>server_tool_call</code> | <code>server_tool_result</code>.
+        </ParamField>
+
+        <Expandable title="text">
+          <ParamField path="type" type="literal('text')" required />
+          <ParamField path="text" type="string" required>
+            Text content.
+          </ParamField>
+        <ParamField path="annotations" type="object[]">
+            List of annotations for the text
+        </ParamField>
+        <ParamField path="extras" type="object">
+            Additional provider-specific data.
+        </ParamField>
+        </Expandable>
+
+        <Expandable title="reasoning">
+          <ParamField path="type" type="literal('reasoning')" required />
+          <ParamField path="text" type="string" required>
+            Text content.
+          </ParamField>
+        <ParamField path="extras" type="object">
+            Additional provider-specific data.
+        </ParamField>
+        </Expandable>
+
+        <Expandable title="image">
+          <ParamField path="type" type="literal('image')" required />
+          <ParamField path="url" type="string">
+            URL pointing to the image location.
+          </ParamField>
+        <ParamField path="base64" type="string" required>
+            Base64-encoded image data.
+          </ParamField>
+          <ParamField path="id" type="string">
+            Reference ID to an externally stored image (e.g., in a provider’s file system or in a bucket).
+          </ParamField>
+          <ParamField path="mime_type" type="string">
+            Image [MIME type](https://www.iana.org/assignments/media-types/media-types.xhtml#image) (e.g., `image/jpeg`, `image/png`).
+          </ParamField>
+        </Expandable>
+
+        <Expandable title="file (e.g., PDFs)">
+          <ParamField path="type" type="literal('file')" required />
+          <ParamField path="url" type="string">
+            URL pointing to the file.
+          </ParamField>
+        <ParamField path="base64" type="string" required>
+            Base64-encoded file data.
+          </ParamField>
+          <ParamField path="id" type="string">
+            Reference ID to an externally stored file (e.g., in a provider’s file system or in a bucket).
+          </ParamField>
+          <ParamField path="mime_type" type="string">
+            File [MIME type](https://www.iana.org/assignments/media-types/media-types.xhtml#image) (e.g., `application/pdf`).
+          </ParamField>
+        </Expandable>
+
+        <Expandable title="audio">
+          <ParamField path="type" type="literal('audio')" required />
+          <ParamField path="url" type="string">
+            URL pointing to the audio file.
+          </ParamField>
+        <ParamField path="base64" type="string" required>
+            Base64-encoded audio data.
+          </ParamField>
+          <ParamField path="id" type="string">
+            Reference ID to an externally stored audio file (e.g., in a provider’s file system or in a bucket).
+          </ParamField>
+          <ParamField path="mime_type" type="string">
+            Audio [MIME type](https://www.iana.org/assignments/media-types/media-types.xhtml#image) (e.g., `audio/mpeg`, `audio/wav`).
+          </ParamField>
+        </Expandable>
+
+        <Expandable title="video">
+          <ParamField path="type" type="literal('video')" required />
+          <ParamField path="url" type="string">
+            URL pointing to the video file.
+          </ParamField>
+        <ParamField path="base64" type="string" required>
+            Base64-encoded video data.
+          </ParamField>
+          <ParamField path="id" type="string">
+            Reference ID to an externally stored video file (e.g., in a provider’s file system or in a bucket).
+          </ParamField>
+          <ParamField path="mime_type" type="string">
+            Video [MIME type](https://www.iana.org/assignments/media-types/media-types.xhtml#image) (e.g., `video/mp4`, `video/webm`).
+          </ParamField>
+        </Expandable>
+
+        <Expandable title="tool_call">
+          <ParamField path="type" type="literal('tool_call')" required />
+          <ParamField path="name" type="string" />
+          <ParamField path="args" type="object" required>
+            Arguments to pass to the tool.
+          </ParamField>
+          <ParamField path="id" type="string">
+            Unique identifier for this tool call.
+          </ParamField>
+        </Expandable>
+
+        <Expandable title="server_tool_call">
+          <ParamField path="type" type="literal('tool_call')" required />
+          <ParamField path="id" type="string" required >
+            Unique identifier for this tool call.
+          </ParamField>
+          <ParamField path="name" type="string" required>
+            The name of the tool to be called.
+          </ParamField>
+          <ParamField path="args" type="object" required>
+            Arguments to pass to the tool.
+          </ParamField>
+        </Expandable>
+
+        <Expandable title="server_tool_result">
+          <ParamField path="type" type="literal('server_tool_result')" required />
+          <ParamField path="tool_call_id" type="string" required>
+            Identifier of the corresponding server tool call.
+          </ParamField>
+          <ParamField path="args" type="object" required>
+            Arguments to pass to the tool.
+          </ParamField>
+          <ParamField path="id" type="string">
+            Unique identifier for this tool call.
+          </ParamField>
+        <ParamField path="status" type="string" required>
+            Execution status of the server-side tool. One of: <code>success</code> | <code>error</code>.
+          </ParamField>
+          <ParamField path="output">
+            Output of the executed tool.
+          </ParamField>
+        </Expandable>
+
+      </Expandable>
+
+    </ParamField>
+
+    <ParamField path="tool_call_id" type="string">
+    Must match the <code>id</code> of a prior <code>assistant</code> message’s <code>tool_calls[i]</code> entry. Only valid when <code>role</code> is <code>tool</code>.
+    </ParamField>
+
+    <ParamField path="usage_metadata" type="object">
+    Use this field to send token counts and or costs with your model's output. See [this guide](/langsmith/log-llm-trace#provide-token-and-cost-information) for more details.
+    </ParamField>
+</ParamField>
+
+</Expandable>
+
+
+### Examples
+<CodeGroup>
+
+```python Text input and output
+ inputs = {
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "Hi, can you tell me the capital of France?"
+        }
+      ]
+    }
+  ]
+}
+
+outputs = {
+  "messages": [
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "The capital of France is Paris."
+        },
+        {
+          "type": "reasoning",
+          "text": "The user is asking about..."
+        }
+      ]
+    }
+  ]
+}
+
+```
+
+```python Tool calls
+input = {
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "What's the weather in San Francisco?"
+        }
+      ]
+    }
+  ]
+}
+
+outputs = {
+  "messages": [
+    {
+      "role": "assistant",
+      "content": [{"type": "tool_call", "name": "get_weather", "args": {"city": "San Francisco"}, "id": "call_1"}],
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "call_1",
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"temperature\": \"18°C\", \"condition\": \"Sunny\"}"
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "The weather in San Francisco is 18°C and sunny."
+        }
+      ]
+    }
+  ]
+}
+```
+
+```python Multimodal
+inputs = {
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "What breed is this dog?"
+        },
+        {
+          "type": "image",
+          "url": "https://fastly.picsum.photos/id/237/200/300.jpg?hmac=TmmQSbShHz9CdQm0NkEjx1Dyh_Y984R9LpNrpvH2D_U",
+        }
+      ]
+    }
+  ]
+}
+
+outputs = {
+  "messages": [
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "This looks like a Black Labrador."
+        }
+      ]
+    }
+  ]
+}
+```
+</CodeGroup>
+
+
+  </Tab>
+    <Tab title="LangChain v0 Format">
+    <Expandable title="LangChain v0 format">
 
 <ParamField path="messages" type="array" required>
   A list of messages containing the content of the conversation.
@@ -35,7 +323,7 @@ When tracing a custom model or a custom input/output format, it must either foll
 
       <Expandable title="Content options">
         <ParamField path="type" type="string" required>
-          One of: <code>text</code>, <code>image</code>, <code>file</code>, <code>audio</code>.
+          One of: <code>text</code> | <code>image</code> | <code>file</code> | <code>audio</code>
         </ParamField>
 
         <Expandable title="text">
@@ -255,6 +543,11 @@ outputs = {
 }
 ```
 </CodeGroup>
+  </Tab>
+</Tabs>
+
+
+
 
 
 ## Converting custom I/O formats into LangSmith compatible formats
