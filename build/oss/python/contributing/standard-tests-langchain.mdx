@@ -51,6 +51,8 @@ There are 2 namespaces in the `langchain-tests` package:
 
 
         Designed to test the component in isolation and without access to external services
+
+        [View API reference](https://reference.langchain.com/python/langchain_tests/unit_tests)
     </Accordion>
 
     <Accordion title="Integration tests" icon="network-wired">
@@ -59,6 +61,8 @@ There are 2 namespaces in the `langchain-tests` package:
 
 
         Designed to test the component with access to external services (in particular, the external service that the component is designed to interact with)
+
+        [View API reference](https://reference.langchain.com/python/langchain_tests/integration_tests)
     </Accordion>
 </AccordionGroup>
 
@@ -87,12 +91,12 @@ class TestChatParrotLinkStandard(ChatModelIntegrationTests):
 
 
 <Note>
-    You should typically organize tests in these subdirectories relative to the root of your package:
+    You should organize tests in these subdirectories relative to the root of your package:
     - `tests/unit_tests` for unit tests
     - `tests/integration_tests` for integration tests
 </Note>
 
-To see the complete list of configurable capabilities and their defaults, visit the [API reference](https://reference.langchain.com/python) for your integration type. Reference pages include code examples for implementing standard tests.
+To see the complete list of configurable capabilities and their defaults, visit the [API reference](https://reference.langchain.com/python/langchain_tests) for standard tests.
 
 
 
@@ -162,13 +166,13 @@ uv run --group test pytest tests/integration_tests/test_chat_models.py::TestChat
 
 ## Troubleshooting
 
-For a full list of the standard test suites that are available, as well as information on which tests are included and how to troubleshoot common issues, see the [Standard Tests API Reference](https://python.langchain.com/api_reference/standard_tests/index.html).
-
-{/* TODO update to use new ref */}
-You can find troubleshooting guides under the individual test suites listed in that API Reference. For example, [here is the guide for `ChatModelIntegrationTests.test_usage_metadata`](https://python.langchain.com/api_reference/standard_tests/integration_tests/langchain_tests.integration_tests.chat_models.ChatModelIntegrationTests.html#langchain_tests.integration_tests.chat_models.ChatModelIntegrationTests.test_usage_metadata).
+For a full list of the standard test suites that are available, as well as information on which tests are included and how to troubleshoot common issues, see the [Standard Tests API Reference](https://reference.langchain.com/python/langchain_tests).
 
 ---
 
 <Callout icon="pen-to-square" iconType="regular">
-  [Edit the source of this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/oss/contributing/standard-tests-langchain.mdx)
+    [Edit the source of this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/oss/contributing/standard-tests-langchain.mdx)
 </Callout>
+<Tip icon="terminal" iconType="regular">
+    Connect these docs to Claude, VSCode, and more via MCP for    real-time answers. [See how](/use-these-docs)
+</Tip>
