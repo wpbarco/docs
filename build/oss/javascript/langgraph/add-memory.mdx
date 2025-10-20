@@ -322,64 +322,64 @@ const items = await store.search(["user_123", "memories"], {
 <Accordion title="Long-term memory with semantic search">
 
 
-  ```typescript
-  import { OpenAIEmbeddings, ChatOpenAI } from "@langchain/openai";
-  import { StateGraph, START, MessagesZodMeta, InMemoryStore } from "@langchain/langgraph";
-  import { BaseMessage } from "@langchain/core/messages";
-  import { registry } from "@langchain/langgraph/zod";
-  import * as z from "zod";
+    ```typescript
+    import { OpenAIEmbeddings, ChatOpenAI } from "@langchain/openai";
+    import { StateGraph, START, MessagesZodMeta, InMemoryStore } from "@langchain/langgraph";
+    import { BaseMessage } from "@langchain/core/messages";
+    import { registry } from "@langchain/langgraph/zod";
+    import * as z from "zod";
 
-  const MessagesZodState = z.object({
-    messages: z
-      .array(z.custom<BaseMessage>())
-      .register(registry, MessagesZodMeta),
-  });
+    const MessagesZodState = z.object({
+        messages: z
+        .array(z.custom<BaseMessage>())
+        .register(registry, MessagesZodMeta),
+    });
 
-  const llm = new ChatOpenAI({ model: "gpt-4o-mini" });
+    const model = new ChatOpenAI({ model: "gpt-4o-mini" });
 
-  // Create store with semantic search enabled
-  const embeddings = new OpenAIEmbeddings({ model: "text-embedding-3-small" });
-  const store = new InMemoryStore({
-    index: {
-      embeddings,
-      dims: 1536,
+    // Create store with semantic search enabled
+    const embeddings = new OpenAIEmbeddings({ model: "text-embedding-3-small" });
+    const store = new InMemoryStore({
+        index: {
+        embeddings,
+        dims: 1536,
+        }
+    });
+
+    await store.put(["user_123", "memories"], "1", { text: "I love pizza" });
+    await store.put(["user_123", "memories"], "2", { text: "I am a plumber" });
+
+    const chat = async (state: z.infer<typeof MessagesZodState>, config) => {
+        // Search based on user's last message
+        const items = await config.store.search(
+        ["user_123", "memories"],
+        { query: state.messages.at(-1)?.content, limit: 2 }
+        );
+        const memories = items.map(item => item.value.text).join("\n");
+        const memoriesText = memories ? `## Memories of user\n${memories}` : "";
+
+        const response = await model.invoke([
+        { role: "system", content: `You are a helpful assistant.\n${memoriesText}` },
+        ...state.messages,
+        ]);
+
+        return { messages: [response] };
+    };
+
+    const builder = new StateGraph(MessagesZodState)
+        .addNode("chat", chat)
+        .addEdge(START, "chat");
+    const graph = builder.compile({ store });
+
+    for await (const [message, metadata] of await graph.stream(
+        { messages: [{ role: "user", content: "I'm hungry" }] },
+        { streamMode: "messages" }
+    )) {
+        if (message.content) {
+        console.log(message.content);
+        }
     }
-  });
-
-  await store.put(["user_123", "memories"], "1", { text: "I love pizza" });
-  await store.put(["user_123", "memories"], "2", { text: "I am a plumber" });
-
-  const chat = async (state: z.infer<typeof MessagesZodState>, config) => {
-    // Search based on user's last message
-    const items = await config.store.search(
-      ["user_123", "memories"],
-      { query: state.messages.at(-1)?.content, limit: 2 }
-    );
-    const memories = items.map(item => item.value.text).join("\n");
-    const memoriesText = memories ? `## Memories of user\n${memories}` : "";
-
-    const response = await llm.invoke([
-      { role: "system", content: `You are a helpful assistant.\n${memoriesText}` },
-      ...state.messages,
-    ]);
-
-    return { messages: [response] };
-  };
-
-  const builder = new StateGraph(MessagesZodState)
-    .addNode("chat", chat)
-    .addEdge(START, "chat");
-  const graph = builder.compile({ store });
-
-  for await (const [message, metadata] of await graph.stream(
-    { messages: [{ role: "user", content: "I'm hungry" }] },
-    { streamMode: "messages" }
-  )) {
-    if (message.content) {
-      console.log(message.content);
-    }
-  }
-  ```
+    ```
 
 </Accordion>
 

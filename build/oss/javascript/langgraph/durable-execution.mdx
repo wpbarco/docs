@@ -193,7 +193,7 @@ Once you have enabled durable execution in your workflow, you can resume executi
 
 
 
-* **Pausing and Resuming Workflows:** Use the [interrupt](https://langchain-ai.github.io/langgraphjs/reference/functions/langgraph.interrupt-2.html) function to pause a workflow at specific points and the [Command](https://langchain-ai.github.io/langgraphjs/reference/classes/langgraph.Command.html) primitive to resume it with updated state. See [**Interrupts**](/oss/javascript/langgraph/interrupts) for more details.
+* **Pausing and Resuming Workflows:** Use the [interrupt](https://langchain-ai.github.io/langgraphjs/reference/functions/langgraph.interrupt-2.html) function to pause a workflow at specific points and the [`Command`](https://langchain-ai.github.io/langgraphjs/reference/classes/langgraph.Command.html) primitive to resume it with updated state. See [**Interrupts**](/oss/javascript/langgraph/interrupts) for more details.
 * **Recovering from Failures:** Automatically resume workflows from the last successful checkpoint after an exception (e.g., LLM provider outage). This involves executing the workflow with the same thread identifier by providing it with a `null` as the input value (see this [example](/oss/javascript/langgraph/use-functional-api#resuming-after-an-error) with the functional API).
 
 

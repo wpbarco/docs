@@ -34,7 +34,7 @@ LangChain's standard model interfaces give you access to many different provider
 
 Models can be utilized in two ways:
 
-1. **With agents** - Models can be dynamically specified when creating an agent. See the [agents](/oss/javascript/langchain/agents#model) guide for more details on how to do this.
+1. **With agents** - Models can be dynamically specified when creating an [agent](/oss/javascript/langchain/agents#model).
 2. **Standalone** - Models can be called directly (outside of the agent loop) for tasks like text generation, classification, or extraction without the need for an agent framework.
 
 The same model interface works in both contexts, which gives you the flexibility to start simple and scale up to more complex agent-based workflows as needed.
@@ -122,8 +122,6 @@ const model = await initChatModel(
 ## Invocation
 
 A chat model must be invoked to generate an output. There are three primary invocation methods, each suited to different use cases.
-
-
 
 ### Invoke
 
@@ -668,19 +666,19 @@ LangChain supports all major model providers, including OpenAI, Anthropic, Googl
 
 ### Multimodal
 
-Certain models can process and return non-textual data such as images, audio, and video. You can pass non-textual data to a model by providing [content blocks](/oss/javascript/langchain/messages#content).
+Certain models can process and return non-textual data such as images, audio, and video. You can pass non-textual data to a model by providing [content blocks](/oss/javascript/langchain/messages#message-content).
 
 <Tip>
     All LangChain chat models with underlying multimodal capabilities support:
 
     1. Data in the cross-provider standard format (see [our messages guide](/oss/javascript/langchain/messages))
-    2. OpenAI [chat completions](https://platform.openai.com/docs/guides/images-vision?api-mode=chat) format
+    2. OpenAI [chat completions](https://platform.openai.com/docs/api-reference/chat) format
     3. Any format that is native to that specific provider (e.g., Anthropic models accept Anthropic native format)
 </Tip>
 
 See the [multimodal section](/oss/javascript/langchain/messages#multimodal) of the messages guide for details.
 
-Some models can also return multimodal data as part of their response. In such cases, the resulting [`AIMessage`](https://v03.api.js.langchain.com/classes/_langchain_core.messages_ai_message.AIMessage.html) will have content blocks with multimodal types.
+<Tooltip tip="Not all LLMs are made equally!" cta="See reference" href="https://models.dev/">Some models</Tooltip> can return multimodal data as part of their response. If invoked to do so, the resulting [`AIMessage`](https://v03.api.js.langchain.com/classes/_langchain_core.messages_ai_message.AIMessage.html) will have content blocks with multimodal types.
 
 
 
@@ -737,7 +735,7 @@ LangChain supports running models locally on your own hardware. This is useful f
 Many providers offer prompt caching features to reduce latency and cost on repeat processing of the same tokens. These features can be **implicit** or **explicit**:
 
 - **Implicit prompt caching:** providers will automatically pass on cost savings if a request hits a cache. Examples: [OpenAI](/oss/javascript/integrations/chat/openai) and [Gemini](/oss/javascript/integrations/chat/google_generative_ai) (Gemini 2.5 and above).
-- **Explicit caching:** providers allow you to manually indicate cache points for greater control or to guarantee cost savings. Examples: @[`ChatOpenAI`] (via `prompt_cache_key`), [Anthropic](/oss/javascript/integrations/chat/anthropic#prompt-caching), [AWS Bedrock](/oss/javascript/integrations/chat/bedrock#prompt-caching), [Gemini](https://python.langchain.com/api_reference/google_genai/chat_models/langchain_google_genai.chat_models.ChatGoogleGenerativeAI.html).
+- **Explicit caching:** providers allow you to manually indicate cache points for greater control or to guarantee cost savings. Examples: @[`ChatOpenAI`] (via `prompt_cache_key`), Anthropic's [`AnthropicPromptCachingMiddleware`](/oss/javascript/integrations/chat/anthropic#prompt-caching) and [`cache_control`](https://docs.langchain.com/oss/python/integrations/chat/anthropic#prompt-caching) options, [AWS Bedrock](/oss/javascript/integrations/chat/bedrock#prompt-caching), [Gemini](https://python.langchain.com/api_reference/google_genai/chat_models/langchain_google_genai.chat_models.ChatGoogleGenerativeAI.html).
 
 <Warning>
     Prompt caching is often only engaged above a minimum input token threshold. See [provider pages](/oss/javascript/integrations/chat) for details.

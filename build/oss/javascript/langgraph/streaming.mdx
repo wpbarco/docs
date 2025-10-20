@@ -299,15 +299,15 @@ const MyState = z.object({
   joke: z.string().default(""),
 });
 
-const llm = new ChatOpenAI({ model: "gpt-4o-mini" });
+const model = new ChatOpenAI({ model: "gpt-4o-mini" });
 
 const callModel = async (state: z.infer<typeof MyState>) => {
   // Call the LLM to generate a joke about a topic
   // Note that message events are emitted even when the LLM is run using .invoke rather than .stream
-  const llmResponse = await llm.invoke([
+  const modelResponse = await model.invoke([
     { role: "user", content: `Generate a joke about ${state.topic}` },
   ]);
-  return { joke: llmResponse.content };
+  return { joke: modelResponse.content };
 };
 
 const graph = new StateGraph(MyState)
@@ -338,13 +338,13 @@ You can associate `tags` with LLM invocations to filter the streamed tokens by L
 ```typescript
 import { ChatOpenAI } from "@langchain/openai";
 
-// llm1 is tagged with "joke"
-const llm1 = new ChatOpenAI({
+// model1 is tagged with "joke"
+const model1 = new ChatOpenAI({
   model: "gpt-4o-mini",
   tags: ['joke']
 });
-// llm2 is tagged with "poem"
-const llm2 = new ChatOpenAI({
+// model2 is tagged with "poem"
+const model2 = new ChatOpenAI({
   model: "gpt-4o-mini",
   tags: ['poem']
 });

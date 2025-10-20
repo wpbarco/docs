@@ -12,7 +12,7 @@ import StableCalloutJS from '/snippets/stable-lg-callout-js.mdx';
 
 [Pregel](https://reference.langchain.com/python/langgraph/pregel/) implements LangGraph's runtime, managing the execution of LangGraph applications.
 
-Compiling a [StateGraph](https://reference.langchain.com/python/langgraph/graphs/#langgraph.graph.StateGraph) or creating an [entrypoint](https://reference.langchain.com/python/langgraph/func/#langgraph.func.entrypoint) produces a [Pregel](https://reference.langchain.com/python/langgraph/pregel/) instance that can be invoked with input.
+Compiling a [StateGraph](https://reference.langchain.com/python/langgraph/graphs/#langgraph.graph.state.StateGraph) or creating an [`@entrypoint`](https://reference.langchain.com/python/langgraph/func/#langgraph.func.entrypoint) produces a [Pregel](https://reference.langchain.com/python/langgraph/pregel/) instance that can be invoked with input.
 
 
 
@@ -53,7 +53,7 @@ Channels are used to communicate between actors (PregelNodes). Each channel has 
 
 ## Examples
 
-While most users will interact with Pregel through the [StateGraph](https://reference.langchain.com/python/langgraph/graphs/#langgraph.graph.StateGraph) API or the [entrypoint](https://reference.langchain.com/python/langgraph/func/#langgraph.func.entrypoint) decorator, it is possible to interact with Pregel directly.
+While most users will interact with Pregel through the [StateGraph](https://reference.langchain.com/python/langgraph/graphs/#langgraph.graph.state.StateGraph) API or the [`@entrypoint`](https://reference.langchain.com/python/langgraph/func/#langgraph.func.entrypoint) decorator, it is possible to interact with Pregel directly.
 
 
 
@@ -254,7 +254,7 @@ LangGraph provides two high-level APIs for creating a Pregel application: the [S
 
 <Tabs>
     <Tab title="StateGraph (Graph API)">
-    The [StateGraph (Graph API)](https://reference.langchain.com/python/langgraph/graphs/#langgraph.graph.StateGraph) is a higher-level abstraction that simplifies the creation of Pregel applications. It allows you to define a graph of nodes and edges. When you compile the graph, the StateGraph API automatically creates the Pregel application for you.
+    The [StateGraph (Graph API)](https://reference.langchain.com/python/langgraph/graphs/#langgraph.graph.state.StateGraph) is a higher-level abstraction that simplifies the creation of Pregel applications. It allows you to define a graph of nodes and edges. When you compile the graph, the StateGraph API automatically creates the Pregel application for you.
 
     ```python
     from typing import TypedDict
@@ -330,7 +330,7 @@ LangGraph provides two high-level APIs for creating a Pregel application: the [S
 
     </Tab>
     <Tab title="Functional API">
-    In the [Functional API](/oss/python/langgraph/functional-api), you can use an [`entrypoint`](https://reference.langchain.com/python/langgraph/func/#langgraph.func.entrypoint) to create a Pregel application. The `entrypoint` decorator allows you to define a function that takes input and returns output.
+    In the [Functional API](/oss/python/langgraph/functional-api), you can use an [`@entrypoint`](https://reference.langchain.com/python/langgraph/func/#langgraph.func.entrypoint) to create a Pregel application. The `entrypoint` decorator allows you to define a function that takes input and returns output.
 
     ```python
     from typing import TypedDict

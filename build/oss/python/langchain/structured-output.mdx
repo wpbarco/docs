@@ -32,7 +32,7 @@ Controls how the agent returns structured data:
 - **`None`**: No structured output
 
 When a schema type is provided directly, LangChain automatically chooses:
-- `ProviderStrategy` for models supporting native structured output (OpenAI, Grok)
+- `ProviderStrategy` for models supporting native structured output (e.g. [OpenAI](/oss/python/integrations/providers/openai), [Grok](/oss/python/integrations/providers/xai))
 - `ToolStrategy` for all other models
 
 The structured response is returned in the `structured_response` key of the agent's final state.
@@ -65,6 +65,7 @@ LangChain automatically uses `ProviderStrategy` when you pass a schema type dire
     from pydantic import BaseModel
     from langchain.agents import create_agent
 
+
     class ContactInfo(BaseModel):
         """Contact information for a person."""
         name: str = Field(description="The name of the person")
@@ -88,6 +89,7 @@ LangChain automatically uses `ProviderStrategy` when you pass a schema type dire
     ```python Dataclass
     from dataclasses import dataclass
     from langchain.agents import create_agent
+
 
     @dataclass
     class ContactInfo:
@@ -114,6 +116,7 @@ LangChain automatically uses `ProviderStrategy` when you pass a schema type dire
     from typing_extensions import TypedDict
     from langchain.agents import create_agent
 
+
     class ContactInfo(TypedDict):
         """Contact information for a person."""
         name: str # The name of the person
@@ -136,6 +139,7 @@ LangChain automatically uses `ProviderStrategy` when you pass a schema type dire
 
     ```python JSON Schema
     from langchain.agents import create_agent
+
 
     contact_info_schema = {
         "type": "object",
@@ -224,6 +228,7 @@ class ToolStrategy(Generic[SchemaT]):
     from langchain.agents import create_agent
     from langchain.agents.structured_output import ToolStrategy
 
+
     class ProductReview(BaseModel):
         """Analysis of a product review."""
         rating: int | None = Field(description="The rating of the product", ge=1, le=5)
@@ -248,6 +253,7 @@ class ToolStrategy(Generic[SchemaT]):
     from typing import Literal
     from langchain.agents import create_agent
     from langchain.agents.structured_output import ToolStrategy
+
 
     @dataclass
     class ProductReview:
@@ -275,6 +281,7 @@ class ToolStrategy(Generic[SchemaT]):
     from langchain.agents import create_agent
     from langchain.agents.structured_output import ToolStrategy
 
+
     class ProductReview(TypedDict):
         """Analysis of a product review."""
         rating: int | None  # The rating of the product (1-5)
@@ -297,6 +304,7 @@ class ToolStrategy(Generic[SchemaT]):
     ```python JSON Schema
     from langchain.agents import create_agent
     from langchain.agents.structured_output import ToolStrategy
+
 
     product_review_schema = {
         "type": "object",
@@ -341,6 +349,7 @@ class ToolStrategy(Generic[SchemaT]):
     from langchain.agents import create_agent
     from langchain.agents.structured_output import ToolStrategy
 
+
     class ProductReview(BaseModel):
         """Analysis of a product review."""
         rating: int | None = Field(description="The rating of the product", ge=1, le=5)
@@ -376,6 +385,7 @@ from pydantic import BaseModel, Field
 from typing import Literal
 from langchain.agents import create_agent
 from langchain.agents.structured_output import ToolStrategy
+
 
 class MeetingAction(BaseModel):
     """Action items extracted from a meeting transcript."""
@@ -438,6 +448,7 @@ from pydantic import BaseModel, Field
 from typing import Union
 from langchain.agents import create_agent
 from langchain.agents.structured_output import ToolStrategy
+
 
 class ContactInfo(BaseModel):
     name: str = Field(description="Person's name")
@@ -508,6 +519,7 @@ When structured output doesn't match the expected schema, the agent provides spe
 from pydantic import BaseModel, Field
 from langchain.agents import create_agent
 from langchain.agents.structured_output import ToolStrategy
+
 
 class ProductRating(BaseModel):
     rating: int | None = Field(description="Rating from 1-5", ge=1, le=5)

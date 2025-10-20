@@ -119,6 +119,7 @@ from langchain.tools import tool
 from langchain.messages import HumanMessage, AIMessage, ToolMessage
 from agentevals.trajectory.match import create_trajectory_match_evaluator
 
+
 @tool
 def get_weather(city: str):
     """Get weather information for a city."""
@@ -170,6 +171,7 @@ from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain.messages import HumanMessage, AIMessage, ToolMessage
 from agentevals.trajectory.match import create_trajectory_match_evaluator
+
 
 @tool
 def get_weather(city: str):
@@ -229,6 +231,7 @@ from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain.messages import HumanMessage, AIMessage, ToolMessage
 from agentevals.trajectory.match import create_trajectory_match_evaluator
+
 
 @tool
 def get_weather(city: str):
@@ -296,6 +299,7 @@ from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain.messages import HumanMessage, AIMessage, ToolMessage
 from agentevals.trajectory.llm import create_trajectory_llm_as_judge, TRAJECTORY_ACCURACY_PROMPT
+
 
 @tool
 def get_weather(city: str):

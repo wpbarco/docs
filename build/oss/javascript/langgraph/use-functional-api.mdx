@@ -87,12 +87,12 @@ await myWorkflow.invoke({ value: 1, anotherValue: 2 });
   import { ChatOpenAI } from "@langchain/openai";
   import { entrypoint, task, MemorySaver } from "@langchain/langgraph";
 
-  const llm = new ChatOpenAI({ model: "gpt-3.5-turbo" });
+  const model = new ChatOpenAI({ model: "gpt-3.5-turbo" });
 
   // Task: generate essay using an LLM
   const composeEssay = task("composeEssay", async (topic: string) => {
     // Generate an essay about the given topic
-    const response = await llm.invoke([
+    const response = await model.invoke([
       { role: "system", content: "You are a helpful assistant that writes essays." },
       { role: "user", content: `Write an essay about ${topic}.` }
     ]);
@@ -149,11 +149,11 @@ const graph = entrypoint(
   import { entrypoint, task, MemorySaver } from "@langchain/langgraph";
 
   // Initialize the LLM model
-  const llm = new ChatOpenAI({ model: "gpt-3.5-turbo" });
+  const model = new ChatOpenAI({ model: "gpt-3.5-turbo" });
 
   // Task that generates a paragraph about a given topic
   const generateParagraph = task("generateParagraph", async (topic: string) => {
-    const response = await llm.invoke([
+    const response = await model.invoke([
       { role: "system", content: "You are a helpful assistant that writes educational paragraphs." },
       { role: "user", content: `Write a paragraph about ${topic}.` }
     ]);
@@ -713,9 +713,9 @@ const agent = entrypoint(
       messages = addMessages(previous, messages);
     }
 
-    let llmResponse = await callModel(messages);
+    let modelResponse = await callModel(messages);
     while (true) {
-      if (!llmResponse.tool_calls?.length) {
+      if (!modelResponse.tool_calls?.length) {
         break;
       }
 
@@ -723,15 +723,15 @@ const agent = entrypoint(
       const toolResults: ToolMessage[] = [];
       const toolCalls: ToolCall[] = [];
 
-      for (let i = 0; i < llmResponse.tool_calls.length; i++) {
-        const review = reviewToolCall(llmResponse.tool_calls[i]);
+      for (let i = 0; i < modelResponse.tool_calls.length; i++) {
+        const review = reviewToolCall(modelResponse.tool_calls[i]);
         if (review instanceof ToolMessage) {
           toolResults.push(review);
         } else {
           // is a validated tool call
           toolCalls.push(review);
-          if (review !== llmResponse.tool_calls[i]) {
-            llmResponse.tool_calls[i] = review; // update message
+          if (review !== modelResponse.tool_calls[i]) {
+            modelResponse.tool_calls[i] = review; // update message
           }
         }
       }
@@ -743,18 +743,18 @@ const agent = entrypoint(
 
       // Append to message list
       messages = addMessages(messages, [
-        llmResponse,
+        modelResponse,
         ...toolResults,
         ...remainingToolResults,
       ]);
 
       // Call model again
-      llmResponse = await callModel(messages);
+      modelResponse = await callModel(messages);
     }
 
     // Generate final response
-    messages = addMessages(messages, llmResponse);
-    return entrypoint.final({ value: llmResponse, save: messages });
+    messages = addMessages(messages, modelResponse);
+    return entrypoint.final({ value: modelResponse, save: messages });
   }
 );
 ```

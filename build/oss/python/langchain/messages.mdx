@@ -16,7 +16,7 @@ Messages are the fundamental unit of context for models in LangChain. They repre
 Messages are objects that contain:
 
 * <Icon icon="user" size={16} /> [**Role**](#message-types) - Identifies the message type (e.g. `system`, `user`)
-* <Icon icon="folder-closed" size={16} /> [**Content**](#content) - Represents the actual content of the message (like text, images, audio, documents, etc.)
+* <Icon icon="folder-closed" size={16} /> [**Content**](#message-content) - Represents the actual content of the message (like text, images, audio, documents, etc.)
 * <Icon icon="tag" size={16} /> [**Metadata**](#message-metadata) - Optional fields such as response information, message IDs, and token usage
 
 LangChain provides a standard message type that works across all model providers, ensuring consistent behavior regardless of the model being called.
@@ -144,7 +144,7 @@ response = model.invoke(messages)
 
 ### Human Message
 
-A [`HumanMessage`](https://reference.langchain.com/python/langchain/messages/#langchain.messages.HumanMessage) represents user input and interactions. They can contain text, images, audio, files, and any other amount of multimodal [content](#content).
+A [`HumanMessage`](https://reference.langchain.com/python/langchain/messages/#langchain.messages.HumanMessage) represents user input and interactions. They can contain text, images, audio, files, and any other amount of multimodal [content](#message-content).
 
 #### Text content
 
@@ -195,9 +195,9 @@ print(type(response))  # <class 'langchain_core.messages.AIMessage'>
 
 
 
-`AIMessage` objects are returned by the model when calling it, which contains all of the associated metadata in the response. However, that doesn't mean that's the only place they can be created/ modified from.
+[`AIMessage`](https://reference.langchain.com/python/langchain/messages/#langchain.messages.AIMessage) objects are returned by the model when calling it, which contains all of the associated metadata in the response.
 
-Providers weight/contextualize types of messages differently, which means it is sometimes helpful to create a new [`AIMessage`](https://reference.langchain.com/python/langchain/messages/#langchain.messages.AIMessage) object and insert it into the message history as if it came from the model.
+Providers weigh/contextualize types of messages differently, which means it is sometimes helpful to manually create a new [`AIMessage`](https://reference.langchain.com/python/langchain/messages/#langchain.messages.AIMessage) object and insert it into the message history as if it came from the model.
 
 ```python
 from langchain.messages import AIMessage, SystemMessage, HumanMessage
@@ -227,7 +227,7 @@ response = model.invoke(messages)
         The raw content of the message.
     </ParamField>
     <ParamField path="content_blocks" type="ContentBlock[]">
-        The standardized [content blocks](#content) of the message.
+        The standardized [content blocks](#message-content) of the message.
     </ParamField>
     <ParamField path="tool_calls" type="dict[] | None">
         The tool calls made by the model. Empty if no tools are called.
@@ -271,11 +271,11 @@ for tool_call in response.tool_calls:
 
 
 
-Other structured data, such as reasoning or citations, can also appear in message [content](/oss/python/langchain/messages#content).
+Other structured data, such as reasoning or citations, can also appear in message [content](/oss/python/langchain/messages#message-content).
 
 #### Token usage
 
-An [`AIMessage`](https://reference.langchain.com/python/langchain/messages/#langchain.messages.AIMessage) can hold token counts and other usage metadata in its `usage_metadata` field:
+An [`AIMessage`](https://reference.langchain.com/python/langchain/messages/#langchain.messages.AIMessage) can hold token counts and other usage metadata in its [`usage_metadata`](https://reference.langchain.com/python/langchain/messages/#langchain.messages.AIMessage.usage_metadata) field:
 
 ```python
 from langchain.chat_models import init_chat_model
@@ -296,11 +296,11 @@ response.usage_metadata
 
 
 
-See @[UsageMetadata] for details.
+See [`UsageMetadata`](https://reference.langchain.com/python/langchain/messages/#langchain.messages.AIMessage.usage_metadata) for details.
 
 #### Streaming and chunks
 
-During streaming, you'll receive [`AIMessageChunk`](https://reference.langchain.com/python/langchain/messages/#langchain.messages.AIMessageChunk) objects that can be combined into a full message:
+During streaming, you'll receive [`AIMessageChunk`](https://reference.langchain.com/python/langchain/messages/#langchain.messages.AIMessageChunk) objects that can be combined into a full message object:
 
 ```python
 chunks = []
@@ -404,7 +404,7 @@ response = model.invoke(messages)  # Model processes the result
 
 ---
 
-## Content
+## Message content
 
 You can think of a message's content as the payload of data that gets sent to the model. Messages have a `content` attribute that is loosely-typed, supporting strings and lists of untyped objects (e.g., dictionaries). This allows support for provider-native structures directly in LangChain chat models, such as [multimodal](#multimodal) content and other data.
 

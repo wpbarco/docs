@@ -142,8 +142,9 @@ from langchain.agents import create_agent
 from langchain.agents.middleware import HumanInTheLoopMiddleware # [!code highlight]
 from langgraph.checkpoint.memory import InMemorySaver # [!code highlight]
 
+
 agent = create_agent(
-    llm,
+    model,
     tools,
     system_prompt=system_prompt,
     middleware=[ # [!code highlight]

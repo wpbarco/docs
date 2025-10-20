@@ -85,7 +85,7 @@ class State(TypedDict):
     joke: NotRequired[str]
 
 
-llm = init_chat_model(
+model = init_chat_model(
     "anthropic:claude-sonnet-4-5",
     temperature=0,
 )
@@ -93,13 +93,13 @@ llm = init_chat_model(
 
 def generate_topic(state: State):
     """LLM call to generate a topic for the joke"""
-    msg = llm.invoke("Give me a funny topic for a joke")
+    msg = model.invoke("Give me a funny topic for a joke")
     return {"topic": msg.content}
 
 
 def write_joke(state: State):
     """LLM call to write a joke based on the topic"""
-    msg = llm.invoke(f"Write a short joke about {state['topic']}")
+    msg = model.invoke(f"Write a short joke about {state['topic']}")
     return {"joke": msg.content}
 
 
