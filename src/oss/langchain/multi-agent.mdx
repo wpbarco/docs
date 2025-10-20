@@ -18,8 +18,8 @@ Instead of relying on a single agent to handle every step, **multi-agent archite
 
 Multi-agent systems are useful when:
 
-* A single agent has too many tools and makes poor decisions about which to use.
-* Context or memory grows too large for one agent to track effectively.
+* A single agent has too many [tools](/oss/langchain/tools) and makes poor decisions about which to use.
+* Context or [memory](/oss/langchain/short-term-memory) grows too large for one agent to track effectively.
 * Tasks require **specialization** (e.g., a planner, researcher, math expert).
 
 ## Multi-agent patterns
@@ -39,17 +39,24 @@ Multi-agent systems are useful when:
     This tutorial demonstrates:
     * Creating specialized sub-agents for different domains (calendar and email)
     * Wrapping sub-agents as tools for centralized orchestration
-    * Adding human-in-the-loop review for sensitive actions
+    * Adding [human-in-the-loop](/oss/langchain/human-in-the-loop) review for sensitive actions
 </Card>
 
 
 ## Choosing a pattern
 
-| Question                                              | Tool Calling | Handoffs |
-|-------------------------------------------------------|--------------|----------|
-| Need centralized control over workflow?               | ✅ Yes        | ❌ No     |
-| Want agents to interact directly with the user?       | ❌ No         | ✅ Yes    |
-| Complex, human-like conversation between specialists? | ❌ Limited    | ✅ Strong |
+**Use tool calling (supervisor pattern)** when:
+* You have multiple distinct domains (e.g., calendar, email, CRM, database)
+* Each domain has multiple tools or complex logic
+* You want centralized workflow control
+* Sub-agents don't need to converse directly with users
+
+For simpler cases with just a few tools, use a single agent.
+
+**Use handoffs** when:
+* Agents need to have direct conversations with users
+* The workflow requires state transitions between specialists
+* You need dynamic control flow that changes based on user interactions
 
 <Tip>
     You can mix both patterns — use **handoffs** for agent switching, and have each agent **call subagents as tools** for specialized tasks.
@@ -57,7 +64,7 @@ Multi-agent systems are useful when:
 
 ## Customizing agent context
 
-At the heart of multi-agent design is **context engineering** - deciding what information each agent sees. LangChain gives you fine-grained control over:
+At the heart of multi-agent design is **[context engineering](/oss/langchain/context-engineering)** - deciding what information each agent sees. LangChain gives you fine-grained control over:
 
 * Which parts of the conversation or state are passed to each agent.
 * Specialized prompts tailored to subagents.
@@ -346,7 +353,7 @@ The key advantage is **sequential unlocking** - you can design workflows where a
 
 ### How handoffs work
 
-At the core, handoffs rely on **persistent state** that survives across conversation turns:
+At the core, handoffs rely on **[persistent state](/oss/langchain/short-term-memory)** that survives across conversation turns:
 
 1. **State variable** - A field in your state schema (e.g., `active_agent: str`) tracks which agent is currently active.
 2. **State update tool** - The agent uses a tool to change the value of `active_agent` when handing off control.
