@@ -309,13 +309,14 @@ const callSubagent1 = tool(
 
 ## Handoffs
 
-In **handoffs**, agents can directly pass control to each other. The “active” agent changes, and the user interacts with whichever agent currently has control.
+In **handoffs**, agents pass control to each other through **state transitions**. Think of it as a state machine where the system tracks which agent is currently active, and that agent's configuration (system prompt, tools, etc.) determines the behavior.
 
 Flow:
 
-1. The **current agent** decides it needs help from another agent.
-2. It passes control (and state) to the **next agent**.
-3. The **new agent** interacts directly with the user until it decides to hand off again or finish.
+1. The **current agent** decides it needs to transfer control to another agent.
+2. It updates a state variable (e.g., `active_agent`) using a tool that modifies the graph state.
+3. On the next conversational turn, the graph reads this state and configures itself with the **new agent's** system prompt, tools, and behavior.
+4. The **new agent** interacts directly with the user until it decides to hand off again or finish.
 
 ```mermaid
 graph LR
@@ -324,5 +325,33 @@ graph LR
     C --> A
 ```
 
+### When to use handoffs
+
+Handoffs are particularly valuable for **"online"** customer support scenarios where you need to collect information from users in a specific sequence. For example:
+
+* Collecting a warranty ID before processing a refund.
+* Gathering account details before escalating to a specialist.
+* Verifying identity before accessing sensitive information.
+
+The key advantage is **sequential unlocking** - you can design workflows where additional options or agents become available only after required information has been collected.
+
+<Warning>
+    Design handoff flows carefully to avoid creating rigid, frustrating experiences. Users should be able to:
+    * Correct typos or mistakes in previously provided information.
+    * Change the conversation flow when appropriate.
+    * Navigate back to previous steps if needed.
+
+    Overly restrictive handoff patterns can feel like poorly designed phone trees.
+</Warning>
+
+### How handoffs work
+
+At the core, handoffs rely on **persistent state** that survives across conversation turns:
+
+1. **State variable** - A field in your state schema (e.g., `active_agent: str`) tracks which agent is currently active.
+2. **State update tool** - The agent uses a tool to change the value of `active_agent` when handing off control.
+3. **Dynamic configuration** - On each turn, the graph entry point reads `active_agent` from the persisted state and dynamically configures the appropriate system prompt, tools, and behavior for that agent.
+
+This pattern creates a state machine where each agent represents a distinct state with its own behavior and capabilities. The state persists between user messages, allowing the conversation to resume with the correct agent configuration.
 
 ### Implementation (Coming soon)
