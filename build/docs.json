@@ -261,6 +261,27 @@
                 ]
               },
               {
+                "tab": "Deep Agents",
+                "pages": [
+                  "oss/python/deepagents/overview",
+                  {
+                    "group": "Get started",
+                    "pages": [
+                      "oss/python/deepagents/quickstart",
+                      "oss/python/deepagents/customization"
+                    ]
+                  },
+                  {
+                    "group": "Core capabilities",
+                    "pages": [
+                      "oss/python/deepagents/subagents",
+                      "oss/python/deepagents/human-in-the-loop",
+                      "oss/python/deepagents/long-term-memory"
+                    ]
+                  }
+                ]
+              },
+              {
                 "tab": "Integrations",
                 "pages": [
                   "oss/python/integrations/providers/overview",
@@ -798,8 +819,13 @@
                   "langsmith/langgraph-python-sdk",
                   "langsmith/langgraph-js-ts-sdk",
                   "langsmith/smith-api-ref",
-                  "langsmith/server-api-ref",
-                  "langsmith/api-ref-control-plane"
+                  {
+                    "group": "API reference for LangSmith Deployment",
+                    "pages": [
+                      "langsmith/server-api-ref",
+                      "langsmith/api-ref-control-plane"
+                    ]
+                  }
                 ]
               },
               {
@@ -1463,6 +1489,10 @@
   {
     "source": "/langgraph-platform/:path*",
     "destination": "/langsmith/:path*"
+  },
+  {
+    "source": "/oss/python/deepagents/index",
+    "destination": "/oss/python/deepagents/overview"
   }
 ]
 }
