@@ -102,7 +102,7 @@ const MessagesState = z.object({
   messages: z
     .array(z.custom<BaseMessage>())
     .register(registry, MessagesZodMeta),
-  modelCalls: z.number().optional(),
+  llmCalls: z.number().optional(),
 });
 ```
 
