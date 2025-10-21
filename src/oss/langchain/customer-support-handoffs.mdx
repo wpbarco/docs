@@ -1,0 +1,787 @@
+---
+title: Online customer support with handoffs
+sidebarTitle: Customer support handoffs
+---
+
+import StableCalloutPy from '/snippets/stable-lc-callout-py.mdx';
+
+:::python
+<StableCalloutPy />
+:::
+
+## Overview
+
+The **handoffs pattern** is a [multi-agent](/oss/langchain/multi-agent#handoffs) architecture where agents pass control to each other through state transitions. This tutorial demonstrates how to build an online customer support system where different "agents" (really, different configurations of a single agent) handle specific stages of the support workflow.
+
+In this tutorial, you'll build a support bot that:
+- Collects warranty information before proceeding
+- Classifies issues as hardware or software
+- Provides solutions or escalates to human support
+- Maintains conversation state across multiple turns
+
+Unlike the [supervisor pattern](/oss/langchain/supervisor) where subagents are called as tools, handoffs create a **state machine** where the active agent changes based on workflow progress. The key insight is that each "agent" is just a different configuration (system prompt + tools) of the same underlying agent, selected dynamically based on state.
+
+### When to use handoffs
+
+Handoffs excel at **sequential information collection** in online customer support:
+
+* **Warranty verification** - Collect warranty ID before processing refunds
+* **Account verification** - Gather credentials before accessing sensitive data
+* **Progressive disclosure** - Unlock options only after collecting required information
+
+<Warning>
+    Design handoff flows to avoid frustrating users. Allow them to:
+    * Correct previous responses
+    * Navigate back to earlier steps
+    * Change the conversation flow naturally
+
+    Rigid workflows feel like poorly designed phone trees.
+</Warning>
+
+### Concepts
+
+We will cover the following concepts:
+
+- [Multi-agent systems](/oss/langchain/multi-agent)
+- [Middleware](/oss/langchain/middleware) for dynamic agent configuration
+- [Tools](/oss/langchain/tools) for state management
+- [Short-term memory](/oss/langchain/short-term-memory) for state persistence
+
+## Setup
+
+### Installation
+
+This tutorial requires the `langchain` package:
+
+<CodeGroup>
+```bash pip
+pip install langchain
+```
+```bash conda
+conda install langchain -c conda-forge
+```
+</CodeGroup>
+
+For more details, see our [Installation guide](/oss/langchain/install).
+
+### LangSmith
+
+Set up [LangSmith](https://smith.langchain.com) to inspect what is happening inside your agent:
+
+<CodeGroup>
+```bash bash
+export LANGSMITH_TRACING="true"
+export LANGSMITH_API_KEY="..."
+```
+```python python
+import getpass
+import os
+
+os.environ["LANGSMITH_TRACING"] = "true"
+os.environ["LANGSMITH_API_KEY"] = getpass.getpass()
+```
+</CodeGroup>
+
+### Components
+
+We will need to select a chat model:
+
+```python
+from langchain.chat_models import init_chat_model
+
+model = init_chat_model("anthropic:claude-3-5-sonnet-latest")
+```
+
+## 1. Define custom state
+
+First, define a custom state schema that tracks which agent is currently active:
+
+```python
+from langchain.agents import AgentState
+from typing_extensions import NotRequired
+from typing import Literal
+
+# Define the possible agent types
+AgentType = Literal["warranty_collector", "issue_classifier", "resolution_specialist"]
+
+class SupportState(AgentState):
+    """State for customer support workflow with handoffs."""
+    active_agent: NotRequired[AgentType]
+    warranty_status: NotRequired[Literal["in_warranty", "out_of_warranty", "unknown"]]
+    issue_type: NotRequired[Literal["hardware", "software", "unknown"]]
+```
+
+The `active_agent` field is the core of the handoffs pattern - it determines which agent configuration is loaded on each turn.
+
+## 2. Define agent configurations
+
+Create configurations for each agent in the workflow. Each configuration specifies the system prompt and available tools for that agent:
+
+```python
+from dataclasses import dataclass
+from typing import List
+from langchain_core.tools import BaseTool
+
+@dataclass
+class AgentConfig:
+    """Configuration for a specific agent in the handoff workflow."""
+    name: AgentType
+    system_prompt: str
+    tools: List[BaseTool]
+
+# We'll define the actual configurations after creating the tools
+```
+
+## 3. Create handoff and workflow tools
+
+Create tools that update the workflow state. These tools allow agents to record information and transition to the next agent:
+
+```python
+from langchain.tools import tool, ToolRuntime
+from langgraph.types import Command
+
+@tool
+def record_warranty_status(
+    status: Literal["in_warranty", "out_of_warranty"],
+    runtime: ToolRuntime[None, SupportState]
+) -> Command:
+    """Record the customer's warranty status and transition to issue classification."""
+    return Command(update={
+        "warranty_status": status,
+        "active_agent": "issue_classifier"
+    })
+
+@tool
+def record_issue_type(
+    issue_type: Literal["hardware", "software"],
+    runtime: ToolRuntime[None, SupportState]
+) -> Command:
+    """Record the type of issue and transition to resolution specialist."""
+    return Command(update={
+        "issue_type": issue_type,
+        "active_agent": "resolution_specialist"
+    })
+
+@tool
+def escalate_to_human(
+    reason: str,
+    runtime: ToolRuntime[None, SupportState]
+) -> str:
+    """Escalate the case to a human support specialist."""
+    # In a real system, this would create a ticket, notify staff, etc.
+    return f"Escalating to human support. Reason: {reason}"
+
+@tool
+def provide_solution(
+    solution: str,
+    runtime: ToolRuntime[None, SupportState]
+) -> str:
+    """Provide a solution to the customer's issue."""
+    return f"Solution provided: {solution}"
+```
+
+## 4. Create agent configurations
+
+Now define the specific configurations for each agent:
+
+```python
+AGENT_CONFIGS = {
+    "warranty_collector": AgentConfig(
+        name="warranty_collector",
+        system_prompt="""You are a warranty verification specialist.
+
+Your task:
+1. Greet the customer warmly
+2. Ask if their device is under warranty
+3. Use record_warranty_status to record their response and move to the next step
+
+Be conversational and friendly. Don't ask multiple questions at once.""",
+        tools=[record_warranty_status]
+    ),
+
+    "issue_classifier": AgentConfig(
+        name="issue_classifier",
+        system_prompt="""You are an issue classification specialist.
+
+Your task:
+1. Ask the customer to describe their issue
+2. Determine if it's a hardware issue (physical damage, broken parts) or software issue (app crashes, performance)
+3. Use record_issue_type to record the classification and move to the next step
+
+If unclear, ask clarifying questions before classifying.""",
+        tools=[record_issue_type]
+    ),
+
+    "resolution_specialist": AgentConfig(
+        name="resolution_specialist",
+        system_prompt="""You are a technical resolution specialist.
+
+Context available to you:
+- Warranty status: {warranty_status}
+- Issue type: {issue_type}
+
+Your task:
+1. For SOFTWARE issues: provide troubleshooting steps using provide_solution
+2. For HARDWARE issues:
+   - If IN WARRANTY: explain warranty repair process using provide_solution
+   - If OUT OF WARRANTY: escalate_to_human for paid repair options
+
+Be specific and helpful in your solutions.""",
+        tools=[provide_solution, escalate_to_human]
+    )
+}
+```
+
+Note how the resolution specialist's prompt references state variables - we'll inject these dynamically.
+
+## 5. Create dynamic configuration middleware
+
+Create middleware that reads the `active_agent` state and configures the agent accordingly:
+
+```python
+from langchain.agents.middleware import AgentMiddleware, ModelRequest, ModelResponse
+from langchain_core.messages import SystemMessage
+from typing import Callable
+
+class HandoffMiddleware(AgentMiddleware[SupportState]):
+    """Middleware that dynamically configures the agent based on active_agent state."""
+
+    state_schema = SupportState
+
+    def __init__(self, agent_configs: dict[AgentType, AgentConfig]):
+        super().__init__()
+        self.agent_configs = agent_configs
+
+    def wrap_model_call(
+        self,
+        request: ModelRequest,
+        handler: Callable[[ModelRequest], ModelResponse]
+    ) -> ModelResponse:
+        """Configure system prompt and tools based on active_agent."""
+
+        # Get the current active agent from state (default to warranty_collector)
+        active_agent = request.state.get("active_agent", "warranty_collector")
+        config = self.agent_configs[active_agent]
+
+        # Format the system prompt with current state values
+        system_prompt = config.system_prompt.format(
+            warranty_status=request.state.get("warranty_status", "unknown"),
+            issue_type=request.state.get("issue_type", "unknown")
+        )
+
+        # Replace the system message
+        messages = [msg for msg in request.messages if not isinstance(msg, SystemMessage)]
+        messages.insert(0, SystemMessage(content=system_prompt))
+
+        # Update request with new configuration
+        request.messages = messages
+        request.tools = config.tools
+
+        return handler(request)
+```
+
+This middleware:
+1. Reads `active_agent` from state
+2. Looks up the corresponding configuration
+3. Injects the appropriate system prompt (with state interpolation)
+4. Filters tools to only those available to the current agent
+
+## 6. Create the agent
+
+Now create the agent with the handoff middleware and a checkpointer for state persistence:
+
+```python
+from langchain.agents import create_agent
+from langgraph.checkpoint.memory import InMemorySaver
+
+# Collect all tools from all configurations
+all_tools = []
+for config in AGENT_CONFIGS.values():
+    all_tools.extend(config.tools)
+
+# Create the agent with middleware
+agent = create_agent(
+    model,
+    tools=all_tools,
+    state_schema=SupportState,
+    middleware=[HandoffMiddleware(AGENT_CONFIGS)],
+    checkpointer=InMemorySaver()  # Required for state persistence across turns
+)
+```
+
+<Note>
+**Why a checkpointer?** The checkpointer maintains state across conversation turns. Without it, the `active_agent` state would be lost between user messages, breaking the handoff flow.
+</Note>
+
+## 7. Test the workflow
+
+Test the complete handoff workflow:
+
+```python
+from langchain_core.messages import HumanMessage
+
+# Configuration for this conversation thread
+config = {"configurable": {"thread_id": "support-001"}}
+
+# Initial message - starts with warranty_collector
+print("=== Turn 1: Warranty Collection ===")
+result = agent.invoke(
+    {
+        "messages": [HumanMessage("Hi, my phone screen is cracked")]
+    },
+    config
+)
+print(result["messages"][-1].content)
+
+# User responds about warranty
+print("\n=== Turn 2: User responds about warranty ===")
+result = agent.invoke(
+    {
+        "messages": [HumanMessage("Yes, it's still under warranty")]
+    },
+    config
+)
+print(result["messages"][-1].content)
+print(f"Active agent: {result.get('active_agent')}")
+
+# User describes the issue
+print("\n=== Turn 3: Issue classification ===")
+result = agent.invoke(
+    {
+        "messages": [HumanMessage("The screen is physically cracked, it happened when I dropped it")]
+    },
+    config
+)
+print(result["messages"][-1].content)
+print(f"Active agent: {result.get('active_agent')}")
+
+# Resolution
+print("\n=== Turn 4: Resolution ===")
+result = agent.invoke(
+    {
+        "messages": [HumanMessage("What should I do?")]
+    },
+    config
+)
+print(result["messages"][-1].content)
+```
+
+Expected flow:
+1. **Warranty Collector**: Asks about warranty status
+2. **Issue Classifier**: Asks about the problem, determines it's hardware
+3. **Resolution Specialist**: Provides warranty repair instructions
+
+## 8. Understanding the handoff mechanism
+
+Let's trace what happens at each turn:
+
+### Turn 1: Initial message
+```python
+{
+    "messages": [HumanMessage("Hi, my phone screen is cracked")],
+    "active_agent": "warranty_collector"  # Default value
+}
+```
+
+Middleware configures:
+- System prompt: Warranty collector instructions
+- Tools: `[record_warranty_status]`
+
+### Turn 2: After warranty recorded
+Tool call: `record_warranty_status("in_warranty")` returns:
+```python
+Command(update={
+    "warranty_status": "in_warranty",
+    "active_agent": "issue_classifier"  # State transition!
+})
+```
+
+Next turn, middleware configures:
+- System prompt: Issue classifier instructions
+- Tools: `[record_issue_type]`
+
+### Turn 3: After issue classified
+Tool call: `record_issue_type("hardware")` returns:
+```python
+Command(update={
+    "issue_type": "hardware",
+    "active_agent": "resolution_specialist"  # State transition!
+})
+```
+
+Next turn, middleware configures:
+- System prompt: Resolution specialist instructions (with state context)
+- Tools: `[provide_solution, escalate_to_human]`
+
+## 9. Adding flexibility: Going back
+
+A key UX requirement is allowing users to correct mistakes. Add a "go back" tool:
+
+```python
+@tool
+def go_back_to_warranty(
+    runtime: ToolRuntime[None, SupportState]
+) -> Command:
+    """Go back to warranty verification step."""
+    return Command(update={
+        "active_agent": "warranty_collector",
+        "warranty_status": "unknown"  # Reset warranty status
+    })
+
+@tool
+def go_back_to_classification(
+    runtime: ToolRuntime[None, SupportState]
+) -> Command:
+    """Go back to issue classification step."""
+    return Command(update={
+        "active_agent": "issue_classifier",
+        "issue_type": "unknown"  # Reset issue type
+    })
+
+# Add these tools to resolution_specialist configuration
+AGENT_CONFIGS["resolution_specialist"].tools.extend([
+    go_back_to_warranty,
+    go_back_to_classification
+])
+```
+
+Update the resolution specialist's prompt:
+```python
+system_prompt="""You are a technical resolution specialist.
+
+Context:
+- Warranty status: {warranty_status}
+- Issue type: {issue_type}
+
+Your task:
+1. For SOFTWARE issues: provide troubleshooting steps using provide_solution
+2. For HARDWARE issues:
+   - If IN WARRANTY: explain warranty repair process
+   - If OUT OF WARRANTY: escalate_to_human for paid repair options
+
+If the customer indicates any information was wrong, use:
+- go_back_to_warranty to correct warranty status
+- go_back_to_classification to correct issue type
+
+Be specific and helpful in your solutions."""
+```
+
+Now the agent can handle corrections:
+```python
+result = agent.invoke(
+    {
+        "messages": [HumanMessage("Actually, I made a mistake - my device is out of warranty")]
+    },
+    config
+)
+```
+
+## 10. Complete example
+
+Here's everything together in a runnable script:
+
+<Expandable title="View complete code" defaultOpen={false}>
+
+```python
+"""
+Customer Support Handoffs Example
+
+This example demonstrates the handoffs pattern for multi-agent systems.
+A single agent dynamically changes its behavior based on the active_agent state,
+creating a state machine for sequential information collection.
+"""
+
+from dataclasses import dataclass
+from typing import List, Literal, Callable
+from typing_extensions import NotRequired
+
+from langchain.agents import create_agent, AgentState
+from langchain.agents.middleware import AgentMiddleware, ModelRequest, ModelResponse
+from langchain.chat_models import init_chat_model
+from langchain.tools import tool, ToolRuntime, BaseTool
+from langchain_core.messages import HumanMessage, SystemMessage
+from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.types import Command
+
+
+# ============================================================================
+# Step 1: Define custom state
+# ============================================================================
+
+AgentType = Literal["warranty_collector", "issue_classifier", "resolution_specialist"]
+
+class SupportState(AgentState):
+    """State for customer support workflow with handoffs."""
+    active_agent: NotRequired[AgentType]
+    warranty_status: NotRequired[Literal["in_warranty", "out_of_warranty", "unknown"]]
+    issue_type: NotRequired[Literal["hardware", "software", "unknown"]]
+
+
+# ============================================================================
+# Step 2: Define agent configurations
+# ============================================================================
+
+@dataclass
+class AgentConfig:
+    """Configuration for a specific agent in the handoff workflow."""
+    name: AgentType
+    system_prompt: str
+    tools: List[BaseTool]
+
+
+# ============================================================================
+# Step 3: Create handoff and workflow tools
+# ============================================================================
+
+@tool
+def record_warranty_status(
+    status: Literal["in_warranty", "out_of_warranty"],
+    runtime: ToolRuntime[None, SupportState]
+) -> Command:
+    """Record the customer's warranty status and transition to issue classification."""
+    return Command(update={
+        "warranty_status": status,
+        "active_agent": "issue_classifier"
+    })
+
+@tool
+def record_issue_type(
+    issue_type: Literal["hardware", "software"],
+    runtime: ToolRuntime[None, SupportState]
+) -> Command:
+    """Record the type of issue and transition to resolution specialist."""
+    return Command(update={
+        "issue_type": issue_type,
+        "active_agent": "resolution_specialist"
+    })
+
+@tool
+def escalate_to_human(
+    reason: str,
+    runtime: ToolRuntime[None, SupportState]
+) -> str:
+    """Escalate the case to a human support specialist."""
+    return f"Escalating to human support. Reason: {reason}"
+
+@tool
+def provide_solution(
+    solution: str,
+    runtime: ToolRuntime[None, SupportState]
+) -> str:
+    """Provide a solution to the customer's issue."""
+    return f"Solution provided: {solution}"
+
+@tool
+def go_back_to_warranty(
+    runtime: ToolRuntime[None, SupportState]
+) -> Command:
+    """Go back to warranty verification step."""
+    return Command(update={
+        "active_agent": "warranty_collector",
+        "warranty_status": "unknown"
+    })
+
+@tool
+def go_back_to_classification(
+    runtime: ToolRuntime[None, SupportState]
+) -> Command:
+    """Go back to issue classification step."""
+    return Command(update={
+        "active_agent": "issue_classifier",
+        "issue_type": "unknown"
+    })
+
+
+# ============================================================================
+# Step 4: Create agent configurations
+# ============================================================================
+
+AGENT_CONFIGS = {
+    "warranty_collector": AgentConfig(
+        name="warranty_collector",
+        system_prompt="""You are a warranty verification specialist.
+
+Your task:
+1. Greet the customer warmly
+2. Ask if their device is under warranty
+3. Use record_warranty_status to record their response and move to the next step
+
+Be conversational and friendly. Don't ask multiple questions at once.""",
+        tools=[record_warranty_status]
+    ),
+
+    "issue_classifier": AgentConfig(
+        name="issue_classifier",
+        system_prompt="""You are an issue classification specialist.
+
+Your task:
+1. Ask the customer to describe their issue
+2. Determine if it's a hardware issue (physical damage, broken parts) or software issue (app crashes, performance)
+3. Use record_issue_type to record the classification and move to the next step
+
+If unclear, ask clarifying questions before classifying.""",
+        tools=[record_issue_type]
+    ),
+
+    "resolution_specialist": AgentConfig(
+        name="resolution_specialist",
+        system_prompt="""You are a technical resolution specialist.
+
+Context:
+- Warranty status: {warranty_status}
+- Issue type: {issue_type}
+
+Your task:
+1. For SOFTWARE issues: provide troubleshooting steps using provide_solution
+2. For HARDWARE issues:
+   - If IN WARRANTY: explain warranty repair process using provide_solution
+   - If OUT OF WARRANTY: escalate_to_human for paid repair options
+
+If the customer indicates any information was wrong, use:
+- go_back_to_warranty to correct warranty status
+- go_back_to_classification to correct issue type
+
+Be specific and helpful in your solutions.""",
+        tools=[provide_solution, escalate_to_human, go_back_to_warranty, go_back_to_classification]
+    )
+}
+
+
+# ============================================================================
+# Step 5: Create dynamic configuration middleware
+# ============================================================================
+
+class HandoffMiddleware(AgentMiddleware[SupportState]):
+    """Middleware that dynamically configures the agent based on active_agent state."""
+
+    state_schema = SupportState
+
+    def __init__(self, agent_configs: dict[AgentType, AgentConfig]):
+        super().__init__()
+        self.agent_configs = agent_configs
+
+    def wrap_model_call(
+        self,
+        request: ModelRequest,
+        handler: Callable[[ModelRequest], ModelResponse]
+    ) -> ModelResponse:
+        """Configure system prompt and tools based on active_agent."""
+
+        # Get the current active agent from state
+        active_agent = request.state.get("active_agent", "warranty_collector")
+        config = self.agent_configs[active_agent]
+
+        # Format the system prompt with current state
+        system_prompt = config.system_prompt.format(
+            warranty_status=request.state.get("warranty_status", "unknown"),
+            issue_type=request.state.get("issue_type", "unknown")
+        )
+
+        # Replace the system message
+        messages = [msg for msg in request.messages if not isinstance(msg, SystemMessage)]
+        messages.insert(0, SystemMessage(content=system_prompt))
+
+        # Update request with new configuration
+        request.messages = messages
+        request.tools = config.tools
+
+        return handler(request)
+
+
+# ============================================================================
+# Step 6: Create the agent
+# ============================================================================
+
+model = init_chat_model("anthropic:claude-3-5-sonnet-latest")
+
+# Collect all tools
+all_tools = []
+for config in AGENT_CONFIGS.values():
+    all_tools.extend(config.tools)
+
+# Create agent with middleware
+agent = create_agent(
+    model,
+    tools=all_tools,
+    state_schema=SupportState,
+    middleware=[HandoffMiddleware(AGENT_CONFIGS)],
+    checkpointer=InMemorySaver()
+)
+
+
+# ============================================================================
+# Step 7: Test the workflow
+# ============================================================================
+
+if __name__ == "__main__":
+    config = {"configurable": {"thread_id": "support-001"}}
+
+    print("=== Turn 1: Initial Contact ===")
+    result = agent.invoke(
+        {"messages": [HumanMessage("Hi, my phone screen is cracked")]},
+        config
+    )
+    print(f"Bot: {result['messages'][-1].content}\n")
+
+    print("=== Turn 2: Warranty Response ===")
+    result = agent.invoke(
+        {"messages": [HumanMessage("Yes, it's still under warranty")]},
+        config
+    )
+    print(f"Bot: {result['messages'][-1].content}")
+    print(f"State: active_agent={result.get('active_agent')}, warranty={result.get('warranty_status')}\n")
+
+    print("=== Turn 3: Issue Description ===")
+    result = agent.invoke(
+        {"messages": [HumanMessage("The screen is physically cracked from dropping it")]},
+        config
+    )
+    print(f"Bot: {result['messages'][-1].content}")
+    print(f"State: active_agent={result.get('active_agent')}, issue_type={result.get('issue_type')}\n")
+
+    print("=== Turn 4: Resolution ===")
+    result = agent.invoke(
+        {"messages": [HumanMessage("What should I do?")]},
+        config
+    )
+    print(f"Bot: {result['messages'][-1].content}\n")
+```
+
+</Expandable>
+
+## Key takeaways
+
+The handoffs pattern demonstrates several important concepts:
+
+1. **State machines**: The `active_agent` field creates a state machine where each state has different behavior (prompts + tools).
+
+2. **Dynamic configuration**: Middleware reads state and configures the agent on-the-fly, eliminating the need for separate agent instances.
+
+3. **State persistence**: A checkpointer maintains state across conversation turns, enabling the handoff mechanism.
+
+4. **Sequential workflows**: Perfect for collecting information in a specific order (warranty → classification → resolution).
+
+5. **Flexibility**: Tools can transition forward OR backward, allowing users to correct mistakes.
+
+<Tip>
+**When to use handoffs vs supervisor pattern**
+
+Use **handoffs** when:
+- Agents need direct conversation with users
+- Workflow requires sequential information collection
+- State transitions depend on user responses
+
+Use **[supervisor](/oss/langchain/supervisor)** when:
+- Sub-agents don't need to converse with users
+- You want centralized orchestration
+- Sub-agents are truly independent specialists
+
+You can also mix both patterns!
+</Tip>
+
+## Next steps
+
+- Learn about the [supervisor pattern](/oss/langchain/supervisor) for centralized orchestration
+- Explore [middleware](/oss/langchain/middleware) for more dynamic behaviors
+- Read the [multi-agent overview](/oss/langchain/multi-agent) to compare patterns
+- Use [LangSmith](https://smith.langchain.com) to debug and monitor your multi-agent system
