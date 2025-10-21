@@ -95,10 +95,10 @@ from langchain.tools import tool
 from langchain.agents import create_agent
 
 
-subagent1 = create_agent(..)
+subagent1 = create_agent(model="...", tools=[...])
 
 @tool(
-    name="subagent1_name",
+    "subagent1_name",
     description="subagent1_description"
 )
 def call_subagent1(query: str):
@@ -107,7 +107,7 @@ def call_subagent1(query: str):
     })
     return result["messages"][-1].content
 
-agent = create_agent(..., tools=[call_subagent1])
+agent = create_agent(model="...", tools=[call_subagent1])
 ```
 
 
@@ -141,7 +141,7 @@ class CustomState(AgentState):
     example_state_key: str
 
 @tool(
-    name="subagent1_name",
+    "subagent1_name",
     description="subagent1_description"
 )
 def call_subagent1(query: str, runtime: ToolRuntime[None, CustomState]):
@@ -178,7 +178,7 @@ from langgraph.types import Command
 
 
 @tool(
-    name="subagent1_name",
+    "subagent1_name",
     description="subagent1_description"
 )
 # We need to pass the `tool_call_id` to the sub agent so it can use it to respond with the tool call result
