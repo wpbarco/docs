@@ -1511,6 +1511,14 @@
   {
     "source": "/oss/python/deepagents/index",
     "destination": "/oss/python/deepagents/overview"
+  },
+  {
+    "source": "/oss/python/integrations/document_loaders/azure_blob_storage_container",
+    "destination": "/oss/python/integrations/document_loaders/azure_blob_storage"
+  },
+  {
+    "source": "/oss/python/integrations/document_loaders/azure_blob_storage_file",
+    "destination": "/oss/python/integrations/document_loaders/azure_blob_storage"
   }
 ]
 }
