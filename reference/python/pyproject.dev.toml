@@ -57,6 +57,7 @@ dependencies = [
     "langchain-aws",
     "langchain-azure-ai",
     #"langchain-azure-dynamic-sessions",
+    "langchain-azure-storage",
     #"langchain-cerebras",
     #"langchain-cohere",
     #"langchain-db2",
@@ -161,6 +162,7 @@ langchain-ai21 = { path = "../../../langchain-ai21/libs/ai21", editable = true }
 langchain-aws = { path = "../../../langchain-aws/libs/aws", editable = true }
 langchain-azure-ai = { path = "../../../langchain-azure/libs/azure-ai", editable = true }
 langchain-azure-dynamic-sessions = { path = "../../../langchain-azure/libs/azure-dynamic-sessions", editable = true }
+langchain-azure-storage = { path = "../../../langchain-azure/libs/azure-storage", editable = true }
 langchain-cerebras = { path = "../../../langchain-cerebras/libs/cerebras", editable = true }
 langchain-cohere = { path = "../../../langchain-cohere/libs/cohere", editable = true }
 langchain-db2 = { path = "../../../langchain-ibm/libs/langchain-db2", editable = true }

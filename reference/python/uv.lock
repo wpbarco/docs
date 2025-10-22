@@ -251,6 +251,11 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/b1/3c/b90d5afc2e47c4a45f4bba00f9c3193b0417fad5ad3bb07869f9d12832aa/azure_core-1.36.0-py3-none-any.whl", hash = "sha256:fee9923a3a753e94a259563429f3644aaf05c486d45b1215d098115102d91d3b", size = 213302, upload-time = "2025-10-15T00:33:51.058Z" },
 ]
 
+[package.optional-dependencies]
+aio = [
+    { name = "aiohttp" },
+]
+
 [[package]]
 name = "azure-core-tracing-opentelemetry"
 version = "1.0.0b12"
@@ -321,6 +326,11 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/02/32/0476f18ac82ef1def115dfabaa53170c5a71605c00b4e66c740b07abae71/azure_storage_blob-12.27.0.tar.gz", hash = "sha256:99e8e2cd2a6a723930c364ea0a0539d28e465bc77cf94ef12813c465dc09cb9a", size = 597402, upload-time = "2025-10-15T13:26:15.718Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b5/55/5c8aec0544007ec8f9ddd0e3b69939a3a41eb6c3897e2454797021753478/azure_storage_blob-12.27.0-py3-none-any.whl", hash = "sha256:b7bef8acb79825f96f2fa24c7535e2924fb3dbc4840a2eebb5f117175bde3657", size = 428916, upload-time = "2025-10-15T13:26:17.607Z" },
+]
+
+[package.optional-dependencies]
+aio = [
+    { name = "azure-core", extra = ["aio"] },
 ]
 
 [[package]]
@@ -1903,6 +1913,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "langchain-azure-storage"
+version = "1.0.0"
+source = { git = "https://github.com/langchain-ai/langchain-azure.git?subdirectory=libs%2Fazure-storage#950f33dc0a7adf4d265c572ac9b3d04bddda9592" }
+dependencies = [
+    { name = "azure-identity" },
+    { name = "azure-storage-blob", extra = ["aio"] },
+    { name = "langchain-core" },
+]
+
+[[package]]
 name = "langchain-chroma"
 version = "1.0.0"
 source = { git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Fchroma#ef85161525f32d5bf5b251cf507c60edd1210348" }
@@ -2142,6 +2162,7 @@ dependencies = [
     { name = "langchain-astradb" },
     { name = "langchain-aws" },
     { name = "langchain-azure-ai" },
+    { name = "langchain-azure-storage" },
     { name = "langchain-chroma" },
     { name = "langchain-classic" },
     { name = "langchain-community" },
@@ -2199,6 +2220,7 @@ requires-dist = [
     { name = "langchain-astradb", git = "https://github.com/langchain-ai/langchain-datastax.git?subdirectory=libs%2Fastradb" },
     { name = "langchain-aws", git = "https://github.com/langchain-ai/langchain-aws.git?subdirectory=libs%2Faws" },
     { name = "langchain-azure-ai", git = "https://github.com/langchain-ai/langchain-azure.git?subdirectory=libs%2Fazure-ai" },
+    { name = "langchain-azure-storage", git = "https://github.com/langchain-ai/langchain-azure.git?subdirectory=libs%2Fazure-storage" },
     { name = "langchain-chroma", git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Fpartners%2Fchroma" },
     { name = "langchain-classic", git = "https://github.com/langchain-ai/langchain.git?subdirectory=libs%2Flangchain" },
     { name = "langchain-community", git = "https://github.com/langchain-ai/langchain-community.git?subdirectory=libs%2Fcommunity" },
