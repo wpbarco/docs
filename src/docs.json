@@ -1169,7 +1169,8 @@
                     "langsmith/graph-rebuild",
                     "langsmith/use-remote-graph",
                     "langsmith/semantic-search",
-                    "langsmith/configure-ttl"
+                    "langsmith/configure-ttl",
+                    "langsmith/cicd-pipeline-example"
                   ]
               },
               {
