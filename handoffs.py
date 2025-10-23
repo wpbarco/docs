@@ -81,54 +81,6 @@ def provide_solution(solution: str, runtime: ToolRuntime[None, SupportState]) ->
     return f"Solution provided: {solution}"
 
 
-def get_recent_messages(messages: list, max_turns: int = 2) -> list:
-    """Get last N conversation turns, ensuring valid message sequence.
-
-    A turn consists of: user message + AI response (+ optional tool messages).
-    This prevents message history from growing unbounded and ensures each
-    agent only sees its relevant context.
-
-    Args:
-        messages: Full message history
-        max_turns: Maximum number of conversation turns to retain
-
-    Returns:
-        List of recent messages forming complete, valid turns
-    """
-    if not messages:
-        return []
-
-    # Work backwards to collect complete turns
-    turns = []
-    current_turn = []
-
-    for msg in reversed(messages):
-        if isinstance(msg, SystemMessage):
-            continue  # Skip old system messages (we inject our own)
-
-        current_turn.insert(0, msg)
-
-        # A turn starts with a user message
-        if isinstance(msg, HumanMessage):
-            turns.insert(0, current_turn)
-            current_turn = []
-
-            if len(turns) >= max_turns:
-                break
-
-    # Flatten turns into message list
-    result = []
-    for turn in turns:
-        result.extend(turn)
-
-    # Ensure we start with a user message for valid history
-    # (Most LLM providers require this pattern)
-    while result and not isinstance(result[0], HumanMessage):
-        result.pop(0)
-
-    return result
-
-
 # Define prompts as constants for lazy interpolation
 WARRANTY_COLLECTOR_PROMPT = """You are a customer support agent helping with device issues.
 
@@ -178,10 +130,9 @@ async def warranty_collector_config(
     if request.state.get("active_agent", "warranty_collector") != "warranty_collector":
         return await handler(request)
 
-    # Get recent messages and inject system prompt
-    relevant_messages = get_recent_messages(request.messages, max_turns=2)
+    # Inject system prompt
     request = request.override(
-        messages=[SystemMessage(content=WARRANTY_COLLECTOR_PROMPT)] + relevant_messages,
+        messages=[SystemMessage(content=WARRANTY_COLLECTOR_PROMPT)] + request.messages,
         tools=[record_warranty_status],
     )
 
@@ -205,10 +156,9 @@ async def issue_classifier_config(
 
     system_prompt = ISSUE_CLASSIFIER_PROMPT.format(warranty_status=warranty_status)
 
-    # Get recent messages and inject system prompt
-    relevant_messages = get_recent_messages(request.messages, max_turns=2)
+    # Inject system prompt
     request = request.override(
-        messages=[SystemMessage(content=system_prompt)] + relevant_messages,
+        messages=[SystemMessage(content=system_prompt)] + request.messages,
         tools=[record_issue_type],
     )
 
@@ -240,10 +190,9 @@ async def resolution_specialist_config(
         issue_type=issue_type
     )
 
-    # Get recent messages and inject system prompt
-    relevant_messages = get_recent_messages(request.messages, max_turns=2)
+    # Inject system prompt
     request = request.override(
-        messages=[SystemMessage(content=system_prompt)] + relevant_messages,
+        messages=[SystemMessage(content=system_prompt)] + request.messages,
         tools=[provide_solution, escalate_to_human],
     )
 
