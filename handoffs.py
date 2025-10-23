@@ -1,4 +1,4 @@
-afrom langgraph.checkpoint.memory import InMemorySaver
+from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.types import Command
 from typing import Callable
 from typing import Literal
@@ -130,33 +130,35 @@ def get_recent_messages(messages: list, max_turns: int = 2) -> list:
 
 
 # Define prompts as constants for lazy interpolation
-WARRANTY_COLLECTOR_PROMPT = """You are a warranty verification specialist.
+WARRANTY_COLLECTOR_PROMPT = """You are a customer support agent helping with device issues.
 
-Your task:
+CURRENT STAGE: Warranty verification
+
+At this stage, you need to:
 1. Greet the customer warmly
 2. Ask if their device is under warranty
-3. Use record_warranty_status to record their response and move to the next step
+3. Use record_warranty_status to record their response and move to the next stage
 
 Be conversational and friendly. Don't ask multiple questions at once."""
 
-ISSUE_CLASSIFIER_PROMPT = """You are an issue classification specialist.
+ISSUE_CLASSIFIER_PROMPT = """You are a customer support agent helping with device issues.
 
-The customer's warranty status: {warranty_status}
+CURRENT STAGE: Issue classification
+CUSTOMER INFO: Warranty status is {warranty_status}
 
-Your task:
+At this stage, you need to:
 1. Ask the customer to describe their issue
 2. Determine if it's a hardware issue (physical damage, broken parts) or software issue (app crashes, performance)
-3. Use record_issue_type to record the classification and move to the next step
+3. Use record_issue_type to record the classification and move to the next stage
 
 If unclear, ask clarifying questions before classifying."""
 
-RESOLUTION_SPECIALIST_PROMPT = """You are a technical resolution specialist.
+RESOLUTION_SPECIALIST_PROMPT = """You are a customer support agent helping with device issues.
 
-Context available to you:
-- Warranty status: {warranty_status}
-- Issue type: {issue_type}
+CURRENT STAGE: Resolution
+CUSTOMER INFO: Warranty status is {warranty_status}, issue type is {issue_type}
 
-Your task:
+At this stage, you need to:
 1. For SOFTWARE issues: provide troubleshooting steps using provide_solution
 2. For HARDWARE issues:
    - If IN WARRANTY: explain warranty repair process using provide_solution
