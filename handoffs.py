@@ -1,8 +1,9 @@
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.types import Command
-from typing import Callable
+from typing import Callable, Any
 from typing import Literal
 from typing_extensions import NotRequired
+from dataclasses import dataclass
 
 from langchain.agents import AgentState
 from langchain.agents import create_agent
@@ -132,7 +133,7 @@ async def warranty_collector_config(
 
     # Inject system prompt
     request = request.override(
-        messages=[SystemMessage(content=WARRANTY_COLLECTOR_PROMPT)] + request.messages,
+        system_prompt=system_prompt,
         tools=[record_warranty_status],
     )
 
@@ -158,7 +159,7 @@ async def issue_classifier_config(
 
     # Inject system prompt
     request = request.override(
-        messages=[SystemMessage(content=system_prompt)] + request.messages,
+        system_prompt=system_prompt,
         tools=[record_issue_type],
     )
 
@@ -192,7 +193,7 @@ async def resolution_specialist_config(
 
     # Inject system prompt
     request = request.override(
-        messages=[SystemMessage(content=system_prompt)] + request.messages,
+        system_prompt=system_prompt,
         tools=[provide_solution, escalate_to_human],
     )
 
