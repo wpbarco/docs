@@ -16,14 +16,14 @@ from langchain_core.messages import ToolMessage
 model = init_chat_model("anthropic:claude-3-5-sonnet-latest")
 
 
-# Define the possible agent types
-AgentType = Literal["warranty_collector", "issue_classifier", "resolution_specialist"]
+# Define the possible workflow stages
+SupportStage = Literal["warranty_collector", "issue_classifier", "resolution_specialist"]
 
 
 class SupportState(AgentState):
     """State for customer support workflow with handoffs."""
 
-    active_agent: NotRequired[AgentType]
+    current_stage: NotRequired[SupportStage]
     warranty_status: NotRequired[Literal["in_warranty", "out_of_warranty"]]
     issue_type: NotRequired[Literal["hardware", "software"]]
 
@@ -44,7 +44,7 @@ def record_warranty_status(
                 )
             ],
             "warranty_status": status,
-            "active_agent": "issue_classifier",
+            "current_stage": "issue_classifier",
         }
     )
 
@@ -64,7 +64,7 @@ def record_issue_type(
                 )
             ],
             "issue_type": issue_type,
-            "active_agent": "resolution_specialist",
+            "current_stage": "resolution_specialist",
         }
     )
 
@@ -120,81 +120,50 @@ At this stage, you need to:
 Be specific and helpful in your solutions."""
 
 
-
-@wrap_model_call
-async def warranty_collector_config(
-    request: ModelRequest,
-    handler: Callable[[ModelRequest], ModelResponse],
-) -> ModelResponse:
-    """Configure agent as warranty collector."""
-    # Only apply if this is the active agent
-    if request.state.get("active_agent", "warranty_collector") != "warranty_collector":
-        return await handler(request)
-
-    # Inject system prompt
-    request = request.override(
-        system_prompt=system_prompt,
-        tools=[record_warranty_status],
-    )
-
-    return await handler(request)
-
-
-@wrap_model_call
-async def issue_classifier_config(
-    request: ModelRequest,
-    handler: Callable[[ModelRequest], ModelResponse],
-) -> ModelResponse:
-    """Configure agent as issue classifier."""
-    # Only apply if this is the active agent
-    if request.state.get("active_agent") != "issue_classifier":
-        return await handler(request)
-
-    # Materialize system prompt with warranty status
-    warranty_status = request.state.get("warranty_status")
-    if warranty_status is None:
-        raise ValueError("warranty_status must be set before reaching issue_classifier")
-
-    system_prompt = ISSUE_CLASSIFIER_PROMPT.format(warranty_status=warranty_status)
-
-    # Inject system prompt
-    request = request.override(
-        system_prompt=system_prompt,
-        tools=[record_issue_type],
-    )
-
-    return await handler(request)
+# Stage configuration: maps stage name to (prompt_template, tools, required_state)
+STAGE_CONFIG = {
+    "warranty_collector": {
+        "prompt": WARRANTY_COLLECTOR_PROMPT,
+        "tools": [record_warranty_status],
+        "requires": [],
+    },
+    "issue_classifier": {
+        "prompt": ISSUE_CLASSIFIER_PROMPT,
+        "tools": [record_issue_type],
+        "requires": ["warranty_status"],
+    },
+    "resolution_specialist": {
+        "prompt": RESOLUTION_SPECIALIST_PROMPT,
+        "tools": [provide_solution, escalate_to_human],
+        "requires": ["warranty_status", "issue_type"],
+    },
+}
 
 
 @wrap_model_call
-async def resolution_specialist_config(
+async def apply_stage_config(
     request: ModelRequest,
     handler: Callable[[ModelRequest], ModelResponse],
 ) -> ModelResponse:
-    """Configure agent as resolution specialist."""
-    # Only apply if this is the active agent
-    if request.state.get("active_agent") != "resolution_specialist":
-        return await handler(request)
+    """Configure agent behavior based on the current stage."""
+    # Get current stage (defaults to warranty_collector for first interaction)
+    current_stage = request.state.get("current_stage", "warranty_collector")
 
-    # Materialize system prompt with lazy interpolation
-    # These should always exist when we reach resolution specialist
-    warranty_status = request.state.get("warranty_status")
-    issue_type = request.state.get("issue_type")
+    # Look up stage configuration
+    stage_config = STAGE_CONFIG[current_stage]
 
-    if warranty_status is None:
-        raise ValueError("warranty_status must be set before reaching resolution_specialist")
-    if issue_type is None:
-        raise ValueError("issue_type must be set before reaching resolution_specialist")
+    # Validate required state exists
+    for key in stage_config["requires"]:
+        if request.state.get(key) is None:
+            raise ValueError(f"{key} must be set before reaching {current_stage}")
 
-    system_prompt = RESOLUTION_SPECIALIST_PROMPT.format(
-        warranty_status=warranty_status,
-        issue_type=issue_type
-    )
+    # Format prompt with state values (supports {warranty_status}, {issue_type}, etc.)
+    system_prompt = stage_config["prompt"].format(**request.state)
 
-    # Inject system prompt
+    # Inject system prompt and stage-specific tools
     request = request.override(
         system_prompt=system_prompt,
-        tools=[provide_solution, escalate_to_human],
+        tools=stage_config["tools"],
     )
 
     return await handler(request)
@@ -207,16 +176,12 @@ all_tools = [
     escalate_to_human,
 ]
 
-# Create the agent with configuration functions
+# Create the agent with stage-based configuration
 agent = create_agent(
     model,
     tools=all_tools,
     state_schema=SupportState,
-    middleware=[
-        warranty_collector_config,
-        issue_classifier_config,
-        resolution_specialist_config,
-    ],
+    middleware=[apply_stage_config],  # Single middleware handles all stages
     checkpointer=InMemorySaver(),  # Required for state persistence across turns
 )
 
