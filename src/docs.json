@@ -1046,7 +1046,8 @@
                       "langsmith/evaluate-graph",
                       "langsmith/evaluate-existing-experiment",
                       "langsmith/evaluate-with-attachments",
-                      "langsmith/multi-turn-simulation"
+                      "langsmith/multi-turn-simulation",
+                      "langsmith/trajectory-evals"
                     ]
                   },
                   {
