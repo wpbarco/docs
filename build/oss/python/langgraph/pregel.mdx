@@ -276,6 +276,7 @@ LangGraph provides two high-level APIs for creating a Pregel application: the [S
     builder.add_node(write_essay)
     builder.add_node(score_essay)
     builder.add_edge(START, "write_essay")
+    builder.add_edge("write_essay", "score_essay")
 
     # Compile the graph.
     # This will return a Pregel instance.
