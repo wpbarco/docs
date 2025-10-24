@@ -1274,6 +1274,13 @@
             ]
           },
           {
+            "tab": "Agent Builder",
+            "pages": [
+              "langsmith/agent-builder",
+              "langsmith/agent-builder-setup"
+            ]
+          },
+          {
             "tab": "Hosting",
             "groups": [
               {
@@ -1372,13 +1379,6 @@
                   }
                 ]
               }
-            ]
-          },
-          {
-            "tab": "Agent Builder",
-            "pages": [
-              "langsmith/agent-builder",
-              "langsmith/agent-builder-setup"
             ]
           }
         ]
