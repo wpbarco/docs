@@ -120,10 +120,10 @@ await graph.invoke({ foo: "" }, config);
 
 After we run the graph, we expect to see exactly 4 checkpoints:
 
-* empty checkpoint with `START` as the next node to be executed
-* checkpoint with the user input `{'foo': '', 'bar': []}` and `nodeA` as the next node to be executed
-* checkpoint with the outputs of `nodeA` `{'foo': 'a', 'bar': ['a']}` and `nodeB` as the next node to be executed
-* checkpoint with the outputs of `nodeB` `{'foo': 'b', 'bar': ['a', 'b']}` and no next nodes to be executed
+* Empty checkpoint with [`START`](https://langchain-ai.github.io/langgraphjs/reference/variables/langgraph.START.html) as the next node to be executed
+* Checkpoint with the user input `{'foo': '', 'bar': []}` and `nodeA` as the next node to be executed
+* Checkpoint with the outputs of `nodeA` `{'foo': 'a', 'bar': ['a']}` and `nodeB` as the next node to be executed
+* Checkpoint with the outputs of `nodeB` `{'foo': 'b', 'bar': ['a', 'b']}` and no next nodes to be executed
 
 Note that the `bar` channel values contain outputs from both nodes as we have a reducer for the `bar` channel.
 
@@ -363,7 +363,7 @@ The config should contain `thread_id` specifying which thread to update. When on
 
 #### `values`
 
-These are the values that will be used to update the state. Note that this update is treated exactly as any update from a node is treated. This means that these values will be passed to the [reducer](/oss/javascript/langgraph/graph-api#reducers) functions, if they are defined for some of the channels in the graph state. This means that `update_state` does NOT automatically overwrite the channel values for every channel, but only for the channels without reducers. Let's walk through an example.
+These are the values that will be used to update the state. Note that this update is treated exactly as any update from a node is treated. This means that these values will be passed to the [reducer](/oss/javascript/langgraph/graph-api#reducers) functions, if they are defined for some of the channels in the graph state. This means that [`update_state`](https://langchain-ai.github.io/langgraphjs/reference/classes/langgraph.CompiledStateGraph.html#updateState) does NOT automatically overwrite the channel values for every channel, but only for the channels without reducers. Let's walk through an example.
 
 Let's assume you have defined the state of your graph with the following schema (see full example above):
 
@@ -716,7 +716,7 @@ See the [deployment guide](/langsmith/semantic-search) for more details and conf
 
 ## Checkpointer libraries
 
-Under the hood, checkpointing is powered by checkpointer objects that conform to [BaseCheckpointSaver](https://langchain-ai.github.io/langgraphjs/reference/classes/checkpoint.BaseCheckpointSaver.html) interface. LangGraph provides several checkpointer implementations, all implemented via standalone, installable libraries:
+Under the hood, checkpointing is powered by checkpointer objects that conform to [`BaseCheckpointSaver`](https://langchain-ai.github.io/langgraphjs/reference/classes/checkpoint.BaseCheckpointSaver.html) interface. LangGraph provides several checkpointer implementations, all implemented via standalone, installable libraries:
 
 
 
@@ -729,7 +729,7 @@ Under the hood, checkpointing is powered by checkpointer objects that conform to
 
 
 
-Each checkpointer conforms to the [BaseCheckpointSaver](https://langchain-ai.github.io/langgraphjs/reference/classes/checkpoint.BaseCheckpointSaver.html) interface and implements the following methods:
+Each checkpointer conforms to the [`BaseCheckpointSaver`](https://langchain-ai.github.io/langgraphjs/reference/classes/checkpoint.BaseCheckpointSaver.html) interface and implements the following methods:
 
 * `.put` - Store a checkpoint with its configuration and metadata.
 * `.putWrites` - Store intermediate writes linked to a checkpoint (i.e. [pending writes](#pending-writes)).

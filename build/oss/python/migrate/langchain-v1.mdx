@@ -77,10 +77,9 @@ uv add langchain-classic
 
 ## Migrate to `create_agent`
 
-Prior to v1.0, we recommended using `langgraph.prebuilt.create_react_agent` to build agents.
-Now, we recommend you use [`langchain.agents.create_agent`](https://reference.langchain.com/python/langchain/agents/#langchain.agents.create_agent) to build agents.
+Prior to v1.0, we recommended using [`langgraph.prebuilt.create_react_agent`](https://reference.langchain.com/python/langgraph/prebuilt/#langgraph.prebuilt.chat_agent_executor.create_react_agent) to build agents. Now, we recommend you use [`langchain.agents.create_agent`](https://reference.langchain.com/python/langchain/agents/#langchain.agents.create_agent) to build agents.
 
-The table below outlines what functionality has changed from `create_react_agent` to [`create_agent`](https://reference.langchain.com/python/langchain/agents/#langchain.agents.create_agent):
+The table below outlines what functionality has changed from [`create_react_agent`](https://reference.langchain.com/python/langgraph/prebuilt/#langgraph.prebuilt.chat_agent_executor.create_react_agent) to [`create_agent`](https://reference.langchain.com/python/langchain/agents/#langchain.agents.create_agent):
 
 | Section | TL;DR - What's changed |
 |---------|--------------|
@@ -99,7 +98,7 @@ The table below outlines what functionality has changed from `create_react_agent
 ### Import path
 
 The import path for the agent prebuilt has changed from `langgraph.prebuilt` to `langchain.agents`.
-The name of the function has changed from `create_react_agent` to [`create_agent`](https://reference.langchain.com/python/langchain/agents/#langchain.agents.create_agent):
+The name of the function has changed from [`create_react_agent`](https://reference.langchain.com/python/langgraph/prebuilt/#langgraph.prebuilt.chat_agent_executor.create_react_agent) to [`create_agent`](https://reference.langchain.com/python/langchain/agents/#langchain.agents.create_agent):
 
 ```python
 from langgraph.prebuilt import create_react_agent # [!code --]
@@ -483,8 +482,7 @@ If you need to perform validation, handle it in middleware hooks instead.
 
 ### Model
 
-Dynamic model selection allows you to choose different models based on runtime context (e.g., task complexity, cost constraints, or user preferences). `create_react_agent` released in v0.6 of [`langgraph-prebuilt`](https://pypi.org/project/langgraph-prebuilt) supported dynamic model and tool selection
-via a callable passed to the `model` parameter.
+Dynamic model selection allows you to choose different models based on runtime context (e.g., task complexity, cost constraints, or user preferences). [`create_react_agent`](https://reference.langchain.com/python/langgraph/prebuilt/#langgraph.prebuilt.chat_agent_executor.create_react_agent) released in v0.6 of [`langgraph-prebuilt`](https://pypi.org/project/langgraph-prebuilt) supported dynamic model and tool selection via a callable passed to the `model` parameter.
 
 This functionality has been ported to the middleware interface in v1.
 
@@ -567,7 +565,7 @@ The [`tools`](https://reference.langchain.com/python/langchain/agents/#langchain
 * Callable objects (functions) with proper type hints and a docstring
 * `dict` that represents a built-in provider tools
 
-The argument will no longer accept `ToolNode` instances.
+The argument will no longer accept [`ToolNode`](https://reference.langchain.com/python/langgraph/agents/#langgraph.prebuilt.tool_node.ToolNode) instances.
 
 <CodeGroup>
 ```python v1 (new)

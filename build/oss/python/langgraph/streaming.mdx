@@ -16,7 +16,7 @@ What's possible with LangGraph streaming:
 
 ## Supported stream modes
 
-Pass one or more of the following stream modes as a list to the [`stream()`](https://reference.langchain.com/python/langgraph/graphs/#langgraph.graph.state.CompiledStateGraph.stream) or [`astream()`](https://reference.langchain.com/python/langgraph/graphs/#langgraph.graph.state.CompiledStateGraph.astream) methods:
+Pass one or more of the following stream modes as a list to the [`stream`](https://reference.langchain.com/python/langgraph/graphs/#langgraph.graph.state.CompiledStateGraph.stream) or [`astream`](https://reference.langchain.com/python/langgraph/graphs/#langgraph.graph.state.CompiledStateGraph.astream) methods:
 
 
 
@@ -31,7 +31,7 @@ Pass one or more of the following stream modes as a list to the [`stream()`](htt
 
 ## Basic usage example
 
-LangGraph graphs expose the [`.stream()`](https://reference.langchain.com/python/langgraph/pregel/#langgraph.pregel.Pregel.stream) (sync) and [`.astream()`](https://reference.langchain.com/python/langgraph/pregel/#langgraph.pregel.Pregel.astream) (async) methods to yield streamed outputs as iterators.
+LangGraph graphs expose the [`stream`](https://reference.langchain.com/python/langgraph/pregel/#langgraph.pregel.Pregel.stream) (sync) and [`astream`](https://reference.langchain.com/python/langgraph/pregel/#langgraph.pregel.Pregel.astream) (async) methods to yield streamed outputs as iterators.
 
 ```python
 for chunk in graph.stream(inputs, stream_mode="updates"):

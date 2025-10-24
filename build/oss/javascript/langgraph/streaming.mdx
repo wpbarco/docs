@@ -18,7 +18,7 @@ What's possible with LangGraph streaming:
 
 
 
-Pass one or more of the following stream modes as a list to the [`stream()`](https://langchain-ai.github.io/langgraphjs/reference/classes/langgraph.CompiledStateGraph.html#stream) method:
+Pass one or more of the following stream modes as a list to the [`stream`](https://langchain-ai.github.io/langgraphjs/reference/classes/langgraph.CompiledStateGraph.html#stream) method:
 
 
 | Mode       | Description                                                                                                                                                                         |
@@ -33,7 +33,7 @@ Pass one or more of the following stream modes as a list to the [`stream()`](htt
 
 
 
-LangGraph graphs expose the [`.stream()`](https://langchain-ai.github.io/langgraphjs/reference/classes/langgraph.Pregel.html#stream) method to yield streamed outputs as iterators.
+LangGraph graphs expose the [`stream`](https://langchain-ai.github.io/langgraphjs/reference/classes/langgraph.Pregel.html#stream) method to yield streamed outputs as iterators.
 
 ```typescript
 for await (const chunk of await graph.stream(inputs, {

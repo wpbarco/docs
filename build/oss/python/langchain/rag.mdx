@@ -212,7 +212,7 @@ Indexing commonly works as follows:
 
 We need to first load the blog post contents. We can use [DocumentLoaders](/oss/python/langchain/retrieval#document_loaders) for this, which are objects that load in data from a source and return a list of [Document](https://reference.langchain.com/python/langchain_core/documents/#langchain_core.documents.base.Document) objects.
 
-In this case we'll use the [WebBaseLoader](/oss/python/integrations/document_loaders/web_base), which uses `urllib` to load HTML from web URLs and `BeautifulSoup` to parse it to text. We can customize the HTML -\> text parsing by passing in parameters into the `BeautifulSoup` parser via `bs_kwargs` (see [BeautifulSoup docs](https://beautiful-soup-4.readthedocs.io/en/latest/#beautifulsoup)). In this case only HTML tags with class “post-content”, “post-title”, or “post-header” are relevant, so we'll remove all others.
+In this case we'll use the [`WebBaseLoader`](/oss/python/integrations/document_loaders/web_base), which uses `urllib` to load HTML from web URLs and `BeautifulSoup` to parse it to text. We can customize the HTML -\> text parsing by passing in parameters into the `BeautifulSoup` parser via `bs_kwargs` (see [BeautifulSoup docs](https://beautiful-soup-4.readthedocs.io/en/latest/#beautifulsoup)). In this case only HTML tags with class “post-content”, “post-title”, or “post-header” are relevant, so we'll remove all others.
 
 ```python
 import bs4
@@ -252,10 +252,8 @@ In
 
 `DocumentLoader`: Object that loads data from a source as list of `Documents`.
 
-- [Integrations](/oss/python/integrations/document_loaders/): 160+
-  integrations to choose from.
-- [Interface](https://python.langchain.com/api_reference/core/document_loaders/langchain_core.document_loaders.base.BaseLoader.html):
-  API reference for the base interface.
+- [Integrations](/oss/python/integrations/document_loaders/): 160+ integrations to choose from.
+- [`BaseLoader`](https://reference.langchain.com/python/langchain_core/document_loaders/#langchain_core.document_loaders.BaseLoader): API reference for the base interface.
 
 ### Splitting documents
 
