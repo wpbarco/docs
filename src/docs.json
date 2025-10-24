@@ -1046,7 +1046,8 @@
                       "langsmith/evaluate-graph",
                       "langsmith/evaluate-existing-experiment",
                       "langsmith/evaluate-with-attachments",
-                      "langsmith/multi-turn-simulation"
+                      "langsmith/multi-turn-simulation",
+                      "langsmith/trajectory-evals"
                     ]
                   },
                   {
@@ -1280,6 +1281,13 @@
             ]
           },
           {
+            "tab": "Agent Builder",
+            "pages": [
+              "langsmith/agent-builder",
+              "langsmith/agent-builder-setup"
+            ]
+          },
+          {
             "tab": "Hosting",
             "groups": [
               {
@@ -1378,13 +1386,6 @@
                   }
                 ]
               }
-            ]
-          },
-          {
-            "tab": "Agent Builder",
-            "pages": [
-              "langsmith/agent-builder",
-              "langsmith/agent-builder-setup"
             ]
           }
         ]
