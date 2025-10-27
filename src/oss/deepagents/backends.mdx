@@ -1,41 +1,115 @@
 ---
 title: Backends
-description: Choose and configure filesystem backends for deep agents, route paths, implement virtual filesystems, and enforce policies.
+description: Choose and configure filesystem backends for deep agents. You can specify routes to different backends, implement virtual filesystems, and enforce policies.
 ---
 
-Deep agents expose a filesystem surface to the model via tools like `ls`, `read_file`, `write_file`, `edit_file`, `glob`, and `grep`. These tools operate through a pluggable backend. This page explains how to choose a backend, route different paths to different backends, implement your own virtual filesystem (for example, S3 or Postgres), add policy hooks, and comply with the backend protocol.
+Deep agents expose a filesystem surface to the agent via tools like `ls`, `read_file`, `write_file`, `edit_file`, `glob`, and `grep`. These tools operate through a pluggable backend. This page explains how to choose a backend, route different paths to different backends, implement your own virtual filesystem (for example, S3 or Postgres), add policy hooks, and comply with the backend protocol.
 
 ## Quick start
 
-- Default (ephemeral in state):
-  - `agent = create_deep_agent()`
-- Local filesystem persistence:
-  - `agent = create_deep_agent(backend=FilesystemBackend(root_dir="."))`
-- Durable store (LangGraph Store):
-  - `agent = create_deep_agent(backend=lambda rt: StoreBackend(rt))`
-- Composite (ephemeral by default, `/memories/` persisted):
-  - See Composite routing below for a ready‑to‑paste example.
+Here are a few pre-built filesystem backends that you can quickly use with your deep agent.
+
+- **Default (ephemeral in state)**
+
+    `agent = create_deep_agent()`
+
+    The default filesystem backend for an agent is stored in langgraph state. Note that this filesystem only persists _for a single thread_.
+- **Local filesystem persistence**
+
+    `agent = create_deep_agent(backend=FilesystemBackend(root_dir="."))`
+
+    This gives the deep agent access to your local machine's filesystem. You can specify the root directory that the agent has access to.
+- **Durable store (LangGraph Store)**
+
+    `agent = create_deep_agent(backend=lambda rt: StoreBackend(rt))`
+
+    This gives the agent access to long-term storage that is _persisted across threads_. This is great for storing longer term memories or instructions that are applicable to the agent over multiple executions.
+- **Composite (ephemeral by default, `/memories/` persisted)**
+
+    The Composite backend is maximally flexible. You can specify different routes in the filesystem to point towards different backends. See Composite routing below for a ready‑to‑paste example.
 
 ## Built‑in backends
 
 ### StateBackend (ephemeral)
-- Stores files in LangGraph agent state for the current thread; persists across turns via checkpoints.
-- Best for scratch files, intermediate results, and automatic eviction of large tool outputs.
+```python
+# By default we provide a StateBackend
+agent = create_deep_agent()
+
+# Under the hood, it looks like
+from deepagents.backends import StateBackend
+
+agent = create_deep_agent(
+    backend=(lambda rt: StateBackend(rt))   # Note that the tools access State through the runtime.state
+)
+```
+**How it works:**
+- Stores files in LangGraph agent state for the current thread.
+- Persists across multiple agent turns on the same thread via checkpoints.
+
+**Best for:**
+- A scratch pad for the agent to write intermediate results.
+- Aautomatic eviction of large tool outputs which the agent can then read back in piece by piece.
 
 ### FilesystemBackend (local disk)
+
+```python
+from deepagents.backends import FilesystemBackend
+
+agent = create_deep_agent(
+    backend=FilesystemBackend(root_dir=".")
+)
+```
+**How it works:**
 - Reads/writes real files under a configurable `root_dir`.
-- Optional `virtual_mode=True` to sandbox and normalize paths under `root_dir`.
+- You can optionally set `virtual_mode=True` to sandbox and normalize paths under `root_dir`.
 - Uses secure path resolution, prevents unsafe symlink traversal when possible, can use ripgrep for fast `grep`.
-- Best for local projects, CI sandboxes, or mounted persistent volumes.
+
+**Best for:**
+- Local projects on your machine
+- CI sandboxes
+- Mounted persistent volumes
 
 ### StoreBackend (LangGraph Store)
+```python
+from deepagents.backends import StoreBackend
+
+agent = create_deep_agent(
+    backend=(lambda rt: StoreBackend(rt))   # Note that the tools access Store through the runtime.store
+)
+```
+**How it works:**
 - Stores files in a LangGraph `BaseStore` provided by the runtime, enabling cross‑thread durable storage.
-- Best when you already run with a configured LangGraph store (for example, Redis, Postgres, or cloud implementations behind `BaseStore`).
+
+**Best for:**
+- When you already run with a configured LangGraph store (for example, Redis, Postgres, or cloud implementations behind `BaseStore`).
+- When you're deploying your agent through LangSmith Deployments (a store is automatically provisioned for your agent).
 
 
 ### CompositeBackend (router)
+
+```python
+from deepagents import create_deep_agent
+from deepagents.backends import FilesystemBackend
+from deepagents.backends.composite import build_composite_state_backend
+
+composite_backend = lambda rt: CompositeBackend(
+    default=StateBackend(rt)
+    routes={
+        "/memories/": StoreBackend(rt),
+        "/docs/": CustomBackend()
+    }
+)
+
+agent = create_deep_agent(backend=composite_backend)
+```
+**How it works:**
 - Routes file operations to different backends based on path prefix.
 - Preserves the original path prefixes in listings and search results.
+
+**Best for:**
+- When you want to give your agent both ephemeral and cross-thread storage, a CompositeBackend allows you provide both a StateBackend and StoreBackend
+- When you have multiple sources of information that you want to provide to your agent as part of a single filesystem.
+    - e.g. You have long-term memories stored under /memories/ in one Store and you also have a custom backend that has documentation accessible at /docs/.
 
 ## Specify a backend
 
@@ -46,11 +120,9 @@ Deep agents expose a filesystem surface to the model via tools like `ls`, `read_
 - If omitted, the default is `lambda rt: StateBackend(rt)`.
 
 
-## Composite routing
+## Composite routing example
 
 Route parts of the namespace to different backends. Commonly used to persist `/memories/*` and keep everything else ephemeral.
-
-Example (recommended):
 
 :::python
 ```python
@@ -58,15 +130,13 @@ from deepagents import create_deep_agent
 from deepagents.backends import FilesystemBackend
 from deepagents.backends.composite import build_composite_state_backend
 
-def composite_factory(runtime):
-    return build_composite_state_backend(
-        runtime,
-        routes={
-            "/memories/": FilesystemBackend(root_dir="~/.deepagents/myagent"),
-        },
-    )
+composite_backend = lambda rt: CompositeBackend(
+    routes={
+        "/memories/": FilesystemBackend(root_dir="~/.deepagents/myagent"),
+    },
+)
 
-agent = create_deep_agent(backend=composite_factory)
+agent = create_deep_agent(backend=composite_backend)
 ```
 :::
 
