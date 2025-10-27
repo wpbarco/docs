@@ -11,7 +11,7 @@
 
 # Any file in the `/src/oss/python/integrations`
 # and any of its subdirectories.
-/src/oss/python/integrations @mdrxy
+/src/oss/python/integrations/ @mdrxy
 
 # Any file in the `/src/langsmith`
 # and any of its subdirectories.
