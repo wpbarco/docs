@@ -1,5 +1,5 @@
 ---
-title: Azure AI - LangChain Integration Reference
+title: Azure AI
 ---
 
 # :material-microsoft-azure:{ .lg .middle } `langchain-azure-ai`

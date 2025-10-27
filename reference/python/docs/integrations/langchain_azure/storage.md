@@ -1,5 +1,5 @@
 ---
-title: Azure Storage - LangChain Integration Reference
+title: Azure Storage
 ---
 
 # :material-microsoft-azure:{ .lg .middle } `langchain-azure-storage`

@@ -1,5 +1,5 @@
 ---
-title: Azure Dynamic Sessions - LangChain Integration Reference
+title: Azure Dynamic Sessions
 ---
 
 # :material-microsoft-azure:{ .lg .middle } `langchain-azure-dynamic-sessions`
