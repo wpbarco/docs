@@ -5,6 +5,10 @@
 # the repo. Unless a later match takes precedence, they will be requested for review when someone opens a pull request.
 *       @lnhsingh @katmayb
 
+# Any file in the `/src/oss`
+# and any of its subdirectories.
+/src/oss/ @lnhsingh
+
 # Any file in the `/src/oss/python/integrations`
 # and any of its subdirectories.
 /src/oss/python/integrations @mdrxy
@@ -13,6 +17,3 @@
 # and any of its subdirectories.
 /src/langsmith/ @katmayb
 
-# Any file in the `/src/oss`
-# and any of its subdirectories.
-/src/oss/ @lnhsingh
