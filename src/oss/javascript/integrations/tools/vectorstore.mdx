@@ -19,22 +19,21 @@ process.env.LANGSMITH_API_KEY="your-api-key"
 
 This toolkit lives in the `langchain` package:
 
-```{=mdx}
-import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
-<IntegrationInstallTooltip></IntegrationInstallTooltip>
-
-<Npm2Yarn>
-  langchain @langchain/core
-</Npm2Yarn>
+<CodeGroup>
+```bash npm
+npm install langchain @langchain/core
 ```
+```bash yarn
+yarn add langchain @langchain/core
+```
+```bash pnpm
+pnpm add langchain @langchain/core
+```
+</CodeGroup>
 
 ## Instantiation
 
 Now we can instantiate our toolkit. First, we need to define the LLM we'll use in the toolkit.
-
-```{=mdx}
-<ChatModelTabs customVarName="llm" />
-```
 
 ```typescript
 // @lc-docs-hide-cell
@@ -48,9 +47,9 @@ const llm = new ChatOpenAI({
 ```
 
 ```typescript
-import { VectorStoreToolkit, VectorStoreInfo } from "langchain/agents/toolkits"
+import { VectorStoreToolkit, VectorStoreInfo } from "@langchain/classic/agents/toolkits"
 import { OpenAIEmbeddings } from "@langchain/openai"
-import { MemoryVectorStore } from "langchain/vectorstores/memory"
+import { MemoryVectorStore } from "@langchain/classic/vectorstores/memory"
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import fs from "fs";
 
@@ -98,16 +97,24 @@ console.log(tools.map((tool) => ({
 
 First, ensure you have LangGraph installed:
 
-```{=mdx}
-<Npm2Yarn>
-  @langchain/langgraph
-</Npm2Yarn>
+
+<CodeGroup>
+```bash npm
+npm install @langchain/langgraph
 ```
+```bash yarn
+yarn add @langchain/langgraph
+```
+```bash pnpm
+pnpm add @langchain/langgraph
+```
+</CodeGroup>
+
 
 Then, instantiate the agent:
 
 ```typescript
-import { createAgent } from "langchain"
+import { createAgent } from "@langchain/classic"
 
 const agentExecutor = createAgent({ llm, tools });
 ```

@@ -2,9 +2,7 @@
 title: Long-term memory
 ---
 
-import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
 
-<AlphaCallout />
 
 ## Overview
 
@@ -105,9 +103,9 @@ from dataclasses import dataclass
 
 from langchain_core.runnables import RunnableConfig
 from langchain.agents import create_agent
-from langgraph.config import get_store
-from langgraph.runtime import get_runtime
+from langchain.tools import tool, ToolRuntime
 from langgraph.store.memory import InMemoryStore
+
 
 @dataclass
 class Context:
@@ -126,17 +124,18 @@ store.put( # [!code highlight]
     }  # Data to store for the given user
 )
 
-def get_user_info() -> str:
+@tool
+def get_user_info(runtime: ToolRuntime[Context]) -> str:
     """Look up user info."""
     # Access the store - same as that provided to `create_agent`
-    store = get_runtime().store # [!code highlight]
-    user_id = get_runtime(Context).context.user_id
+    store = runtime.store # [!code highlight]
+    user_id = runtime.context.user_id
     # Retrieve data from store - returns StoreValue object with value and metadata
     user_info = store.get(("users",), user_id) # [!code highlight]
     return str(user_info.value) if user_info else "Unknown user"
 
 agent = create_agent(
-    model="anthropic:claude-3-7-sonnet-latest",
+    model="anthropic:claude-sonnet-4-5",
     tools=[get_user_info],
     # Pass store to agent - enables agent to access store when running tools
     store=store, # [!code highlight]
@@ -154,7 +153,7 @@ agent.invoke(
 
 :::js
 ```typescript A tool the agent can use to look up user information
-import { z } from "zod";
+import * as z from "zod";
 import { createAgent, tool } from "langchain";
 import { InMemoryStore, type Runtime } from "@langchain/langgraph";
 
@@ -223,41 +222,48 @@ console.log(result.messages.at(-1)?.content);
 
 :::python
 ```python Example of a tool that updates user information
+from dataclasses import dataclass
 from typing_extensions import TypedDict
 
-from langchain_core.runnables import RunnableConfig
 from langchain.agents import create_agent
-from langgraph.config import get_store
+from langchain.tools import tool, ToolRuntime
 from langgraph.store.memory import InMemoryStore
+
 
 # InMemoryStore saves data to an in-memory dictionary. Use a DB-backed store in production.
 store = InMemoryStore() # [!code highlight]
+
+@dataclass
+class Context:
+    user_id: str
 
 # TypedDict defines the structure of user information for the LLM
 class UserInfo(TypedDict):
     name: str
 
 # Tool that allows agent to update user information (useful for chat applications)
-def save_user_info(user_info: UserInfo, config: RunnableConfig) -> str:
+@tool
+def save_user_info(user_info: UserInfo, runtime: ToolRuntime[Context]) -> str:
     """Save user info."""
     # Access the store - same as that provided to `create_agent`
-    store = get_store() # [!code highlight]
-    user_id = config["configurable"].get("user_id")
+    store = runtime.store # [!code highlight]
+    user_id = runtime.context.user_id # [!code highlight]
     # Store data in the store (namespace, key, data)
     store.put(("users",), user_id, user_info) # [!code highlight]
     return "Successfully saved user info."
 
 agent = create_agent(
-    model="anthropic:claude-3-7-sonnet-latest",
+    model="anthropic:claude-sonnet-4-5",
     tools=[save_user_info],
-    store=store # [!code highlight]
+    store=store, # [!code highlight]
+    context_schema=Context
 )
 
 # Run the agent
 agent.invoke(
     {"messages": [{"role": "user", "content": "My name is John Smith"}]},
-    # user_id passed in config to identify whose information is being updated
-    config={"configurable": {"user_id": "user_123"}} # [!code highlight]
+    # user_id passed in context to identify whose information is being updated
+    context=Context(user_id="user_123") # [!code highlight]
 )
 
 # You can access the store directly to get the value
@@ -268,7 +274,7 @@ store.get(("users",), "user_123").value
 
 :::js
 ```typescript Example of a tool that updates user information
-import { z } from "zod";
+import * as z from "zod";
 import { tool, createAgent, type AgentRuntime } from "langchain";
 import { InMemoryStore, type Runtime } from "@langchain/langgraph";
 

@@ -33,7 +33,7 @@ There is no built-in auth mechanism for Outlines.
 The LangChain Outlines integration lives in the `langchain-community` package and requires the `outlines` library:
 
 ```python
-%pip install -qU langchain-community outlines
+pip install -qU langchain-community outlines
 ```
 
 ## Instantiation
@@ -59,7 +59,7 @@ model = ChatOutlines(model="microsoft/phi-2")  # defaults to transformers backen
 ## Invocation
 
 ```python
-from langchain_core.messages import HumanMessage
+from langchain.messages import HumanMessage
 
 messages = [HumanMessage(content="What will the capital of mars be called?")]
 response = model.invoke(messages)

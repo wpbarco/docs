@@ -2,15 +2,13 @@
 title: Structured output
 ---
 
-import AlphaCallout from '/snippets/alpha-lc-callout.mdx';
 
-<AlphaCallout />
 
 :::python
 
 Structured output allows agents to return data in a specific, predictable format. Instead of parsing natural language responses, you get structured data in the form of JSON objects, Pydantic models, or dataclasses that your application can directly use.
 
-LangChain's prebuilt ReAct agent `create_agent()` handles structured output automatically. The user sets their desired structured output schema, and when the model generates the structured data, it's captured, validated, and returned in the `'structured_response'` key of the agent's state.
+LangChain's @[`create_agent`] handles structured output automatically. The user sets their desired structured output schema, and when the model generates the structured data, it's captured, validated, and returned in the `'structured_response'` key of the agent's state.
 
 ```python
 def create_agent(
@@ -22,20 +20,19 @@ def create_agent(
     ]
 ```
 
-<ParamField path="response_format">
-    Controls how the agent returns structured data:
+## Response Format
+Controls how the agent returns structured data:
 
-    - **`ToolStrategy[StructuredResponseT]`**: `Uses tool calling for structured output
-    - **`ProviderStrategy[StructuredResponseT]`**: Uses provider-native structured output
-    - **`type[StructuredResponseT]`**: Schema type - automatically selects best strategy based on model capabilities
-    - **`None`**: No structured output
+- **`ToolStrategy[StructuredResponseT]`**: Uses tool calling for structured output
+- **`ProviderStrategy[StructuredResponseT]`**: Uses provider-native structured output
+- **`type[StructuredResponseT]`**: Schema type - automatically selects best strategy based on model capabilities
+- **`None`**: No structured output
 
-    When a schema type is provided directly, LangChain automatically chooses:
-    - `ProviderStrategy` for models supporting native structured output (OpenAI, Grok)
-    - `ToolStrategy` for all other models
+When a schema type is provided directly, LangChain automatically chooses:
+- `ProviderStrategy` for models supporting native structured output (e.g. [OpenAI](/oss/integrations/providers/openai), [Grok](/oss/integrations/providers/xai))
+- `ToolStrategy` for all other models
 
-    The structured response is returned in the `structured_response` key of the agent's final state.
-</ParamField>
+The structured response is returned in the `structured_response` key of the agent's final state.
 :::
 :::js
 Structured output allows agents to return data in a specific, predictable format. Instead of parsing natural language responses, you get typed structured data.
@@ -54,13 +51,13 @@ const agent = createAgent({
 })
 ```
 
-<ParamField path="responseFormat">
+## Response Format
     Controls how the agent returns structured data. You can provide either a Zod object or JSON schema. By default, the agent uses a tool calling strategy, in which the output is created by an additional tool call. Certain models support native structured output, in which case the agent will use that strategy instead.
 
     You can control the behavior by wrapping `ResponseFormat` in a `toolStrategy` or `providerStrategy` function call:
 
     ```ts
-    import { toolStrategy, providerStrategy } from "langchain/agents";
+    import { toolStrategy, providerStrategy } from "langchain";
 
     const agent = createAgent({
         // use a provider strategy if supported by the model
@@ -71,7 +68,6 @@ const agent = createAgent({
     ```
 
     The structured response is returned in the `structuredResponse` key of the agent's final state.
-</ParamField>
 :::
 
 ## Provider strategy
@@ -94,12 +90,13 @@ class ProviderStrategy(Generic[SchemaT]):
     - **JSON Schema**: Dictionary with JSON schema specification
 </ParamField>
 
-LangChain automatically uses `ProviderStrategy` when you pass a schema type directly to `create_agent.response_format` and the model supports native structured output:
+LangChain automatically uses `ProviderStrategy` when you pass a schema type directly to @[`create_agent.response_format`][create_agent(response_format)] and the model supports native structured output:
 
 <CodeGroup>
     ```python Pydantic Model
     from pydantic import BaseModel
     from langchain.agents import create_agent
+
 
     class ContactInfo(BaseModel):
         """Contact information for a person."""
@@ -124,6 +121,7 @@ LangChain automatically uses `ProviderStrategy` when you pass a schema type dire
     ```python Dataclass
     from dataclasses import dataclass
     from langchain.agents import create_agent
+
 
     @dataclass
     class ContactInfo:
@@ -150,6 +148,7 @@ LangChain automatically uses `ProviderStrategy` when you pass a schema type dire
     from typing_extensions import TypedDict
     from langchain.agents import create_agent
 
+
     class ContactInfo(TypedDict):
         """Contact information for a person."""
         name: str # The name of the person
@@ -172,6 +171,7 @@ LangChain automatically uses `ProviderStrategy` when you pass a schema type dire
 
     ```python JSON Schema
     from langchain.agents import create_agent
+
 
     contact_info_schema = {
         "type": "object",
@@ -216,7 +216,7 @@ LangChain automatically uses `ProviderStrategy` when you pass a schema type dire
 
 <CodeGroup>
     ```ts Zod Schema
-    import { z } from "zod";
+    import * as z from "zod";
     import { createAgent, providerStrategy } from "langchain";
 
     const ContactInfo = z.object({
@@ -330,13 +330,14 @@ class ToolStrategy(Generic[SchemaT]):
 <CodeGroup>
     ```python Pydantic Model
     from pydantic import BaseModel, Field
-    from typing import Literal, Optional
+    from typing import Literal
     from langchain.agents import create_agent
     from langchain.agents.structured_output import ToolStrategy
 
+
     class ProductReview(BaseModel):
         """Analysis of a product review."""
-        rating: Optional[int] = Field(description="The rating of the product", ge=1, le=5)
+        rating: int | None = Field(description="The rating of the product", ge=1, le=5)
         sentiment: Literal["positive", "negative"] = Field(description="The sentiment of the review")
         key_points: list[str] = Field(description="The key points of the review. Lowercase, 1-3 words each.")
 
@@ -355,14 +356,15 @@ class ToolStrategy(Generic[SchemaT]):
 
     ```python Dataclass
     from dataclasses import dataclass
-    from typing import Literal, Optional
+    from typing import Literal
     from langchain.agents import create_agent
     from langchain.agents.structured_output import ToolStrategy
+
 
     @dataclass
     class ProductReview:
         """Analysis of a product review."""
-        rating: Optional[int]  # The rating of the product (1-5)
+        rating: int | None  # The rating of the product (1-5)
         sentiment: Literal["positive", "negative"]  # The sentiment of the review
         key_points: list[str]  # The key points of the review
 
@@ -380,14 +382,15 @@ class ToolStrategy(Generic[SchemaT]):
     ```
 
     ```python TypedDict
-    from typing import Literal, Optional
+    from typing import Literal
     from typing_extensions import TypedDict
     from langchain.agents import create_agent
     from langchain.agents.structured_output import ToolStrategy
 
+
     class ProductReview(TypedDict):
         """Analysis of a product review."""
-        rating: Optional[int]  # The rating of the product (1-5)
+        rating: int | None  # The rating of the product (1-5)
         sentiment: Literal["positive", "negative"]  # The sentiment of the review
         key_points: list[str]  # The key points of the review
 
@@ -407,6 +410,7 @@ class ToolStrategy(Generic[SchemaT]):
     ```python JSON Schema
     from langchain.agents import create_agent
     from langchain.agents.structured_output import ToolStrategy
+
 
     product_review_schema = {
         "type": "object",
@@ -447,13 +451,14 @@ class ToolStrategy(Generic[SchemaT]):
 
     ```python Union Types
     from pydantic import BaseModel, Field
-    from typing import Literal, Optional, Union
+    from typing import Literal, Union
     from langchain.agents import create_agent
     from langchain.agents.structured_output import ToolStrategy
 
+
     class ProductReview(BaseModel):
         """Analysis of a product review."""
-        rating: Optional[int] = Field(description="The rating of the product", ge=1, le=5)
+        rating: int | None = Field(description="The rating of the product", ge=1, le=5)
         sentiment: Literal["positive", "negative"] = Field(description="The sentiment of the review")
         key_points: list[str] = Field(description="The key points of the review. Lowercase, 1-3 words each.")
 
@@ -486,6 +491,7 @@ from pydantic import BaseModel, Field
 from typing import Literal
 from langchain.agents import create_agent
 from langchain.agents.structured_output import ToolStrategy
+
 
 class MeetingAction(BaseModel):
     """Action items extracted from a meeting transcript."""
@@ -525,7 +531,7 @@ Name: MeetingAction
 Action item captured and added to meeting notes!
 ```
 
-Without `tool_message_content`, our final `ToolMessage` would be:
+Without `tool_message_content`, our final @[`ToolMessage`] would be:
 ```
 ================================= Tool Message =================================
 Name: MeetingAction
@@ -565,7 +571,7 @@ function toolStrategy<StructuredResponseT>(
 
 <CodeGroup>
     ```ts Zod Schema
-    import { z } from "zod";
+    import * as z from "zod";
     import { createAgent, toolStrategy } from "langchain";
 
     const ProductReview = z.object({
@@ -630,7 +636,7 @@ function toolStrategy<StructuredResponseT>(
     ```
 
     ```ts Union Types
-    import { z } from "zod";
+    import * as z from "zod";
     import { createAgent, toolStrategy } from "langchain";
 
     const ProductReview = z.object({
@@ -665,7 +671,7 @@ function toolStrategy<StructuredResponseT>(
 The `toolMessageContent` parameter allows you to customize the message that appears in the conversation history when structured output is generated:
 
 ```ts
-import { z } from "zod";
+import * as z from "zod";
 import { createAgent, toolStrategy } from "langchain";
 
 const MeetingAction = z.object({
@@ -721,7 +727,7 @@ Models can make mistakes when generating structured output via tool calling. Lan
 
 #### Multiple structured outputs error
 
-When a model incorrectly calls multiple structured output tools, the agent provides error feedback in a `ToolMessage` and prompts the model to retry:
+When a model incorrectly calls multiple structured output tools, the agent provides error feedback in a @[`ToolMessage`] and prompts the model to retry:
 
 :::python
 ```python
@@ -729,6 +735,7 @@ from pydantic import BaseModel, Field
 from typing import Union
 from langchain.agents import create_agent
 from langchain.agents.structured_output import ToolStrategy
+
 
 class ContactInfo(BaseModel):
     name: str = Field(description="Person's name")
@@ -791,7 +798,7 @@ Returning structured response: {'name': 'John Doe', 'email': 'john@email.com'}
 :::
 :::js
 ```ts
-import { z } from "zod";
+import * as z from "zod";
 import { createAgent, toolStrategy } from "langchain";
 
 const ContactInfo = z.object({
@@ -845,19 +852,19 @@ When structured output doesn't match the expected schema, the agent provides spe
 :::python
 ```python
 from pydantic import BaseModel, Field
-from typing import Optional
 from langchain.agents import create_agent
 from langchain.agents.structured_output import ToolStrategy
 
+
 class ProductRating(BaseModel):
-    rating: Optional[int] = Field(description="Rating from 1-5", ge=1, le=5)
+    rating: int | None = Field(description="Rating from 1-5", ge=1, le=5)
     comment: str = Field(description="Review comment")
 
 agent = create_agent(
     model="openai:gpt-5",
     tools=[],
     response_format=ToolStrategy(ProductRating),  # Default: handle_errors=True
-    prompt="You are a helpful assistant that parses product reviews. Do not make any field or value up."
+    system_prompt="You are a helpful assistant that parses product reviews. Do not make any field or value up."
 )
 
 agent.invoke({
@@ -986,7 +993,7 @@ response_format = ToolStrategy(
 :::
 :::js
 ```ts
-import { z } from "zod";
+import * as z from "zod";
 import { createAgent, toolStrategy } from "langchain";
 
 const ProductRating = z.object({

@@ -36,7 +36,7 @@ API key is the default authentication method used in the examples above. The fol
 The LangChain OCIGenAI integration lives in the `langchain-community` package and you will also need to install the `oci` package:
 
 ```python
-%pip install -qU langchain-community oci
+pip install -qU langchain-community oci
 ```
 
 ## Instantiation
@@ -45,7 +45,7 @@ Now we can instantiate our model object and generate chat completions:
 
 ```python
 from langchain_community.chat_models.oci_generative_ai import ChatOCIGenAI
-from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
+from langchain.messages import AIMessage, HumanMessage, SystemMessage
 
 chat = ChatOCIGenAI(
     model_id="cohere.command-r-16k",
