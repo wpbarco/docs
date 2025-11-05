@@ -96,7 +96,7 @@ from langchain_openai import ChatOpenAI
 ```python
 # You can use the standard LangChain ChatOpenAI/ChatAnthropic models
 # or any other LLM model based on langchain_core.language_models.chat.BaseChatModel
-llm = ChatOpenAI(model="gpt-4o", temperature=0, openai_api_key='open-ai-api-key')
+llm = ChatOpenAI(model="gpt-4o", temperature=0, openai_api_key="open-ai-api-key")
 
 # Optional alternative: Use Timbr's LlmWrapper, which provides generic connections to different LLM providers
 from langchain_timbr import LlmWrapper, LlmTypes
