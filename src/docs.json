@@ -302,7 +302,8 @@
                           "oss/python/integrations/providers/aws",
                           "oss/python/integrations/providers/huggingface",
                           "oss/python/integrations/providers/microsoft",
-                          "oss/python/integrations/providers/ollama"
+                          "oss/python/integrations/providers/ollama",
+                          "oss/python/integrations/providers/groq"
                         ]
                       },
                       {
@@ -1303,7 +1304,7 @@
                   "langsmith/agent-builder",
                   "langsmith/agent-builder-setup",
                   "langsmith/agent-builder-tools",
-                  "langsmith/agent-builder-slack-install"
+                  "langsmith/agent-builder-slack-app"
                 ]
               },
               {
@@ -1423,6 +1424,50 @@
     }
   },
   "redirects": [
+    {
+      "source": "/langchain",
+      "destination": "/oss/python/langchain/overview"
+    },
+    {
+      "source": "/langgraph",
+      "destination": "/oss/python/langgraph/overview"
+    },
+    {
+      "source": "/deepagents",
+      "destination": "/oss/python/deepagents/overview"
+    },
+    {
+      "source": "/langsmith",
+      "destination": "/langsmith/home"
+    },
+    {
+      "source": "/js/langchain",
+      "destination": "/oss/javascript/langchain/overview"
+    },
+    {
+      "source": "/js/langgraph",
+      "destination": "/oss/javascript/langgraph/overview"
+    },
+    {
+      "source": "/python/langchain",
+      "destination": "/oss/python/langchain/overview"
+    },
+    {
+      "source": "/python/langgraph",
+      "destination": "/oss/python/langgraph/overview"
+    },
+    {
+      "source": "/python/deepagents",
+      "destination": "/oss/python/deepagents/overview"
+    },
+    {
+      "source": "/javascript/langchain",
+      "destination": "/oss/javascript/langchain/overview"
+    },
+    {
+      "source": "/javascript/langgraph",
+      "destination": "/oss/javascript/langgraph/overview"
+    },
     {
       "source": "/langsmith/cloud-architecture-and-scalability",
       "destination": "/langsmith/cloud#cloud-architecture-and-scalability"
